@@ -1,24 +1,805 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import {
+  Flame,
+  Check,
+  Star,
+  ShieldCheck,
+  Zap,
+  Clock,
+  Lock,
+  Award,
+  TrendingUp,
+  Users,
+  ChefHat,
+  DollarSign,
+  Calculator,
+  ClipboardList,
+  Truck,
+  BookOpen,
+  Sparkles,
+  ArrowRight,
+  ChevronDown,
+  Instagram,
+  MessageCircle,
+  Mail,
+  Beef,
+  Utensils,
+  Target,
+  Heart,
+} from "lucide-react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import heroChef from "@/assets/hero-chef.asset.json";
+import platter1 from "@/assets/platter1.asset.json";
+import platter2 from "@/assets/platter2.asset.json";
+import skewerSingle from "@/assets/skewer-single.asset.json";
+import skewersHeld from "@/assets/skewers-held.asset.json";
+import skewersFlat from "@/assets/skewers-flat.asset.json";
+import ribeye from "@/assets/ribeye.asset.json";
+import chefWorking from "@/assets/chef-working.asset.json";
+import chefPortrait from "@/assets/chef-portrait.asset.json";
+import author from "@/assets/author.asset.json";
+
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: LandingPage,
+  head: () => ({
+    links: [{ rel: "canonical", href: "/" }],
+  }),
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+// ---- Small primitives ----
+
+function SectionTag({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
+    <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--gold)]">
+      <Flame className="h-3.5 w-3.5" />
+      {children}
+    </span>
+  );
+}
+
+function CTAButton({
+  children,
+  size = "lg",
+  className = "",
+}: {
+  children: React.ReactNode;
+  size?: "lg" | "xl";
+  className?: string;
+}) {
+  return (
+    <a
+      href="#oferta"
+      className={`btn-fire ${size === "xl" ? "text-lg px-10 py-5" : ""} ${className}`}
     >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+      {children}
+    </a>
+  );
+}
+
+// ---- Sections ----
+
+function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        scrolled ? "backdrop-blur-xl bg-background/70 border-b border-border" : ""
+      }`}
+    >
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+        <a href="#top" className="flex items-center gap-2">
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-fire shadow-fire">
+            <Flame className="h-5 w-5 text-white" />
+          </span>
+          <span className="font-display text-xl tracking-wide">
+            ESPETINHO <span className="text-gradient-fire">NA VEIA</span>
+          </span>
+        </a>
+        <nav className="hidden gap-8 text-sm text-muted-foreground md:flex">
+          <a href="#beneficios" className="hover:text-foreground transition">Benefícios</a>
+          <a href="#modulos" className="hover:text-foreground transition">Módulos</a>
+          <a href="#bonus" className="hover:text-foreground transition">Bônus</a>
+          <a href="#faq" className="hover:text-foreground transition">FAQ</a>
+        </nav>
+        <a href="#oferta" className="btn-fire !py-2 !px-5 text-sm">
+          Quero o eBook
+        </a>
+      </div>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <section id="top" className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/20 blur-3xl" />
+      </div>
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+        <div className="flex flex-col items-start">
+          <SectionTag>Método completo · edição 2026</SectionTag>
+          <h1 className="mt-6 text-4xl font-black leading-[0.95] sm:text-6xl md:text-7xl">
+            Vire referência em <span className="text-gradient-fire">espetinho</span> e lucre todos os dias
+          </h1>
+          <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+            O passo a passo definitivo para escolher as carnes certas, temperar como profissional,
+            precificar com margem alta e vender sem parar — mesmo começando com pouco.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <CTAButton size="xl">
+              Quero começar agora <ArrowRight className="h-5 w-5" />
+            </CTAButton>
+            <a href="#beneficios" className="btn-ghost-fire">
+              Ver o que aprendo
+            </a>
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
+            <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[color:var(--gold)]" /> Garantia 7 dias</span>
+            <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-[color:var(--gold)]" /> Acesso imediato</span>
+            <span className="flex items-center gap-2"><Lock className="h-4 w-4 text-[color:var(--gold)]" /> Pagamento seguro</span>
+          </div>
+
+          <div className="mt-6 flex items-center gap-3">
+            <div className="flex -space-x-2">
+              {[chefPortrait, author, chefWorking].map((img, i) => (
+                <img
+                  key={i}
+                  src={img.url}
+                  alt="Aluno"
+                  className="h-9 w-9 rounded-full border-2 border-background object-cover"
+                />
+              ))}
+            </div>
+            <div className="text-sm">
+              <div className="flex gap-0.5 text-[color:var(--gold)]">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="h-3.5 w-3.5 fill-current" />
+                ))}
+              </div>
+              <div className="text-muted-foreground">+2.000 leitores satisfeitos</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative">
+          <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
+          <div className="glass relative overflow-hidden rounded-[2rem] p-2 shadow-fire animate-float">
+            <img
+              src={heroChef.url}
+              alt="Chef especialista em espetinhos com espetos flamejantes"
+              className="h-[520px] w-full rounded-[1.75rem] object-cover"
+              loading="eager"
+              fetchPriority="high"
+            />
+            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl border border-white/10 bg-black/50 p-4 backdrop-blur-xl">
+              <div>
+                <div className="text-xs uppercase tracking-widest text-[color:var(--gold)]">eBook Digital</div>
+                <div className="font-display text-2xl">Espetinho na Veia</div>
+              </div>
+              <div className="rounded-full bg-fire px-3 py-1 text-xs font-bold shadow-fire">+200 páginas</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LogosBar() {
+  const items = [
+    { icon: Users, label: "+2.000 leitores" },
+    { icon: Star, label: "4.9 / 5 estrelas" },
+    { icon: ShieldCheck, label: "7 dias de garantia" },
+    { icon: Zap, label: "Acesso imediato" },
+  ];
+  return (
+    <div className="border-y border-border/60 bg-background/40 backdrop-blur">
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-4 py-6 sm:grid-cols-4 sm:px-6">
+        {items.map(({ icon: Icon, label }) => (
+          <div key={label} className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+            <Icon className="h-4 w-4 text-[color:var(--gold)]" />
+            <span>{label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Pain() {
+  const pains = [
+    { icon: Beef, title: "Escolhe a carne errada", desc: "Compra caro, o cliente reclama e o lucro some." },
+    { icon: Utensils, title: "Não sabe temperar", desc: "O sabor fica sem graça e o cliente não volta." },
+    { icon: Calculator, title: "Não sabe precificar", desc: "Vende no chute e trabalha muito ganhando pouco." },
+    { icon: DollarSign, title: "Lucro apertado", desc: "Trabalha o mês inteiro e não sobra dinheiro." },
+    { icon: Truck, title: "Compra ingrediente caro", desc: "Não conhece fornecedores certos e paga a mais." },
+    { icon: Heart, title: "Medo de investir", desc: "Trava por não ter um método claro passo a passo." },
+  ];
+  return (
+    <section className="relative py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>O problema</SectionTag>
+          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+            Você já se viu <span className="text-gradient-fire">preso em algum destes erros?</span>
+          </h2>
+          <p className="mt-4 max-w-2xl text-muted-foreground">
+            A maioria de quem tenta vender espetinho cai nas mesmas armadilhas — e desiste antes de ver o real potencial do negócio.
+          </p>
+        </div>
+        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {pains.map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="glass rounded-2xl p-6 transition hover:-translate-y-1 hover:border-[color:var(--ember)]/40">
+              <div className="grid h-11 w-11 place-items-center rounded-xl bg-[color:var(--ember)]/15 text-[color:var(--ember)]">
+                <Icon className="h-5 w-5" />
+              </div>
+              <h3 className="mt-4 text-xl font-bold">{title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Solution() {
+  return (
+    <section className="relative py-24">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+        <div className="relative">
+          <div className="grid grid-cols-2 gap-4">
+            <img src={platter1.url} alt="Tábua premium de espetinhos variados" className="h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
+            <img src={skewersHeld.url} alt="Espetinhos suculentos" className="mt-8 h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
+            <img src={ribeye.url} alt="Corte nobre bovino" className="h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
+            <img src={platter2.url} alt="Espetinhos servidos" className="mt-8 h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
+          </div>
+        </div>
+        <div>
+          <SectionTag>A solução</SectionTag>
+          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+            Um método <span className="text-gradient-fire">testado na brasa</span>, feito para quem quer resultado.
+          </h2>
+          <p className="mt-5 text-lg text-muted-foreground">
+            O <strong className="text-foreground">Espetinho na Veia</strong> reúne, num só material,
+            tudo o que você precisa saber para transformar espetinho em uma máquina de fazer dinheiro:
+            da escolha da carne ao pós-venda.
+          </p>
+          <ul className="mt-6 space-y-3">
+            {[
+              "Passo a passo direto ao ponto — sem enrolação.",
+              "Temperos exclusivos que fidelizam qualquer cliente.",
+              "Precificação inteligente para lucrar de verdade.",
+              "Estratégias de venda para atrair clientes todo dia.",
+            ].map((t) => (
+              <li key={t} className="flex items-start gap-3">
+                <span className="mt-1 grid h-5 w-5 place-items-center rounded-full bg-fire">
+                  <Check className="h-3 w-3 text-white" />
+                </span>
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-8">
+            <CTAButton>Quero acessar o método <ArrowRight className="h-4 w-4" /></CTAButton>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Benefits() {
+  const items = [
+    { icon: Beef, title: "Carnes certas", desc: "Aprenda a escolher os melhores cortes pelo custo-benefício." },
+    { icon: Sparkles, title: "Temperos exclusivos", desc: "Marinadas e blends que criam um sabor inesquecível." },
+    { icon: Calculator, title: "Lucro previsível", desc: "Calcule custo, margem e ponto de equilíbrio sem erro." },
+    { icon: TrendingUp, title: "Venda mais", desc: "Táticas para bombar o movimento em qualquer região." },
+    { icon: Users, title: "Conquiste clientes", desc: "Atendimento e apresentação que impressionam de primeira." },
+    { icon: Heart, title: "Fidelize", desc: "Faça o cliente voltar toda semana — e trazer amigos." },
+    { icon: ClipboardList, title: "Produção organizada", desc: "Rotina, checklist e etapas para produzir com fluidez." },
+    { icon: ShieldCheck, title: "Zero desperdício", desc: "Compras, corte e estoque no ponto certo." },
+    { icon: Zap, title: "Vendas todo dia", desc: "Estratégias para não depender só do fim de semana." },
+  ];
+  return (
+    <section id="beneficios" className="relative py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>Benefícios</SectionTag>
+          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+            O que vai <span className="text-gradient-fire">mudar no seu negócio</span>
+          </h2>
+        </div>
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map(({ icon: Icon, title, desc }) => (
+            <div
+              key={title}
+              className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:border-[color:var(--gold)]/50 hover:shadow-fire"
+            >
+              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-fire opacity-0 blur-3xl transition-opacity group-hover:opacity-20" />
+              <div className="grid h-12 w-12 place-items-center rounded-xl bg-fire shadow-fire">
+                <Icon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="mt-5 text-lg font-bold">{title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Modules() {
+  const modules = [
+    { icon: BookOpen, title: "Fundamentos do negócio", desc: "Estrutura, mentalidade e primeiros passos." },
+    { icon: Beef, title: "Escolha e corte das carnes", desc: "Como comprar bem, cortar e conservar." },
+    { icon: Sparkles, title: "Temperos e marinadas", desc: "Fórmulas exclusivas para cada tipo de carne." },
+    { icon: ChefHat, title: "Preparo e ponto ideal", desc: "Técnicas de brasa e ponto perfeito." },
+    { icon: Calculator, title: "Precificação e lucro", desc: "Metodologia simples para lucrar sempre." },
+    { icon: Target, title: "Vendas e marketing local", desc: "Como atrair clientes na sua cidade." },
+    { icon: Users, title: "Atendimento premium", desc: "Transforme comprador em cliente fiel." },
+    { icon: ClipboardList, title: "Rotina e produção", desc: "Fluxo de trabalho para vender todo dia." },
+  ];
+  return (
+    <section id="modulos" className="relative py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>O que você recebe</SectionTag>
+          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+            8 módulos <span className="text-gradient-fire">práticos e diretos</span>
+          </h2>
+          <p className="mt-4 max-w-2xl text-muted-foreground">
+            Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
+          </p>
+        </div>
+        <div className="mt-14 grid gap-4 md:grid-cols-2">
+          {modules.map(({ icon: Icon, title, desc }, i) => (
+            <div key={title} className="glass flex items-start gap-4 rounded-2xl p-6 transition hover:-translate-y-0.5">
+              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-fire text-white shadow-fire">
+                <Icon className="h-6 w-6" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-xs font-bold uppercase tracking-widest text-[color:var(--gold)]">
+                  Módulo {String(i + 1).padStart(2, "0")}
+                </div>
+                <h3 className="mt-1 text-lg font-bold">{title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Bonuses() {
+  const bonuses = [
+    { icon: Calculator, title: "Calculadora de lucro", tag: "R$ 47" },
+    { icon: ClipboardList, title: "Checklist de compras", tag: "R$ 27" },
+    { icon: Truck, title: "Lista de fornecedores", tag: "R$ 67" },
+    { icon: BookOpen, title: "Planilha de custos", tag: "R$ 47" },
+    { icon: Utensils, title: "Receitas extras", tag: "R$ 37" },
+    { icon: ShieldCheck, title: "Manual de conservação", tag: "R$ 37" },
+    { icon: ChefHat, title: "Checklist de produção", tag: "R$ 27" },
+  ];
+  return (
+    <section id="bonus" className="relative py-24">
+      <div className="pointer-events-none absolute inset-0 -z-10 opacity-30">
+        <div className="absolute right-0 top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-[color:var(--flame)]/40 blur-3xl" />
+      </div>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>Bônus exclusivos</SectionTag>
+          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+            Mais de <span className="text-gradient-fire">R$ 289 em bônus</span> — grátis
+          </h2>
+          <p className="mt-4 max-w-2xl text-muted-foreground">
+            Ferramentas prontas para acelerar seus resultados desde o primeiro dia.
+          </p>
+        </div>
+        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {bonuses.map(({ icon: Icon, title, tag }) => (
+            <div key={title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition hover:border-[color:var(--gold)]/60">
+              <div className="flex items-start justify-between gap-4">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-[color:var(--gold)]/15 text-[color:var(--gold)]">
+                  <Icon className="h-6 w-6" />
+                </div>
+                <span className="rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-3 py-1 text-xs font-bold text-[color:var(--gold)]">
+                  {tag}
+                </span>
+              </div>
+              <h3 className="mt-5 text-lg font-bold">{title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Material prático incluído gratuitamente na sua compra hoje.
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Results() {
+  const before = ["Sem saber qual carne comprar", "Preços no chute", "Cliente esporádico", "Estresse na produção", "Lucro apertado"];
+  const after = ["Carnes escolhidas com estratégia", "Preços com margem garantida", "Cliente fiel toda semana", "Rotina fluida e organizada", "Lucro previsível e crescente"];
+  return (
+    <section className="relative py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>Transformação</SectionTag>
+          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+            Do improviso para o <span className="text-gradient-fire">negócio de verdade</span>
+          </h2>
+        </div>
+        <div className="mt-14 grid gap-6 md:grid-cols-2">
+          <div className="rounded-3xl border border-border bg-card p-8">
+            <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-muted-foreground">
+              <span className="h-2 w-2 rounded-full bg-muted-foreground/60" /> Antes
+            </div>
+            <h3 className="mt-3 text-2xl font-bold">Você hoje</h3>
+            <ul className="mt-5 space-y-3 text-muted-foreground">
+              {before.map((b) => (
+                <li key={b} className="flex items-start gap-3">
+                  <span className="mt-1 h-4 w-4 shrink-0 rounded-full border border-muted-foreground/40" />
+                  {b}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="relative rounded-3xl border border-[color:var(--ember)]/40 bg-gradient-to-br from-[color:var(--ember)]/10 to-[color:var(--gold)]/5 p-8 shadow-fire">
+            <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-[color:var(--gold)]">
+              <Flame className="h-4 w-4" /> Depois
+            </div>
+            <h3 className="mt-3 text-2xl font-bold">Você com o método</h3>
+            <ul className="mt-5 space-y-3">
+              {after.map((a) => (
+                <li key={a} className="flex items-start gap-3">
+                  <span className="mt-1 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-fire">
+                    <Check className="h-2.5 w-2.5 text-white" />
+                  </span>
+                  {a}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Author() {
+  return (
+    <section className="relative py-24">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
+        <div className="relative">
+          <div className="absolute -inset-4 -z-10 rounded-3xl bg-fire opacity-25 blur-2xl" />
+          <img
+            src={chefWorking.url}
+            alt="Autor no dia a dia da grelha"
+            className="h-[500px] w-full rounded-3xl object-cover shadow-fire"
+            loading="lazy"
+          />
+        </div>
+        <div>
+          <SectionTag>Quem escreveu</SectionTag>
+          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+            Um método <span className="text-gradient-fire">nascido na brasa</span>
+          </h2>
+          <p className="mt-5 text-lg text-muted-foreground">
+            Anos servindo espetinho todos os dias, escutando cliente, ajustando ponto, corte e tempero.
+            O que está no eBook é o que funciona de verdade — na prática, no calor da grelha, com fila esperando.
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            {[
+              { n: "+10", l: "anos na brasa" },
+              { n: "+2k", l: "leitores" },
+              { n: "4.9", l: "avaliação" },
+            ].map((s) => (
+              <div key={s.l} className="glass rounded-2xl p-4 text-center">
+                <div className="text-3xl font-black text-gradient-fire">{s.n}</div>
+                <div className="text-xs uppercase tracking-widest text-muted-foreground">{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Testimonials() {
+  const items = [
+    {
+      name: "Carlos M.",
+      role: "Empreendedor iniciante",
+      text: "Comecei com pouco e no primeiro mês já paguei o investimento do eBook várias vezes. A parte de precificação abriu meus olhos.",
+      img: chefPortrait.url,
+    },
+    {
+      name: "Marina R.",
+      role: "Renda extra",
+      text: "Vendia espetinho aos sábados no chute. Hoje vendo todo dia, com tempero exclusivo e clientes fiéis.",
+      img: author.url,
+    },
+    {
+      name: "João P.",
+      role: "Trailer de espetinhos",
+      text: "Reduzi desperdício, aumentei a margem e o movimento não para. O checklist de produção mudou minha rotina.",
+      img: chefWorking.url,
+    },
+  ];
+  return (
+    <section className="relative py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>Depoimentos ilustrativos</SectionTag>
+          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+            O que dizem <span className="text-gradient-fire">os leitores</span>
+          </h2>
+          <p className="mt-3 max-w-2xl text-xs uppercase tracking-widest text-muted-foreground">
+            * Depoimentos fictícios apenas para demonstração visual — serão substituídos por depoimentos reais.
+          </p>
+        </div>
+        <div className="mt-14 grid gap-5 md:grid-cols-3">
+          {items.map((t) => (
+            <div key={t.name} className="glass flex flex-col rounded-2xl p-6">
+              <div className="flex gap-0.5 text-[color:var(--gold)]">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-current" />
+                ))}
+              </div>
+              <p className="mt-4 text-muted-foreground">"{t.text}"</p>
+              <div className="mt-6 flex items-center gap-3">
+                <img src={t.img} alt={t.name} className="h-11 w-11 rounded-full object-cover" loading="lazy" />
+                <div>
+                  <div className="font-semibold">{t.name}</div>
+                  <div className="text-xs text-muted-foreground">{t.role}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Guarantee() {
+  return (
+    <section className="relative py-24">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[color:var(--gold)]/10 via-transparent to-[color:var(--ember)]/10 p-10 text-center shadow-fire">
+          <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-fire shadow-fire animate-pulse-glow">
+            <Award className="h-12 w-12 text-white" />
+          </div>
+          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+            Garantia <span className="text-gradient-fire">incondicional de 7 dias</span>
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+            Leia o eBook, teste o método e, se por qualquer motivo você não gostar,
+            devolvemos <strong className="text-foreground">100% do seu dinheiro</strong>. Simples assim. O risco é todo nosso.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Offer() {
+  return (
+    <section id="oferta" className="relative py-24">
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[color:var(--ember)]/25 blur-3xl" />
+      </div>
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        <div className="relative overflow-hidden rounded-[2rem] border border-[color:var(--ember)]/40 bg-card p-8 shadow-fire sm:p-12">
+          <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-fire opacity-20 blur-3xl" />
+          <div className="flex flex-col items-center text-center">
+            <span className="inline-flex items-center gap-2 rounded-full bg-fire px-4 py-1.5 text-xs font-black uppercase tracking-widest text-white shadow-fire animate-flicker">
+              <Flame className="h-3.5 w-3.5" /> Oferta por tempo limitado
+            </span>
+            <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+              Comece hoje por <span className="text-gradient-fire">menos que um espetinho por dia</span>
+            </h2>
+
+            <div className="mt-8 flex flex-col items-center gap-2">
+              <div className="text-sm text-muted-foreground line-through">De R$ 197,00</div>
+              <div className="flex items-end gap-2">
+                <span className="text-lg font-bold text-[color:var(--gold)]">R$</span>
+                <span className="font-display text-7xl leading-none text-gradient-fire sm:text-8xl">27</span>
+                <span className="mb-2 text-lg font-bold text-[color:var(--gold)]">,00</span>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                ou <strong className="text-foreground">3x de R$ 9,73</strong> no cartão
+              </div>
+            </div>
+
+            <ul className="mt-8 grid w-full max-w-md gap-2 text-left">
+              {[
+                "eBook completo com 8 módulos",
+                "7 bônus (calculadora, planilhas, receitas...)",
+                "Acesso imediato após o pagamento",
+                "Garantia incondicional de 7 dias",
+              ].map((t) => (
+                <li key={t} className="flex items-center gap-3">
+                  <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-fire">
+                    <Check className="h-3 w-3 text-white" />
+                  </span>
+                  {t}
+                </li>
+              ))}
+            </ul>
+
+            <a href="#" className="btn-fire mt-10 !text-lg !px-10 !py-5 w-full max-w-md">
+              Quero garantir meu acesso <ArrowRight className="h-5 w-5" />
+            </a>
+
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5"><Lock className="h-3.5 w-3.5" /> Compra 100% segura</span>
+              <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> Acesso imediato</span>
+              <span className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" /> 7 dias de garantia</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FAQ() {
+  const faqs = [
+    { q: "Preciso ter experiência com churrasco?", a: "Não. O método foi pensado para iniciantes absolutos. Você é guiado passo a passo desde a escolha da carne até a venda." },
+    { q: "O eBook serve para quem já vende espetinho?", a: "Sim. Muitos leitores já vendem e usam o material para aumentar a margem, reduzir desperdício e vender mais dias por semana." },
+    { q: "Como recebo o material?", a: "Assim que o pagamento é confirmado, o acesso é liberado automaticamente por e-mail em minutos." },
+    { q: "Em quais dispositivos posso ler?", a: "Você pode ler no celular, tablet, notebook ou computador. É um PDF de alta qualidade." },
+    { q: "Preciso de muito dinheiro para começar?", a: "Não. O método mostra caminhos para começar pequeno, com investimento baixo e crescer de forma sustentável." },
+    { q: "O eBook ensina a fazer os temperos?", a: "Sim. Você recebe temperos e marinadas exclusivas testadas na prática, adaptáveis a cada tipo de carne." },
+    { q: "E se eu não gostar do material?", a: "Você tem 7 dias de garantia total. Se não gostar, basta pedir o reembolso e devolvemos 100% do valor." },
+    { q: "Vou aprender a precificar corretamente?", a: "Sim. Tem um módulo dedicado a custos, margem e precificação, além de uma calculadora de lucro como bônus." },
+    { q: "Serve para vender em qualquer cidade?", a: "Sim. As estratégias são universais e podem ser aplicadas em qualquer região do Brasil." },
+    { q: "Consigo fazer isso como renda extra?", a: "Perfeitamente. Muitos leitores começam vendendo apenas nos fins de semana e depois expandem." },
+    { q: "Os pagamentos são seguros?", a: "Sim. Utilizamos plataformas de pagamento com criptografia e antifraude." },
+    { q: "Existe suporte para dúvidas?", a: "Sim. Nosso e-mail de suporte responde todas as dúvidas relacionadas ao material." },
+  ];
+  return (
+    <section id="faq" className="relative py-24">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>Perguntas frequentes</SectionTag>
+          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+            Tirando suas <span className="text-gradient-fire">últimas dúvidas</span>
+          </h2>
+        </div>
+        <div className="mt-12 space-y-3">
+          {faqs.map((f, i) => (
+            <details
+              key={i}
+              className="group rounded-2xl border border-border bg-card p-5 open:border-[color:var(--gold)]/40 transition"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
+                <span>{f.q}</span>
+                <ChevronDown className="h-5 w-5 shrink-0 text-[color:var(--gold)] transition group-open:rotate-180" />
+              </summary>
+              <p className="mt-3 text-muted-foreground">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FinalCTA() {
+  return (
+    <section className="relative py-24">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="relative overflow-hidden rounded-[2rem] p-10 text-center sm:p-16">
+          <img
+            src={skewersFlat.url}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 -z-10 h-full w-full object-cover opacity-20"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-background/90 via-background/80 to-[color:var(--ember)]/50" />
+          <SectionTag>Última chamada</SectionTag>
+          <h2 className="mx-auto mt-6 max-w-3xl text-4xl font-black sm:text-6xl">
+            A brasa está pronta. <br />
+            <span className="text-gradient-fire">Falta só você acender o fogo.</span>
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
+            Cada dia sem o método é dinheiro deixado na tábua. Comece hoje, com garantia de 7 dias.
+          </p>
+          <div className="mt-10 flex justify-center">
+            <CTAButton size="xl">
+              Quero o eBook agora <ArrowRight className="h-5 w-5" />
+            </CTAButton>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-border/60 bg-background/60 py-12">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 md:grid-cols-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-fire shadow-fire">
+              <Flame className="h-5 w-5 text-white" />
+            </span>
+            <span className="font-display text-xl">ESPETINHO <span className="text-gradient-fire">NA VEIA</span></span>
+          </div>
+          <p className="mt-4 text-sm text-muted-foreground">
+            O método que transforma espetinho em negócio de verdade.
+          </p>
+        </div>
+        <div>
+          <h4 className="text-sm font-bold uppercase tracking-widest text-[color:var(--gold)]">Institucional</h4>
+          <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+            <li><a href="#" className="hover:text-foreground">Política de Privacidade</a></li>
+            <li><a href="#" className="hover:text-foreground">Termos de Uso</a></li>
+            <li><a href="#faq" className="hover:text-foreground">Perguntas frequentes</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-sm font-bold uppercase tracking-widest text-[color:var(--gold)]">Contato</h4>
+          <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+            <li className="flex items-center gap-2"><Mail className="h-4 w-4" /> contato@espetinhonaveia.com</li>
+            <li className="flex items-center gap-2"><MessageCircle className="h-4 w-4" /> Suporte via WhatsApp</li>
+          </ul>
+          <div className="mt-4 flex gap-3">
+            <a href="#" aria-label="Instagram" className="grid h-10 w-10 place-items-center rounded-full border border-border hover:border-[color:var(--gold)]/60">
+              <Instagram className="h-4 w-4" />
+            </a>
+            <a href="#" aria-label="WhatsApp" className="grid h-10 w-10 place-items-center rounded-full border border-border hover:border-[color:var(--gold)]/60">
+              <MessageCircle className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </div>
+      <div className="mx-auto mt-10 max-w-6xl border-t border-border/60 px-4 pt-6 text-center text-xs text-muted-foreground sm:px-6">
+        © {new Date().getFullYear()} Espetinho na Veia. Todos os direitos reservados. Este produto não garante retornos financeiros — os resultados dependem da aplicação do método.
+      </div>
+    </footer>
+  );
+}
+
+function LandingPage() {
+  return (
+    <div className="min-h-screen">
+      <Nav />
+      <main>
+        <Hero />
+        <LogosBar />
+        <Pain />
+        <Solution />
+        <Benefits />
+        <Modules />
+        <Bonuses />
+        <Results />
+        <Author />
+        <Testimonials />
+        <Guarantee />
+        <Offer />
+        <FAQ />
+        <FinalCTA />
+      </main>
+      <Footer />
     </div>
   );
 }
