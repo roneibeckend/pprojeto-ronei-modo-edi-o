@@ -57,24 +57,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Espetinho na Veia com Ronnei — Do Zero aos 10k" },
+      { title: "Espetinho na Veia — Do Zero aos 10k" },
       {
         name: "description",
         content:
           "Aprenda o passo a passo para montar, temperar, precificar e vender espetinhos com alto lucro. Método completo do zero aos 10k por mês.",
       },
       { name: "theme-color", content: "#1a0d08" },
-      { property: "og:title", content: "Espetinho na Veia com Ronnei — Do Zero aos 10k" },
+      { property: "og:title", content: "Espetinho na Veia — Do Zero aos 10k" },
       {
         property: "og:description",
         content:
           "Do zero à primeira venda: escolha das carnes, temperos, precificação e vendas diárias. Método prático e direto ao ponto.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Espetinho na Veia com Ronnei" },
+      { property: "og:site_name", content: "Espetinho na Veia" },
       { property: "og:locale", content: "pt_BR" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Espetinho na Veia com Ronnei — Do Zero aos 10k" },
+      { name: "twitter:title", content: "Espetinho na Veia — Do Zero aos 10k" },
       { name: "twitter:description", content: "O método completo para lucrar vendendo espetinhos — do zero aos 10k." },
     ],
     links: [
@@ -93,10 +93,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
-          name: "eBook Espetinho na Veia com Ronnei — Do Zero aos 10k",
+          name: "eBook Espetinho na Veia — Do Zero aos 10k",
           description:
             "Guia completo para montar, temperar, precificar e vender espetinhos com alto lucro.",
-          brand: { "@type": "Brand", name: "Espetinho na Veia com Ronnei" },
+          brand: { "@type": "Brand", name: "Espetinho na Veia" },
           offers: {
             "@type": "Offer",
             price: "47.90",

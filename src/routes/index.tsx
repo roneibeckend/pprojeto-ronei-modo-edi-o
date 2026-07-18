@@ -181,7 +181,7 @@ function Hero() {
             <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl border border-white/10 bg-black/50 p-4 backdrop-blur-xl">
               <div>
                 <div className="text-xs uppercase tracking-widest text-[color:var(--gold)]">eBook Digital</div>
-                <div className="font-display text-2xl leading-tight">Espetinho na Veia com Ronnei<div className="text-xs font-semibold tracking-wider text-[color:var(--gold)]">Do Zero aos 10k</div></div>
+                <div className="font-display text-2xl leading-tight">Espetinho na Veia<div className="text-xs font-semibold tracking-wider text-[color:var(--gold)]">Do Zero aos 10k</div></div>
               </div>
               <div className="rounded-full bg-fire px-3 py-1 text-xs font-bold shadow-fire">+30 páginas</div>
             </div>
@@ -223,7 +223,7 @@ function Pain() {
     { icon: Heart, title: "Medo de investir", desc: "Trava por não ter um método claro passo a passo." },
   ];
   return (
-    <section className="relative py-24">
+    <section className="relative py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>O problema</SectionTag>
@@ -252,7 +252,7 @@ function Pain() {
 
 function Solution() {
   return (
-    <section className="relative py-24">
+    <section className="relative py-20">
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
         <div className="relative">
           <div className="grid grid-cols-2 gap-4">
@@ -306,7 +306,7 @@ function Benefits() {
     { icon: Zap, title: "Vendas todo dia", desc: "Estratégias para não depender só do fim de semana." },
   ];
   return (
-    <section id="beneficios" className="relative py-24">
+    <section id="beneficios" className="relative py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Benefícios</SectionTag>
@@ -352,7 +352,7 @@ function Modules() {
     { icon: Instagram, title: "Próximos passos para crescer ainda mais", desc: "Como transformar o espetinho em uma marca sólida." },
   ];
   return (
-    <section id="modulos" className="relative py-24">
+    <section id="modulos" className="relative py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>O que você recebe</SectionTag>
@@ -392,7 +392,7 @@ function Bonuses() {
     { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", value: "R$ 250", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
   ];
   return (
-    <section id="bonus" className="relative py-24">
+    <section id="bonus" className="relative py-20">
       <div className="pointer-events-none absolute inset-0 -z-10 opacity-30">
         <div className="absolute right-0 top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-[color:var(--flame)]/40 blur-3xl" />
       </div>
@@ -435,7 +435,7 @@ function Results() {
   const before = ["Sem saber qual carne comprar", "Preços no chute", "Cliente esporádico", "Estresse na produção", "Lucro apertado"];
   const after = ["Carnes escolhidas com estratégia", "Preços com margem garantida", "Cliente fiel toda semana", "Rotina fluida e organizada", "Lucro previsível e crescente"];
   return (
-    <section className="relative py-24">
+    <section className="relative py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Transformação</SectionTag>
@@ -482,7 +482,7 @@ function Results() {
 
 function Author() {
   return (
-    <section className="relative py-24">
+    <section className="relative py-20">
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
         <div className="relative">
           <div className="absolute -inset-4 -z-10 rounded-3xl bg-fire opacity-25 blur-2xl" />
@@ -542,7 +542,7 @@ function Testimonials() {
     },
   ];
   return (
-    <section className="relative py-24">
+    <section className="relative py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Depoimentos ilustrativos</SectionTag>
@@ -579,7 +579,7 @@ function Testimonials() {
 
 function Guarantee() {
   return (
-    <section className="relative py-24">
+    <section className="relative py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[color:var(--gold)]/10 via-transparent to-[color:var(--ember)]/10 p-10 text-center shadow-fire">
           <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-fire shadow-fire animate-pulse-glow">
@@ -600,7 +600,7 @@ function Guarantee() {
 
 function Offer() {
   return (
-    <section id="oferta" className="relative py-24">
+    <section id="oferta" className="relative py-20">
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[color:var(--ember)]/25 blur-3xl" />
       </div>
@@ -670,7 +670,7 @@ function FAQ() {
     { q: "Funciona também para delivery?", a: "Sim. Tem estratégias específicas para venda por WhatsApp, iFood e delivery próprio, além do ponto físico." },
   ];
   return (
-    <section id="faq" className="relative py-24">
+    <section id="faq" className="relative py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Perguntas frequentes</SectionTag>
@@ -699,7 +699,7 @@ function FAQ() {
 
 function FinalCTA() {
   return (
-    <section className="relative py-24">
+    <section className="relative py-20">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="relative overflow-hidden rounded-[2rem] p-10 text-center sm:p-16">
           <img
