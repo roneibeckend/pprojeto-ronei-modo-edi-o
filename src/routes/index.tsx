@@ -456,6 +456,21 @@ function Hero() {
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2">
         <div className="flex flex-col items-start">
           <SectionTag>Método completo · edição 2026</SectionTag>
+
+          {/* Mobile-only hero image (below badge) */}
+          <div className="relative mt-5 w-full lg:hidden">
+            <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
+            <div className="glass relative overflow-hidden rounded-[1.5rem] p-1.5 shadow-fire animate-float">
+              <img
+                src={heroChef.url}
+                alt="Chef especialista em espetinhos com espetos flamejantes"
+                className="h-[300px] w-full rounded-[1.25rem] object-cover sm:h-[420px]"
+                loading="eager"
+                fetchPriority="high"
+              />
+            </div>
+          </div>
+
           <h1 className="mt-5 h-fluid-hero font-black sm:mt-6">
             Lucre até <span className="text-gradient-fire">R$ 300 por dia</span> vendendo espetinhos — começando do zero
           </h1>
@@ -473,15 +488,14 @@ function Hero() {
           </div>
         </div>
 
-        <div className="relative order-first lg:order-last">
-          <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow sm:-inset-6" />
-          <div className="glass relative overflow-hidden rounded-[1.5rem] p-1.5 shadow-fire animate-float sm:rounded-[2rem] sm:p-2">
+        <div className="relative hidden lg:block">
+          <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
+          <div className="glass relative overflow-hidden rounded-[2rem] p-2 shadow-fire animate-float">
             <img
               src={heroChef.url}
               alt="Chef especialista em espetinhos com espetos flamejantes"
-              className="h-[300px] w-full rounded-[1.25rem] object-cover sm:h-[420px] sm:rounded-[1.75rem] lg:h-[520px]"
+              className="h-[520px] w-full rounded-[1.75rem] object-cover"
               loading="eager"
-              fetchPriority="high"
             />
           </div>
         </div>
