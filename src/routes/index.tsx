@@ -472,11 +472,6 @@ function Hero() {
             </a>
           </div>
 
-          <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground sm:mt-8 sm:gap-x-6 sm:gap-y-3 sm:text-sm">
-            <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[color:var(--gold)]" /> Garantia 7 dias</span>
-            <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-[color:var(--gold)]" /> Acesso imediato</span>
-            <span className="flex items-center gap-2"><Lock className="h-4 w-4 text-[color:var(--gold)]" /> Pagamento seguro</span>
-          </div>
 
           <div className="mt-6 flex items-center gap-3">
             <div className="flex -space-x-2">
@@ -495,7 +490,6 @@ function Hero() {
                   <Star key={i} className="h-3.5 w-3.5 fill-current" />
                 ))}
               </div>
-              <div className="text-muted-foreground">+2.000 leitores satisfeitos</div>
             </div>
           </div>
         </div>
@@ -510,13 +504,6 @@ function Hero() {
               loading="eager"
               fetchPriority="high"
             />
-            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/50 p-3 backdrop-blur-xl sm:bottom-6 sm:left-6 sm:right-6 sm:rounded-2xl sm:p-4">
-              <div className="min-w-0">
-                <div className="text-[10px] uppercase tracking-widest text-[color:var(--gold)] sm:text-xs">eBook Digital</div>
-                <div className="font-display text-lg leading-tight sm:text-2xl">Espetinho na Veia<div className="text-[10px] font-semibold tracking-wider text-[color:var(--gold)] sm:text-xs">Do Zero aos 10k</div></div>
-              </div>
-              <div className="shrink-0 rounded-full bg-fire px-2.5 py-1 text-[10px] font-bold shadow-fire sm:px-3 sm:text-xs">+30 páginas</div>
-            </div>
           </div>
         </div>
       </div>
@@ -1236,7 +1223,7 @@ function LandingPage() {
       <Nav />
       <main>
         <Hero />
-        <LogosBar />
+        
         <ForYou />
         <Solution />
         <Benefits />
