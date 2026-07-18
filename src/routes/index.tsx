@@ -125,11 +125,10 @@ function Hero() {
         <div className="flex flex-col items-start">
           <SectionTag>Método completo · edição 2026</SectionTag>
           <h1 className="mt-6 text-4xl font-black leading-[0.95] sm:text-6xl md:text-7xl">
-            Vire referência em <span className="text-gradient-fire">espetinho</span> e lucre todos os dias
+            Lucre até <span className="text-gradient-fire">R$ 300 por dia</span> vendendo espetinhos — começando do zero
           </h1>
           <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-            O passo a passo definitivo para escolher as carnes certas, temperar como profissional,
-            precificar com margem alta e vender sem parar — mesmo começando com pouco.
+            O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -383,10 +382,10 @@ function Modules() {
 
 function Bonuses() {
   const bonuses = [
-    { icon: Truck, title: "Contato com fornecedores", tag: "Bônus 01", desc: "Acesso direto a fornecedores confiáveis para comprar melhor e mais barato." },
-    { icon: MessageCircle, title: "Grupo de WhatsApp", tag: "Bônus 02", desc: "Comunidade exclusiva com outros alunos para trocar experiências e networking." },
-    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
-    { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
+    { icon: Truck, title: "Contato com fornecedores", tag: "Bônus 01", value: "R$ 97", desc: "Acesso direto a fornecedores confiáveis para comprar melhor e mais barato." },
+    { icon: MessageCircle, title: "Grupo de WhatsApp", tag: "Bônus 02", value: "R$ 147", desc: "Comunidade exclusiva com outros alunos para trocar experiências e networking." },
+    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", value: "R$ 67", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
+    { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", value: "R$ 250", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
   ];
   return (
     <section id="bonus" className="relative py-24">
@@ -404,7 +403,7 @@ function Bonuses() {
           </p>
         </div>
         <div className="mt-14 grid gap-4 sm:grid-cols-2">
-          {bonuses.map(({ icon: Icon, title, tag, desc }) => (
+          {bonuses.map(({ icon: Icon, title, tag, value, desc }) => (
             <div key={title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition hover:border-[color:var(--gold)]/60">
               <div className="flex items-start justify-between gap-4">
                 <div className="grid h-12 w-12 place-items-center rounded-xl bg-[color:var(--gold)]/15 text-[color:var(--gold)]">
@@ -416,6 +415,10 @@ function Bonuses() {
               </div>
               <h3 className="mt-5 text-lg font-bold">{title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
+              <div className="mt-4 flex items-center gap-2 text-sm">
+                <span className="text-muted-foreground line-through">De {value}</span>
+                <span className="rounded-full bg-fire px-2.5 py-0.5 text-xs font-bold text-white">GRÁTIS hoje</span>
+              </div>
             </div>
           ))}
         </div>
@@ -655,17 +658,12 @@ function Offer() {
 function FAQ() {
   const faqs = [
     { q: "Preciso ter experiência com churrasco?", a: "Não. O método foi pensado para iniciantes absolutos. Você é guiado passo a passo desde a escolha da carne até a venda." },
-    { q: "O eBook serve para quem já vende espetinho?", a: "Sim. Muitos leitores já vendem e usam o material para aumentar a margem, reduzir desperdício e vender mais dias por semana." },
-    { q: "Como recebo o material?", a: "Assim que o pagamento é confirmado, o acesso é liberado automaticamente por e-mail em minutos." },
-    { q: "Em quais dispositivos posso ler?", a: "Você pode ler no celular, tablet, notebook ou computador. É um PDF de alta qualidade." },
     { q: "Preciso de muito dinheiro para começar?", a: "Não. O método mostra caminhos para começar pequeno, com investimento baixo e crescer de forma sustentável." },
-    { q: "O eBook ensina a fazer os temperos?", a: "Sim. Você recebe temperos e marinadas exclusivas testadas na prática, adaptáveis a cada tipo de carne." },
-    { q: "E se eu não gostar do material?", a: "Você tem 7 dias de garantia total. Se não gostar, basta pedir o reembolso e devolvemos 100% do valor." },
-    { q: "Vou aprender a precificar corretamente?", a: "Sim. Tem um módulo dedicado a custos, margem e precificação, além de uma calculadora de lucro como bônus." },
-    { q: "Serve para vender em qualquer cidade?", a: "Sim. As estratégias são universais e podem ser aplicadas em qualquer região do Brasil." },
-    { q: "Consigo fazer isso como renda extra?", a: "Perfeitamente. Muitos leitores começam vendendo apenas nos fins de semana e depois expandem." },
-    { q: "Os pagamentos são seguros?", a: "Sim. Utilizamos plataformas de pagamento com criptografia e antifraude." },
-    { q: "Existe suporte para dúvidas?", a: "Sim. Nosso e-mail de suporte responde todas as dúvidas relacionadas ao material." },
+    { q: "E se eu morar em cidade pequena?", a: "As estratégias funcionam em qualquer região — cidade grande, interior, bairro residencial ou comercial." },
+    { q: "Em quanto tempo posso começar a vender?", a: "Seguindo o plano de ação de 30 dias, muitos alunos fazem as primeiras vendas já na primeira semana." },
+    { q: "Como recebo o material?", a: "O acesso é liberado automaticamente por e-mail em minutos, após a confirmação do pagamento. Você lê no celular, tablet ou computador." },
+    { q: "E se eu não gostar do material?", a: "Você tem 7 dias de garantia total. Se não gostar, basta pedir o reembolso e devolvemos 100% do valor. Sem perguntas." },
+    { q: "Funciona também para delivery?", a: "Sim. Tem estratégias específicas para venda por WhatsApp, iFood e delivery próprio, além do ponto físico." },
   ];
   return (
     <section id="faq" className="relative py-24">
@@ -773,13 +771,57 @@ function Footer() {
   );
 }
 
+function ForYou() {
+  const items = [
+    "Você quer uma renda extra sem depender de patrão",
+    "Já tentou vender espetinho e não conseguiu lucrar",
+    "Curte churrasco e quer transformar isso em dinheiro",
+    "Está desempregado e precisa começar com pouco",
+    "Já vende, mas quer aumentar a margem e o volume",
+    "Sonha em ter o próprio negócio para chamar de seu",
+  ];
+  return (
+    <section className="relative py-20">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>Isso é pra você se…</SectionTag>
+          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+            Se você se <span className="text-gradient-fire">identifica com um destes</span>, o eBook é pra você
+          </h2>
+        </div>
+        <div className="mt-12 grid gap-3 sm:grid-cols-2">
+          {items.map((t) => (
+            <div key={t} className="glass flex items-start gap-3 rounded-2xl p-5">
+              <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-fire">
+                <Check className="h-3.5 w-3.5 text-white" />
+              </span>
+              <span className="text-base">{t}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StickyMobileCTA() {
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 p-3 backdrop-blur-xl md:hidden">
+      <a href="#oferta" className="btn-fire w-full !py-3 text-sm">
+        Quero o eBook por R$ 27 <ArrowRight className="h-4 w-4" />
+      </a>
+    </div>
+  );
+}
+
 function LandingPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20 md:pb-0">
       <Nav />
       <main>
         <Hero />
         <LogosBar />
+        <ForYou />
         <Solution />
         <Benefits />
         <Modules />
@@ -791,6 +833,7 @@ function LandingPage() {
         <FinalCTA />
       </main>
       <Footer />
+      <StickyMobileCTA />
     </div>
   );
 }
