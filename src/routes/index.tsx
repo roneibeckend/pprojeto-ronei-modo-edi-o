@@ -771,13 +771,57 @@ function Footer() {
   );
 }
 
+function ForYou() {
+  const items = [
+    "Você quer uma renda extra sem depender de patrão",
+    "Já tentou vender espetinho e não conseguiu lucrar",
+    "Curte churrasco e quer transformar isso em dinheiro",
+    "Está desempregado e precisa começar com pouco",
+    "Já vende, mas quer aumentar a margem e o volume",
+    "Sonha em ter o próprio negócio para chamar de seu",
+  ];
+  return (
+    <section className="relative py-20">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>Isso é pra você se…</SectionTag>
+          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+            Se você se <span className="text-gradient-fire">identifica com um destes</span>, o eBook é pra você
+          </h2>
+        </div>
+        <div className="mt-12 grid gap-3 sm:grid-cols-2">
+          {items.map((t) => (
+            <div key={t} className="glass flex items-start gap-3 rounded-2xl p-5">
+              <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-fire">
+                <Check className="h-3.5 w-3.5 text-white" />
+              </span>
+              <span className="text-base">{t}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StickyMobileCTA() {
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 p-3 backdrop-blur-xl md:hidden">
+      <a href="#oferta" className="btn-fire w-full !py-3 text-sm">
+        Quero o eBook por R$ 27 <ArrowRight className="h-4 w-4" />
+      </a>
+    </div>
+  );
+}
+
 function LandingPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20 md:pb-0">
       <Nav />
       <main>
         <Hero />
         <LogosBar />
+        <ForYou />
         <Solution />
         <Benefits />
         <Modules />
@@ -789,6 +833,7 @@ function LandingPage() {
         <FinalCTA />
       </main>
       <Footer />
+      <StickyMobileCTA />
     </div>
   );
 }
