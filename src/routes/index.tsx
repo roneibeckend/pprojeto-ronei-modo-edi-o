@@ -358,7 +358,7 @@ function Modules() {
         <div className="flex flex-col items-center text-center">
           <SectionTag>O que você recebe</SectionTag>
           <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
-            10 módulos <span className="text-gradient-fire">práticos e diretos</span>
+            15 capítulos <span className="text-gradient-fire">práticos e diretos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
             Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
