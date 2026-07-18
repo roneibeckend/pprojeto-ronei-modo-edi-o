@@ -403,7 +403,7 @@ function Bonuses() {
           </p>
         </div>
         <div className="mt-14 grid gap-4 sm:grid-cols-2">
-          {bonuses.map(({ icon: Icon, title, tag, desc }) => (
+          {bonuses.map(({ icon: Icon, title, tag, value, desc }) => (
             <div key={title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition hover:border-[color:var(--gold)]/60">
               <div className="flex items-start justify-between gap-4">
                 <div className="grid h-12 w-12 place-items-center rounded-xl bg-[color:var(--gold)]/15 text-[color:var(--gold)]">
@@ -415,6 +415,10 @@ function Bonuses() {
               </div>
               <h3 className="mt-5 text-lg font-bold">{title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
+              <div className="mt-4 flex items-center gap-2 text-sm">
+                <span className="text-muted-foreground line-through">De {value}</span>
+                <span className="rounded-full bg-fire px-2.5 py-0.5 text-xs font-bold text-white">GRÁTIS hoje</span>
+              </div>
             </div>
           ))}
         </div>
