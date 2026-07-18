@@ -661,17 +661,17 @@ function Modules() {
             Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
           </p>
         </div>
-        <div className="mt-14 grid gap-4 md:grid-cols-2">
+        <div className="mt-10 grid gap-3 sm:mt-14 sm:gap-4 md:grid-cols-2">
           {modules.map(({ icon: Icon, title, desc }, i) => (
-            <div key={title} className="glass flex items-start gap-4 rounded-2xl p-6 transition hover:-translate-y-0.5">
-              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-fire text-white shadow-fire">
-                <Icon className="h-6 w-6" />
+            <div key={title} className="glass flex items-start gap-3 rounded-2xl p-4 transition hover:-translate-y-0.5 sm:gap-4 sm:p-6">
+              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-fire text-white shadow-fire sm:h-14 sm:w-14">
+                <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <div className="min-w-0">
-                <div className="text-xs font-bold uppercase tracking-widest text-[color:var(--gold)]">
+                <div className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)] sm:text-xs">
                   Módulo {String(i + 1).padStart(2, "0")}
                 </div>
-                <h3 className="mt-1 text-lg font-bold">{title}</h3>
+                <h3 className="mt-1 text-base font-bold sm:text-lg">{title}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
               </div>
             </div>
