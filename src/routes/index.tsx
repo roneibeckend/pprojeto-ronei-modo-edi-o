@@ -620,11 +620,11 @@ function Offer() {
               <div className="text-sm text-muted-foreground line-through">De R$ 197,00</div>
               <div className="flex items-end gap-2">
                 <span className="text-lg font-bold text-[color:var(--gold)]">R$</span>
-                <span className="font-display text-7xl leading-none text-gradient-fire sm:text-8xl">27</span>
-                <span className="mb-2 text-lg font-bold text-[color:var(--gold)]">,00</span>
+                <span className="font-display text-7xl leading-none text-gradient-fire sm:text-8xl">47</span>
+                <span className="mb-2 text-lg font-bold text-[color:var(--gold)]">,90</span>
               </div>
               <div className="text-sm text-muted-foreground">
-                ou <strong className="text-foreground">3x de R$ 9,73</strong> no cartão
+                ou <strong className="text-foreground">3x de R$ 17,00</strong> no cartão
               </div>
             </div>
 
