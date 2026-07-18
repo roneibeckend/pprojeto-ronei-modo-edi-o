@@ -1212,7 +1212,7 @@ function LandingPage() {
         <Bonuses />
         <Solution />
         <FAQ />
-        <FinalCTA />
+        
       </main>
       <Footer />
       <StickyMobileCTA />
