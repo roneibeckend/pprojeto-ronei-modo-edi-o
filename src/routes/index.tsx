@@ -153,8 +153,8 @@ export const Route = createFileRoute("/")({
 
 function SectionTag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--gold)]">
-      <Flame className="h-3.5 w-3.5" />
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--gold)] sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs sm:tracking-[0.2em]">
+      <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
       {children}
     </span>
   );
@@ -172,7 +172,7 @@ function CTAButton({
   return (
     <a
       href="#oferta"
-      className={`btn-fire ${size === "xl" ? "text-lg px-10 py-5" : ""} ${className}`}
+      className={`btn-fire w-full sm:w-auto ${size === "xl" ? "text-base sm:text-lg sm:!px-10 sm:!py-5" : ""} ${className}`}
     >
       {children}
     </a>
