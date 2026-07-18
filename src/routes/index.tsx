@@ -786,14 +786,11 @@ function LandingPage() {
       <main>
         <Hero />
         <LogosBar />
-        <Pain />
         <Solution />
         <Benefits />
         <Modules />
         <Bonuses />
-        <Results />
         <Author />
-        <Testimonials />
         <Guarantee />
         <Offer />
         <FAQ />
