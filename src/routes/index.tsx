@@ -1241,10 +1241,10 @@ function LandingPage() {
         <Solution />
         <Benefits />
         <Modules />
-        <Bonuses />
+        <Offer />
         <Author />
         <Guarantee />
-        <Offer />
+        <Bonuses />
         <FAQ />
         <FinalCTA />
       </main>
