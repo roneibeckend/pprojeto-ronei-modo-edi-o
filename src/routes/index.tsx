@@ -658,17 +658,12 @@ function Offer() {
 function FAQ() {
   const faqs = [
     { q: "Preciso ter experiência com churrasco?", a: "Não. O método foi pensado para iniciantes absolutos. Você é guiado passo a passo desde a escolha da carne até a venda." },
-    { q: "O eBook serve para quem já vende espetinho?", a: "Sim. Muitos leitores já vendem e usam o material para aumentar a margem, reduzir desperdício e vender mais dias por semana." },
-    { q: "Como recebo o material?", a: "Assim que o pagamento é confirmado, o acesso é liberado automaticamente por e-mail em minutos." },
-    { q: "Em quais dispositivos posso ler?", a: "Você pode ler no celular, tablet, notebook ou computador. É um PDF de alta qualidade." },
     { q: "Preciso de muito dinheiro para começar?", a: "Não. O método mostra caminhos para começar pequeno, com investimento baixo e crescer de forma sustentável." },
-    { q: "O eBook ensina a fazer os temperos?", a: "Sim. Você recebe temperos e marinadas exclusivas testadas na prática, adaptáveis a cada tipo de carne." },
-    { q: "E se eu não gostar do material?", a: "Você tem 7 dias de garantia total. Se não gostar, basta pedir o reembolso e devolvemos 100% do valor." },
-    { q: "Vou aprender a precificar corretamente?", a: "Sim. Tem um módulo dedicado a custos, margem e precificação, além de uma calculadora de lucro como bônus." },
-    { q: "Serve para vender em qualquer cidade?", a: "Sim. As estratégias são universais e podem ser aplicadas em qualquer região do Brasil." },
-    { q: "Consigo fazer isso como renda extra?", a: "Perfeitamente. Muitos leitores começam vendendo apenas nos fins de semana e depois expandem." },
-    { q: "Os pagamentos são seguros?", a: "Sim. Utilizamos plataformas de pagamento com criptografia e antifraude." },
-    { q: "Existe suporte para dúvidas?", a: "Sim. Nosso e-mail de suporte responde todas as dúvidas relacionadas ao material." },
+    { q: "E se eu morar em cidade pequena?", a: "As estratégias funcionam em qualquer região — cidade grande, interior, bairro residencial ou comercial." },
+    { q: "Em quanto tempo posso começar a vender?", a: "Seguindo o plano de ação de 30 dias, muitos alunos fazem as primeiras vendas já na primeira semana." },
+    { q: "Como recebo o material?", a: "O acesso é liberado automaticamente por e-mail em minutos, após a confirmação do pagamento. Você lê no celular, tablet ou computador." },
+    { q: "E se eu não gostar do material?", a: "Você tem 7 dias de garantia total. Se não gostar, basta pedir o reembolso e devolvemos 100% do valor. Sem perguntas." },
+    { q: "Funciona também para delivery?", a: "Sim. Tem estratégias específicas para venda por WhatsApp, iFood e delivery próprio, além do ponto físico." },
   ];
   return (
     <section id="faq" className="relative py-24">
