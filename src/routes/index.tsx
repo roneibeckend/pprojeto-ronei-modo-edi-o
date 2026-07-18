@@ -303,10 +303,7 @@ function Benefits() {
     { icon: Sparkles, title: "Temperos exclusivos", desc: "Marinadas e blends que criam um sabor inesquecível." },
     { icon: Calculator, title: "Lucro previsível", desc: "Calcule custo, margem e ponto de equilíbrio sem erro." },
     { icon: TrendingUp, title: "Venda mais", desc: "Táticas para bombar o movimento em qualquer região." },
-    { icon: Users, title: "Conquiste clientes", desc: "Atendimento e apresentação que impressionam de primeira." },
-    { icon: Heart, title: "Fidelize", desc: "Faça o cliente voltar toda semana — e trazer amigos." },
-    { icon: ClipboardList, title: "Produção organizada", desc: "Rotina, checklist e etapas para produzir com fluidez." },
-    { icon: ShieldCheck, title: "Zero desperdício", desc: "Compras, corte e estoque no ponto certo." },
+    { icon: Heart, title: "Clientes fiéis", desc: "Atendimento e sabor que fazem o cliente voltar toda semana." },
     { icon: Zap, title: "Vendas todo dia", desc: "Estratégias para não depender só do fim de semana." },
   ];
   return (
