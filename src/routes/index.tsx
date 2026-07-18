@@ -357,7 +357,7 @@ function Modules() {
         <div className="flex flex-col items-center text-center">
           <SectionTag>O que você recebe</SectionTag>
           <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
-            15 capítulos <span className="text-gradient-fire">práticos e diretos</span>
+            14 capítulos <span className="text-gradient-fire">práticos e diretos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
             Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
@@ -629,7 +629,7 @@ function Offer() {
 
             <ul className="mt-8 grid w-full max-w-md gap-2 text-left">
               {[
-                "eBook completo com 15 capítulos (+30 páginas)",
+                "eBook completo com 14 capítulos (+30 páginas)",
                 "4 bônus exclusivos (fornecedores, grupo VIP, certificado e sorteio)",
                 "Acesso imediato após o pagamento",
                 "Garantia incondicional de 7 dias",
