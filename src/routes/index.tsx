@@ -449,7 +449,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden pt-24 pb-14 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28">
+    <section id="top" className="relative overflow-hidden pt-20 pb-10 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28">
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-0 h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/20 blur-3xl sm:h-[500px] sm:w-[900px]" />
       </div>
