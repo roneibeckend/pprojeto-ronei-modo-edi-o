@@ -181,7 +181,7 @@ function Hero() {
             <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl border border-white/10 bg-black/50 p-4 backdrop-blur-xl">
               <div>
                 <div className="text-xs uppercase tracking-widest text-[color:var(--gold)]">eBook Digital</div>
-                <div className="font-display text-2xl">Espetinho na Veia</div>
+                <div className="font-display text-2xl leading-tight">Espetinho na Veia com Ronnei<div className="text-xs font-semibold tracking-wider text-[color:var(--gold)]">Do Zero aos 10k</div></div>
               </div>
               <div className="rounded-full bg-fire px-3 py-1 text-xs font-bold shadow-fire">+30 páginas</div>
             </div>
@@ -620,11 +620,11 @@ function Offer() {
               <div className="text-sm text-muted-foreground line-through">De R$ 197,00</div>
               <div className="flex items-end gap-2">
                 <span className="text-lg font-bold text-[color:var(--gold)]">R$</span>
-                <span className="font-display text-7xl leading-none text-gradient-fire sm:text-8xl">27</span>
-                <span className="mb-2 text-lg font-bold text-[color:var(--gold)]">,00</span>
+                <span className="font-display text-7xl leading-none text-gradient-fire sm:text-8xl">47</span>
+                <span className="mb-2 text-lg font-bold text-[color:var(--gold)]">,90</span>
               </div>
               <div className="text-sm text-muted-foreground">
-                ou <strong className="text-foreground">3x de R$ 9,73</strong> no cartão
+                ou <strong className="text-foreground">3x de R$ 17,00</strong> no cartão
               </div>
             </div>
 
@@ -813,7 +813,7 @@ function StickyMobileCTA() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 p-3 backdrop-blur-xl md:hidden">
       <a href="#oferta" className="btn-fire w-full !py-3 text-sm">
-        Quero o eBook por R$ 27 <ArrowRight className="h-4 w-4" />
+        Quero o eBook por R$ 47,90 <ArrowRight className="h-4 w-4" />
       </a>
     </div>
   );
