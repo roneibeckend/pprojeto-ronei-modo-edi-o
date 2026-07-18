@@ -33,6 +33,7 @@ import {
   CheckCircle2,
   User,
   Phone,
+  X,
 } from "lucide-react";
 
 import heroChef from "@/assets/hero-chef.asset.json";
