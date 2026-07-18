@@ -350,7 +350,6 @@ function Modules() {
     { icon: Award, title: "Os erros que fazem muitos desistirem do negócio", desc: "O que evitar para não perder tempo e dinheiro." },
     { icon: DollarSign, title: "O caminho para chegar aos 10k por mês", desc: "Passo a passo para alcançar o primeiro grande resultado." },
     { icon: Instagram, title: "Próximos passos para crescer ainda mais", desc: "Como transformar o espetinho em uma marca sólida." },
-    { icon: MessageCircle, title: "Mensagem final para você dar o próximo passo", desc: "O empurrão final para agir hoje mesmo." },
   ];
   return (
     <section id="modulos" className="relative py-24">
@@ -358,7 +357,7 @@ function Modules() {
         <div className="flex flex-col items-center text-center">
           <SectionTag>O que você recebe</SectionTag>
           <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
-            15 capítulos <span className="text-gradient-fire">práticos e diretos</span>
+            14 capítulos <span className="text-gradient-fire">práticos e diretos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
             Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
@@ -630,7 +629,7 @@ function Offer() {
 
             <ul className="mt-8 grid w-full max-w-md gap-2 text-left">
               {[
-                "eBook completo com 15 capítulos (+30 páginas)",
+                "eBook completo com 14 capítulos (+30 páginas)",
                 "4 bônus exclusivos (fornecedores, grupo VIP, certificado e sorteio)",
                 "Acesso imediato após o pagamento",
                 "Garantia incondicional de 7 dias",
