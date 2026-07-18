@@ -183,7 +183,7 @@ function Hero() {
                 <div className="text-xs uppercase tracking-widest text-[color:var(--gold)]">eBook Digital</div>
                 <div className="font-display text-2xl">Espetinho na Veia</div>
               </div>
-              <div className="rounded-full bg-fire px-3 py-1 text-xs font-bold shadow-fire">+200 páginas</div>
+              <div className="rounded-full bg-fire px-3 py-1 text-xs font-bold shadow-fire">+30 páginas</div>
             </div>
           </div>
         </div>
