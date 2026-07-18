@@ -125,11 +125,10 @@ function Hero() {
         <div className="flex flex-col items-start">
           <SectionTag>Método completo · edição 2026</SectionTag>
           <h1 className="mt-6 text-4xl font-black leading-[0.95] sm:text-6xl md:text-7xl">
-            Vire referência em <span className="text-gradient-fire">espetinho</span> e lucre todos os dias
+            Lucre até <span className="text-gradient-fire">R$ 300 por dia</span> vendendo espetinhos — começando do zero
           </h1>
           <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-            O passo a passo definitivo para escolher as carnes certas, temperar como profissional,
-            precificar com margem alta e vender sem parar — mesmo começando com pouco.
+            O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
