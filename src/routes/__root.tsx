@@ -93,13 +93,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
-          name: "eBook Espetinho na Veia",
+          name: "eBook Espetinho na Veia com Ronnei — Do Zero aos 10k",
           description:
             "Guia completo para montar, temperar, precificar e vender espetinhos com alto lucro.",
-          brand: { "@type": "Brand", name: "Espetinho na Veia" },
+          brand: { "@type": "Brand", name: "Espetinho na Veia com Ronnei" },
           offers: {
             "@type": "Offer",
-            price: "27.00",
+            price: "47.90",
             priceCurrency: "BRL",
             availability: "https://schema.org/InStock",
           },
