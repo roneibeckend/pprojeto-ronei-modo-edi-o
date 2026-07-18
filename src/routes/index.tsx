@@ -1080,9 +1080,9 @@ function Footer() {
         <div>
           <h4 className="text-sm font-bold uppercase tracking-widest text-[color:var(--gold)]">Institucional</h4>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-            <li><a href="#" className="hover:text-foreground">Política de Privacidade</a></li>
-            <li><a href="#" className="hover:text-foreground">Termos de Uso</a></li>
-            <li><a href="#faq" className="hover:text-foreground">Perguntas frequentes</a></li>
+            <li><Link to="/politica-de-privacidade" className="hover:text-foreground">Política de Privacidade</Link></li>
+            <li><Link to="/termos-de-uso" className="hover:text-foreground">Termos de Uso</Link></li>
+            <li><Link to="/perguntas-frequentes" className="hover:text-foreground">Perguntas frequentes</Link></li>
           </ul>
         </div>
         <div>
