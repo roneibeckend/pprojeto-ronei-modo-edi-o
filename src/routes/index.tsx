@@ -449,7 +449,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden pt-24 pb-14 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28">
+    <section id="top" className="relative overflow-hidden pt-20 pb-10 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28">
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-0 h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/20 blur-3xl sm:h-[500px] sm:w-[900px]" />
       </div>
@@ -661,17 +661,17 @@ function Modules() {
             Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
           </p>
         </div>
-        <div className="mt-14 grid gap-4 md:grid-cols-2">
+        <div className="mt-10 grid gap-3 sm:mt-14 sm:gap-4 md:grid-cols-2">
           {modules.map(({ icon: Icon, title, desc }, i) => (
-            <div key={title} className="glass flex items-start gap-4 rounded-2xl p-6 transition hover:-translate-y-0.5">
-              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-fire text-white shadow-fire">
-                <Icon className="h-6 w-6" />
+            <div key={title} className="glass flex items-start gap-3 rounded-2xl p-4 transition hover:-translate-y-0.5 sm:gap-4 sm:p-6">
+              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-fire text-white shadow-fire sm:h-14 sm:w-14">
+                <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <div className="min-w-0">
-                <div className="text-xs font-bold uppercase tracking-widest text-[color:var(--gold)]">
+                <div className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)] sm:text-xs">
                   Módulo {String(i + 1).padStart(2, "0")}
                 </div>
-                <h3 className="mt-1 text-lg font-bold">{title}</h3>
+                <h3 className="mt-1 text-base font-bold sm:text-lg">{title}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
               </div>
             </div>
@@ -704,20 +704,20 @@ function Bonuses() {
             Materiais e vantagens extras para acelerar seus resultados desde o primeiro dia.
           </p>
         </div>
-        <div className="mt-14 grid gap-4 sm:grid-cols-2">
+        <div className="mt-10 grid gap-4 sm:mt-14 sm:grid-cols-2">
           {bonuses.map(({ icon: Icon, title, tag, value, desc }) => (
-            <div key={title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition hover:border-[color:var(--gold)]/60">
-              <div className="flex items-start justify-between gap-4">
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-[color:var(--gold)]/15 text-[color:var(--gold)]">
-                  <Icon className="h-6 w-6" />
+            <div key={title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 transition hover:border-[color:var(--gold)]/60 sm:p-6">
+              <div className="flex items-start justify-between gap-3">
+                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[color:var(--gold)]/15 text-[color:var(--gold)] sm:h-12 sm:w-12">
+                  <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
-                <span className="rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-3 py-1 text-xs font-bold text-[color:var(--gold)]">
+                <span className="shrink-0 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-2.5 py-1 text-[10px] font-bold text-[color:var(--gold)] sm:px-3 sm:text-xs">
                   {tag}
                 </span>
               </div>
-              <h3 className="mt-5 text-lg font-bold">{title}</h3>
+              <h3 className="mt-4 text-base font-bold sm:mt-5 sm:text-lg">{title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
-              <div className="mt-4 flex items-center gap-2 text-sm">
+              <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
                 <span className="text-muted-foreground line-through">De {value}</span>
                 <span className="rounded-full bg-fire px-2.5 py-0.5 text-xs font-bold text-white">GRÁTIS hoje</span>
               </div>
