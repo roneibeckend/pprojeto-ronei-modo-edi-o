@@ -813,7 +813,7 @@ function StickyMobileCTA() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 p-3 backdrop-blur-xl md:hidden">
       <a href="#oferta" className="btn-fire w-full !py-3 text-sm">
-        Quero o eBook por R$ 27 <ArrowRight className="h-4 w-4" />
+        Quero o eBook por R$ 47,90 <ArrowRight className="h-4 w-4" />
       </a>
     </div>
   );
