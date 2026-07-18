@@ -423,22 +423,22 @@ function Nav() {
         scrolled ? "backdrop-blur-xl bg-background/70 border-b border-border" : ""
       }`}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-        <a href="#top" className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-fire shadow-fire">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+        <a href="#top" className="flex min-w-0 items-center gap-2">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-fire shadow-fire">
             <Flame className="h-5 w-5 text-white" />
           </span>
-          <span className="font-display text-xl tracking-wide">
+          <span className="truncate font-display text-base tracking-wide sm:text-xl">
             ESPETINHO <span className="text-gradient-fire">NA VEIA</span>
           </span>
         </a>
-        <nav className="hidden gap-8 text-sm text-muted-foreground md:flex">
+        <nav className="hidden gap-6 text-sm text-muted-foreground lg:flex xl:gap-8">
           <a href="#beneficios" className="hover:text-foreground transition">Benefícios</a>
           <a href="#modulos" className="hover:text-foreground transition">Módulos</a>
           <a href="#bonus" className="hover:text-foreground transition">Bônus</a>
           <a href="#faq" className="hover:text-foreground transition">FAQ</a>
         </nav>
-        <a href="#oferta" className="btn-fire !py-2 !px-5 text-sm">
+        <a href="#oferta" className="btn-fire shrink-0 !min-h-0 !py-2 !px-4 text-xs sm:!px-5 sm:text-sm">
           Quero o eBook
         </a>
       </div>
