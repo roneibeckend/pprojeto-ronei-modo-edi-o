@@ -181,7 +181,7 @@ function Hero() {
             <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl border border-white/10 bg-black/50 p-4 backdrop-blur-xl">
               <div>
                 <div className="text-xs uppercase tracking-widest text-[color:var(--gold)]">eBook Digital</div>
-                <div className="font-display text-2xl">Espetinho na Veia</div>
+                <div className="font-display text-2xl leading-tight">Espetinho na Veia com Ronnei<div className="text-xs font-semibold tracking-wider text-[color:var(--gold)]">Do Zero aos 10k</div></div>
               </div>
               <div className="rounded-full bg-fire px-3 py-1 text-xs font-bold shadow-fire">+30 páginas</div>
             </div>
