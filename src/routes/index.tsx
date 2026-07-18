@@ -153,8 +153,8 @@ export const Route = createFileRoute("/")({
 
 function SectionTag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--gold)]">
-      <Flame className="h-3.5 w-3.5" />
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--gold)] sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs sm:tracking-[0.2em]">
+      <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
       {children}
     </span>
   );
@@ -172,7 +172,7 @@ function CTAButton({
   return (
     <a
       href="#oferta"
-      className={`btn-fire ${size === "xl" ? "text-lg px-10 py-5" : ""} ${className}`}
+      className={`btn-fire w-full sm:w-auto ${size === "xl" ? "text-base sm:text-lg sm:!px-10 sm:!py-5" : ""} ${className}`}
     >
       {children}
     </a>
@@ -423,22 +423,22 @@ function Nav() {
         scrolled ? "backdrop-blur-xl bg-background/70 border-b border-border" : ""
       }`}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-        <a href="#top" className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-fire shadow-fire">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+        <a href="#top" className="flex min-w-0 items-center gap-2">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-fire shadow-fire">
             <Flame className="h-5 w-5 text-white" />
           </span>
-          <span className="font-display text-xl tracking-wide">
+          <span className="truncate font-display text-base tracking-wide sm:text-xl">
             ESPETINHO <span className="text-gradient-fire">NA VEIA</span>
           </span>
         </a>
-        <nav className="hidden gap-8 text-sm text-muted-foreground md:flex">
+        <nav className="hidden gap-6 text-sm text-muted-foreground lg:flex xl:gap-8">
           <a href="#beneficios" className="hover:text-foreground transition">Benefícios</a>
           <a href="#modulos" className="hover:text-foreground transition">Módulos</a>
           <a href="#bonus" className="hover:text-foreground transition">Bônus</a>
           <a href="#faq" className="hover:text-foreground transition">FAQ</a>
         </nav>
-        <a href="#oferta" className="btn-fire !py-2 !px-5 text-sm">
+        <a href="#oferta" className="btn-fire shrink-0 !min-h-0 !py-2 !px-4 text-xs sm:!px-5 sm:text-sm">
           Quero o eBook
         </a>
       </div>
@@ -448,30 +448,30 @@ function Nav() {
 
 function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
+    <section id="top" className="relative overflow-hidden pt-24 pb-14 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28">
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/20 blur-3xl" />
+        <div className="absolute left-1/2 top-0 h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/20 blur-3xl sm:h-[500px] sm:w-[900px]" />
       </div>
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2">
         <div className="flex flex-col items-start">
           <SectionTag>Método completo · edição 2026</SectionTag>
-          <h1 className="mt-6 text-4xl font-black leading-[0.95] sm:text-6xl md:text-7xl">
+          <h1 className="mt-5 h-fluid-hero font-black sm:mt-6">
             Lucre até <span className="text-gradient-fire">R$ 300 por dia</span> vendendo espetinhos — começando do zero
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+          <p className="mt-5 max-w-xl text-fluid-lead text-muted-foreground sm:mt-6">
             O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
             <CTAButton size="xl">
               Quero começar agora <ArrowRight className="h-5 w-5" />
             </CTAButton>
-            <a href="#beneficios" className="btn-ghost-fire">
+            <a href="#beneficios" className="btn-ghost-fire w-full sm:w-auto">
               Ver o que aprendo
             </a>
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
+          <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground sm:mt-8 sm:gap-x-6 sm:gap-y-3 sm:text-sm">
             <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[color:var(--gold)]" /> Garantia 7 dias</span>
             <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-[color:var(--gold)]" /> Acesso imediato</span>
             <span className="flex items-center gap-2"><Lock className="h-4 w-4 text-[color:var(--gold)]" /> Pagamento seguro</span>
@@ -499,22 +499,22 @@ function Hero() {
           </div>
         </div>
 
-        <div className="relative">
-          <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
-          <div className="glass relative overflow-hidden rounded-[2rem] p-2 shadow-fire animate-float">
+        <div className="relative order-first lg:order-last">
+          <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow sm:-inset-6" />
+          <div className="glass relative overflow-hidden rounded-[1.5rem] p-1.5 shadow-fire animate-float sm:rounded-[2rem] sm:p-2">
             <img
               src={heroChef.url}
               alt="Chef especialista em espetinhos com espetos flamejantes"
-              className="h-[520px] w-full rounded-[1.75rem] object-cover"
+              className="h-[300px] w-full rounded-[1.25rem] object-cover sm:h-[420px] sm:rounded-[1.75rem] lg:h-[520px]"
               loading="eager"
               fetchPriority="high"
             />
-            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl border border-white/10 bg-black/50 p-4 backdrop-blur-xl">
-              <div>
-                <div className="text-xs uppercase tracking-widest text-[color:var(--gold)]">eBook Digital</div>
-                <div className="font-display text-2xl leading-tight">Espetinho na Veia<div className="text-xs font-semibold tracking-wider text-[color:var(--gold)]">Do Zero aos 10k</div></div>
+            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/50 p-3 backdrop-blur-xl sm:bottom-6 sm:left-6 sm:right-6 sm:rounded-2xl sm:p-4">
+              <div className="min-w-0">
+                <div className="text-[10px] uppercase tracking-widest text-[color:var(--gold)] sm:text-xs">eBook Digital</div>
+                <div className="font-display text-lg leading-tight sm:text-2xl">Espetinho na Veia<div className="text-[10px] font-semibold tracking-wider text-[color:var(--gold)] sm:text-xs">Do Zero aos 10k</div></div>
               </div>
-              <div className="rounded-full bg-fire px-3 py-1 text-xs font-bold shadow-fire">+30 páginas</div>
+              <div className="shrink-0 rounded-full bg-fire px-2.5 py-1 text-[10px] font-bold shadow-fire sm:px-3 sm:text-xs">+30 páginas</div>
             </div>
           </div>
         </div>
@@ -554,11 +554,11 @@ function Pain() {
     { icon: Heart, title: "Medo de investir", desc: "Trava por não ter um método claro passo a passo." },
   ];
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>O problema</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             Você já se viu <span className="text-gradient-fire">preso em algum destes erros?</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
@@ -583,19 +583,19 @@ function Pain() {
 
 function Solution() {
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
         <div className="relative">
           <div className="grid grid-cols-2 gap-4">
-            <img src={platter1.url} alt="Tábua premium de espetinhos variados" className="h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
-            <img src={skewersHeld.url} alt="Espetinhos suculentos" className="mt-8 h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
-            <img src={ribeye.url} alt="Corte nobre bovino" className="h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
-            <img src={platter2.url} alt="Espetinhos servidos" className="mt-8 h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
+            <img src={platter1.url} alt="Tábua premium de espetinhos variados" className="h-44 w-full rounded-2xl sm:h-64 object-cover shadow-fire" loading="lazy" />
+            <img src={skewersHeld.url} alt="Espetinhos suculentos" className="mt-8 h-44 w-full rounded-2xl sm:h-64 object-cover shadow-fire" loading="lazy" />
+            <img src={ribeye.url} alt="Corte nobre bovino" className="h-44 w-full rounded-2xl sm:h-64 object-cover shadow-fire" loading="lazy" />
+            <img src={platter2.url} alt="Espetinhos servidos" className="mt-8 h-44 w-full rounded-2xl sm:h-64 object-cover shadow-fire" loading="lazy" />
           </div>
         </div>
         <div>
           <SectionTag>A solução</SectionTag>
-          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 h-fluid-h2 font-black">
             Um método <span className="text-gradient-fire">testado na brasa</span>, feito para quem quer resultado.
           </h2>
           <p className="mt-5 text-lg text-muted-foreground">
@@ -637,11 +637,11 @@ function Benefits() {
     { icon: TrendingUp, title: "Do carrinho ao trailer", desc: "Passo a passo real para escalar de renda extra a negócio de 10k por mês." },
   ];
   return (
-    <section id="beneficios" className="relative py-20">
+    <section id="beneficios" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Benefícios</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             O que vai <span className="text-gradient-fire">mudar no seu bolso</span>
           </h2>
         </div>
@@ -683,11 +683,11 @@ function Modules() {
     { icon: Instagram, title: "Próximos passos para crescer ainda mais", desc: "Como transformar o espetinho em uma marca sólida." },
   ];
   return (
-    <section id="modulos" className="relative py-20">
+    <section id="modulos" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>O que você recebe</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             14 capítulos <span className="text-gradient-fire">práticos e diretos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
@@ -723,14 +723,14 @@ function Bonuses() {
     { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", value: "R$ 250", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
   ];
   return (
-    <section id="bonus" className="relative py-20">
+    <section id="bonus" className="relative py-14 sm:py-20">
       <div className="pointer-events-none absolute inset-0 -z-10 opacity-30">
         <div className="absolute right-0 top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-[color:var(--flame)]/40 blur-3xl" />
       </div>
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Bônus exclusivos</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
@@ -766,11 +766,11 @@ function Results() {
   const before = ["Sem saber qual carne comprar", "Preços no chute", "Cliente esporádico", "Estresse na produção", "Lucro apertado"];
   const after = ["Carnes escolhidas com estratégia", "Preços com margem garantida", "Cliente fiel toda semana", "Rotina fluida e organizada", "Lucro previsível e crescente"];
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Transformação</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             Do improviso para o <span className="text-gradient-fire">negócio de verdade</span>
           </h2>
         </div>
@@ -813,20 +813,20 @@ function Results() {
 
 function Author() {
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
         <div className="relative">
           <div className="absolute -inset-4 -z-10 rounded-3xl bg-fire opacity-25 blur-2xl" />
           <img
             src={chefWorking.url}
             alt="Autor no dia a dia da grelha"
-            className="h-[500px] w-full rounded-3xl object-cover shadow-fire"
+            className="h-[320px] w-full rounded-3xl sm:h-[500px] object-cover shadow-fire"
             loading="lazy"
           />
         </div>
         <div>
           <SectionTag>Quem escreveu</SectionTag>
-          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 h-fluid-h2 font-black">
             Um método <span className="text-gradient-fire">nascido na brasa</span>
           </h2>
           <p className="mt-5 text-lg text-muted-foreground">
@@ -873,11 +873,11 @@ function Testimonials() {
     },
   ];
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Depoimentos ilustrativos</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             O que dizem <span className="text-gradient-fire">os leitores</span>
           </h2>
           <p className="mt-3 max-w-2xl text-xs uppercase tracking-widest text-muted-foreground">
@@ -910,13 +910,13 @@ function Testimonials() {
 
 function Guarantee() {
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[color:var(--gold)]/10 via-transparent to-[color:var(--ember)]/10 p-10 text-center shadow-fire">
           <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-fire shadow-fire animate-pulse-glow">
             <Award className="h-12 w-12 text-white" />
           </div>
-          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 h-fluid-h2 font-black">
             Garantia <span className="text-gradient-fire">incondicional de 7 dias</span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -931,18 +931,18 @@ function Guarantee() {
 
 function Offer() {
   return (
-    <section id="oferta" className="relative py-20">
+    <section id="oferta" className="relative py-14 sm:py-20">
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[color:var(--ember)]/25 blur-3xl" />
       </div>
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-[2rem] border border-[color:var(--ember)]/40 bg-card p-8 shadow-fire sm:p-12">
+        <div className="relative overflow-hidden rounded-[1.5rem] border border-[color:var(--ember)]/40 bg-card p-6 shadow-fire sm:rounded-[2rem] sm:p-12">
           <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-fire opacity-20 blur-3xl" />
           <div className="flex flex-col items-center text-center">
             <span className="inline-flex items-center gap-2 rounded-full bg-fire px-4 py-1.5 text-xs font-black uppercase tracking-widest text-white shadow-fire animate-flicker">
               <Flame className="h-3.5 w-3.5" /> Oferta por tempo limitado
             </span>
-            <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+            <h2 className="mt-6 h-fluid-h2 font-black">
               Comece hoje por <span className="text-gradient-fire">menos que um espetinho por dia</span>
             </h2>
 
@@ -950,7 +950,7 @@ function Offer() {
               <div className="text-sm text-muted-foreground line-through">De R$ 197,00</div>
               <div className="flex items-end gap-2">
                 <span className="text-lg font-bold text-[color:var(--gold)]">R$</span>
-                <span className="font-display text-7xl leading-none text-gradient-fire sm:text-8xl">47</span>
+                <span className="font-display text-6xl leading-none text-gradient-fire sm:text-8xl">47</span>
                 <span className="mb-2 text-lg font-bold text-[color:var(--gold)]">,90</span>
               </div>
               <div className="text-sm text-muted-foreground">
@@ -1005,11 +1005,11 @@ function FAQ() {
     { q: "Funciona também para delivery?", a: "Sim. Tem estratégias específicas para venda por WhatsApp, iFood e delivery próprio, além do ponto físico." },
   ];
   return (
-    <section id="faq" className="relative py-20">
+    <section id="faq" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Perguntas frequentes</SectionTag>
-          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 h-fluid-h2 font-black">
             Tirando suas <span className="text-gradient-fire">últimas dúvidas</span>
           </h2>
         </div>
@@ -1034,9 +1034,9 @@ function FAQ() {
 
 function FinalCTA() {
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-[2rem] p-10 text-center sm:p-16">
+        <div className="relative overflow-hidden rounded-[1.5rem] p-6 text-center sm:rounded-[2rem] sm:p-16">
           <img
             src={skewersFlat.url}
             alt=""
@@ -1046,7 +1046,7 @@ function FinalCTA() {
           />
           <div className="absolute inset-0 -z-10 bg-gradient-to-br from-background/90 via-background/80 to-[color:var(--ember)]/50" />
           <SectionTag>Última chamada</SectionTag>
-          <h2 className="mx-auto mt-6 max-w-3xl text-4xl font-black sm:text-6xl">
+          <h2 className="mx-auto mt-6 max-w-3xl h-fluid-h2 font-black">
             A brasa está pronta. <br />
             <span className="text-gradient-fire">Falta só você acender o fogo.</span>
           </h2>
@@ -1120,11 +1120,11 @@ function ForYou() {
     "Sonha em ter o próprio negócio para chamar de seu",
   ];
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Isso é pra você se…</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             Se você se <span className="text-gradient-fire">identifica com um destes</span>, o eBook é pra você
           </h2>
         </div>
@@ -1145,7 +1145,10 @@ function ForYou() {
 
 function StickyMobileCTA() {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 p-3 backdrop-blur-xl md:hidden">
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 pt-3 backdrop-blur-xl md:hidden"
+      style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+    >
       <a href="#oferta" className="btn-fire w-full !py-3 text-sm">
         Quero o eBook por R$ 47,90 <ArrowRight className="h-4 w-4" />
       </a>
@@ -1155,7 +1158,7 @@ function StickyMobileCTA() {
 
 function LandingPage() {
   return (
-    <div className="min-h-screen pb-20 md:pb-0">
+    <div className="min-h-screen pb-24 md:pb-0">
       <Nav />
       <main>
         <Hero />
