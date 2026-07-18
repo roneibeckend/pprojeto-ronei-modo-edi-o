@@ -33,6 +33,7 @@ import {
   CheckCircle2,
   User,
   Phone,
+  X,
 } from "lucide-react";
 
 import heroChef from "@/assets/hero-chef.asset.json";
@@ -975,12 +976,9 @@ function Offer() {
             </ul>
 
             <div className="mt-8 w-full flex justify-center">
-              <LeadForm />
-            </div>
-
-            <div className="mt-8 w-full flex justify-center">
               <CheckoutButton />
             </div>
+
 
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5"><Lock className="h-3.5 w-3.5" /> Compra 100% segura</span>
@@ -1143,6 +1141,82 @@ function ForYou() {
   );
 }
 
+function LeadPopup() {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem("espetinho_lead_popup_dismissed") === "1") return;
+    if (localStorage.getItem("espetinho_leads")) return;
+    const t = setTimeout(() => setOpen(true), 60_000);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const close = () => {
+    try {
+      sessionStorage.setItem("espetinho_lead_popup_dismissed", "1");
+    } catch {
+      // ignore
+    }
+    setOpen(false);
+  };
+
+  if (!open) return null;
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lead-popup-title"
+      className="fixed inset-0 z-[70] flex items-end justify-center p-3 sm:items-center sm:p-4"
+    >
+      <div
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        onClick={close}
+        aria-hidden="true"
+      />
+      <div className="relative w-full max-w-md rounded-2xl border border-[color:var(--gold)]/40 bg-card p-5 shadow-fire sm:p-6">
+        <button
+          type="button"
+          onClick={close}
+          aria-label="Fechar"
+          className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full border border-border bg-background/60 text-muted-foreground transition hover:text-foreground"
+        >
+          <X className="h-4 w-4" />
+        </button>
+        <div className="text-center">
+          <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-fire shadow-fire">
+            <Flame className="h-6 w-6 text-white" />
+          </div>
+          <h3 id="lead-popup-title" className="mt-3 h-fluid-h3 font-black">
+            Espera! Garanta seu <span className="text-gradient-fire">cupom de desconto</span>
+          </h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Deixe seu nome e WhatsApp e receba um cupom exclusivo antes de sair.
+          </p>
+        </div>
+        <div className="mt-4">
+          <LeadForm />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function StickyMobileCTA() {
   return (
     <div
@@ -1176,6 +1250,7 @@ function LandingPage() {
       </main>
       <Footer />
       <StickyMobileCTA />
+      <LeadPopup />
     </div>
   );
 }
