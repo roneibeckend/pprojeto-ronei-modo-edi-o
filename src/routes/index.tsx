@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
 import {
   Flame,
   Check,
@@ -27,6 +29,10 @@ import {
   Utensils,
   Target,
   Heart,
+  Loader2,
+  CheckCircle2,
+  User,
+  Phone,
 } from "lucide-react";
 
 import heroChef from "@/assets/hero-chef.asset.json";
@@ -170,6 +176,235 @@ function CTAButton({
     >
       {children}
     </a>
+  );
+}
+
+// Configuração do checkout — troque pela URL do Kiwify/Hotmart/Stripe quando disponível.
+const CHECKOUT_URL = "";
+
+function CheckoutButton({ className = "" }: { className?: string }) {
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      // Simula pequena latência antes de redirecionar (evita clique duplo e mostra feedback).
+      await new Promise((r) => setTimeout(r, 600));
+      if (!CHECKOUT_URL) {
+        throw new Error("URL de checkout ainda não configurada.");
+      }
+      window.location.href = CHECKOUT_URL;
+    } catch (err) {
+      console.error("[checkout] falha ao redirecionar:", err);
+      toast.error("Não conseguimos abrir o checkout", {
+        description:
+          err instanceof Error ? err.message : "Verifique sua conexão e tente novamente.",
+        action: { label: "Tentar de novo", onClick: () => handleClick() },
+      });
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={loading}
+      aria-busy={loading}
+      className={`btn-fire !text-lg !px-10 !py-5 w-full max-w-md disabled:opacity-80 disabled:cursor-wait ${className}`}
+    >
+      {loading ? (
+        <>
+          <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+          Processando...
+        </>
+      ) : (
+        <>
+          Quero garantir meu acesso <ArrowRight className="h-5 w-5" aria-hidden="true" />
+        </>
+      )}
+    </button>
+  );
+}
+
+const leadSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, "Digite seu nome completo")
+    .max(80, "Nome muito longo"),
+  whatsapp: z
+    .string()
+    .trim()
+    .min(10, "WhatsApp com DDD (mín. 10 dígitos)")
+    .max(20, "Número muito longo")
+    .regex(/^[0-9()\s\-+]+$/, "Use apenas números e ( ) - + espaços"),
+});
+
+type LeadStatus = "idle" | "loading" | "success" | "error";
+
+function formatWhatsapp(raw: string) {
+  const d = raw.replace(/\D/g, "").slice(0, 11);
+  if (d.length <= 2) return d;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+function LeadForm() {
+  const [name, setName] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [status, setStatus] = useState<LeadStatus>("idle");
+  const [errors, setErrors] = useState<{ name?: string; whatsapp?: string }>({});
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (status === "loading") return;
+
+    const parsed = leadSchema.safeParse({ name, whatsapp });
+    if (!parsed.success) {
+      const fieldErrors: { name?: string; whatsapp?: string } = {};
+      for (const issue of parsed.error.issues) {
+        const key = issue.path[0] as "name" | "whatsapp";
+        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+      }
+      setErrors(fieldErrors);
+      setStatus("error");
+      toast.error("Preencha os dados corretamente");
+      return;
+    }
+
+    setErrors({});
+    setStatus("loading");
+    try {
+      // Simula envio (troque por chamada real ao seu CRM/webhook).
+      await new Promise((r) => setTimeout(r, 900));
+      try {
+        const list = JSON.parse(localStorage.getItem("espetinho_leads") || "[]");
+        list.push({ ...parsed.data, at: new Date().toISOString() });
+        localStorage.setItem("espetinho_leads", JSON.stringify(list));
+      } catch {
+        // ignore storage errors
+      }
+      setStatus("success");
+      toast.success("Cupom reservado!", {
+        description: "Enviamos os detalhes no seu WhatsApp.",
+      });
+    } catch (err) {
+      console.error("[lead-form] falha no envio:", err);
+      setStatus("error");
+      toast.error("Não conseguimos enviar agora", {
+        description: "Verifique sua conexão e tente novamente.",
+        action: { label: "Tentar de novo", onClick: () => handleSubmit(e) },
+      });
+    }
+  };
+
+  if (status === "success") {
+    return (
+      <div
+        role="status"
+        className="w-full max-w-md rounded-2xl border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/5 p-6 text-center"
+      >
+        <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-fire shadow-fire">
+          <CheckCircle2 className="h-8 w-8 text-white" aria-hidden="true" />
+        </div>
+        <h3 className="mt-4 text-xl font-black">Tudo certo, {name.split(" ")[0]}!</h3>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Seu cupom foi reservado. Agora é só garantir seu acesso abaixo.
+        </p>
+      </div>
+    );
+  }
+
+  const loading = status === "loading";
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="w-full max-w-md rounded-2xl border border-border bg-background/40 p-5 text-left"
+    >
+      <p className="mb-4 text-center text-sm font-semibold text-[color:var(--gold)]">
+        Receba o cupom de desconto no seu WhatsApp
+      </p>
+
+      <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Seu nome
+      </label>
+      <div className="relative mt-1.5">
+        <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          disabled={loading}
+          maxLength={80}
+          autoComplete="name"
+          placeholder="Como você quer ser chamado(a)"
+          aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? "lead-name-err" : undefined}
+          className={`w-full rounded-lg border bg-card py-2.5 pl-9 pr-3 text-sm outline-none transition focus:border-[color:var(--gold)] disabled:opacity-60 ${
+            errors.name ? "border-red-500/60" : "border-border"
+          }`}
+        />
+      </div>
+      {errors.name && (
+        <p id="lead-name-err" className="mt-1.5 text-xs text-red-400">
+          {errors.name}
+        </p>
+      )}
+
+      <label className="mt-4 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Seu WhatsApp
+      </label>
+      <div className="relative mt-1.5">
+        <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <input
+          type="tel"
+          inputMode="tel"
+          value={whatsapp}
+          onChange={(e) => setWhatsapp(formatWhatsapp(e.target.value))}
+          disabled={loading}
+          maxLength={20}
+          autoComplete="tel"
+          placeholder="(11) 99999-9999"
+          aria-invalid={!!errors.whatsapp}
+          aria-describedby={errors.whatsapp ? "lead-wpp-err" : undefined}
+          className={`w-full rounded-lg border bg-card py-2.5 pl-9 pr-3 text-sm outline-none transition focus:border-[color:var(--gold)] disabled:opacity-60 ${
+            errors.whatsapp ? "border-red-500/60" : "border-border"
+          }`}
+        />
+      </div>
+      {errors.whatsapp && (
+        <p id="lead-wpp-err" className="mt-1.5 text-xs text-red-400">
+          {errors.whatsapp}
+        </p>
+      )}
+
+      <button
+        type="submit"
+        disabled={loading}
+        aria-busy={loading}
+        className="btn-fire mt-5 w-full !py-3 !text-sm disabled:opacity-80 disabled:cursor-wait"
+      >
+        {loading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            Enviando...
+          </>
+        ) : (
+          <>
+            Quero meu cupom <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </>
+        )}
+      </button>
+
+      <p className="mt-3 text-center text-[11px] text-muted-foreground">
+        <Lock className="mr-1 inline h-3 w-3" /> Seus dados ficam seguros. Sem spam.
+      </p>
+    </form>
   );
 }
 
@@ -739,9 +974,13 @@ function Offer() {
               ))}
             </ul>
 
-            <a href="#" className="btn-fire mt-10 !text-lg !px-10 !py-5 w-full max-w-md">
-              Quero garantir meu acesso <ArrowRight className="h-5 w-5" />
-            </a>
+            <div className="mt-8 w-full flex justify-center">
+              <LeadForm />
+            </div>
+
+            <div className="mt-8 w-full flex justify-center">
+              <CheckoutButton />
+            </div>
 
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5"><Lock className="h-3.5 w-3.5" /> Compra 100% segura</span>
