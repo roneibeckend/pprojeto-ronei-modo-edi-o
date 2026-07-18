@@ -471,27 +471,6 @@ function Hero() {
               Ver o que aprendo
             </a>
           </div>
-
-
-          <div className="mt-6 flex items-center gap-3">
-            <div className="flex -space-x-2">
-              {[chefPortrait, author, chefWorking].map((img, i) => (
-                <img
-                  key={i}
-                  src={img.url}
-                  alt="Aluno"
-                  className="h-9 w-9 rounded-full border-2 border-background object-cover"
-                />
-              ))}
-            </div>
-            <div className="text-sm">
-              <div className="flex gap-0.5 text-[color:var(--gold)]">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="h-3.5 w-3.5 fill-current" />
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="relative order-first lg:order-last">
