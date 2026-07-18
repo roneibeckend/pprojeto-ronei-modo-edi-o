@@ -386,13 +386,10 @@ function Modules() {
 
 function Bonuses() {
   const bonuses = [
-    { icon: Calculator, title: "Calculadora de lucro", tag: "R$ 47" },
-    { icon: ClipboardList, title: "Checklist de compras", tag: "R$ 27" },
-    { icon: Truck, title: "Lista de fornecedores", tag: "R$ 67" },
-    { icon: BookOpen, title: "Planilha de custos", tag: "R$ 47" },
-    { icon: Utensils, title: "Receitas extras", tag: "R$ 37" },
-    { icon: ShieldCheck, title: "Manual de conservação", tag: "R$ 37" },
-    { icon: ChefHat, title: "Checklist de produção", tag: "R$ 27" },
+    { icon: Truck, title: "Contato com fornecedores", tag: "Bônus 01", desc: "Acesso direto a fornecedores confiáveis para comprar melhor e mais barato." },
+    { icon: MessageCircle, title: "Grupo de WhatsApp", tag: "Bônus 02", desc: "Comunidade exclusiva com outros alunos para trocar experiências e networking." },
+    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
+    { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
   ];
   return (
     <section id="bonus" className="relative py-24">
