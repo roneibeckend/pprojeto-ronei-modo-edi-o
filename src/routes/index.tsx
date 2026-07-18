@@ -382,10 +382,10 @@ function Modules() {
 
 function Bonuses() {
   const bonuses = [
-    { icon: Truck, title: "Contato com fornecedores", tag: "Bônus 01", desc: "Acesso direto a fornecedores confiáveis para comprar melhor e mais barato." },
-    { icon: MessageCircle, title: "Grupo de WhatsApp", tag: "Bônus 02", desc: "Comunidade exclusiva com outros alunos para trocar experiências e networking." },
-    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
-    { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
+    { icon: Truck, title: "Contato com fornecedores", tag: "Bônus 01", value: "R$ 97", desc: "Acesso direto a fornecedores confiáveis para comprar melhor e mais barato." },
+    { icon: MessageCircle, title: "Grupo de WhatsApp", tag: "Bônus 02", value: "R$ 147", desc: "Comunidade exclusiva com outros alunos para trocar experiências e networking." },
+    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", value: "R$ 67", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
+    { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", value: "R$ 250", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
   ];
   return (
     <section id="bonus" className="relative py-24">
