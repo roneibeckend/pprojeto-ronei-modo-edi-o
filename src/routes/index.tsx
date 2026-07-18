@@ -1223,7 +1223,7 @@ function LandingPage() {
       <Nav />
       <main>
         <Hero />
-        <LogosBar />
+        
         <ForYou />
         <Solution />
         <Benefits />
