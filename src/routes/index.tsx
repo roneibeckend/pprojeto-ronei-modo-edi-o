@@ -704,20 +704,20 @@ function Bonuses() {
             Materiais e vantagens extras para acelerar seus resultados desde o primeiro dia.
           </p>
         </div>
-        <div className="mt-14 grid gap-4 sm:grid-cols-2">
+        <div className="mt-10 grid gap-4 sm:mt-14 sm:grid-cols-2">
           {bonuses.map(({ icon: Icon, title, tag, value, desc }) => (
-            <div key={title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition hover:border-[color:var(--gold)]/60">
-              <div className="flex items-start justify-between gap-4">
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-[color:var(--gold)]/15 text-[color:var(--gold)]">
-                  <Icon className="h-6 w-6" />
+            <div key={title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 transition hover:border-[color:var(--gold)]/60 sm:p-6">
+              <div className="flex items-start justify-between gap-3">
+                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[color:var(--gold)]/15 text-[color:var(--gold)] sm:h-12 sm:w-12">
+                  <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
-                <span className="rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-3 py-1 text-xs font-bold text-[color:var(--gold)]">
+                <span className="shrink-0 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-2.5 py-1 text-[10px] font-bold text-[color:var(--gold)] sm:px-3 sm:text-xs">
                   {tag}
                 </span>
               </div>
-              <h3 className="mt-5 text-lg font-bold">{title}</h3>
+              <h3 className="mt-4 text-base font-bold sm:mt-5 sm:text-lg">{title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
-              <div className="mt-4 flex items-center gap-2 text-sm">
+              <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
                 <span className="text-muted-foreground line-through">De {value}</span>
                 <span className="rounded-full bg-fire px-2.5 py-0.5 text-xs font-bold text-white">GRÁTIS hoje</span>
               </div>
