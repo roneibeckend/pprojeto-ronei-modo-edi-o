@@ -40,10 +40,106 @@ import chefWorking from "@/assets/chef-working.asset.json";
 import chefPortrait from "@/assets/chef-portrait.asset.json";
 import author from "@/assets/author.asset.json";
 
+const SITE_URL = "https://sizzling-story-maker.lovable.app";
+const OG_IMAGE = `${SITE_URL}${heroChef.url}`;
+
 export const Route = createFileRoute("/")({
   component: LandingPage,
   head: () => ({
-    links: [{ rel: "canonical", href: "/" }],
+    meta: [
+      { title: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
+      {
+        name: "description",
+        content:
+          "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
+      },
+      { name: "keywords", content: "espetinho, ebook espetinho, como vender espetinho, negócio de espetinho, churrasco, renda extra, Ronnei" },
+      { name: "author", content: "Ronnei" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { property: "og:type", content: "product" },
+      { property: "og:url", content: `${SITE_URL}/` },
+      { property: "og:title", content: "Espetinho na Veia — Do Zero aos 10k" },
+      {
+        property: "og:description",
+        content:
+          "Método completo para lucrar vendendo espetinhos: carnes, temperos, brasa, precificação e vendas. 14 capítulos + bônus exclusivos.",
+      },
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:alt", content: "Chef especialista em espetinhos com espetos flamejantes" },
+      { property: "og:locale", content: "pt_BR" },
+      { property: "og:site_name", content: "Espetinho na Veia" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Espetinho na Veia — Do Zero aos 10k" },
+      {
+        name: "twitter:description",
+        content:
+          "eBook prático para montar, temperar, precificar e vender espetinhos com alto lucro. Do zero aos 10k por mês.",
+      },
+      { name: "twitter:image", content: OG_IMAGE },
+      { name: "twitter:image:alt", content: "Chef especialista em espetinhos" },
+    ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: "Espetinho na Veia — Do Zero aos 10k",
+          description:
+            "eBook com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro.",
+          image: [OG_IMAGE],
+          brand: { "@type": "Brand", name: "Espetinho na Veia" },
+          author: { "@type": "Person", name: "Ronnei" },
+          offers: {
+            "@type": "Offer",
+            url: `${SITE_URL}/#oferta`,
+            price: "47.90",
+            priceCurrency: "BRL",
+            availability: "https://schema.org/InStock",
+            itemCondition: "https://schema.org/NewCondition",
+          },
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: "4.9",
+            reviewCount: "2000",
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "Preciso ter experiência com churrasco para começar?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Não. O eBook foi feito para iniciantes: passo a passo do zero, escolha da carne, tempero, brasa e ponto certo.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Como recebo o eBook após a compra?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "O acesso é imediato por e-mail após a confirmação do pagamento, em PDF para ler no celular ou computador.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Existe garantia?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Sim. Você tem 7 dias de garantia incondicional. Se não gostar, devolvemos 100% do valor.",
+              },
+            },
+          ],
+        }),
+      },
+    ],
   }),
 });
 
