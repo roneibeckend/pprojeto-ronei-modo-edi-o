@@ -303,10 +303,7 @@ function Benefits() {
     { icon: Sparkles, title: "Temperos exclusivos", desc: "Marinadas e blends que criam um sabor inesquecível." },
     { icon: Calculator, title: "Lucro previsível", desc: "Calcule custo, margem e ponto de equilíbrio sem erro." },
     { icon: TrendingUp, title: "Venda mais", desc: "Táticas para bombar o movimento em qualquer região." },
-    { icon: Users, title: "Conquiste clientes", desc: "Atendimento e apresentação que impressionam de primeira." },
-    { icon: Heart, title: "Fidelize", desc: "Faça o cliente voltar toda semana — e trazer amigos." },
-    { icon: ClipboardList, title: "Produção organizada", desc: "Rotina, checklist e etapas para produzir com fluidez." },
-    { icon: ShieldCheck, title: "Zero desperdício", desc: "Compras, corte e estoque no ponto certo." },
+    { icon: Heart, title: "Clientes fiéis", desc: "Atendimento e sabor que fazem o cliente voltar toda semana." },
     { icon: Zap, title: "Vendas todo dia", desc: "Estratégias para não depender só do fim de semana." },
   ];
   return (
@@ -340,14 +337,16 @@ function Benefits() {
 
 function Modules() {
   const modules = [
-    { icon: BookOpen, title: "Fundamentos do negócio", desc: "Estrutura, mentalidade e primeiros passos." },
-    { icon: Beef, title: "Escolha e corte das carnes", desc: "Como comprar bem, cortar e conservar." },
-    { icon: Sparkles, title: "Temperos e marinadas", desc: "Fórmulas exclusivas para cada tipo de carne." },
-    { icon: ChefHat, title: "Preparo e ponto ideal", desc: "Técnicas de brasa e ponto perfeito." },
-    { icon: Calculator, title: "Precificação e lucro", desc: "Metodologia simples para lucrar sempre." },
-    { icon: Target, title: "Vendas e marketing local", desc: "Como atrair clientes na sua cidade." },
-    { icon: Users, title: "Atendimento premium", desc: "Transforme comprador em cliente fiel." },
-    { icon: ClipboardList, title: "Rotina e produção", desc: "Fluxo de trabalho para vender todo dia." },
+    { icon: Target, title: "Mentalidade de Quem Faz Acontecer", desc: "A base mental para começar, persistir e crescer no espetinho." },
+    { icon: DollarSign, title: "Começando com Pouco Dinheiro", desc: "Como iniciar com investimento baixo e escalar sem dor de cabeça." },
+    { icon: ClipboardList, title: "A Produção (na prática)", desc: "Fluxo real de produção, do corte à montagem dos espetos." },
+    { icon: Flame, title: "O Segredo da Brasa Perfeita", desc: "Domine o fogo, o carvão e o tempo certo para uma brasa impecável." },
+    { icon: ChefHat, title: "Escolhendo o Ponto Certo", desc: "Aprenda a acertar o ponto de cada carne — sempre." },
+    { icon: TrendingUp, title: "Vendas na Prática", desc: "Como vender todos os dias, com ou sem ponto fixo." },
+    { icon: Calculator, title: "Precificação e Lucro", desc: "Método simples para calcular custo, margem e preço final." },
+    { icon: Instagram, title: "Redes Sociais que Vendem", desc: "Como usar Instagram e WhatsApp para atrair clientes toda semana." },
+    { icon: Sparkles, title: "Da Renda Extra ao Negócio Próprio", desc: "Transforme o espetinho em uma marca lucrativa e reconhecida." },
+    { icon: BookOpen, title: "Plano de Ação: Seus Próximos 30 Dias", desc: "Roteiro dia a dia para tirar o negócio do papel neste mês." },
   ];
   return (
     <section id="modulos" className="relative py-24">
@@ -355,7 +354,7 @@ function Modules() {
         <div className="flex flex-col items-center text-center">
           <SectionTag>O que você recebe</SectionTag>
           <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
-            8 módulos <span className="text-gradient-fire">práticos e diretos</span>
+            10 módulos <span className="text-gradient-fire">práticos e diretos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
             Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
@@ -384,13 +383,10 @@ function Modules() {
 
 function Bonuses() {
   const bonuses = [
-    { icon: Calculator, title: "Calculadora de lucro", tag: "R$ 47" },
-    { icon: ClipboardList, title: "Checklist de compras", tag: "R$ 27" },
-    { icon: Truck, title: "Lista de fornecedores", tag: "R$ 67" },
-    { icon: BookOpen, title: "Planilha de custos", tag: "R$ 47" },
-    { icon: Utensils, title: "Receitas extras", tag: "R$ 37" },
-    { icon: ShieldCheck, title: "Manual de conservação", tag: "R$ 37" },
-    { icon: ChefHat, title: "Checklist de produção", tag: "R$ 27" },
+    { icon: Truck, title: "Contato com fornecedores", tag: "Bônus 01", desc: "Acesso direto a fornecedores confiáveis para comprar melhor e mais barato." },
+    { icon: MessageCircle, title: "Grupo de WhatsApp", tag: "Bônus 02", desc: "Comunidade exclusiva com outros alunos para trocar experiências e networking." },
+    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
+    { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
   ];
   return (
     <section id="bonus" className="relative py-24">
@@ -401,14 +397,14 @@ function Bonuses() {
         <div className="flex flex-col items-center text-center">
           <SectionTag>Bônus exclusivos</SectionTag>
           <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
-            Mais de <span className="text-gradient-fire">R$ 289 em bônus</span> — grátis
+            4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            Ferramentas prontas para acelerar seus resultados desde o primeiro dia.
+            Materiais e vantagens extras para acelerar seus resultados desde o primeiro dia.
           </p>
         </div>
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {bonuses.map(({ icon: Icon, title, tag }) => (
+        <div className="mt-14 grid gap-4 sm:grid-cols-2">
+          {bonuses.map(({ icon: Icon, title, tag, desc }) => (
             <div key={title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition hover:border-[color:var(--gold)]/60">
               <div className="flex items-start justify-between gap-4">
                 <div className="grid h-12 w-12 place-items-center rounded-xl bg-[color:var(--gold)]/15 text-[color:var(--gold)]">
@@ -419,9 +415,7 @@ function Bonuses() {
                 </span>
               </div>
               <h3 className="mt-5 text-lg font-bold">{title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Material prático incluído gratuitamente na sua compra hoje.
-              </p>
+              <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
             </div>
           ))}
         </div>
@@ -628,8 +622,8 @@ function Offer() {
 
             <ul className="mt-8 grid w-full max-w-md gap-2 text-left">
               {[
-                "eBook completo com 8 módulos",
-                "7 bônus (calculadora, planilhas, receitas...)",
+                "eBook completo com 10 módulos",
+                "4 bônus exclusivos (fornecedores, grupo VIP, certificado e sorteio)",
                 "Acesso imediato após o pagamento",
                 "Garantia incondicional de 7 dias",
               ].map((t) => (
@@ -786,14 +780,11 @@ function LandingPage() {
       <main>
         <Hero />
         <LogosBar />
-        <Pain />
         <Solution />
         <Benefits />
         <Modules />
         <Bonuses />
-        <Results />
         <Author />
-        <Testimonials />
         <Guarantee />
         <Offer />
         <FAQ />
