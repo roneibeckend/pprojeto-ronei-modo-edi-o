@@ -340,14 +340,16 @@ function Benefits() {
 
 function Modules() {
   const modules = [
-    { icon: BookOpen, title: "Fundamentos do negócio", desc: "Estrutura, mentalidade e primeiros passos." },
-    { icon: Beef, title: "Escolha e corte das carnes", desc: "Como comprar bem, cortar e conservar." },
-    { icon: Sparkles, title: "Temperos e marinadas", desc: "Fórmulas exclusivas para cada tipo de carne." },
-    { icon: ChefHat, title: "Preparo e ponto ideal", desc: "Técnicas de brasa e ponto perfeito." },
-    { icon: Calculator, title: "Precificação e lucro", desc: "Metodologia simples para lucrar sempre." },
-    { icon: Target, title: "Vendas e marketing local", desc: "Como atrair clientes na sua cidade." },
-    { icon: Users, title: "Atendimento premium", desc: "Transforme comprador em cliente fiel." },
-    { icon: ClipboardList, title: "Rotina e produção", desc: "Fluxo de trabalho para vender todo dia." },
+    { icon: Target, title: "Mentalidade de Quem Faz Acontecer", desc: "A base mental para começar, persistir e crescer no espetinho." },
+    { icon: DollarSign, title: "Começando com Pouco Dinheiro", desc: "Como iniciar com investimento baixo e escalar sem dor de cabeça." },
+    { icon: ClipboardList, title: "A Produção (na prática)", desc: "Fluxo real de produção, do corte à montagem dos espetos." },
+    { icon: Flame, title: "O Segredo da Brasa Perfeita", desc: "Domine o fogo, o carvão e o tempo certo para uma brasa impecável." },
+    { icon: ChefHat, title: "Escolhendo o Ponto Certo", desc: "Aprenda a acertar o ponto de cada carne — sempre." },
+    { icon: TrendingUp, title: "Vendas na Prática", desc: "Como vender todos os dias, com ou sem ponto fixo." },
+    { icon: Calculator, title: "Precificação e Lucro", desc: "Método simples para calcular custo, margem e preço final." },
+    { icon: Instagram, title: "Redes Sociais que Vendem", desc: "Como usar Instagram e WhatsApp para atrair clientes toda semana." },
+    { icon: Sparkles, title: "Da Renda Extra ao Negócio Próprio", desc: "Transforme o espetinho em uma marca lucrativa e reconhecida." },
+    { icon: BookOpen, title: "Plano de Ação: Seus Próximos 30 Dias", desc: "Roteiro dia a dia para tirar o negócio do papel neste mês." },
   ];
   return (
     <section id="modulos" className="relative py-24">
@@ -355,7 +357,7 @@ function Modules() {
         <div className="flex flex-col items-center text-center">
           <SectionTag>O que você recebe</SectionTag>
           <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
-            8 módulos <span className="text-gradient-fire">práticos e diretos</span>
+            10 módulos <span className="text-gradient-fire">práticos e diretos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
             Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
