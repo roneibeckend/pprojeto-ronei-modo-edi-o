@@ -336,16 +336,21 @@ function Benefits() {
 
 function Modules() {
   const modules = [
-    { icon: Target, title: "Mentalidade de Quem Faz Acontecer", desc: "A base mental para começar, persistir e crescer no espetinho." },
-    { icon: DollarSign, title: "Começando com Pouco Dinheiro", desc: "Como iniciar com investimento baixo e escalar sem dor de cabeça." },
-    { icon: ClipboardList, title: "A Produção (na prática)", desc: "Fluxo real de produção, do corte à montagem dos espetos." },
-    { icon: Flame, title: "O Segredo da Brasa Perfeita", desc: "Domine o fogo, o carvão e o tempo certo para uma brasa impecável." },
-    { icon: ChefHat, title: "Escolhendo o Ponto Certo", desc: "Aprenda a acertar o ponto de cada carne — sempre." },
-    { icon: TrendingUp, title: "Vendas na Prática", desc: "Como vender todos os dias, com ou sem ponto fixo." },
-    { icon: Calculator, title: "Precificação e Lucro", desc: "Método simples para calcular custo, margem e preço final." },
-    { icon: Instagram, title: "Redes Sociais que Vendem", desc: "Como usar Instagram e WhatsApp para atrair clientes toda semana." },
-    { icon: Sparkles, title: "Da Renda Extra ao Negócio Próprio", desc: "Transforme o espetinho em uma marca lucrativa e reconhecida." },
-    { icon: BookOpen, title: "Plano de Ação: Seus Próximos 30 Dias", desc: "Roteiro dia a dia para tirar o negócio do papel neste mês." },
+    { icon: BookOpen, title: "A história por trás do Espetinho na Veia", desc: "A trajetória real que deu origem ao método." },
+    { icon: TrendingUp, title: "Por que espetinho é um dos negócios mais lucrativos da rua", desc: "Entenda o potencial desse mercado bilionário." },
+    { icon: DollarSign, title: "Quanto dá para ganhar vendendo espetinhos", desc: "Números reais de faturamento e margem." },
+    { icon: Target, title: "O que você precisa para começar do zero", desc: "Estrutura, equipamentos e investimento inicial." },
+    { icon: Flame, title: "Os espetinhos que mais vendem", desc: "Os campeões de venda que não podem faltar no seu cardápio." },
+    { icon: ChefHat, title: "Como escolher a carne certa para lucrar mais", desc: "Cortes ideais, onde comprar e como economizar." },
+    { icon: ClipboardList, title: "Como montar o espetinho perfeito", desc: "Técnica de montagem para padrão profissional." },
+    { icon: Sparkles, title: "O segredo do tempero simples e saboroso", desc: "A fórmula de tempero que fideliza clientes." },
+    { icon: Calculator, title: "Como assar espetinhos do jeito certo", desc: "Domine a brasa, o ponto e o tempo de cada carne." },
+    { icon: Target, title: "Os melhores lugares para vender espetinhos", desc: "Onde e como se posicionar para vender todo dia." },
+    { icon: TrendingUp, title: "Estratégias simples para vender muito mais", desc: "Táticas práticas para escalar suas vendas." },
+    { icon: Award, title: "Os erros que fazem muitos desistirem do negócio", desc: "O que evitar para não perder tempo e dinheiro." },
+    { icon: DollarSign, title: "O caminho para chegar aos 10k por mês", desc: "Passo a passo para alcançar o primeiro grande resultado." },
+    { icon: Instagram, title: "Próximos passos para crescer ainda mais", desc: "Como transformar o espetinho em uma marca sólida." },
+    { icon: MessageCircle, title: "Mensagem final para você dar o próximo passo", desc: "O empurrão final para agir hoje mesmo." },
   ];
   return (
     <section id="modulos" className="relative py-24">
