@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
 import {
   Flame,
   Check,
@@ -27,6 +29,10 @@ import {
   Utensils,
   Target,
   Heart,
+  Loader2,
+  CheckCircle2,
+  User,
+  Phone,
 } from "lucide-react";
 
 import heroChef from "@/assets/hero-chef.asset.json";
