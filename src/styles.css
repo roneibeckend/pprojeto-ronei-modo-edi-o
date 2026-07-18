@@ -34,7 +34,7 @@
   --color-flame: var(--flame);
   --color-gold: var(--gold);
   --color-charcoal: var(--charcoal);
-  --font-display: "Anton", "Impact", sans-serif;
+  --font-display: "Oswald", "Inter", system-ui, sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
 }
 
