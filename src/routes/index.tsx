@@ -448,30 +448,30 @@ function Nav() {
 
 function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
+    <section id="top" className="relative overflow-hidden pt-24 pb-14 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28">
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/20 blur-3xl" />
+        <div className="absolute left-1/2 top-0 h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/20 blur-3xl sm:h-[500px] sm:w-[900px]" />
       </div>
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2">
         <div className="flex flex-col items-start">
           <SectionTag>Método completo · edição 2026</SectionTag>
-          <h1 className="mt-6 text-4xl font-black leading-[0.95] sm:text-6xl md:text-7xl">
+          <h1 className="mt-5 h-fluid-hero font-black sm:mt-6">
             Lucre até <span className="text-gradient-fire">R$ 300 por dia</span> vendendo espetinhos — começando do zero
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+          <p className="mt-5 max-w-xl text-fluid-lead text-muted-foreground sm:mt-6">
             O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
             <CTAButton size="xl">
               Quero começar agora <ArrowRight className="h-5 w-5" />
             </CTAButton>
-            <a href="#beneficios" className="btn-ghost-fire">
+            <a href="#beneficios" className="btn-ghost-fire w-full sm:w-auto">
               Ver o que aprendo
             </a>
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
+          <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground sm:mt-8 sm:gap-x-6 sm:gap-y-3 sm:text-sm">
             <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[color:var(--gold)]" /> Garantia 7 dias</span>
             <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-[color:var(--gold)]" /> Acesso imediato</span>
             <span className="flex items-center gap-2"><Lock className="h-4 w-4 text-[color:var(--gold)]" /> Pagamento seguro</span>
@@ -499,22 +499,22 @@ function Hero() {
           </div>
         </div>
 
-        <div className="relative">
-          <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
-          <div className="glass relative overflow-hidden rounded-[2rem] p-2 shadow-fire animate-float">
+        <div className="relative order-first lg:order-last">
+          <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow sm:-inset-6" />
+          <div className="glass relative overflow-hidden rounded-[1.5rem] p-1.5 shadow-fire animate-float sm:rounded-[2rem] sm:p-2">
             <img
               src={heroChef.url}
               alt="Chef especialista em espetinhos com espetos flamejantes"
-              className="h-[520px] w-full rounded-[1.75rem] object-cover"
+              className="h-[300px] w-full rounded-[1.25rem] object-cover sm:h-[420px] sm:rounded-[1.75rem] lg:h-[520px]"
               loading="eager"
               fetchPriority="high"
             />
-            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl border border-white/10 bg-black/50 p-4 backdrop-blur-xl">
-              <div>
-                <div className="text-xs uppercase tracking-widest text-[color:var(--gold)]">eBook Digital</div>
-                <div className="font-display text-2xl leading-tight">Espetinho na Veia<div className="text-xs font-semibold tracking-wider text-[color:var(--gold)]">Do Zero aos 10k</div></div>
+            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/50 p-3 backdrop-blur-xl sm:bottom-6 sm:left-6 sm:right-6 sm:rounded-2xl sm:p-4">
+              <div className="min-w-0">
+                <div className="text-[10px] uppercase tracking-widest text-[color:var(--gold)] sm:text-xs">eBook Digital</div>
+                <div className="font-display text-lg leading-tight sm:text-2xl">Espetinho na Veia<div className="text-[10px] font-semibold tracking-wider text-[color:var(--gold)] sm:text-xs">Do Zero aos 10k</div></div>
               </div>
-              <div className="rounded-full bg-fire px-3 py-1 text-xs font-bold shadow-fire">+30 páginas</div>
+              <div className="shrink-0 rounded-full bg-fire px-2.5 py-1 text-[10px] font-bold shadow-fire sm:px-3 sm:text-xs">+30 páginas</div>
             </div>
           </div>
         </div>
