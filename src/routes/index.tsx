@@ -298,12 +298,12 @@ function Solution() {
 
 function Benefits() {
   const items = [
-    { icon: Beef, title: "Carnes certas", desc: "Aprenda a escolher os melhores cortes pelo custo-benefício." },
-    { icon: Sparkles, title: "Temperos exclusivos", desc: "Marinadas e blends que criam um sabor inesquecível." },
-    { icon: Calculator, title: "Lucro previsível", desc: "Calcule custo, margem e ponto de equilíbrio sem erro." },
-    { icon: TrendingUp, title: "Venda mais", desc: "Táticas para bombar o movimento em qualquer região." },
-    { icon: Heart, title: "Clientes fiéis", desc: "Atendimento e sabor que fazem o cliente voltar toda semana." },
-    { icon: Zap, title: "Vendas todo dia", desc: "Estratégias para não depender só do fim de semana." },
+    { icon: DollarSign, title: "Até 300% de margem", desc: "Aprenda a precificar cada espeto para lucrar de verdade, sem trabalhar de graça." },
+    { icon: Beef, title: "Carne que rende mais", desc: "Cortes certos, quantidade certa por espeto e menos desperdício no fim do dia." },
+    { icon: Flame, title: "Ponto e brasa perfeitos", desc: "O segredo do ponto suculento que faz o cliente voltar e indicar pra todo mundo." },
+    { icon: Sparkles, title: "Tempero que fideliza", desc: "A marinada da casa que transforma espeto comum em 'o melhor da região'." },
+    { icon: Users, title: "Fila no seu ponto", desc: "Onde montar, como atrair e como fazer o movimento não parar nem em dia de semana." },
+    { icon: TrendingUp, title: "Do carrinho ao trailer", desc: "Passo a passo real para escalar de renda extra a negócio de 10k por mês." },
   ];
   return (
     <section id="beneficios" className="relative py-20">
@@ -311,7 +311,7 @@ function Benefits() {
         <div className="flex flex-col items-center text-center">
           <SectionTag>Benefícios</SectionTag>
           <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
-            O que vai <span className="text-gradient-fire">mudar no seu negócio</span>
+            O que vai <span className="text-gradient-fire">mudar no seu bolso</span>
           </h2>
         </div>
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
