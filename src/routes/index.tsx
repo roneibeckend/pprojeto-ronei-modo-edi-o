@@ -936,7 +936,7 @@ function Offer() {
         <div className="absolute left-1/2 top-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[color:var(--ember)]/25 blur-3xl" />
       </div>
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-[2rem] border border-[color:var(--ember)]/40 bg-card p-8 shadow-fire sm:p-12">
+        <div className="relative overflow-hidden rounded-[1.5rem] border border-[color:var(--ember)]/40 bg-card p-6 shadow-fire sm:rounded-[2rem] sm:p-12">
           <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-fire opacity-20 blur-3xl" />
           <div className="flex flex-col items-center text-center">
             <span className="inline-flex items-center gap-2 rounded-full bg-fire px-4 py-1.5 text-xs font-black uppercase tracking-widest text-white shadow-fire animate-flicker">
@@ -950,7 +950,7 @@ function Offer() {
               <div className="text-sm text-muted-foreground line-through">De R$ 197,00</div>
               <div className="flex items-end gap-2">
                 <span className="text-lg font-bold text-[color:var(--gold)]">R$</span>
-                <span className="font-display text-7xl leading-none text-gradient-fire sm:text-8xl">47</span>
+                <span className="font-display text-6xl leading-none text-gradient-fire sm:text-8xl">47</span>
                 <span className="mb-2 text-lg font-bold text-[color:var(--gold)]">,90</span>
               </div>
               <div className="text-sm text-muted-foreground">
@@ -1036,7 +1036,7 @@ function FinalCTA() {
   return (
     <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-[2rem] p-10 text-center sm:p-16">
+        <div className="relative overflow-hidden rounded-[1.5rem] p-6 text-center sm:rounded-[2rem] sm:p-16">
           <img
             src={skewersFlat.url}
             alt=""
