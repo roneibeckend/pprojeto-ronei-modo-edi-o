@@ -400,14 +400,14 @@ function Bonuses() {
         <div className="flex flex-col items-center text-center">
           <SectionTag>Bônus exclusivos</SectionTag>
           <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
-            Mais de <span className="text-gradient-fire">R$ 289 em bônus</span> — grátis
+            4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            Ferramentas prontas para acelerar seus resultados desde o primeiro dia.
+            Materiais e vantagens extras para acelerar seus resultados desde o primeiro dia.
           </p>
         </div>
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {bonuses.map(({ icon: Icon, title, tag }) => (
+        <div className="mt-14 grid gap-4 sm:grid-cols-2">
+          {bonuses.map(({ icon: Icon, title, tag, desc }) => (
             <div key={title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition hover:border-[color:var(--gold)]/60">
               <div className="flex items-start justify-between gap-4">
                 <div className="grid h-12 w-12 place-items-center rounded-xl bg-[color:var(--gold)]/15 text-[color:var(--gold)]">
@@ -418,9 +418,7 @@ function Bonuses() {
                 </span>
               </div>
               <h3 className="mt-5 text-lg font-bold">{title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Material prático incluído gratuitamente na sua compra hoje.
-              </p>
+              <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
             </div>
           ))}
         </div>
