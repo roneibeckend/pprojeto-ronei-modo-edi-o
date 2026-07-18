@@ -350,7 +350,6 @@ function Modules() {
     { icon: Award, title: "Os erros que fazem muitos desistirem do negócio", desc: "O que evitar para não perder tempo e dinheiro." },
     { icon: DollarSign, title: "O caminho para chegar aos 10k por mês", desc: "Passo a passo para alcançar o primeiro grande resultado." },
     { icon: Instagram, title: "Próximos passos para crescer ainda mais", desc: "Como transformar o espetinho em uma marca sólida." },
-    { icon: MessageCircle, title: "Mensagem final para você dar o próximo passo", desc: "O empurrão final para agir hoje mesmo." },
   ];
   return (
     <section id="modulos" className="relative py-24">
