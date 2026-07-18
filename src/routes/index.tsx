@@ -1204,13 +1204,13 @@ function LandingPage() {
         <Hero />
         
         <ForYou />
-        <Solution />
         <Benefits />
         <Modules />
         <Offer />
         <Author />
         <Guarantee />
         <Bonuses />
+        <Solution />
         <FAQ />
         <FinalCTA />
       </main>
