@@ -554,11 +554,11 @@ function Pain() {
     { icon: Heart, title: "Medo de investir", desc: "Trava por não ter um método claro passo a passo." },
   ];
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>O problema</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             Você já se viu <span className="text-gradient-fire">preso em algum destes erros?</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
@@ -583,19 +583,19 @@ function Pain() {
 
 function Solution() {
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
         <div className="relative">
           <div className="grid grid-cols-2 gap-4">
-            <img src={platter1.url} alt="Tábua premium de espetinhos variados" className="h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
-            <img src={skewersHeld.url} alt="Espetinhos suculentos" className="mt-8 h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
-            <img src={ribeye.url} alt="Corte nobre bovino" className="h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
-            <img src={platter2.url} alt="Espetinhos servidos" className="mt-8 h-64 w-full rounded-2xl object-cover shadow-fire" loading="lazy" />
+            <img src={platter1.url} alt="Tábua premium de espetinhos variados" className="h-44 w-full rounded-2xl sm:h-64 object-cover shadow-fire" loading="lazy" />
+            <img src={skewersHeld.url} alt="Espetinhos suculentos" className="mt-8 h-44 w-full rounded-2xl sm:h-64 object-cover shadow-fire" loading="lazy" />
+            <img src={ribeye.url} alt="Corte nobre bovino" className="h-44 w-full rounded-2xl sm:h-64 object-cover shadow-fire" loading="lazy" />
+            <img src={platter2.url} alt="Espetinhos servidos" className="mt-8 h-44 w-full rounded-2xl sm:h-64 object-cover shadow-fire" loading="lazy" />
           </div>
         </div>
         <div>
           <SectionTag>A solução</SectionTag>
-          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 h-fluid-h2 font-black">
             Um método <span className="text-gradient-fire">testado na brasa</span>, feito para quem quer resultado.
           </h2>
           <p className="mt-5 text-lg text-muted-foreground">
@@ -637,11 +637,11 @@ function Benefits() {
     { icon: TrendingUp, title: "Do carrinho ao trailer", desc: "Passo a passo real para escalar de renda extra a negócio de 10k por mês." },
   ];
   return (
-    <section id="beneficios" className="relative py-20">
+    <section id="beneficios" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Benefícios</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             O que vai <span className="text-gradient-fire">mudar no seu bolso</span>
           </h2>
         </div>
@@ -683,11 +683,11 @@ function Modules() {
     { icon: Instagram, title: "Próximos passos para crescer ainda mais", desc: "Como transformar o espetinho em uma marca sólida." },
   ];
   return (
-    <section id="modulos" className="relative py-20">
+    <section id="modulos" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>O que você recebe</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             14 capítulos <span className="text-gradient-fire">práticos e diretos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
@@ -723,14 +723,14 @@ function Bonuses() {
     { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", value: "R$ 250", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
   ];
   return (
-    <section id="bonus" className="relative py-20">
+    <section id="bonus" className="relative py-14 sm:py-20">
       <div className="pointer-events-none absolute inset-0 -z-10 opacity-30">
         <div className="absolute right-0 top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-[color:var(--flame)]/40 blur-3xl" />
       </div>
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Bônus exclusivos</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
@@ -766,11 +766,11 @@ function Results() {
   const before = ["Sem saber qual carne comprar", "Preços no chute", "Cliente esporádico", "Estresse na produção", "Lucro apertado"];
   const after = ["Carnes escolhidas com estratégia", "Preços com margem garantida", "Cliente fiel toda semana", "Rotina fluida e organizada", "Lucro previsível e crescente"];
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Transformação</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             Do improviso para o <span className="text-gradient-fire">negócio de verdade</span>
           </h2>
         </div>
@@ -813,20 +813,20 @@ function Results() {
 
 function Author() {
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
         <div className="relative">
           <div className="absolute -inset-4 -z-10 rounded-3xl bg-fire opacity-25 blur-2xl" />
           <img
             src={chefWorking.url}
             alt="Autor no dia a dia da grelha"
-            className="h-[500px] w-full rounded-3xl object-cover shadow-fire"
+            className="h-[320px] w-full rounded-3xl sm:h-[500px] object-cover shadow-fire"
             loading="lazy"
           />
         </div>
         <div>
           <SectionTag>Quem escreveu</SectionTag>
-          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 h-fluid-h2 font-black">
             Um método <span className="text-gradient-fire">nascido na brasa</span>
           </h2>
           <p className="mt-5 text-lg text-muted-foreground">
@@ -873,11 +873,11 @@ function Testimonials() {
     },
   ];
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Depoimentos ilustrativos</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             O que dizem <span className="text-gradient-fire">os leitores</span>
           </h2>
           <p className="mt-3 max-w-2xl text-xs uppercase tracking-widest text-muted-foreground">
@@ -910,13 +910,13 @@ function Testimonials() {
 
 function Guarantee() {
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[color:var(--gold)]/10 via-transparent to-[color:var(--ember)]/10 p-10 text-center shadow-fire">
           <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-fire shadow-fire animate-pulse-glow">
             <Award className="h-12 w-12 text-white" />
           </div>
-          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 h-fluid-h2 font-black">
             Garantia <span className="text-gradient-fire">incondicional de 7 dias</span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -931,7 +931,7 @@ function Guarantee() {
 
 function Offer() {
   return (
-    <section id="oferta" className="relative py-20">
+    <section id="oferta" className="relative py-14 sm:py-20">
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[color:var(--ember)]/25 blur-3xl" />
       </div>
@@ -942,7 +942,7 @@ function Offer() {
             <span className="inline-flex items-center gap-2 rounded-full bg-fire px-4 py-1.5 text-xs font-black uppercase tracking-widest text-white shadow-fire animate-flicker">
               <Flame className="h-3.5 w-3.5" /> Oferta por tempo limitado
             </span>
-            <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+            <h2 className="mt-6 h-fluid-h2 font-black">
               Comece hoje por <span className="text-gradient-fire">menos que um espetinho por dia</span>
             </h2>
 
@@ -1005,11 +1005,11 @@ function FAQ() {
     { q: "Funciona também para delivery?", a: "Sim. Tem estratégias específicas para venda por WhatsApp, iFood e delivery próprio, além do ponto físico." },
   ];
   return (
-    <section id="faq" className="relative py-20">
+    <section id="faq" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Perguntas frequentes</SectionTag>
-          <h2 className="mt-6 text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 h-fluid-h2 font-black">
             Tirando suas <span className="text-gradient-fire">últimas dúvidas</span>
           </h2>
         </div>
@@ -1034,7 +1034,7 @@ function FAQ() {
 
 function FinalCTA() {
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="relative overflow-hidden rounded-[2rem] p-10 text-center sm:p-16">
           <img
@@ -1046,7 +1046,7 @@ function FinalCTA() {
           />
           <div className="absolute inset-0 -z-10 bg-gradient-to-br from-background/90 via-background/80 to-[color:var(--ember)]/50" />
           <SectionTag>Última chamada</SectionTag>
-          <h2 className="mx-auto mt-6 max-w-3xl text-4xl font-black sm:text-6xl">
+          <h2 className="mx-auto mt-6 max-w-3xl h-fluid-h2 font-black">
             A brasa está pronta. <br />
             <span className="text-gradient-fire">Falta só você acender o fogo.</span>
           </h2>
@@ -1120,11 +1120,11 @@ function ForYou() {
     "Sonha em ter o próprio negócio para chamar de seu",
   ];
   return (
-    <section className="relative py-20">
+    <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Isso é pra você se…</SectionTag>
-          <h2 className="mt-6 max-w-3xl text-4xl font-black sm:text-5xl">
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             Se você se <span className="text-gradient-fire">identifica com um destes</span>, o eBook é pra você
           </h2>
         </div>
