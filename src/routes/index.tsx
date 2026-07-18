@@ -630,7 +630,7 @@ function Offer() {
 
             <ul className="mt-8 grid w-full max-w-md gap-2 text-left">
               {[
-                "eBook completo com 10 módulos",
+                "eBook completo com 15 capítulos (+30 páginas)",
                 "4 bônus exclusivos (fornecedores, grupo VIP, certificado e sorteio)",
                 "Acesso imediato após o pagamento",
                 "Garantia incondicional de 7 dias",
