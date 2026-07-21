@@ -602,12 +602,18 @@ function Hero() {
           </span>
         </Reveal>
 
-        <Reveal variant="blur" delay={1} as="h1" className="mt-4 h-fluid-hero font-black">
-          Lucre até <span className="animated-fire-text">R$ 300 por dia</span> vendendo espetinhos — começando do zero
+        <Reveal variant="blur" delay={1} as="h1" className="mt-4 text-3xl font-black leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl">
+          Do zero ao <span className="animated-fire-text">próprio negócio</span> de espetinhos
         </Reveal>
         <Reveal variant="up" delay={2} as="p" className="mt-3 max-w-2xl text-fluid-lead text-muted-foreground sm:mt-4">
           O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
         </Reveal>
+
+        <Reveal variant="up" delay={2} className="mt-4 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-4 py-1.5 text-xs font-semibold text-[color:var(--gold)] sm:text-sm">
+          <Flame className="h-4 w-4" />
+          Lucre até <span className="text-foreground">R$ 300 por dia</span> aplicando o método
+        </Reveal>
+
 
         {/* Compact video trigger */}
         <Reveal variant="scale" delay={3} className="mt-6 w-full sm:mt-7">
