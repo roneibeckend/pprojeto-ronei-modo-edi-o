@@ -590,17 +590,20 @@ function Hero() {
             </span>
           </Reveal>
 
-          {/* Mobile-only hero image (below badge) */}
+          {/* Mobile-only hero video (below badge) */}
           <Reveal variant="scale" delay={1} className="relative mt-5 w-full lg:hidden">
             <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
-            <div className="glass relative overflow-hidden rounded-[1.5rem] p-1.5 shadow-fire animate-float">
-              <img
-                src={heroChef.url}
-                alt="Chef especialista em espetinhos com espetos flamejantes"
-                className="h-[300px] w-full rounded-[1.25rem] object-cover sm:h-[420px]"
-                loading="eager"
-                fetchPriority="high"
-              />
+            <div className="glass relative overflow-hidden rounded-[1.5rem] p-1.5 shadow-fire">
+              <div className="relative aspect-[9/16] w-full overflow-hidden rounded-[1.25rem] bg-background sm:aspect-video">
+                <iframe
+                  src="https://www.youtube.com/embed/vYBqd2V-bO8?rel=0&modestbranding=1&playsinline=1"
+                  title="Ronnei — A história por trás do Espetos Grill"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute inset-0 h-full w-full"
+                />
+              </div>
             </div>
           </Reveal>
 
