@@ -1828,6 +1828,7 @@ function LandingPage() {
         <Benefits />
         <Modules />
         <AuthorSolution />
+        <SocialProof />
         <Bonuses />
         <Offer />
         <FAQ />
