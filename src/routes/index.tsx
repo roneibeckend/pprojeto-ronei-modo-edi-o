@@ -328,7 +328,7 @@ function CheckoutButton({ className = "" }: { className?: string }) {
       onClick={handleClick}
       disabled={loading}
       aria-busy={loading}
-      className={`btn-fire !text-lg !px-10 !py-5 w-full max-w-md disabled:opacity-80 disabled:cursor-wait ${className}`}
+      className={`btn-fire shine-on-hover !text-lg !px-10 !py-5 w-full max-w-md disabled:opacity-80 disabled:cursor-wait ${className}`}
     >
       {loading ? (
         <>
