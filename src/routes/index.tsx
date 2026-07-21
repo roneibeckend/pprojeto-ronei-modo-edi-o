@@ -187,8 +187,7 @@ function Reveal({
     "data-reveal": "",
   };
   if (delay) props["data-reveal-delay"] = String(delay);
-  // @ts-expect-error dynamic tag
-  return <Tag {...props}>{children}</Tag>;
+  return <Tag {...(props as Record<string, unknown>)}>{children}</Tag>;
 }
 
 function ScrollProgress() {
