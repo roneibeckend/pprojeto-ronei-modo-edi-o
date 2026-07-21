@@ -555,7 +555,7 @@ function Nav() {
             alt="Espetinho na Veia — Do Zero aos 10k"
             width={40}
             height={40}
-            className="h-10 w-10 shrink-0 rounded-full ring-1 ring-[color:var(--gold)]/40 shadow-fire"
+            className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_12px_oklch(0.72_0.20_50/0.55)]"
           />
           <span className="truncate font-display text-base tracking-wide sm:text-xl">
             ESPETINHO <span className="text-gradient-fire">NA VEIA</span>
