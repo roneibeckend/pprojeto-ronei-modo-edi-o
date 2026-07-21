@@ -657,11 +657,11 @@ function Hero() {
           </Reveal>
 
           {/* CTAs on the right */}
-          <Reveal variant="up" delay={4} className="flex w-full flex-col items-stretch gap-3 sm:max-w-sm sm:mx-auto lg:mx-0 lg:max-w-xs lg:items-start lg:justify-self-start">
-            <CTAButton size="lg" className="w-full justify-center">
+          <Reveal variant="up" delay={4} className="flex w-full flex-col items-stretch gap-3 sm:max-w-sm sm:mx-auto lg:mx-0 lg:max-w-xs lg:items-stretch lg:justify-self-start">
+            <CTAButton size="lg" className="w-full justify-center !text-base !font-bold lg:min-h-[56px]">
               Quero começar agora
             </CTAButton>
-            <a href="#beneficios" className="btn-ghost-fire w-full justify-center text-center">
+            <a href="#beneficios" className="btn-ghost-fire w-full justify-center text-center !text-base !font-bold lg:min-h-[56px]">
               Ver o que aprendo
             </a>
           </Reveal>
