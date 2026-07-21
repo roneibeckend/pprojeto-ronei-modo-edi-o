@@ -603,7 +603,7 @@ function Hero() {
         </Reveal>
 
         <Reveal variant="blur" delay={1} as="h1" className="mt-4 text-3xl font-black leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl">
-          Do zero ao <span className="animated-fire-text">próprio negócio</span> de espetinhos
+          Do zero ao <span className="animated-fire-text">próprio negócio</span>
         </Reveal>
         <Reveal variant="up" delay={2} as="p" className="mt-3 max-w-2xl text-fluid-lead text-muted-foreground sm:mt-4">
           O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
