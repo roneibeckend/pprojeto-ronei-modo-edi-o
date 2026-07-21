@@ -1966,6 +1966,7 @@ function LandingPage() {
 
         <ForYou />
         <Benefits />
+        <ProfitCalculator />
         <Modules />
         <AuthorSolution />
         <SocialProof />
