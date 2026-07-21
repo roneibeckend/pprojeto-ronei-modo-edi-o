@@ -649,13 +649,27 @@ function Hero() {
 
         <Reveal variant="right" delay={2} className="relative hidden lg:block">
           <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
-          <div className="glass gradient-border relative overflow-hidden rounded-[2rem] p-2 shadow-fire animate-float">
-            <img
-              src={heroChef.url}
-              alt="Chef especialista em espetinhos com espetos flamejantes"
-              className="h-[520px] w-full rounded-[1.75rem] object-cover"
-              loading="eager"
-            />
+          <div className="glass gradient-border relative overflow-hidden rounded-[2rem] p-2 shadow-fire">
+            <div className="relative aspect-video w-full overflow-hidden rounded-[1.75rem] bg-background">
+              <iframe
+                src="https://www.youtube.com/embed/vYBqd2V-bO8?rel=0&modestbranding=1&playsinline=1"
+                title="Ronnei — A história por trás do Espetos Grill"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="absolute inset-0 h-full w-full"
+              />
+            </div>
+            <div className="mt-2 flex items-center justify-between px-3 pb-1 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--flame)]" />
+                </span>
+                Assista à história do Ronnei
+              </span>
+              <span className="font-semibold text-[color:var(--gold)]">2 min</span>
+            </div>
           </div>
         </Reveal>
       </div>
