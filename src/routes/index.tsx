@@ -1954,7 +1954,7 @@ function LeadPopup() {
     if (typeof window === "undefined") return;
     if (sessionStorage.getItem("espetinho_lead_popup_dismissed") === "1") return;
     if (localStorage.getItem("espetinho_leads")) return;
-    const t = setTimeout(() => setOpen(true), 60_000);
+    const t = setTimeout(() => setOpen(true), 300_000);
     return () => clearTimeout(t);
   }, []);
 
