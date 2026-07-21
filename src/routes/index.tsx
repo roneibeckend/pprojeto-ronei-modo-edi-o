@@ -1725,20 +1725,25 @@ function ForYou() {
   ];
   return (
     <section className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Isso é pra você se…</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             Se você se <span className="text-gradient-fire">identifica com um destes</span>, o eBook é pra você
           </h2>
         </div>
-        <div className="mt-12 grid gap-3 sm:grid-cols-2">
-          {items.map((t) => (
-            <div key={t} className="glass flex items-start gap-3 rounded-2xl p-5">
-              <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-fire">
-                <Check className="h-3.5 w-3.5 text-white" />
-              </span>
-              <span className="text-base">{t}</span>
+        <div className="mt-12 flex flex-col gap-3">
+          {items.map((t, i) => (
+            <div
+              key={t}
+              className="group flex items-start gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm transition-all hover:border-white/20 hover:bg-white/[0.06]"
+            >
+              <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] transition-colors group-hover:border-[color:var(--gold)]/40">
+                <span className="font-mono text-[11px] tracking-widest text-muted-foreground group-hover:text-[color:var(--gold)]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+              </div>
+              <span className="text-base leading-relaxed text-foreground/90 sm:text-lg">{t}</span>
             </div>
           ))}
         </div>
