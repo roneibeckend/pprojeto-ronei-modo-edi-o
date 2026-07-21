@@ -1285,7 +1285,7 @@ function Bonuses() {
             </div>
             <div className="mt-2 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
               <span className="font-display text-3xl font-black text-muted-foreground/80 line-through decoration-[color:var(--ember)]/60 decoration-2 sm:text-4xl">
-                R$ 561,00
+                R$ 150,00
               </span>
               <span className="rounded-full bg-fire px-3 py-1 text-xs font-black uppercase tracking-widest text-white shadow-fire">
                 GRÁTIS hoje
