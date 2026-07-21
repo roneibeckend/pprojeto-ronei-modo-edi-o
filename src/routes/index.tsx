@@ -993,8 +993,8 @@ function ProfitCalculator() {
     n.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 
   return (
-    <section id="calculadora" className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+    <section id="calculadora" className="relative py-10 sm:py-14">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Simulador · quanto você pode faturar</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
