@@ -2136,14 +2136,17 @@ function LandingPage() {
         <Hero />
 
         <ForYou />
+        <Objection />
         <Benefits />
         <ProfitCalculator />
         <AuthorSolution />
         <SocialProof />
         <Bonuses />
         <Modules />
+        <NotForYou />
         <Offer />
         <FAQ />
+
 
       </main>
       <Footer />
