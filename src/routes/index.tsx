@@ -573,7 +573,7 @@ function Hero() {
         <div className="absolute left-1/2 top-0 h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/25 blur-3xl sm:h-[520px] sm:w-[960px] animate-pulse-glow" />
         <div className="absolute right-0 top-40 h-[280px] w-[280px] rounded-full bg-[color:var(--gold)]/15 blur-3xl" />
       </div>
-      <Embers />
+      
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2">
         <div className="flex flex-col items-start">
           <Reveal variant="clip">
