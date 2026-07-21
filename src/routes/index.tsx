@@ -1486,13 +1486,28 @@ function Offer() {
               ))}
             </ul>
 
-            <div className="mt-8">
-              <CheckoutButton />
+            {/* Countdown */}
+            <div className="mt-7 rounded-2xl border border-[color:var(--ember)]/25 bg-[color:var(--ember)]/[0.05] p-4">
+              <div className="mb-2.5 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[color:var(--ember)]">
+                <Clock className="h-3 w-3" />
+                Promoção termina em
+              </div>
+              <Countdown target={new Date("2026-08-29T23:59:59-03:00")} />
+              <p className="mt-2.5 text-center text-[11px] text-muted-foreground">
+                Depois de <strong className="text-foreground">29/08</strong>, o preço volta para R$ 197,00.
+              </p>
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-white/5 pt-5 text-[11px] uppercase tracking-widest text-muted-foreground">
-              <span className="flex items-center gap-1.5"><Lock className="h-3 w-3" /> Compra segura</span>
-              <span className="flex items-center gap-1.5"><Clock className="h-3 w-3" /> Acesso imediato</span>
+            <div className="mt-6">
+              <CheckoutButton label="Testar por 7 dias sem risco" />
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+              <GuaranteeSeal />
+              <div className="flex flex-col text-[11px] uppercase tracking-widest text-muted-foreground">
+                <span className="flex items-center gap-1.5"><Lock className="h-3 w-3" /> Compra segura</span>
+                <span className="flex items-center gap-1.5"><Clock className="h-3 w-3" /> Acesso imediato</span>
+              </div>
             </div>
           </div>
 
