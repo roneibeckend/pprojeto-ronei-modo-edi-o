@@ -647,7 +647,7 @@ function Hero() {
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--flame)] opacity-75" />
                         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--flame)]" />
                       </span>
-                      A história do Ronnei
+                      Clique e veja como tudo começou
                     </span>
                     <span className="rounded-full bg-background/70 px-2.5 py-1 font-semibold text-[color:var(--gold)] backdrop-blur">2 min</span>
                   </div>
