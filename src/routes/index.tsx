@@ -550,9 +550,13 @@ function Nav() {
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <a href="#top" className="flex min-w-0 items-center gap-2">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-fire shadow-fire">
-            <Flame className="h-5 w-5 text-white" />
-          </span>
+          <img
+            src={logo}
+            alt="Espetinho na Veia — Do Zero aos 10k"
+            width={40}
+            height={40}
+            className="h-10 w-10 shrink-0 rounded-full ring-1 ring-[color:var(--gold)]/40 shadow-fire"
+          />
           <span className="truncate font-display text-base tracking-wide sm:text-xl">
             ESPETINHO <span className="text-gradient-fire">NA VEIA</span>
           </span>
