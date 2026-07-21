@@ -871,7 +871,7 @@ function AuthorSolution() {
         </div>
 
         {/* Copy */}
-        <div>
+        <div className="lg:order-1">
           <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[color:var(--gold)]">
             <Sparkles className="h-3 w-3" /> IA · A solução
           </div>
