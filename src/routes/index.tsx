@@ -986,19 +986,19 @@ function Modules() {
             Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
           </p>
         </div>
-        <div className="mt-10 grid gap-3 sm:mt-14 sm:gap-4 md:grid-cols-2">
-          {modules.map(({ icon: Icon, title, desc }, i) => (
-            <div key={title} className="glass flex items-start gap-3 rounded-2xl p-4 transition hover:-translate-y-0.5 sm:gap-4 sm:p-6">
-              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-fire text-white shadow-fire sm:h-14 sm:w-14">
-                <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)] sm:text-xs">
-                  Módulo {String(i + 1).padStart(2, "0")}
-                </div>
-                <h3 className="mt-1 text-base font-bold sm:text-lg">{title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
-              </div>
+        <div className="mt-10 flex flex-wrap justify-center gap-2 sm:mt-12 sm:gap-3">
+          {modules.map(({ icon: Icon, title }, i) => (
+            <div
+              key={title}
+              className="glass group flex items-center gap-2 rounded-full px-3 py-2 transition hover:-translate-y-0.5 hover:border-[color:var(--gold)]/40 sm:px-4 sm:py-2.5"
+            >
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-fire text-white shadow-fire sm:h-7 sm:w-7">
+                <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)]">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="text-xs font-semibold sm:text-sm">{title}</span>
             </div>
           ))}
         </div>
