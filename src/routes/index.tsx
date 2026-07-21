@@ -618,7 +618,7 @@ function Hero() {
         {/* Video + CTA row */}
         <div className="mt-6 grid w-full items-center gap-6 sm:mt-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8">
           {/* Compact video trigger */}
-          <Reveal variant="scale" delay={3} className="lg:justify-self-end">
+          <Reveal variant="scale" delay={3} className="w-full lg:ml-auto lg:max-w-md">
             <button
               type="button"
               onClick={() => setVideoOpen(true)}
