@@ -913,6 +913,7 @@ function AuthorSolution() {
           </div>
         </div>
       </div>
+      </div>
     </section>
 
   );
