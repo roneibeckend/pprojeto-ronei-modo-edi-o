@@ -288,7 +288,7 @@ function CTAButton({
   return (
     <a
       href="#oferta"
-      className={`btn-fire w-full sm:w-auto ${size === "xl" ? "text-base sm:text-lg sm:!px-10 sm:!py-5" : ""} ${className}`}
+      className={`btn-fire shine-on-hover w-full sm:w-auto ${size === "xl" ? "text-base sm:text-lg sm:!px-10 sm:!py-5" : ""} ${className}`}
     >
       {children}
     </a>
