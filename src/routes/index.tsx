@@ -763,22 +763,28 @@ function AuthorSolution() {
             />
           </div>
           <div>
-            <SectionTag>Quem escreveu · A solução</SectionTag>
+            <SectionTag>Quem escreveu · A história real</SectionTag>
             <h2 className="mt-5 h-fluid-h2 font-black">
-              Um método <span className="text-gradient-fire">nascido na brasa</span>, testado com fila esperando.
+              De açougueiro sem R$ 1.000 no bolso a dono do <span className="text-gradient-fire">Espetos Grill</span>.
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Anos servindo espetinho todos os dias, escutando cliente, ajustando ponto, corte e tempero.
-              O que está no eBook é o que funciona de verdade — na prática, no calor da grelha.
+            <p className="mt-4 text-base text-muted-foreground sm:text-lg">
+              Meu nome é <strong className="text-foreground">Ronnei</strong>. Comecei aos 17 anos trabalhando de açougueiro no supermercado
+              e, no horário de almoço, fabricava espetinhos pra vender à noite. Foram 12 anos de rotina pesada —
+              domingo, feriado, tudo eu vendia. Sem dinheiro, sem atalho, só na raça.
+            </p>
+            <p className="mt-3 text-base text-muted-foreground sm:text-lg">
+              Comecei num cantinho minúsculo. Passei pela pandemia, quase quebrei, aprendi na dor que dinheiro
+              da empresa não é seu e que a culpa de todo BO é do dono. Hoje o <strong className="text-foreground">Espetos Grill</strong> fatura
+              mais de <span className="text-gradient-fire font-black">R$ 350 mil/mês</span> — e o que está nesse eBook é o passo a passo que eu queria ter recebido lá atrás.
             </p>
             <div className="mt-6 grid max-w-md gap-3 sm:grid-cols-3">
               {[
-                { n: "+10", l: "anos na brasa" },
-                { n: "+2k", l: "leitores" },
-                { n: "4.9", l: "avaliação" },
+                { n: "10+", l: "anos na brasa" },
+                { n: "R$350k", l: "faturamento/mês" },
+                { n: "0", l: "começou do zero" },
               ].map((s) => (
                 <div key={s.l} className="glass rounded-2xl p-3 text-center">
-                  <div className="text-2xl font-black text-gradient-fire">{s.n}</div>
+                  <div className="text-xl font-black text-gradient-fire sm:text-2xl">{s.n}</div>
                   <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.l}</div>
                 </div>
               ))}
