@@ -778,7 +778,7 @@ function AuthorSolution() {
         {/* AI Solution */}
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* AI viewer */}
-        <div className="relative">
+        <div className="relative lg:order-2">
           <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/20 bg-card/60 p-3 shadow-fire backdrop-blur">
             {/* header bar */}
             <div className="flex items-center justify-between px-2 pb-3">
