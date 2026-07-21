@@ -1738,12 +1738,11 @@ function LandingPage() {
         <ForYou />
         <Benefits />
         <Modules />
-        <Author />
+        <AuthorSolution />
         <Bonuses />
         <Offer />
-        
-        <Solution />
         <FAQ />
+
       </main>
       <Footer />
       <StickyMobileCTA />
