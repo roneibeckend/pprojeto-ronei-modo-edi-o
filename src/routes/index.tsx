@@ -619,7 +619,7 @@ function Nav() {
           <a href="#bonus" className="hover:text-foreground transition">Bônus</a>
           <a href="#faq" className="hover:text-foreground transition">FAQ</a>
         </nav>
-        <a href="#oferta" className="btn-fire shrink-0 !min-h-0 !py-2 !px-4 text-xs sm:!px-5 sm:text-sm">
+        <a href="#oferta" onClick={() => trackInitiateCheckout("nav")} className="btn-fire shrink-0 !min-h-0 !py-2 !px-4 text-xs sm:!px-5 sm:text-sm">
           Quero o eBook
         </a>
       </div>
@@ -1111,7 +1111,7 @@ function ProfitCalculator() {
 
         {/* CTA pós-simulador */}
         <div className="mt-8 flex flex-col items-center gap-2">
-          <a href="#oferta" className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full max-w-sm justify-center">
+          <a href="#oferta" onClick={() => trackInitiateCheckout("post-calculator")} className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full max-w-sm justify-center">
             Quero faturar isso também <ArrowRight className="h-4 w-4" />
           </a>
           <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
@@ -1319,7 +1319,7 @@ function Bonuses() {
 
         {/* CTA pós-bônus */}
         <div className="mx-auto mt-6 flex max-w-xl flex-col items-center gap-2">
-          <a href="#oferta" className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full justify-center">
+          <a href="#oferta" onClick={() => trackInitiateCheckout("post-bonuses")} className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full justify-center">
             Quero o eBook + os 4 bônus <ArrowRight className="h-4 w-4" />
           </a>
           <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
@@ -2033,7 +2033,7 @@ function StickyMobileCTA() {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 pt-3 backdrop-blur-xl md:hidden"
       style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
     >
-      <a href="#oferta" className="btn-fire w-full !py-3 text-sm">
+      <a href="#oferta" onClick={() => trackInitiateCheckout("sticky-mobile")} className="btn-fire w-full !py-3 text-sm">
         Quero o eBook por R$ 47,90 <ArrowRight className="h-4 w-4" />
       </a>
     </div>
