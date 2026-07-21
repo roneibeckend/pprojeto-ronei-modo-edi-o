@@ -201,6 +201,8 @@
 @keyframes ai-blip {
   0%, 100% { opacity: 0.4; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.15); }
+}
+
 
 /* Loop animations disabled for a calmer, more professional feel */
 .animate-float,
