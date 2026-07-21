@@ -704,7 +704,7 @@ function Pain() {
   );
 }
 
-function Solution() {
+function AuthorSolution() {
   const slides = [
     { src: platter1.url, alt: "Tábua premium de espetinhos variados", tag: "Análise: tábua premium", metric: "Margem 300%" },
     { src: skewersHeld.url, alt: "Espetinhos suculentos", tag: "Detecção: ponto suculento", metric: "Fidelização +82%" },
@@ -736,8 +736,48 @@ function Solution() {
 
   return (
     <section className="relative py-14 sm:py-20">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
-        {/* AI viewer */}
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        {/* Author header */}
+        <div className="grid items-center gap-8 lg:grid-cols-[auto_1fr]">
+          <div className="relative mx-auto lg:mx-0">
+            <div className="absolute -inset-3 -z-10 rounded-3xl bg-fire opacity-25 blur-2xl" />
+            <img
+              src={chefWorking.url}
+              alt="Autor no dia a dia da grelha"
+              className="h-[220px] w-[220px] rounded-3xl object-cover shadow-fire sm:h-[260px] sm:w-[260px]"
+              loading="lazy"
+            />
+          </div>
+          <div>
+            <SectionTag>Quem escreveu · A solução</SectionTag>
+            <h2 className="mt-5 h-fluid-h2 font-black">
+              Um método <span className="text-gradient-fire">nascido na brasa</span>, testado com fila esperando.
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Anos servindo espetinho todos os dias, escutando cliente, ajustando ponto, corte e tempero.
+              O que está no eBook é o que funciona de verdade — na prática, no calor da grelha.
+            </p>
+            <div className="mt-6 grid max-w-md gap-3 sm:grid-cols-3">
+              {[
+                { n: "+10", l: "anos na brasa" },
+                { n: "+2k", l: "leitores" },
+                { n: "4.9", l: "avaliação" },
+              ].map((s) => (
+                <div key={s.l} className="glass rounded-2xl p-3 text-center">
+                  <div className="text-2xl font-black text-gradient-fire">{s.n}</div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="my-12 h-px w-full bg-gradient-to-r from-transparent via-[color:var(--gold)]/30 to-transparent" />
+
+        {/* AI Solution */}
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          {/* AI viewer */}
         <div className="relative">
           <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/20 bg-card/60 p-3 shadow-fire backdrop-blur">
             {/* header bar */}
@@ -873,7 +913,9 @@ function Solution() {
           </div>
         </div>
       </div>
+      </div>
     </section>
+
   );
 }
 
@@ -1061,45 +1103,6 @@ function Results() {
   );
 }
 
-function Author() {
-  return (
-    <section className="relative py-14 sm:py-20">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
-        <div className="relative">
-          <div className="absolute -inset-4 -z-10 rounded-3xl bg-fire opacity-25 blur-2xl" />
-          <img
-            src={chefWorking.url}
-            alt="Autor no dia a dia da grelha"
-            className="h-[320px] w-full rounded-3xl sm:h-[500px] object-cover shadow-fire"
-            loading="lazy"
-          />
-        </div>
-        <div>
-          <SectionTag>Quem escreveu</SectionTag>
-          <h2 className="mt-6 h-fluid-h2 font-black">
-            Um método <span className="text-gradient-fire">nascido na brasa</span>
-          </h2>
-          <p className="mt-5 text-lg text-muted-foreground">
-            Anos servindo espetinho todos os dias, escutando cliente, ajustando ponto, corte e tempero.
-            O que está no eBook é o que funciona de verdade — na prática, no calor da grelha, com fila esperando.
-          </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            {[
-              { n: "+10", l: "anos na brasa" },
-              { n: "+2k", l: "leitores" },
-              { n: "4.9", l: "avaliação" },
-            ].map((s) => (
-              <div key={s.l} className="glass rounded-2xl p-4 text-center">
-                <div className="text-3xl font-black text-gradient-fire">{s.n}</div>
-                <div className="text-xs uppercase tracking-widest text-muted-foreground">{s.l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Testimonials() {
   const items = [
@@ -1662,11 +1665,10 @@ function LandingPage() {
       { headline: "clip",  card: "scale"  }, // ForYou
       { headline: "up",    card: "tilt"   }, // Benefits
       { headline: "left",  card: "rotate" }, // Modules
-      { headline: "right", card: "right"  }, // Author
+      { headline: "right", card: "right"  }, // AuthorSolution
       { headline: "clip",  card: "scale"  }, // Bonuses
       { headline: "up",    card: "blur"   }, // Offer
-      { headline: "scale", card: "up"     }, // Guarantee
-      { headline: "clip",  card: "left"   }, // Solution
+
       { headline: "up",    card: "up"     }, // FAQ
     ];
 
@@ -1735,12 +1737,11 @@ function LandingPage() {
         <ForYou />
         <Benefits />
         <Modules />
-        <Author />
+        <AuthorSolution />
         <Bonuses />
         <Offer />
-        
-        <Solution />
         <FAQ />
+
       </main>
       <Footer />
       <StickyMobileCTA />
