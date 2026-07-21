@@ -795,8 +795,9 @@ function AuthorSolution() {
                 </div>
               ))}
               <div className="flex items-center justify-center sm:col-span-2 lg:col-span-1">
-                <CTAButton className="w-full justify-center">
-                  Quero o método <ArrowRight className="h-4 w-4" />
+                <CTAButton className="relative w-full justify-center text-center">
+                  <span>Quero o método</span>
+                  <ArrowRight className="absolute right-5 h-4 w-4" />
                 </CTAButton>
               </div>
             </div>
