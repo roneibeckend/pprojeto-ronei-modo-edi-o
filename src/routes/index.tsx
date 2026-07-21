@@ -1049,6 +1049,27 @@ function Bonuses() {
             </div>
           ))}
         </div>
+
+        {/* Total dos bônus */}
+        <div className="mx-auto mt-8 max-w-2xl">
+          <div className="relative overflow-hidden rounded-2xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[color:var(--gold)]/10 via-transparent to-[color:var(--ember)]/10 p-5 text-center backdrop-blur sm:p-6">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--gold)]/70 to-transparent" />
+            <div className="text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
+              Valor total dos bônus
+            </div>
+            <div className="mt-2 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
+              <span className="font-display text-3xl font-black text-muted-foreground/80 line-through decoration-[color:var(--ember)]/60 decoration-2 sm:text-4xl">
+                R$ 561,00
+              </span>
+              <span className="rounded-full bg-fire px-3 py-1 text-xs font-black uppercase tracking-widest text-white shadow-fire">
+                GRÁTIS hoje
+              </span>
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Você recebe <strong className="text-foreground">todos os 4 bônus sem pagar nada a mais</strong> — inclusos no seu acesso ao eBook.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -1195,19 +1216,22 @@ function Offer() {
 
             {/* Price */}
             <div className="mt-8 text-center [font-variant-numeric:tabular-nums]">
-              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                <span className="line-through decoration-[color:var(--ember)]/40">De R$ 197,00</span>
-                <span className="inline-flex items-center rounded-md border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)]">
-                  −76%
-                </span>
+              <div className="text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
+                De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 197,00</span> por apenas
               </div>
 
-              <div className="mt-2 flex items-start justify-center gap-1.5">
-                <span className="mt-3 text-xl font-semibold text-muted-foreground">R$</span>
-                <span className="font-display text-7xl leading-none tracking-tight text-foreground sm:text-8xl">
+              <div className="mt-3 flex items-start justify-center gap-1.5">
+                <span className="mt-3 text-xl font-semibold text-[color:var(--gold)]">R$</span>
+                <span className="font-display text-7xl leading-none tracking-tight text-gradient-fire sm:text-8xl">
                   47
                 </span>
-                <span className="mt-3 text-xl font-semibold text-muted-foreground">,90</span>
+                <span className="mt-3 text-xl font-semibold text-[color:var(--gold)]">,90</span>
+              </div>
+
+              <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-3 py-1">
+                <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[color:var(--gold)]">Economize 76%</span>
+                <span className="h-3 w-px bg-[color:var(--gold)]/40" />
+                <span className="text-xs font-bold text-[color:var(--gold)]">R$ 149,10 OFF</span>
               </div>
 
               <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5">
@@ -1287,13 +1311,13 @@ function Offer() {
 
 function FAQ() {
   const faqs = [
-    { q: "Preciso ter experiência com churrasco?", a: "Não. O método foi pensado para iniciantes absolutos. Você é guiado passo a passo desde a escolha da carne até a venda." },
     { q: "Preciso de muito dinheiro para começar?", a: "Não. O método mostra caminhos para começar pequeno, com investimento baixo e crescer de forma sustentável." },
-    { q: "E se eu morar em cidade pequena?", a: "As estratégias funcionam em qualquer região — cidade grande, interior, bairro residencial ou comercial." },
-    { q: "Em quanto tempo posso começar a vender?", a: "Seguindo o plano de ação de 30 dias, muitos alunos fazem as primeiras vendas já na primeira semana." },
-    { q: "Como recebo o material?", a: "O acesso é liberado automaticamente por e-mail em minutos, após a confirmação do pagamento. Você lê no celular, tablet ou computador." },
     { q: "E se eu não gostar do material?", a: "Você tem 7 dias de garantia total. Se não gostar, basta pedir o reembolso e devolvemos 100% do valor. Sem perguntas." },
+    { q: "Em quanto tempo recupero o investimento?", a: "Seguindo o plano de ação, muitos alunos recuperam o valor do eBook nas primeiras vendas — geralmente já na primeira semana." },
+    { q: "Preciso ter experiência com churrasco?", a: "Não. O método foi pensado para iniciantes absolutos. Você é guiado passo a passo desde a escolha da carne até a venda." },
+    { q: "E se eu morar em cidade pequena?", a: "As estratégias funcionam em qualquer região — cidade grande, interior, bairro residencial ou comercial." },
     { q: "Funciona também para delivery?", a: "Sim. Tem estratégias específicas para venda por WhatsApp, iFood e delivery próprio, além do ponto físico." },
+    { q: "Como recebo o material?", a: "O acesso é liberado automaticamente por e-mail em minutos, após a confirmação do pagamento. Você lê no celular, tablet ou computador." },
   ];
 
   type Msg = { role: "user" | "ai"; text: string };
