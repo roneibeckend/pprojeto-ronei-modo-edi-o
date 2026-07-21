@@ -1104,6 +1104,16 @@ function ProfitCalculator() {
             </div>
           </div>
         </div>
+
+        {/* CTA pós-simulador */}
+        <div className="mt-8 flex flex-col items-center gap-2">
+          <a href="#oferta" className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full max-w-sm justify-center">
+            Quero faturar isso também <ArrowRight className="h-4 w-4" />
+          </a>
+          <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
+            Método completo por R$ 47,90
+          </span>
+        </div>
       </div>
     </section>
   );
