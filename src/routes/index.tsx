@@ -1049,6 +1049,27 @@ function Bonuses() {
             </div>
           ))}
         </div>
+
+        {/* Total dos bônus */}
+        <div className="mx-auto mt-8 max-w-2xl">
+          <div className="relative overflow-hidden rounded-2xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[color:var(--gold)]/10 via-transparent to-[color:var(--ember)]/10 p-5 text-center backdrop-blur sm:p-6">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--gold)]/70 to-transparent" />
+            <div className="text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
+              Valor total dos bônus
+            </div>
+            <div className="mt-2 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
+              <span className="font-display text-3xl font-black text-muted-foreground/80 line-through decoration-[color:var(--ember)]/60 decoration-2 sm:text-4xl">
+                R$ 561,00
+              </span>
+              <span className="rounded-full bg-fire px-3 py-1 text-xs font-black uppercase tracking-widest text-white shadow-fire">
+                GRÁTIS hoje
+              </span>
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Você recebe <strong className="text-foreground">todos os 4 bônus sem pagar nada a mais</strong> — inclusos no seu acesso ao eBook.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
