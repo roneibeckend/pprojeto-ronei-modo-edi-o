@@ -889,19 +889,19 @@ function Benefits() {
     { icon: TrendingUp, title: "Do carrinho ao trailer", desc: "Passo a passo real para escalar de renda extra a negócio de 10k por mês.", featured: false },
   ];
   return (
-    <section id="beneficios" className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <section id="beneficios" className="relative py-10 sm:py-14">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Benefícios</SectionTag>
-          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
+          <h2 className="mt-4 max-w-2xl text-2xl sm:text-3xl font-black">
             O que vai <span className="text-gradient-fire">mudar no seu bolso</span>
           </h2>
         </div>
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {items.map(({ icon: Icon, title, desc, featured }) => (
             <div
               key={title}
-              className={`group relative overflow-hidden rounded-2xl border p-8 backdrop-blur-sm transition-all ${
+              className={`group relative overflow-hidden rounded-xl border p-4 backdrop-blur-sm transition-all ${
                 featured
                   ? "border-white/15 bg-white/[0.05]"
                   : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"
@@ -910,14 +910,15 @@ function Benefits() {
               {featured && (
                 <div
                   aria-hidden="true"
-                  className="absolute left-0 top-1/4 bottom-1/4 w-[2px] bg-gradient-to-b from-[color:var(--flame)] to-[color:var(--ember)] shadow-[0_0_15px_color-mix(in_oklab,var(--flame)_50%,transparent)]"
+                  className="absolute left-0 top-1/4 bottom-1/4 w-[2px] bg-gradient-to-b from-[color:var(--flame)] to-[color:var(--ember)] shadow-[0_0_10px_color-mix(in_oklab,var(--flame)_50%,transparent)]"
                 />
               )}
-              <div className="absolute right-4 top-4 opacity-30 group-hover:opacity-60 transition-opacity">
-                <Icon className={`h-5 w-5 ${featured ? "text-[color:var(--flame)]" : "text-foreground"}`} strokeWidth={1.5} />
-              </div>
-              <h3 className="mb-3 text-xl font-bold pr-8">{title}</h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">{desc}</p>
+              <div className="flex items-start gap-3">
+                <Icon className={`h-4 w-4 shrink-0 mt-0.5 ${featured ? "text-[color:var(--flame)]" : "text-foreground/70"}`} strokeWidth={1.75} />
+                <div>
+                  <h3 className="mb-1 text-sm font-bold">{title}</h3>
+                  <p className="text-xs leading-relaxed text-muted-foreground">{desc}</p>
+
             </div>
           ))}
         </div>
