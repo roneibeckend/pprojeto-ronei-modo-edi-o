@@ -1195,19 +1195,22 @@ function Offer() {
 
             {/* Price */}
             <div className="mt-8 text-center [font-variant-numeric:tabular-nums]">
-              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                <span className="line-through decoration-[color:var(--ember)]/40">De R$ 197,00</span>
-                <span className="inline-flex items-center rounded-md border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)]">
-                  −76%
-                </span>
+              <div className="text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
+                De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 197,00</span> por apenas
               </div>
 
-              <div className="mt-2 flex items-start justify-center gap-1.5">
-                <span className="mt-3 text-xl font-semibold text-muted-foreground">R$</span>
-                <span className="font-display text-7xl leading-none tracking-tight text-foreground sm:text-8xl">
+              <div className="mt-3 flex items-start justify-center gap-1.5">
+                <span className="mt-3 text-xl font-semibold text-[color:var(--gold)]">R$</span>
+                <span className="font-display text-7xl leading-none tracking-tight text-gradient-fire sm:text-8xl">
                   47
                 </span>
-                <span className="mt-3 text-xl font-semibold text-muted-foreground">,90</span>
+                <span className="mt-3 text-xl font-semibold text-[color:var(--gold)]">,90</span>
+              </div>
+
+              <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-3 py-1">
+                <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[color:var(--gold)]">Economize 76%</span>
+                <span className="h-3 w-px bg-[color:var(--gold)]/40" />
+                <span className="text-xs font-bold text-[color:var(--gold)]">R$ 149,10 OFF</span>
               </div>
 
               <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5">
