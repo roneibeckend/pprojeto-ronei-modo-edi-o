@@ -1241,59 +1241,60 @@ function Bonuses() {
     { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", value: "R$ 67", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
   ];
   return (
-    <section id="bonus" className="relative py-14 sm:py-20">
+    <section id="bonus" className="relative py-10 sm:py-14">
       <div className="pointer-events-none absolute inset-0 -z-10 opacity-30">
-        <div className="absolute right-0 top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-[color:var(--flame)]/40 blur-3xl" />
+        <div className="absolute right-0 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-[color:var(--flame)]/40 blur-3xl" />
       </div>
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Bônus exclusivos</SectionTag>
-          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
+          <h2 className="mt-4 max-w-3xl h-fluid-h3 font-black">
             4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
           </h2>
-          <p className="mt-4 max-w-2xl text-muted-foreground">
-            Materiais e vantagens extras para acelerar seus resultados desde o primeiro dia.
+          <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+            Vantagens extras para acelerar seus resultados desde o primeiro dia.
           </p>
         </div>
-        <div className="mt-10 grid gap-4 sm:mt-14 sm:grid-cols-2">
+        <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2">
           {bonuses.map(({ icon: Icon, title, tag, value, desc }) => (
-            <div key={title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 transition hover:border-[color:var(--gold)]/60 sm:p-6">
-              <div className="flex items-start justify-between gap-3">
-                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[color:var(--gold)]/15 text-[color:var(--gold)] sm:h-12 sm:w-12">
-                  <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+            <div key={title} className="group relative overflow-hidden rounded-xl border border-border bg-card p-4 transition hover:border-[color:var(--gold)]/60">
+              <div className="flex items-start gap-3">
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[color:var(--gold)]/15 text-[color:var(--gold)]">
+                  <Icon className="h-4 w-4" />
                 </div>
-                <span className="shrink-0 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-2.5 py-1 text-[10px] font-bold text-[color:var(--gold)] sm:px-3 sm:text-xs">
-                  {tag}
-                </span>
-              </div>
-              <h3 className="mt-4 text-base font-bold sm:mt-5 sm:text-lg">{title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
-              <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
-                <span className="text-muted-foreground line-through">De {value}</span>
-                <span className="rounded-full bg-fire px-2.5 py-0.5 text-xs font-bold text-white">GRÁTIS hoje</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-sm font-bold sm:text-base">{title}</h3>
+                    <span className="shrink-0 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-2 py-0.5 text-[10px] font-bold text-[color:var(--gold)]">
+                      {tag}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">{desc}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                    <span className="text-muted-foreground line-through">De {value}</span>
+                    <span className="rounded-full bg-fire px-2 py-0.5 text-[10px] font-bold text-white">GRÁTIS hoje</span>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
         </div>
 
         {/* Total dos bônus */}
-        <div className="mx-auto mt-8 max-w-2xl">
-          <div className="relative overflow-hidden rounded-2xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[color:var(--gold)]/10 via-transparent to-[color:var(--ember)]/10 p-5 text-center backdrop-blur sm:p-6">
+        <div className="mx-auto mt-5 max-w-xl">
+          <div className="relative overflow-hidden rounded-xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[color:var(--gold)]/10 via-transparent to-[color:var(--ember)]/10 p-4 text-center backdrop-blur">
             <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--gold)]/70 to-transparent" />
-            <div className="text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
-              Valor total dos bônus
-            </div>
-            <div className="mt-2 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-              <span className="font-display text-3xl font-black text-muted-foreground/80 line-through decoration-[color:var(--ember)]/60 decoration-2 sm:text-4xl">
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted-foreground">
+                Valor total
+              </span>
+              <span className="font-display text-2xl font-black text-muted-foreground/80 line-through decoration-[color:var(--ember)]/60 decoration-2 sm:text-3xl">
                 R$ 150,00
               </span>
-              <span className="rounded-full bg-fire px-3 py-1 text-xs font-black uppercase tracking-widest text-white shadow-fire">
+              <span className="rounded-full bg-fire px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-white shadow-fire">
                 GRÁTIS hoje
               </span>
             </div>
-            <p className="mt-3 text-sm text-muted-foreground">
-              Você recebe <strong className="text-foreground">todos os 4 bônus sem pagar nada a mais</strong> — inclusos no seu acesso ao eBook.
-            </p>
           </div>
         </div>
       </div>
