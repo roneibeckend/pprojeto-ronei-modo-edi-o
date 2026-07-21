@@ -46,6 +46,10 @@ import ribeye from "@/assets/ribeye.asset.json";
 import chefWorking from "@/assets/chef-working.asset.json";
 import chefPortrait from "@/assets/chef-portrait.asset.json";
 import author from "@/assets/author.asset.json";
+import printWhats1 from "@/assets/print-whats-1.jpg";
+import printWhats2 from "@/assets/print-whats-2.jpg";
+import printWhats3 from "@/assets/print-whats-3.jpg";
+import printPix from "@/assets/print-pix.jpg";
 
 const SITE_URL = "https://sizzling-story-maker.lovable.app";
 const OG_IMAGE = `${SITE_URL}${heroChef.url}`;
@@ -967,6 +971,58 @@ function Benefits() {
   );
 }
 
+function SocialProof() {
+  const prints = [
+    { src: printWhats1, alt: "Print de WhatsApp: aluno faturou R$ 480 no primeiro fim de semana", tag: "R$ 480 / fim de semana" },
+    { src: printWhats2, alt: "Print de Instagram: aluna de Goiânia vendeu 320 espetinhos em um sábado", tag: "320 espetos / sábado" },
+    { src: printWhats3, alt: "Print de WhatsApp: aluno corrigiu precificação após o eBook", tag: "Precificação corrigida" },
+    { src: printPix, alt: "Print de recebimentos via Pix de um vendedor de espetinhos", tag: "Pix caindo direto" },
+  ];
+  return (
+    <section id="depoimentos" className="relative py-14 sm:py-20">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>Prova real</SectionTag>
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
+            Alunos que <span className="text-gradient-fire">colocaram a mão na brasa</span> e viram resultado
+          </h2>
+          <p className="mt-4 max-w-2xl text-muted-foreground">
+            Prints reais de quem aplicou o método. Nomes preservados por privacidade.
+          </p>
+        </div>
+
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-5 lg:grid-cols-4">
+          {prints.map((p) => (
+            <figure
+              key={p.alt}
+              className="glass group relative overflow-hidden rounded-2xl border border-white/10 p-2 transition hover:-translate-y-1 hover:border-[color:var(--gold)]/40"
+            >
+              <div className="relative overflow-hidden rounded-xl">
+                <img
+                  src={p.src}
+                  alt={p.alt}
+                  loading="lazy"
+                  width={720}
+                  height={1024}
+                  className="aspect-[9/16] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <span className="absolute bottom-2 left-2 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[color:var(--gold)] backdrop-blur-sm sm:text-xs">
+                  🔥 {p.tag}
+                </span>
+              </div>
+            </figure>
+          ))}
+        </div>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground sm:text-sm">
+          * Resultados variam conforme dedicação, região e aplicação do método.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function Modules() {
   const modules = [
     { icon: BookOpen, title: "A história por trás do Espetinho na Veia", desc: "A trajetória real que deu origem ao método." },
@@ -1700,6 +1756,7 @@ function LandingPage() {
       { headline: "up",    card: "tilt"   }, // Benefits
       { headline: "left",  card: "rotate" }, // Modules
       { headline: "right", card: "right"  }, // AuthorSolution
+      { headline: "clip",  card: "tilt"   }, // SocialProof
       { headline: "clip",  card: "scale"  }, // Bonuses
       { headline: "up",    card: "blur"   }, // Offer
 
@@ -1772,6 +1829,7 @@ function LandingPage() {
         <Benefits />
         <Modules />
         <AuthorSolution />
+        <SocialProof />
         <Bonuses />
         <Offer />
         <FAQ />
