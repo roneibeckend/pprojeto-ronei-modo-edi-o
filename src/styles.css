@@ -198,27 +198,97 @@
 .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
 .animate-marquee { animation: marquee 32s linear infinite; }
 
+/* ---- Reveal variants ---- */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.8s cubic-bezier(.2,.7,.2,1), transform 0.8s cubic-bezier(.2,.7,.2,1), filter 0.8s ease;
-  filter: blur(4px);
-  will-change: opacity, transform;
+  transition:
+    opacity 0.9s cubic-bezier(.2,.7,.2,1),
+    transform 0.9s cubic-bezier(.2,.7,.2,1),
+    filter 0.9s ease,
+    clip-path 1s cubic-bezier(.2,.7,.2,1);
+  will-change: opacity, transform, filter, clip-path;
 }
+[data-reveal=""],
+[data-reveal="up"]      { transform: translate3d(0, 40px, 0); }
+[data-reveal="down"]    { transform: translate3d(0, -32px, 0); }
+[data-reveal="left"]    { transform: translate3d(-48px, 0, 0); }
+[data-reveal="right"]   { transform: translate3d(48px, 0, 0); }
+[data-reveal="scale"]   { transform: scale(0.86); filter: blur(6px); }
+[data-reveal="blur"]    { filter: blur(14px); transform: translate3d(0, 12px, 0); }
+[data-reveal="rotate"]  { transform: translate3d(0, 30px, 0) rotate(-2.5deg); filter: blur(3px); }
+[data-reveal="clip"]    { clip-path: inset(0 100% 0 0); }
+[data-reveal="tilt"]    { transform: perspective(900px) rotateX(14deg) translate3d(0, 30px, 0); transform-origin: center bottom; }
+
 [data-reveal][data-visible="true"] {
   opacity: 1;
   transform: none;
   filter: blur(0);
+  clip-path: inset(0 0 0 0);
 }
 [data-reveal-delay="1"] { transition-delay: 0.08s; }
-[data-reveal-delay="2"] { transition-delay: 0.16s; }
-[data-reveal-delay="3"] { transition-delay: 0.24s; }
-[data-reveal-delay="4"] { transition-delay: 0.32s; }
-[data-reveal-delay="5"] { transition-delay: 0.4s; }
+[data-reveal-delay="2"] { transition-delay: 0.18s; }
+[data-reveal-delay="3"] { transition-delay: 0.28s; }
+[data-reveal-delay="4"] { transition-delay: 0.38s; }
+[data-reveal-delay="5"] { transition-delay: 0.5s; }
+[data-reveal-delay="6"] { transition-delay: 0.62s; }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
-  .animate-float, .animate-flicker, .animate-pulse-glow, .animate-marquee { animation: none !important; }
+  [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; clip-path: none !important; }
+  .animate-float, .animate-flicker, .animate-pulse-glow, .animate-marquee, .animate-aurora, .animate-aurora-2 { animation: none !important; }
+}
+
+/* ---- Modern flourishes ---- */
+@keyframes aurora-drift {
+  0%, 100% { transform: translate3d(-8%, -4%, 0) scale(1); opacity: 0.55; }
+  50%      { transform: translate3d(10%, 6%, 0) scale(1.15); opacity: 0.85; }
+}
+@keyframes aurora-drift-2 {
+  0%, 100% { transform: translate3d(6%, 8%, 0) scale(1.1); opacity: 0.5; }
+  50%      { transform: translate3d(-12%, -6%, 0) scale(0.95); opacity: 0.8; }
+}
+.animate-aurora   { animation: aurora-drift 18s ease-in-out infinite; }
+.animate-aurora-2 { animation: aurora-drift-2 22s ease-in-out infinite; }
+
+@utility card-tilt {
+  transition: transform 0.4s cubic-bezier(.2,.7,.2,1), box-shadow 0.4s ease, border-color 0.4s ease;
+  &:hover {
+    transform: translateY(-6px) rotate(-0.4deg);
+    box-shadow: 0 30px 60px -30px oklch(0.63 0.24 27 / 0.45), 0 10px 30px -12px oklch(0 0 0 / 0.5);
+    border-color: oklch(0.82 0.15 85 / 0.35);
+  }
+}
+
+@utility gradient-border {
+  position: relative;
+  background-clip: padding-box;
+  &::before {
+    content: "";
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg,
+      oklch(0.82 0.15 85 / 0.55),
+      oklch(0.63 0.24 27 / 0.15) 40%,
+      transparent 70%,
+      oklch(0.72 0.20 50 / 0.5));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+@utility grain-overlay {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(oklch(1 0 0 / 0.05) 1px, transparent 1px);
+    background-size: 3px 3px;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    opacity: 0.5;
+  }
 }
 
 @utility shine-on-hover {

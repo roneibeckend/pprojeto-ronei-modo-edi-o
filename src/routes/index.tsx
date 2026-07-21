@@ -152,14 +152,18 @@ export const Route = createFileRoute("/")({
 
 // ---- Small primitives ----
 
+type RevealVariant = "up" | "down" | "left" | "right" | "scale" | "blur" | "rotate" | "clip" | "tilt";
+
 function Reveal({
   children,
   delay = 0,
+  variant = "up",
   as: Tag = "div",
   className = "",
 }: {
   children: React.ReactNode;
-  delay?: 0 | 1 | 2 | 3 | 4 | 5;
+  delay?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  variant?: RevealVariant;
   as?: keyof JSX.IntrinsicElements;
   className?: string;
 }) {
@@ -184,7 +188,7 @@ function Reveal({
   const props: Record<string, unknown> = {
     ref: ref as React.Ref<HTMLElement>,
     className,
-    "data-reveal": "",
+    "data-reveal": variant,
   };
   if (delay) props["data-reveal-delay"] = String(delay);
   return <Tag {...(props as Record<string, unknown>)}>{children}</Tag>;
@@ -572,10 +576,10 @@ function Hero() {
       <Embers />
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2">
         <div className="flex flex-col items-start">
-          <Reveal><SectionTag>Método completo · edição 2026</SectionTag></Reveal>
+          <Reveal variant="clip"><SectionTag>Método completo · edição 2026</SectionTag></Reveal>
 
           {/* Mobile-only hero image (below badge) */}
-          <Reveal delay={1} className="relative mt-5 w-full lg:hidden">
+          <Reveal variant="scale" delay={1} className="relative mt-5 w-full lg:hidden">
             <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
             <div className="glass relative overflow-hidden rounded-[1.5rem] p-1.5 shadow-fire animate-float">
               <img
@@ -588,14 +592,14 @@ function Hero() {
             </div>
           </Reveal>
 
-          <Reveal delay={1} as="h1" className="mt-5 h-fluid-hero font-black sm:mt-6">
+          <Reveal variant="blur" delay={1} as="h1" className="mt-5 h-fluid-hero font-black sm:mt-6">
             Lucre até <span className="animated-fire-text">R$ 300 por dia</span> vendendo espetinhos — começando do zero
           </Reveal>
-          <Reveal delay={2} as="p" className="mt-5 max-w-xl text-fluid-lead text-muted-foreground sm:mt-6">
+          <Reveal variant="up" delay={2} as="p" className="mt-5 max-w-xl text-fluid-lead text-muted-foreground sm:mt-6">
             O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
           </Reveal>
 
-          <Reveal delay={3} className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
+          <Reveal variant="up" delay={3} className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
             <CTAButton size="xl">
               Quero começar agora <ArrowRight className="h-5 w-5" />
             </CTAButton>
@@ -604,13 +608,13 @@ function Hero() {
             </a>
           </Reveal>
 
-          <Reveal delay={4} className="mt-8 grid grid-cols-3 gap-3 sm:gap-4">
+          <Reveal variant="up" delay={4} className="mt-8 grid grid-cols-3 gap-3 sm:gap-4">
             {[
               { n: "300%", l: "margem" },
               { n: "14", l: "capítulos" },
               { n: "7 dias", l: "garantia" },
             ].map((s) => (
-              <div key={s.l} className="glass rounded-xl px-3 py-3 text-center transition hover:-translate-y-0.5">
+              <div key={s.l} className="glass gradient-border rounded-xl px-3 py-3 text-center transition hover:-translate-y-0.5">
                 <div className="font-display text-xl leading-none text-gradient-fire sm:text-2xl">{s.n}</div>
                 <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-xs">{s.l}</div>
               </div>
@@ -618,9 +622,9 @@ function Hero() {
           </Reveal>
         </div>
 
-        <Reveal delay={2} className="relative hidden lg:block">
+        <Reveal variant="right" delay={2} className="relative hidden lg:block">
           <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
-          <div className="glass relative overflow-hidden rounded-[2rem] p-2 shadow-fire animate-float">
+          <div className="glass gradient-border relative overflow-hidden rounded-[2rem] p-2 shadow-fire animate-float">
             <img
               src={heroChef.url}
               alt="Chef especialista em espetinhos com espetos flamejantes"
@@ -1340,40 +1344,101 @@ function StickyMobileCTA() {
   );
 }
 
+function AuroraBackdrop() {
+  return (
+    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+      <div
+        className="animate-aurora absolute -top-40 -left-32 h-[520px] w-[520px] rounded-full blur-3xl"
+        style={{ background: "radial-gradient(circle at 30% 30%, oklch(0.63 0.24 27 / 0.45), transparent 60%)" }}
+      />
+      <div
+        className="animate-aurora-2 absolute top-1/3 -right-40 h-[600px] w-[600px] rounded-full blur-3xl"
+        style={{ background: "radial-gradient(circle at 60% 40%, oklch(0.72 0.20 50 / 0.35), transparent 65%)" }}
+      />
+      <div
+        className="animate-aurora absolute bottom-0 left-1/3 h-[480px] w-[480px] rounded-full blur-3xl"
+        style={{ background: "radial-gradient(circle at 50% 50%, oklch(0.82 0.15 85 / 0.22), transparent 70%)" }}
+      />
+    </div>
+  );
+}
+
 function LandingPage() {
   useEffect(() => {
-    const selectors = [
-      "main section h2",
-      "main section > div > .flex.flex-col.items-center",
-      "main section .glass",
-      "main section .rounded-2xl",
-      "main section .rounded-3xl",
-    ].join(", ");
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>(selectors));
+    // Assign varied reveal variants per section so animations don't all feel the same.
+    // Order below matches <main> children.
+    const variantsBySection: Array<{ headline: string; card: string }> = [
+      { headline: "up",    card: "up"     }, // Hero (mostly handled by <Reveal>)
+      { headline: "clip",  card: "left"   }, // BrasaTicker (no h2)
+      { headline: "clip",  card: "scale"  }, // ForYou
+      { headline: "up",    card: "tilt"   }, // Benefits
+      { headline: "left",  card: "rotate" }, // Modules
+      { headline: "right", card: "right"  }, // Author
+      { headline: "clip",  card: "scale"  }, // Bonuses
+      { headline: "up",    card: "blur"   }, // Offer
+      { headline: "scale", card: "up"     }, // Guarantee
+      { headline: "clip",  card: "left"   }, // Solution
+      { headline: "up",    card: "up"     }, // FAQ
+    ];
+
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section, main > div"));
+    sections.forEach((section, sIdx) => {
+      const v = variantsBySection[sIdx] ?? { headline: "up", card: "up" };
+      const headline = section.querySelector<HTMLElement>("h2");
+      if (headline && !headline.hasAttribute("data-reveal")) {
+        headline.setAttribute("data-reveal", v.headline);
+      }
+      const cards = Array.from(
+        section.querySelectorAll<HTMLElement>(".glass, .rounded-2xl, .rounded-3xl"),
+      );
+      cards.forEach((n, i) => {
+        if (!n.hasAttribute("data-reveal")) {
+          n.setAttribute("data-reveal", v.card);
+          const delay = ((i % 6) + 1) as 1 | 2 | 3 | 4 | 5 | 6;
+          if (delay > 1) n.setAttribute("data-reveal-delay", String(delay - 1));
+        }
+      });
+    });
+
+    const revealNow = (n: HTMLElement) => {
+      if (n.dataset.visible !== "true") n.dataset.visible = "true";
+    };
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (e.isIntersecting) {
-            (e.target as HTMLElement).dataset.visible = "true";
+            revealNow(e.target as HTMLElement);
             io.unobserve(e.target);
           }
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      { threshold: 0, rootMargin: "0px 0px -10% 0px" },
     );
-    nodes.forEach((n, i) => {
-      if (!n.hasAttribute("data-reveal")) {
-        n.setAttribute("data-reveal", "");
-        // small stagger within a group of siblings
-        const delay = (i % 5) as 0 | 1 | 2 | 3 | 4;
-        if (delay) n.setAttribute("data-reveal-delay", String(delay));
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    nodes.forEach((n) => io.observe(n));
+
+    // Scroll fallback: catch anything IO missed (fast scroll / initial paint races)
+    const onScroll = () => {
+      const vh = window.innerHeight;
+      for (const n of nodes) {
+        if (n.dataset.visible === "true") continue;
+        const r = n.getBoundingClientRect();
+        if (r.top < vh * 0.92 && r.bottom > 0) {
+          revealNow(n);
+          io.unobserve(n);
+        }
       }
-      io.observe(n);
-    });
-    return () => io.disconnect();
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      io.disconnect();
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
   return (
     <div className="min-h-screen pb-24 md:pb-0">
+      <AuroraBackdrop />
       <ScrollProgress />
       <Nav />
       <main>
