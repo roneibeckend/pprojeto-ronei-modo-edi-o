@@ -704,7 +704,7 @@ function Pain() {
   );
 }
 
-function Solution() {
+function AuthorSolution() {
   const slides = [
     { src: platter1.url, alt: "Tábua premium de espetinhos variados", tag: "Análise: tábua premium", metric: "Margem 300%" },
     { src: skewersHeld.url, alt: "Espetinhos suculentos", tag: "Detecção: ponto suculento", metric: "Fidelização +82%" },
@@ -736,364 +736,169 @@ function Solution() {
 
   return (
     <section className="relative py-14 sm:py-20">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
-        {/* AI viewer */}
-        <div className="relative">
-          <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/20 bg-card/60 p-3 shadow-fire backdrop-blur">
-            {/* header bar */}
-            <div className="flex items-center justify-between px-2 pb-3">
-              <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
-                <span className="grid h-5 w-5 place-items-center rounded-md bg-fire">
-                  <Sparkles className="h-3 w-3 text-white" />
-                </span>
-                IA · Análise de mercado
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-emerald-400" style={{ animation: "ai-blip 1.4s ease-in-out infinite" }} />
-                <span className="text-[10px] uppercase tracking-widest text-emerald-400/90">live</span>
-              </div>
-            </div>
-
-            {/* image stage */}
-            <div className="relative mx-auto aspect-[4/5] w-full max-w-[280px] sm:max-w-[320px] overflow-hidden rounded-2xl bg-background">
-              {slides.map((s, i) => (
-                <img
-                  key={s.src}
-                  src={s.src}
-                  alt={s.alt}
-                  loading="lazy"
-                  className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ${
-                    i === idx ? "opacity-100 scale-100" : "opacity-0 scale-105"
-                  }`}
-                />
-              ))}
-
-              {/* gradient overlays */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-background/40" />
-
-              {/* grid overlay */}
-              <div
-                className="pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(oklch(1 0 0 / 0.08) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.08) 1px, transparent 1px)",
-                  backgroundSize: "28px 28px",
-                }}
-              />
-
-              {/* corner brackets */}
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        {/* Author header */}
+        <div className="grid items-center gap-8 lg:grid-cols-[auto_1fr]">
+          <div className="relative mx-auto lg:mx-0">
+            <div className="absolute -inset-3 -z-10 rounded-3xl bg-fire opacity-25 blur-2xl" />
+            <img
+              src={chefWorking.url}
+              alt="Autor no dia a dia da grelha"
+              className="h-[220px] w-[220px] rounded-3xl object-cover shadow-fire sm:h-[260px] sm:w-[260px]"
+              loading="lazy"
+            />
+          </div>
+          <div>
+            <SectionTag>Quem escreveu · A solução</SectionTag>
+            <h2 className="mt-5 h-fluid-h2 font-black">
+              Um método <span className="text-gradient-fire">nascido na brasa</span>, testado com fila esperando.
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Anos servindo espetinho todos os dias, escutando cliente, ajustando ponto, corte e tempero.
+              O que está no eBook é o que funciona de verdade — na prática, no calor da grelha.
+            </p>
+            <div className="mt-6 grid max-w-md gap-3 sm:grid-cols-3">
               {[
-                "top-3 left-3 border-t-2 border-l-2",
-                "top-3 right-3 border-t-2 border-r-2",
-                "bottom-3 left-3 border-b-2 border-l-2",
-                "bottom-3 right-3 border-b-2 border-r-2",
-              ].map((c) => (
-                <span key={c} className={`pointer-events-none absolute h-6 w-6 border-[color:var(--gold)] ${c}`} />
-              ))}
-
-              {/* scan line */}
-              <div
-                className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-transparent via-[color:var(--gold)]/40 to-transparent"
-                style={{ animation: "ai-scan 2.8s linear infinite" }}
-              />
-
-              {/* floating tag */}
-              <div key={idx} className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-background/70 px-3 py-1.5 text-[11px] font-medium backdrop-blur animate-fade-in">
-                <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--gold)]" style={{ animation: "ai-blip 1.2s ease-in-out infinite" }} />
-                {current.tag}
-              </div>
-
-              {/* metric card */}
-              <div key={`m-${idx}`} className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-xl border border-border bg-background/80 px-4 py-3 backdrop-blur animate-fade-in">
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Insight detectado</div>
-                  <div className="text-sm font-bold text-foreground">{current.metric}</div>
+                { n: "+10", l: "anos na brasa" },
+                { n: "+2k", l: "leitores" },
+                { n: "4.9", l: "avaliação" },
+              ].map((s) => (
+                <div key={s.l} className="glass rounded-2xl p-3 text-center">
+                  <div className="text-2xl font-black text-gradient-fire">{s.n}</div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.l}</div>
                 </div>
-                <TrendingUp className="h-5 w-5 text-[color:var(--gold)]" />
-              </div>
-            </div>
-
-            {/* dots / progress */}
-            <div className="mt-3 flex items-center justify-center gap-1.5 pb-1">
-              {slides.map((_, i) => (
-                <span
-                  key={i}
-                  className={`h-1.5 rounded-full transition-all duration-500 ${
-                    i === idx ? "w-6 bg-[color:var(--gold)]" : "w-1.5 bg-muted-foreground/30"
-                  }`}
-                />
               ))}
             </div>
           </div>
-
-          {/* ambient glow */}
-          <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] bg-[color:var(--ember)]/20 blur-3xl" />
         </div>
 
-        {/* Copy */}
-        <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[color:var(--gold)]">
-            <Sparkles className="h-3 w-3" /> IA · A solução
-          </div>
-          <h2 className="mt-5 h-fluid-h2 font-black">
-            Um método <span className="text-gradient-fire">testado na brasa</span>, feito para quem quer resultado.
-          </h2>
-          <p className="mt-5 text-lg text-muted-foreground">
-            O <strong className="text-foreground">Espetinho na Veia</strong> reúne, num só material,
-            tudo o que você precisa saber para transformar espetinho em uma máquina de fazer dinheiro:
-            da escolha da carne ao pós-venda.
-          </p>
-          <ul className="mt-6 space-y-3">
-            {bullets.map((t, i) => (
-              <li
-                key={t}
-                className={`flex items-start gap-3 transition-all duration-500 ${
-                  i < visibleBullets ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"
-                }`}
-              >
-                <span className="mt-1 grid h-5 w-5 place-items-center rounded-full bg-fire">
-                  <Check className="h-3 w-3 text-white" />
-                </span>
-                <span>{t}</span>
-              </li>
-            ))}
-            {visibleBullets < bullets.length && (
-              <li className="flex items-center gap-2 pl-8 text-xs text-muted-foreground">
-                <span className="flex gap-1">
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-[color:var(--gold)] [animation-delay:-0.3s]" />
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-[color:var(--gold)] [animation-delay:-0.15s]" />
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-[color:var(--gold)]" />
-                </span>
-                Gerando insights…
-              </li>
-            )}
-          </ul>
-          <div className="mt-8">
-            <CTAButton>Quero acessar o método <ArrowRight className="h-4 w-4" /></CTAButton>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+        {/* Divider */}
+        <div className="my-12 h-px w-full bg-gradient-to-r from-transparent via-[color:var(--gold)]/30 to-transparent" />
 
-function Benefits() {
-  const items = [
-    { icon: DollarSign, title: "Até 300% de margem", desc: "Aprenda a precificar cada espeto para lucrar de verdade, sem trabalhar de graça." },
-    { icon: Beef, title: "Carne que rende mais", desc: "Cortes certos, quantidade certa por espeto e menos desperdício no fim do dia." },
-    { icon: Flame, title: "Ponto e brasa perfeitos", desc: "O segredo do ponto suculento que faz o cliente voltar e indicar pra todo mundo." },
-    { icon: Sparkles, title: "Tempero que fideliza", desc: "A marinada da casa que transforma espeto comum em 'o melhor da região'." },
-    { icon: Users, title: "Fila no seu ponto", desc: "Onde montar, como atrair e como fazer o movimento não parar nem em dia de semana." },
-    { icon: TrendingUp, title: "Do carrinho ao trailer", desc: "Passo a passo real para escalar de renda extra a negócio de 10k por mês." },
-  ];
-  return (
-    <section id="beneficios" className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="flex flex-col items-center text-center">
-          <SectionTag>Benefícios</SectionTag>
-          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
-            O que vai <span className="text-gradient-fire">mudar no seu bolso</span>
-          </h2>
-        </div>
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map(({ icon: Icon, title, desc }) => (
-            <div
-              key={title}
-              className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:border-[color:var(--gold)]/50 hover:shadow-fire"
-            >
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-fire opacity-0 blur-3xl transition-opacity group-hover:opacity-20" />
-              <div className="grid h-12 w-12 place-items-center rounded-xl bg-fire shadow-fire">
-                <Icon className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="mt-5 text-lg font-bold">{title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Modules() {
-  const modules = [
-    { icon: BookOpen, title: "A história por trás do Espetinho na Veia", desc: "A trajetória real que deu origem ao método." },
-    { icon: TrendingUp, title: "Por que espetinho é um dos negócios mais lucrativos da rua", desc: "Entenda o potencial desse mercado bilionário." },
-    { icon: DollarSign, title: "Quanto dá para ganhar vendendo espetinhos", desc: "Números reais de faturamento e margem." },
-    { icon: Target, title: "O que você precisa para começar do zero", desc: "Estrutura, equipamentos e investimento inicial." },
-    { icon: Flame, title: "Os espetinhos que mais vendem", desc: "Os campeões de venda que não podem faltar no seu cardápio." },
-    { icon: ChefHat, title: "Como escolher a carne certa para lucrar mais", desc: "Cortes ideais, onde comprar e como economizar." },
-    { icon: ClipboardList, title: "Como montar o espetinho perfeito", desc: "Técnica de montagem para padrão profissional." },
-    { icon: Sparkles, title: "O segredo do tempero simples e saboroso", desc: "A fórmula de tempero que fideliza clientes." },
-    { icon: Calculator, title: "Como assar espetinhos do jeito certo", desc: "Domine a brasa, o ponto e o tempo de cada carne." },
-    { icon: Target, title: "Os melhores lugares para vender espetinhos", desc: "Onde e como se posicionar para vender todo dia." },
-    { icon: TrendingUp, title: "Estratégias simples para vender muito mais", desc: "Táticas práticas para escalar suas vendas." },
-    { icon: Award, title: "Os erros que fazem muitos desistirem do negócio", desc: "O que evitar para não perder tempo e dinheiro." },
-    { icon: DollarSign, title: "O caminho para chegar aos 10k por mês", desc: "Passo a passo para alcançar o primeiro grande resultado." },
-    { icon: Instagram, title: "Próximos passos para crescer ainda mais", desc: "Como transformar o espetinho em uma marca sólida." },
-  ];
-  return (
-    <section id="modulos" className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="flex flex-col items-center text-center">
-          <SectionTag>O que você recebe</SectionTag>
-          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
-            14 capítulos <span className="text-gradient-fire">práticos e diretos</span>
-          </h2>
-          <p className="mt-4 max-w-2xl text-muted-foreground">
-            Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
-          </p>
-        </div>
-        <div className="mt-10 grid gap-3 sm:mt-14 sm:gap-4 md:grid-cols-2">
-          {modules.map(({ icon: Icon, title, desc }, i) => (
-            <div key={title} className="glass flex items-start gap-3 rounded-2xl p-4 transition hover:-translate-y-0.5 sm:gap-4 sm:p-6">
-              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-fire text-white shadow-fire sm:h-14 sm:w-14">
-                <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)] sm:text-xs">
-                  Módulo {String(i + 1).padStart(2, "0")}
-                </div>
-                <h3 className="mt-1 text-base font-bold sm:text-lg">{title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Bonuses() {
-  const bonuses = [
-    { icon: Truck, title: "Contato com fornecedores", tag: "Bônus 01", value: "R$ 97", desc: "Acesso direto a fornecedores confiáveis para comprar melhor e mais barato." },
-    { icon: MessageCircle, title: "Grupo de WhatsApp", tag: "Bônus 02", value: "R$ 147", desc: "Comunidade exclusiva com outros alunos para trocar experiências e networking." },
-    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", value: "R$ 67", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
-    { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", value: "R$ 250", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
-  ];
-  return (
-    <section id="bonus" className="relative py-14 sm:py-20">
-      <div className="pointer-events-none absolute inset-0 -z-10 opacity-30">
-        <div className="absolute right-0 top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-[color:var(--flame)]/40 blur-3xl" />
-      </div>
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="flex flex-col items-center text-center">
-          <SectionTag>Bônus exclusivos</SectionTag>
-          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
-            4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
-          </h2>
-          <p className="mt-4 max-w-2xl text-muted-foreground">
-            Materiais e vantagens extras para acelerar seus resultados desde o primeiro dia.
-          </p>
-        </div>
-        <div className="mt-10 grid gap-4 sm:mt-14 sm:grid-cols-2">
-          {bonuses.map(({ icon: Icon, title, tag, value, desc }) => (
-            <div key={title} className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 transition hover:border-[color:var(--gold)]/60 sm:p-6">
-              <div className="flex items-start justify-between gap-3">
-                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[color:var(--gold)]/15 text-[color:var(--gold)] sm:h-12 sm:w-12">
-                  <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
-                </div>
-                <span className="shrink-0 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-2.5 py-1 text-[10px] font-bold text-[color:var(--gold)] sm:px-3 sm:text-xs">
-                  {tag}
-                </span>
-              </div>
-              <h3 className="mt-4 text-base font-bold sm:mt-5 sm:text-lg">{title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
-              <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
-                <span className="text-muted-foreground line-through">De {value}</span>
-                <span className="rounded-full bg-fire px-2.5 py-0.5 text-xs font-bold text-white">GRÁTIS hoje</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Results() {
-  const before = ["Sem saber qual carne comprar", "Preços no chute", "Cliente esporádico", "Estresse na produção", "Lucro apertado"];
-  const after = ["Carnes escolhidas com estratégia", "Preços com margem garantida", "Cliente fiel toda semana", "Rotina fluida e organizada", "Lucro previsível e crescente"];
-  return (
-    <section className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="flex flex-col items-center text-center">
-          <SectionTag>Transformação</SectionTag>
-          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
-            Do improviso para o <span className="text-gradient-fire">negócio de verdade</span>
-          </h2>
-        </div>
-        <div className="mt-14 grid gap-6 md:grid-cols-2">
-          <div className="rounded-3xl border border-border bg-card p-8">
-            <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-muted-foreground">
-              <span className="h-2 w-2 rounded-full bg-muted-foreground/60" /> Antes
-            </div>
-            <h3 className="mt-3 text-2xl font-bold">Você hoje</h3>
-            <ul className="mt-5 space-y-3 text-muted-foreground">
-              {before.map((b) => (
-                <li key={b} className="flex items-start gap-3">
-                  <span className="mt-1 h-4 w-4 shrink-0 rounded-full border border-muted-foreground/40" />
-                  {b}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="relative rounded-3xl border border-[color:var(--ember)]/40 bg-gradient-to-br from-[color:var(--ember)]/10 to-[color:var(--gold)]/5 p-8 shadow-fire">
-            <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-[color:var(--gold)]">
-              <Flame className="h-4 w-4" /> Depois
-            </div>
-            <h3 className="mt-3 text-2xl font-bold">Você com o método</h3>
-            <ul className="mt-5 space-y-3">
-              {after.map((a) => (
-                <li key={a} className="flex items-start gap-3">
-                  <span className="mt-1 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-fire">
-                    <Check className="h-2.5 w-2.5 text-white" />
+        {/* AI Solution */}
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          {/* AI viewer */}
+          <div className="relative">
+            <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/20 bg-card/60 p-3 shadow-fire backdrop-blur">
+              <div className="flex items-center justify-between px-2 pb-3">
+                <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+                  <span className="grid h-5 w-5 place-items-center rounded-md bg-fire">
+                    <Sparkles className="h-3 w-3 text-white" />
                   </span>
-                  {a}
+                  IA · Análise de mercado
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" style={{ animation: "ai-blip 1.4s ease-in-out infinite" }} />
+                  <span className="text-[10px] uppercase tracking-widest text-emerald-400/90">live</span>
+                </div>
+              </div>
+
+              <div className="relative mx-auto aspect-[4/5] w-full max-w-[280px] sm:max-w-[320px] overflow-hidden rounded-2xl bg-background">
+                {slides.map((s, i) => (
+                  <img
+                    key={s.src}
+                    src={s.src}
+                    alt={s.alt}
+                    loading="lazy"
+                    className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ${
+                      i === idx ? "opacity-100 scale-100" : "opacity-0 scale-105"
+                    }`}
+                  />
+                ))}
+
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-background/40" />
+
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(oklch(1 0 0 / 0.08) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.08) 1px, transparent 1px)",
+                    backgroundSize: "28px 28px",
+                  }}
+                />
+
+                {[
+                  "top-3 left-3 border-t-2 border-l-2",
+                  "top-3 right-3 border-t-2 border-r-2",
+                  "bottom-3 left-3 border-b-2 border-l-2",
+                  "bottom-3 right-3 border-b-2 border-r-2",
+                ].map((c) => (
+                  <span key={c} className={`pointer-events-none absolute h-6 w-6 border-[color:var(--gold)] ${c}`} />
+                ))}
+
+                <div
+                  className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-transparent via-[color:var(--gold)]/40 to-transparent"
+                  style={{ animation: "ai-scan 2.8s linear infinite" }}
+                />
+
+                <div key={idx} className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-background/70 px-3 py-1.5 text-[11px] font-medium backdrop-blur animate-fade-in">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--gold)]" style={{ animation: "ai-blip 1.2s ease-in-out infinite" }} />
+                  {current.tag}
+                </div>
+
+                <div key={`m-${idx}`} className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-xl border border-border bg-background/80 px-4 py-3 backdrop-blur animate-fade-in">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Insight detectado</div>
+                    <div className="text-sm font-bold text-foreground">{current.metric}</div>
+                  </div>
+                  <TrendingUp className="h-5 w-5 text-[color:var(--gold)]" />
+                </div>
+              </div>
+
+              <div className="mt-3 flex items-center justify-center gap-1.5 pb-1">
+                {slides.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`h-1.5 rounded-full transition-all duration-500 ${
+                      i === idx ? "w-6 bg-[color:var(--gold)]" : "w-1.5 bg-muted-foreground/30"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] bg-[color:var(--ember)]/20 blur-3xl" />
+          </div>
+
+          {/* Copy */}
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[color:var(--gold)]">
+              <Sparkles className="h-3 w-3" /> IA · A solução
+            </div>
+            <h3 className="mt-5 h-fluid-h3 font-black">
+              Tudo o que funciona <span className="text-gradient-fire">reunido num só material</span>.
+            </h3>
+            <p className="mt-4 text-muted-foreground">
+              Da escolha da carne ao pós-venda — o que transforma espetinho em uma máquina de fazer dinheiro.
+            </p>
+            <ul className="mt-6 space-y-3">
+              {bullets.map((t, i) => (
+                <li
+                  key={t}
+                  className={`flex items-start gap-3 transition-all duration-500 ${
+                    i < visibleBullets ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"
+                  }`}
+                >
+                  <span className="mt-1 grid h-5 w-5 place-items-center rounded-full bg-fire">
+                    <Check className="h-3 w-3 text-white" />
+                  </span>
+                  <span>{t}</span>
                 </li>
               ))}
+              {visibleBullets < bullets.length && (
+                <li className="flex items-center gap-2 pl-8 text-xs text-muted-foreground">
+                  <span className="flex gap-1">
+                    <span className="h-1 w-1 animate-bounce rounded-full bg-[color:var(--gold)] [animation-delay:-0.3s]" />
+                    <span className="h-1 w-1 animate-bounce rounded-full bg-[color:var(--gold)] [animation-delay:-0.15s]" />
+                    <span className="h-1 w-1 animate-bounce rounded-full bg-[color:var(--gold)]" />
+                  </span>
+                  Gerando insights…
+                </li>
+              )}
             </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Author() {
-  return (
-    <section className="relative py-14 sm:py-20">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
-        <div className="relative">
-          <div className="absolute -inset-4 -z-10 rounded-3xl bg-fire opacity-25 blur-2xl" />
-          <img
-            src={chefWorking.url}
-            alt="Autor no dia a dia da grelha"
-            className="h-[320px] w-full rounded-3xl sm:h-[500px] object-cover shadow-fire"
-            loading="lazy"
-          />
-        </div>
-        <div>
-          <SectionTag>Quem escreveu</SectionTag>
-          <h2 className="mt-6 h-fluid-h2 font-black">
-            Um método <span className="text-gradient-fire">nascido na brasa</span>
-          </h2>
-          <p className="mt-5 text-lg text-muted-foreground">
-            Anos servindo espetinho todos os dias, escutando cliente, ajustando ponto, corte e tempero.
-            O que está no eBook é o que funciona de verdade — na prática, no calor da grelha, com fila esperando.
-          </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            {[
-              { n: "+10", l: "anos na brasa" },
-              { n: "+2k", l: "leitores" },
-              { n: "4.9", l: "avaliação" },
-            ].map((s) => (
-              <div key={s.l} className="glass rounded-2xl p-4 text-center">
-                <div className="text-3xl font-black text-gradient-fire">{s.n}</div>
-                <div className="text-xs uppercase tracking-widest text-muted-foreground">{s.l}</div>
-              </div>
-            ))}
+            <div className="mt-8">
+              <CTAButton>Quero acessar o método <ArrowRight className="h-4 w-4" /></CTAButton>
+            </div>
           </div>
         </div>
       </div>
