@@ -50,7 +50,7 @@ import printWhats1 from "@/assets/print-whats-1.jpg";
 import printWhats2 from "@/assets/print-whats-2.jpg";
 import printWhats3 from "@/assets/print-whats-3.jpg";
 import printPix from "@/assets/print-pix.jpg";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo-mark.png";
 
 const SITE_URL = "https://sizzling-story-maker.lovable.app";
 const OG_IMAGE = `${SITE_URL}${heroChef.url}`;
@@ -555,7 +555,7 @@ function Nav() {
             alt="Espetinho na Veia — Do Zero aos 10k"
             width={40}
             height={40}
-            className="h-10 w-10 shrink-0 rounded-full ring-1 ring-[color:var(--gold)]/40 shadow-fire"
+            className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_12px_oklch(0.72_0.20_50/0.55)]"
           />
           <span className="truncate font-display text-base tracking-wide sm:text-xl">
             ESPETINHO <span className="text-gradient-fire">NA VEIA</span>
