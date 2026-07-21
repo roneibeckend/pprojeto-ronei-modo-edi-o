@@ -1480,7 +1480,7 @@ function Offer() {
             {/* Price */}
             <div className="mt-8 text-center [font-variant-numeric:tabular-nums]">
               <div className="text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
-                De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 197,00</span> por apenas
+                De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 97,00</span> por apenas
               </div>
 
               <div className="mt-3 flex items-start justify-center gap-1.5">
