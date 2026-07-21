@@ -674,7 +674,7 @@ function Hero() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--flame)]" />
             </span>
-            Já <strong className="text-foreground">+300 eBooks vendidos</strong> para novos vendedores de espetinho
+            Mais de <strong className="text-foreground">300 pessoas</strong> já compraram o eBook e começaram a vender espetinho
           </span>
         </Reveal>
 
