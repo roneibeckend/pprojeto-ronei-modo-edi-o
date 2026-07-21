@@ -1173,6 +1173,7 @@ function Modules() {
     { icon: DollarSign, title: "O caminho para chegar aos 10k por mês", desc: "Passo a passo para alcançar o primeiro grande resultado." },
     { icon: Instagram, title: "Próximos passos para crescer ainda mais", desc: "Como transformar o espetinho em uma marca sólida." },
   ];
+  const [open, setOpen] = useState(false);
   return (
     <section id="modulos" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -1184,22 +1185,48 @@ function Modules() {
           <p className="mt-4 max-w-2xl text-muted-foreground">
             Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
           </p>
+
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls="modulos-lista"
+            className="mt-8 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-fire/10 px-5 py-3 text-sm font-bold uppercase tracking-widest text-[color:var(--gold)] transition hover:bg-fire/20"
+          >
+            {open ? "Ocultar capítulos" : "Ver os 14 capítulos"}
+            <ChevronDown
+              className={`h-4 w-4 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+            />
+          </button>
         </div>
-        <div className="mt-10 flex flex-wrap justify-center gap-2 sm:mt-12 sm:gap-3">
-          {modules.map(({ icon: Icon, title }, i) => (
-            <div
-              key={title}
-              className="glass group flex items-center gap-2 rounded-full px-3 py-2 transition hover:-translate-y-0.5 hover:border-[color:var(--gold)]/40 sm:px-4 sm:py-2.5"
-            >
-              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-fire text-white shadow-fire sm:h-7 sm:w-7">
-                <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)]">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span className="text-xs font-semibold sm:text-sm">{title}</span>
+
+        <div
+          id="modulos-lista"
+          className={`grid overflow-hidden transition-[grid-template-rows,opacity,margin] duration-500 ease-out ${
+            open ? "mt-10 grid-rows-[1fr] opacity-100 sm:mt-12" : "mt-0 grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="min-h-0">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+              {modules.map(({ icon: Icon, title }, i) => (
+                <div
+                  key={title}
+                  style={{ animationDelay: open ? `${i * 40}ms` : "0ms" }}
+                  className={`glass group flex items-center gap-2 rounded-full px-3 py-2 transition hover:-translate-y-0.5 hover:border-[color:var(--gold)]/40 sm:px-4 sm:py-2.5 ${
+                    open ? "animate-fade-in" : ""
+                  }`}
+                >
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-fire text-white shadow-fire sm:h-7 sm:w-7">
+                    <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-xs font-semibold sm:text-sm">{title}</span>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>
