@@ -918,9 +918,11 @@ function Benefits() {
                 <div>
                   <h3 className="mb-1 text-sm font-bold">{title}</h3>
                   <p className="text-xs leading-relaxed text-muted-foreground">{desc}</p>
-
+                </div>
+              </div>
             </div>
           ))}
+
         </div>
       </div>
     </section>
