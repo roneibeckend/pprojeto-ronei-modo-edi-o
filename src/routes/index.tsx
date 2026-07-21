@@ -1524,9 +1524,6 @@ function Offer() {
                 Promoção termina em
               </div>
               <Countdown hours={72} />
-              <p className="mt-2.5 text-center text-[11px] text-muted-foreground">
-                Depois de <strong className="text-foreground">29/08</strong>, o preço volta para R$ 197,00.
-              </p>
             </div>
 
             <div className="mt-6">
@@ -1822,7 +1819,7 @@ function Footer() {
           <strong className="text-foreground">Espetinho na Veia</strong> · CNPJ 00.000.000/0001-00 · contato@espetinhonaveia.com
         </p>
         <p className="mb-2 opacity-80">
-          Endereço comercial informado no rodapé conforme Art. 2º do Decreto 7.962/2013 (CDC — comércio eletrônico). Suporte de segunda a sexta, das 9h às 18h.
+          Suporte de segunda a sexta, das 9h às 18h.
         </p>
         <p>© {new Date().getFullYear()} Espetinho na Veia. Todos os direitos reservados. Este produto não garante retornos financeiros — os resultados dependem da aplicação do método.</p>
       </div>
