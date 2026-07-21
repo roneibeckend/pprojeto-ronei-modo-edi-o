@@ -1099,7 +1099,6 @@ function ProfitCalculator() {
             </div>
           </div>
         </div>
-        </div>
       </div>
     </section>
   );
