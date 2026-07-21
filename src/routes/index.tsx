@@ -1982,8 +1982,34 @@ function LeadPopup() {
     if (typeof window === "undefined") return;
     if (sessionStorage.getItem("espetinho_lead_popup_dismissed") === "1") return;
     if (localStorage.getItem("espetinho_leads")) return;
-    const t = setTimeout(() => setOpen(true), 300_000);
-    return () => clearTimeout(t);
+
+    const trigger = () => setOpen(true);
+    const t = setTimeout(trigger, 300_000);
+
+    // Exit-intent (desktop): cursor sobe além do topo da viewport
+    const onMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 0) trigger();
+    };
+    // Mobile: scroll rápido para cima próximo ao topo
+    let lastY = window.scrollY;
+    let lastT = Date.now();
+    const onScroll = () => {
+      const now = Date.now();
+      const dy = window.scrollY - lastY;
+      const dt = now - lastT || 1;
+      const velocity = dy / dt; // px/ms (negativo = subindo)
+      if (velocity < -1.5 && window.scrollY < 400) trigger();
+      lastY = window.scrollY;
+      lastT = now;
+    };
+
+    document.addEventListener("mouseleave", onMouseLeave);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      clearTimeout(t);
+      document.removeEventListener("mouseleave", onMouseLeave);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   useEffect(() => {
