@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type JSX } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { trackEvent, trackInitiateCheckout } from "@/lib/pixel";
 import {
   Flame,
   Check,
@@ -297,6 +298,7 @@ function CTAButton({
   return (
     <a
       href="#oferta"
+      onClick={() => trackInitiateCheckout("cta-anchor")}
       className={`btn-fire shine-on-hover w-full sm:w-auto ${size === "xl" ? "text-base sm:text-lg sm:!px-10 sm:!py-5" : ""} ${className}`}
     >
       {children}
@@ -313,6 +315,7 @@ function CheckoutButton({ className = "", label = "Quero garantir meu acesso" }:
   const handleClick = async () => {
     if (loading) return;
     setLoading(true);
+    trackInitiateCheckout("checkout-button");
     try {
       // Simula pequena latência antes de redirecionar (evita clique duplo e mostra feedback).
       await new Promise((r) => setTimeout(r, 600));
@@ -461,6 +464,7 @@ function LeadForm() {
         // ignore storage errors
       }
       setStatus("success");
+      trackEvent("Lead", { content_name: "lead-popup", value: 47.9, currency: "BRL" });
       toast.success("Cupom reservado!", {
         description: "Enviamos os detalhes no seu WhatsApp.",
       });
