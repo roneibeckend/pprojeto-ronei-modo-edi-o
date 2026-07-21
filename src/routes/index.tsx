@@ -1988,11 +1988,11 @@ function LandingPage() {
         <ForYou />
         <Benefits />
         <ProfitCalculator />
-        <Modules />
         <AuthorSolution />
         <SocialProof />
         <Bonuses />
         <Offer />
+        <Modules />
         <FAQ />
 
       </main>
