@@ -50,7 +50,7 @@ import printWhats1 from "@/assets/print-whats-1.jpg";
 import printWhats2 from "@/assets/print-whats-2.jpg";
 import printWhats3 from "@/assets/print-whats-3.jpg";
 import printPix from "@/assets/print-pix.jpg";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo-mark.png";
 
 const SITE_URL = "https://sizzling-story-maker.lovable.app";
 const OG_IMAGE = `${SITE_URL}${heroChef.url}`;
