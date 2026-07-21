@@ -1400,28 +1400,41 @@ function LandingPage() {
       });
     });
 
+    const revealNow = (n: HTMLElement) => {
+      if (n.dataset.visible !== "true") n.dataset.visible = "true";
+    };
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (e.isIntersecting) {
-            (e.target as HTMLElement).dataset.visible = "true";
+            revealNow(e.target as HTMLElement);
             io.unobserve(e.target);
           }
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -60px 0px" },
+      { threshold: 0, rootMargin: "0px 0px -10% 0px" },
     );
-    document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((n) => {
-      // If element is already above the current viewport (e.g. fast scroll or reload),
-      // mark it visible immediately so it doesn't stay hidden.
-      const r = n.getBoundingClientRect();
-      if (r.bottom < 0) {
-        n.dataset.visible = "true";
-        return;
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    nodes.forEach((n) => io.observe(n));
+
+    // Scroll fallback: catch anything IO missed (fast scroll / initial paint races)
+    const onScroll = () => {
+      const vh = window.innerHeight;
+      for (const n of nodes) {
+        if (n.dataset.visible === "true") continue;
+        const r = n.getBoundingClientRect();
+        if (r.top < vh * 0.92 && r.bottom > 0) {
+          revealNow(n);
+          io.unobserve(n);
+        }
       }
-      io.observe(n);
-    });
-    return () => io.disconnect();
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      io.disconnect();
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
   return (
     <div className="min-h-screen pb-24 md:pb-0">
