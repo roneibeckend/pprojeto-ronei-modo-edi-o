@@ -778,7 +778,7 @@ function AuthorSolution() {
         {/* AI Solution */}
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* AI viewer */}
-        <div className="relative">
+        <div className="relative lg:order-2">
           <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/20 bg-card/60 p-3 shadow-fire backdrop-blur">
             {/* header bar */}
             <div className="flex items-center justify-between px-2 pb-3">
@@ -871,7 +871,7 @@ function AuthorSolution() {
         </div>
 
         {/* Copy */}
-        <div>
+        <div className="lg:order-1">
           <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[color:var(--gold)]">
             <Sparkles className="h-3 w-3" /> IA · A solução
           </div>
