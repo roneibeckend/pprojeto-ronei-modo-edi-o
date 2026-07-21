@@ -795,7 +795,7 @@ function AuthorSolution() {
             </div>
 
             {/* image stage */}
-            <div className="relative mx-auto aspect-[4/5] w-full max-w-[280px] sm:max-w-[320px] overflow-hidden rounded-2xl bg-background">
+            <div className="relative mx-auto aspect-[4/5] w-full max-w-[220px] sm:max-w-[240px] overflow-hidden rounded-2xl bg-background">
               {slides.map((s, i) => (
                 <img
                   key={s.src}
@@ -875,15 +875,15 @@ function AuthorSolution() {
           <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[color:var(--gold)]">
             <Sparkles className="h-3 w-3" /> IA · A solução
           </div>
-          <h2 className="mt-5 h-fluid-h2 font-black">
+          <h2 className="mt-4 h-fluid-h3 font-black sm:text-2xl">
             Um método <span className="text-gradient-fire">testado na brasa</span>, feito para quem quer resultado.
           </h2>
-          <p className="mt-5 text-lg text-muted-foreground">
+          <p className="mt-3 text-sm text-muted-foreground sm:text-base">
             O <strong className="text-foreground">Espetinho na Veia</strong> reúne, num só material,
-            tudo o que você precisa saber para transformar espetinho em uma máquina de fazer dinheiro:
+            tudo o que você precisa para transformar espetinho em uma máquina de fazer dinheiro:
             da escolha da carne ao pós-venda.
           </p>
-          <ul className="mt-6 space-y-3">
+          <ul className="mt-5 space-y-2 text-sm sm:text-base">
             {bullets.map((t, i) => (
               <li
                 key={t}
