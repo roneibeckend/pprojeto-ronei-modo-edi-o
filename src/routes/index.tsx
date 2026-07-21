@@ -1053,66 +1053,98 @@ function Guarantee() {
 }
 
 function Offer() {
+  const features = [
+    "eBook completo com 14 capítulos (+30 páginas)",
+    "4 bônus exclusivos (fornecedores, grupo VIP, certificado e sorteio)",
+    "Acesso imediato após o pagamento",
+    "Garantia incondicional de 7 dias",
+  ];
   return (
-    <section id="oferta" className="relative py-14 sm:py-20">
+    <section id="oferta" className="relative py-16 sm:py-24">
+      {/* Ambient glows */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[color:var(--ember)]/25 blur-3xl" />
+        <div className="absolute left-1/4 top-10 h-72 w-72 rounded-full bg-[color:var(--ember)]/10 blur-[120px]" />
+        <div className="absolute right-1/4 bottom-10 h-72 w-72 rounded-full bg-[color:var(--gold)]/10 blur-[120px]" />
       </div>
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-[1.5rem] border border-[color:var(--ember)]/40 bg-card p-6 shadow-fire sm:rounded-[2rem] sm:p-12">
-          <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-fire opacity-20 blur-3xl" />
-          <div className="flex flex-col items-center text-center">
-            <span className="inline-flex items-center gap-2 rounded-full bg-fire px-4 py-1.5 text-xs font-black uppercase tracking-widest text-white shadow-fire animate-flicker">
-              <Flame className="h-3.5 w-3.5" /> Oferta por tempo limitado
-            </span>
-            <h2 className="mt-6 h-fluid-h2 font-black">
-              Comece hoje por <span className="text-gradient-fire">menos que um espetinho por dia</span>
-            </h2>
 
-            <div className="mt-8 flex flex-col items-center gap-2">
-              <div className="text-sm text-muted-foreground line-through">De R$ 197,00</div>
-              <div className="flex items-end gap-2">
-                <span className="text-lg font-bold text-[color:var(--gold)]">R$</span>
-                <span className="font-display text-6xl leading-none text-gradient-fire sm:text-8xl">47</span>
-                <span className="mb-2 text-lg font-bold text-[color:var(--gold)]">,90</span>
+      <div className="mx-auto max-w-lg px-4 sm:px-6">
+        <div className="relative">
+          {/* Card */}
+          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[color:var(--card)]/60 p-7 shadow-2xl backdrop-blur-xl sm:p-10">
+            {/* Top hairline */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--ember)]/70 to-transparent" />
+
+            {/* Tag */}
+            <div className="flex justify-center">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--ember)]/25 bg-[color:var(--ember)]/10 px-3.5 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[color:var(--ember)]">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--ember)]" />
+                </span>
+                Oferta por tempo limitado
+              </span>
+            </div>
+
+            {/* Price block */}
+            <div className="mt-9 text-center [font-variant-numeric:tabular-nums]">
+              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <span className="line-through decoration-[color:var(--ember)]/40">De R$ 197,00</span>
+                <span className="inline-flex items-center rounded-md border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)]">
+                  −76%
+                </span>
               </div>
-              <div className="text-sm text-muted-foreground">
-                ou <strong className="text-foreground">3x de R$ 17,00</strong> no cartão
+
+              <div className="mt-2 flex items-start justify-center gap-1.5">
+                <span className="mt-3 text-xl font-semibold text-muted-foreground">R$</span>
+                <span className="font-display text-7xl leading-none tracking-tight text-foreground sm:text-8xl">
+                  47
+                </span>
+                <span className="mt-3 text-xl font-semibold text-muted-foreground">,90</span>
+              </div>
+
+              <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">ou</span>
+                <span className="text-sm font-bold text-[color:var(--gold)]">3x de R$ 17,00</span>
+                <span className="text-[10px] text-muted-foreground">no cartão</span>
               </div>
             </div>
 
-            <ul className="mt-8 grid w-full max-w-md gap-2 text-left">
-              {[
-                "eBook completo com 14 capítulos (+30 páginas)",
-                "4 bônus exclusivos (fornecedores, grupo VIP, certificado e sorteio)",
-                "Acesso imediato após o pagamento",
-                "Garantia incondicional de 7 dias",
-              ].map((t) => (
-                <li key={t} className="flex items-center gap-3">
-                  <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-fire">
-                    <Check className="h-3 w-3 text-white" />
+            {/* Divider */}
+            <div className="my-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+            {/* Features */}
+            <ul className="grid gap-3.5">
+              {features.map((t) => (
+                <li key={t} className="flex items-start gap-3">
+                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/15">
+                    <Check className="h-3 w-3 text-[color:var(--ember)]" strokeWidth={3} />
                   </span>
-                  {t}
+                  <span className="text-sm leading-relaxed text-foreground/85">{t}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="mt-8 w-full flex justify-center">
+            {/* CTA */}
+            <div className="mt-9">
               <CheckoutButton />
             </div>
 
-
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5"><Lock className="h-3.5 w-3.5" /> Compra 100% segura</span>
-              <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> Acesso imediato</span>
-              <span className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" /> 7 dias de garantia</span>
+            {/* Trust row */}
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-white/5 pt-6 text-[11px] uppercase tracking-widest text-muted-foreground">
+              <span className="flex items-center gap-1.5"><Lock className="h-3 w-3" /> Compra segura</span>
+              <span className="flex items-center gap-1.5"><Clock className="h-3 w-3" /> Acesso imediato</span>
+              <span className="flex items-center gap-1.5"><ShieldCheck className="h-3 w-3" /> 7 dias de garantia</span>
             </div>
           </div>
+
+          {/* Soft reflection */}
+          <div className="pointer-events-none absolute -bottom-6 left-1/2 h-10 w-3/4 -translate-x-1/2 rounded-full bg-[color:var(--ember)]/20 blur-3xl" />
         </div>
       </div>
     </section>
   );
 }
+
 
 function FAQ() {
   const faqs = [
