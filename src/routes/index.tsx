@@ -566,14 +566,16 @@ function Hero() {
   return (
     <section id="top" className="relative overflow-hidden pt-20 pb-10 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28">
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-0 h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/20 blur-3xl sm:h-[500px] sm:w-[900px]" />
+        <div className="absolute left-1/2 top-0 h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/25 blur-3xl sm:h-[520px] sm:w-[960px] animate-pulse-glow" />
+        <div className="absolute right-0 top-40 h-[280px] w-[280px] rounded-full bg-[color:var(--gold)]/15 blur-3xl" />
       </div>
+      <Embers />
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2">
         <div className="flex flex-col items-start">
-          <SectionTag>Método completo · edição 2026</SectionTag>
+          <Reveal><SectionTag>Método completo · edição 2026</SectionTag></Reveal>
 
           {/* Mobile-only hero image (below badge) */}
-          <div className="relative mt-5 w-full lg:hidden">
+          <Reveal delay={1} className="relative mt-5 w-full lg:hidden">
             <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
             <div className="glass relative overflow-hidden rounded-[1.5rem] p-1.5 shadow-fire animate-float">
               <img
@@ -584,26 +586,39 @@ function Hero() {
                 fetchPriority="high"
               />
             </div>
-          </div>
+          </Reveal>
 
-          <h1 className="mt-5 h-fluid-hero font-black sm:mt-6">
-            Lucre até <span className="text-gradient-fire">R$ 300 por dia</span> vendendo espetinhos — começando do zero
-          </h1>
-          <p className="mt-5 max-w-xl text-fluid-lead text-muted-foreground sm:mt-6">
+          <Reveal delay={1} as="h1" className="mt-5 h-fluid-hero font-black sm:mt-6">
+            Lucre até <span className="animated-fire-text">R$ 300 por dia</span> vendendo espetinhos — começando do zero
+          </Reveal>
+          <Reveal delay={2} as="p" className="mt-5 max-w-xl text-fluid-lead text-muted-foreground sm:mt-6">
             O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
-          </p>
+          </Reveal>
 
-          <div className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
+          <Reveal delay={3} className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
             <CTAButton size="xl">
               Quero começar agora <ArrowRight className="h-5 w-5" />
             </CTAButton>
             <a href="#beneficios" className="btn-ghost-fire w-full sm:w-auto">
               Ver o que aprendo
             </a>
-          </div>
+          </Reveal>
+
+          <Reveal delay={4} className="mt-8 grid grid-cols-3 gap-3 sm:gap-4">
+            {[
+              { n: "300%", l: "margem" },
+              { n: "14", l: "capítulos" },
+              { n: "7 dias", l: "garantia" },
+            ].map((s) => (
+              <div key={s.l} className="glass rounded-xl px-3 py-3 text-center transition hover:-translate-y-0.5">
+                <div className="font-display text-xl leading-none text-gradient-fire sm:text-2xl">{s.n}</div>
+                <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-xs">{s.l}</div>
+              </div>
+            ))}
+          </Reveal>
         </div>
 
-        <div className="relative hidden lg:block">
+        <Reveal delay={2} className="relative hidden lg:block">
           <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
           <div className="glass relative overflow-hidden rounded-[2rem] p-2 shadow-fire animate-float">
             <img
@@ -613,7 +628,7 @@ function Hero() {
               loading="eager"
             />
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
