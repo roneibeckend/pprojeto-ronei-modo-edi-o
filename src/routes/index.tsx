@@ -658,8 +658,9 @@ function Hero() {
 
           {/* CTAs on the right */}
           <Reveal variant="up" delay={4} className="flex w-full flex-col items-stretch gap-3 sm:max-w-sm sm:mx-auto lg:mx-0 lg:max-w-xs lg:items-start lg:justify-self-start">
-            <CTAButton size="lg" className="w-full justify-center">
-              Quero começar agora <ArrowRight className="h-5 w-5" />
+            <CTAButton size="lg" className="relative w-full justify-center text-center">
+              <span className="w-full text-center">Quero começar agora</span>
+              <ArrowRight className="absolute right-5 h-5 w-5" />
             </CTAButton>
             <a href="#beneficios" className="btn-ghost-fire w-full justify-center text-center">
               Ver o que aprendo
