@@ -356,19 +356,26 @@ function CheckoutButton({ className = "", label = "Quero garantir meu acesso" }:
   );
 }
 
-function Countdown({ target }: { target: Date }) {
+function Countdown({ hours = 72 }: { hours?: number }) {
+  const [target, setTarget] = useState<number | null>(null);
   const [now, setNow] = useState<number>(() => Date.now());
   useEffect(() => {
+    const key = `env_offer_deadline_${hours}h`;
+    let t = Number(localStorage.getItem(key));
+    const max = Date.now() + hours * 3_600_000;
+    if (!t || Number.isNaN(t) || t < Date.now() || t > max) {
+      t = Date.now() + hours * 3_600_000;
+      localStorage.setItem(key, String(t));
+    }
+    setTarget(t);
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
-  }, []);
-  const diff = Math.max(0, target.getTime() - now);
-  const d = Math.floor(diff / 86_400_000);
-  const h = Math.floor((diff / 3_600_000) % 24);
+  }, [hours]);
+  const diff = target ? Math.max(0, target - now) : hours * 3_600_000;
+  const h = Math.floor(diff / 3_600_000);
   const m = Math.floor((diff / 60_000) % 60);
   const s = Math.floor((diff / 1_000) % 60);
   const cells: { l: string; v: number }[] = [
-    { l: "dias", v: d },
     { l: "horas", v: h },
     { l: "min", v: m },
     { l: "seg", v: s },
@@ -377,7 +384,7 @@ function Countdown({ target }: { target: Date }) {
     <div className="flex items-center justify-center gap-1.5 sm:gap-2" role="timer" aria-label="Contagem regressiva da oferta">
       {cells.map((c, i) => (
         <div key={c.l} className="flex items-center gap-1.5 sm:gap-2">
-          <div className="flex min-w-[54px] flex-col items-center rounded-xl border border-white/10 bg-white/[0.04] px-2 py-1.5 backdrop-blur sm:min-w-[64px]">
+          <div className="flex min-w-[60px] flex-col items-center rounded-xl border border-white/10 bg-white/[0.04] px-2 py-1.5 backdrop-blur sm:min-w-[72px]">
             <span className="font-display text-2xl font-black leading-none text-gradient-fire [font-variant-numeric:tabular-nums] sm:text-3xl">
               {String(c.v).padStart(2, "0")}
             </span>
