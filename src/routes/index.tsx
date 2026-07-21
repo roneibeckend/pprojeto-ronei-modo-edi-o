@@ -1235,10 +1235,10 @@ function Modules() {
 
 function Bonuses() {
   const bonuses = [
-    { icon: Truck, title: "Contato com fornecedores", tag: "Bônus 01", value: "R$ 97", desc: "Acesso direto a fornecedores confiáveis para comprar melhor e mais barato." },
-    { icon: MessageCircle, title: "Grupo de WhatsApp", tag: "Bônus 02", value: "R$ 147", desc: "Comunidade exclusiva com outros alunos para trocar experiências e networking." },
-    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", value: "R$ 67", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
-    { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", value: "R$ 250", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
+    { icon: Truck, title: "Contato com fornecedores", tag: "Bônus 01", value: "R$ 27", desc: "Acesso direto a fornecedores confiáveis para comprar melhor e mais barato." },
+    { icon: MessageCircle, title: "Grupo de WhatsApp", tag: "Bônus 02", value: "R$ 37", desc: "Comunidade exclusiva com outros alunos para trocar experiências e networking." },
+    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", value: "R$ 19", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
+    { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", value: "R$ 67", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
   ];
   return (
     <section id="bonus" className="relative py-14 sm:py-20">
@@ -1285,7 +1285,7 @@ function Bonuses() {
             </div>
             <div className="mt-2 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
               <span className="font-display text-3xl font-black text-muted-foreground/80 line-through decoration-[color:var(--ember)]/60 decoration-2 sm:text-4xl">
-                R$ 561,00
+                R$ 150,00
               </span>
               <span className="rounded-full bg-fire px-3 py-1 text-xs font-black uppercase tracking-widest text-white shadow-fire">
                 GRÁTIS hoje
