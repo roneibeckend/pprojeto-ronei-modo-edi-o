@@ -1724,26 +1724,24 @@ function ForYou() {
     "Sonha em ter o próprio negócio para chamar de seu",
   ];
   return (
-    <section className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6">
+    <section className="relative py-10 sm:py-14">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Isso é pra você se…</SectionTag>
-          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
-            Se você se <span className="text-gradient-fire">identifica com um destes</span>, o eBook é pra você
+          <h2 className="mt-4 max-w-2xl text-2xl sm:text-3xl font-black">
+            Você se <span className="text-gradient-fire">identifica</span>?
           </h2>
         </div>
-        <div className="mt-12 flex flex-col gap-3">
+        <div className="mt-8 grid gap-2.5 sm:grid-cols-2">
           {items.map((t, i) => (
             <div
               key={t}
-              className="group flex items-start gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm transition-all hover:border-white/20 hover:bg-white/[0.06]"
+              className="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 backdrop-blur-sm transition-all hover:border-[color:var(--gold)]/30 hover:bg-white/[0.05]"
             >
-              <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] transition-colors group-hover:border-[color:var(--gold)]/40">
-                <span className="font-mono text-[11px] tracking-widest text-muted-foreground group-hover:text-[color:var(--gold)]">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-              </div>
-              <span className="text-base leading-relaxed text-foreground/90 sm:text-lg">{t}</span>
+              <span className="font-mono text-[10px] tracking-widest text-muted-foreground group-hover:text-[color:var(--gold)] shrink-0">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="text-sm leading-snug text-foreground/90">{t}</span>
             </div>
           ))}
         </div>
