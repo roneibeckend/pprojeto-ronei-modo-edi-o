@@ -1158,27 +1158,6 @@ function Testimonials() {
   );
 }
 
-function Guarantee() {
-  return (
-    <section className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[color:var(--gold)]/10 via-transparent to-[color:var(--ember)]/10 p-10 text-center shadow-fire">
-          <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-fire shadow-fire animate-pulse-glow">
-            <Award className="h-12 w-12 text-white" />
-          </div>
-          <h2 className="mt-6 h-fluid-h2 font-black">
-            Garantia <span className="text-gradient-fire">incondicional de 7 dias</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Leia o eBook, teste o método e, se por qualquer motivo você não gostar,
-            devolvemos <strong className="text-foreground">100% do seu dinheiro</strong>. Simples assim. O risco é todo nosso.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Offer() {
   const features = [
     "eBook completo com 14 capítulos (+30 páginas)",
@@ -1194,11 +1173,10 @@ function Offer() {
         <div className="absolute right-1/4 bottom-10 h-72 w-72 rounded-full bg-[color:var(--gold)]/10 blur-[120px]" />
       </div>
 
-      <div className="mx-auto max-w-lg px-4 sm:px-6">
-        <div className="relative">
-          {/* Card */}
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="grid items-stretch gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          {/* Offer card */}
           <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[color:var(--card)]/60 p-7 shadow-2xl backdrop-blur-xl sm:p-10">
-            {/* Top hairline */}
             <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--ember)]/70 to-transparent" />
 
             {/* Tag */}
@@ -1212,8 +1190,8 @@ function Offer() {
               </span>
             </div>
 
-            {/* Price block */}
-            <div className="mt-9 text-center [font-variant-numeric:tabular-nums]">
+            {/* Price */}
+            <div className="mt-8 text-center [font-variant-numeric:tabular-nums]">
               <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                 <span className="line-through decoration-[color:var(--ember)]/40">De R$ 197,00</span>
                 <span className="inline-flex items-center rounded-md border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)]">
@@ -1236,11 +1214,9 @@ function Offer() {
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="my-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <div className="my-7 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-            {/* Features */}
-            <ul className="grid gap-3.5">
+            <ul className="grid gap-3">
               {features.map((t) => (
                 <li key={t} className="flex items-start gap-3">
                   <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/15">
@@ -1251,26 +1227,59 @@ function Offer() {
               ))}
             </ul>
 
-            {/* CTA */}
-            <div className="mt-9">
+            <div className="mt-8">
               <CheckoutButton />
             </div>
 
-            {/* Trust row */}
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-white/5 pt-6 text-[11px] uppercase tracking-widest text-muted-foreground">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-white/5 pt-5 text-[11px] uppercase tracking-widest text-muted-foreground">
               <span className="flex items-center gap-1.5"><Lock className="h-3 w-3" /> Compra segura</span>
               <span className="flex items-center gap-1.5"><Clock className="h-3 w-3" /> Acesso imediato</span>
-              <span className="flex items-center gap-1.5"><ShieldCheck className="h-3 w-3" /> 7 dias de garantia</span>
             </div>
           </div>
 
-          {/* Soft reflection */}
-          <div className="pointer-events-none absolute -bottom-6 left-1/2 h-10 w-3/4 -translate-x-1/2 rounded-full bg-[color:var(--ember)]/20 blur-3xl" />
+          {/* Guarantee card */}
+          <div className="relative overflow-hidden rounded-[2rem] border border-[color:var(--gold)]/30 bg-gradient-to-br from-[color:var(--gold)]/[0.08] via-transparent to-[color:var(--ember)]/[0.08] p-7 backdrop-blur-xl sm:p-9 flex flex-col">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--gold)]/70 to-transparent" />
+
+            <div className="flex justify-center lg:justify-start">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3.5 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[color:var(--gold)]">
+                <ShieldCheck className="h-3 w-3" />
+                Risco zero
+              </span>
+            </div>
+
+            <div className="mt-6 flex flex-col items-center text-center lg:items-start lg:text-left">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full bg-[color:var(--gold)]/20 blur-2xl" />
+                <div className="relative grid h-20 w-20 place-items-center rounded-full border border-[color:var(--gold)]/40 bg-gradient-to-br from-[color:var(--gold)]/25 to-[color:var(--ember)]/20">
+                  <Award className="h-10 w-10 text-[color:var(--gold)]" />
+                </div>
+              </div>
+
+              <h3 className="mt-5 font-display text-2xl leading-tight sm:text-3xl">
+                Garantia <span className="text-gradient-fire">incondicional</span>
+                <br className="hidden sm:block" /> de 7 dias
+              </h3>
+
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Teste o método sem pressa. Se por qualquer motivo não gostar,
+                devolvemos <strong className="text-foreground">100% do seu dinheiro</strong>. O risco é todo nosso.
+              </p>
+            </div>
+
+            <ul className="mt-6 grid gap-2.5 border-t border-white/5 pt-5 text-xs text-muted-foreground">
+              <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[color:var(--gold)]" strokeWidth={3} /> Reembolso em até 7 dias</li>
+              <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[color:var(--gold)]" strokeWidth={3} /> Sem burocracia ou perguntas</li>
+              <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[color:var(--gold)]" strokeWidth={3} /> Devolução 100% do valor pago</li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
+
 
 
 function FAQ() {
@@ -1729,7 +1738,7 @@ function LandingPage() {
         <Author />
         <Bonuses />
         <Offer />
-        <Guarantee />
+        
         <Solution />
         <FAQ />
       </main>
