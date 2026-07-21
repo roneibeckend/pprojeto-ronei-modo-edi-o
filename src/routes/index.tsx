@@ -616,6 +616,16 @@ function Hero() {
             </a>
           </Reveal>
 
+          <Reveal variant="up" delay={3} className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
+            <span className="inline-flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--flame)]" />
+              </span>
+              Método já aplicado por vendedores em <strong className="text-foreground">+120 cidades</strong> do Brasil
+            </span>
+          </Reveal>
+
           <Reveal variant="up" delay={4} className="mt-8 grid grid-cols-3 gap-3 sm:gap-4">
             {[
               { n: "300%", l: "margem" },
