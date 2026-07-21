@@ -669,7 +669,7 @@ function Hero() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--flame)]" />
             </span>
-            Método já aplicado por vendedores em <strong className="text-foreground">+120 cidades</strong> do Brasil
+            Já <strong className="text-foreground">+300 eBooks vendidos</strong> para novos vendedores de espetinho
           </span>
         </Reveal>
 
