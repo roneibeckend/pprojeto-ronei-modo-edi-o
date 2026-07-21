@@ -152,14 +152,18 @@ export const Route = createFileRoute("/")({
 
 // ---- Small primitives ----
 
+type RevealVariant = "up" | "down" | "left" | "right" | "scale" | "blur" | "rotate" | "clip" | "tilt";
+
 function Reveal({
   children,
   delay = 0,
+  variant = "up",
   as: Tag = "div",
   className = "",
 }: {
   children: React.ReactNode;
-  delay?: 0 | 1 | 2 | 3 | 4 | 5;
+  delay?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  variant?: RevealVariant;
   as?: keyof JSX.IntrinsicElements;
   className?: string;
 }) {
@@ -184,7 +188,7 @@ function Reveal({
   const props: Record<string, unknown> = {
     ref: ref as React.Ref<HTMLElement>,
     className,
-    "data-reveal": "",
+    "data-reveal": variant,
   };
   if (delay) props["data-reveal-delay"] = String(delay);
   return <Tag {...(props as Record<string, unknown>)}>{children}</Tag>;
