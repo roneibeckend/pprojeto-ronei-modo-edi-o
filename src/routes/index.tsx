@@ -152,10 +152,126 @@ export const Route = createFileRoute("/")({
 
 // ---- Small primitives ----
 
+function Reveal({
+  children,
+  delay = 0,
+  as: Tag = "div",
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: 0 | 1 | 2 | 3 | 4 | 5;
+  as?: keyof JSX.IntrinsicElements;
+  className?: string;
+}) {
+  const ref = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            (e.target as HTMLElement).dataset.visible = "true";
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" },
+    );
+    io.observe(node);
+    return () => io.disconnect();
+  }, []);
+  const props: Record<string, unknown> = {
+    ref: ref as React.Ref<HTMLElement>,
+    className,
+    "data-reveal": "",
+  };
+  if (delay) props["data-reveal-delay"] = String(delay);
+  // @ts-expect-error dynamic tag
+  return <Tag {...props}>{children}</Tag>;
+}
+
+function ScrollProgress() {
+  const [pct, setPct] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = h.scrollTop;
+      const max = h.scrollHeight - h.clientHeight;
+      setPct(max > 0 ? (scrolled / max) * 100 : 0);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <div className="fixed inset-x-0 top-0 z-[60] h-[3px] bg-transparent">
+      <div
+        className="h-full bg-fire shadow-fire transition-[width] duration-100"
+        style={{ width: `${pct}%` }}
+      />
+    </div>
+  );
+}
+
+function Embers() {
+  // Deterministic layout — no hydration mismatch
+  const embers = Array.from({ length: 14 }, (_, i) => ({
+    left: (i * 7.3) % 100,
+    delay: (i * 0.31) % 4,
+    dur: 3.2 + ((i * 0.7) % 2.5),
+    size: 4 + (i % 4),
+  }));
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-64 overflow-hidden">
+      {embers.map((e, i) => (
+        <span
+          key={i}
+          className="ember"
+          style={{
+            left: `${e.left}%`,
+            width: `${e.size}px`,
+            height: `${e.size}px`,
+            animationDelay: `${e.delay}s`,
+            animationDuration: `${e.dur}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function BrasaTicker() {
+  const items = [
+    "Do zero aos 10k",
+    "Margens de até 300%",
+    "Método na prática",
+    "Brasa perfeita",
+    "Tempero exclusivo",
+    "Fornecedores certos",
+    "Sem enrolação",
+    "Feito por quem vive da grelha",
+  ];
+  const loop = [...items, ...items];
+  return (
+    <div className="relative overflow-hidden border-y border-[color:var(--gold)]/20 bg-gradient-to-r from-[color:var(--ember)]/10 via-transparent to-[color:var(--gold)]/10 py-4">
+      <div className="flex animate-marquee gap-8 whitespace-nowrap">
+        {loop.map((t, i) => (
+          <span key={i} className="flex items-center gap-3 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+            <Flame className="h-4 w-4 shrink-0 text-[color:var(--gold)]" />
+            <span className="text-foreground/90">{t}</span>
+            <span className="text-[color:var(--gold)]/60">•</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function SectionTag({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--gold)] sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs sm:tracking-[0.2em]">
-      <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+      <Flame className="h-3 w-3 animate-flicker sm:h-3.5 sm:w-3.5" />
       {children}
     </span>
   );
