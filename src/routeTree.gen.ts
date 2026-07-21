@@ -10,13 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
+import { Route as SuporteIaRouteImport } from './routes/suporte-ia'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiBrunaRouteImport } from './routes/api/bruna'
 
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   id: '/termos-de-uso',
   path: '/termos-de-uso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuporteIaRoute = SuporteIaRouteImport.update({
+  id: '/suporte-ia',
+  path: '/suporte-ia',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
@@ -34,25 +41,36 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiBrunaRoute = ApiBrunaRouteImport.update({
+  id: '/api/bruna',
+  path: '/api/bruna',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/suporte-ia': typeof SuporteIaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/api/bruna': typeof ApiBrunaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/suporte-ia': typeof SuporteIaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/api/bruna': typeof ApiBrunaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/suporte-ia': typeof SuporteIaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/api/bruna': typeof ApiBrunaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -60,26 +78,34 @@ export interface FileRouteTypes {
     | '/'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
+    | '/suporte-ia'
     | '/termos-de-uso'
+    | '/api/bruna'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
+    | '/suporte-ia'
     | '/termos-de-uso'
+    | '/api/bruna'
   id:
     | '__root__'
     | '/'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
+    | '/suporte-ia'
     | '/termos-de-uso'
+    | '/api/bruna'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
+  SuporteIaRoute: typeof SuporteIaRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
+  ApiBrunaRoute: typeof ApiBrunaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -89,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/termos-de-uso'
       fullPath: '/termos-de-uso'
       preLoaderRoute: typeof TermosDeUsoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/suporte-ia': {
+      id: '/suporte-ia'
+      path: '/suporte-ia'
+      fullPath: '/suporte-ia'
+      preLoaderRoute: typeof SuporteIaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/politica-de-privacidade': {
@@ -112,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/bruna': {
+      id: '/api/bruna'
+      path: '/api/bruna'
+      fullPath: '/api/bruna'
+      preLoaderRoute: typeof ApiBrunaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -119,7 +159,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
+  SuporteIaRoute: SuporteIaRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
+  ApiBrunaRoute: ApiBrunaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
