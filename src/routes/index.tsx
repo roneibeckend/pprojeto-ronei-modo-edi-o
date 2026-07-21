@@ -883,7 +883,7 @@ function AuthorSolution() {
             tudo o que você precisa para transformar espetinho em uma máquina de fazer dinheiro:
             da escolha da carne ao pós-venda.
           </p>
-          <ul className="mt-6 space-y-3">
+          <ul className="mt-5 space-y-2 text-sm sm:text-base">
             {bullets.map((t, i) => (
               <li
                 key={t}
