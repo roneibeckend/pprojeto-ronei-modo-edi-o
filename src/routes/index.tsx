@@ -1665,11 +1665,10 @@ function LandingPage() {
       { headline: "clip",  card: "scale"  }, // ForYou
       { headline: "up",    card: "tilt"   }, // Benefits
       { headline: "left",  card: "rotate" }, // Modules
-      { headline: "right", card: "right"  }, // Author
+      { headline: "right", card: "right"  }, // AuthorSolution
       { headline: "clip",  card: "scale"  }, // Bonuses
       { headline: "up",    card: "blur"   }, // Offer
-      { headline: "scale", card: "up"     }, // Guarantee
-      { headline: "clip",  card: "left"   }, // Solution
+
       { headline: "up",    card: "up"     }, // FAQ
     ];
 
