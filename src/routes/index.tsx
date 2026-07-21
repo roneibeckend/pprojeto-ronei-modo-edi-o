@@ -629,7 +629,7 @@ function Hero() {
               <div className="glass gradient-border relative overflow-hidden rounded-2xl p-1.5 shadow-fire">
                 <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
                   <img
-                    src={`https://i.ytimg.com/vi/vYBqd2V-bO8/hqdefault.jpg`}
+                    src={`https://i.ytimg.com/vi/ZowrRHEwP7I/hqdefault.jpg`}
                     alt="Ronnei — história do Espetos Grill"
                     loading="lazy"
                     className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
@@ -716,7 +716,7 @@ function Hero() {
             <div className="glass gradient-border overflow-hidden rounded-2xl p-2 shadow-fire">
               <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
                 <iframe
-                  src="https://www.youtube.com/embed/vYBqd2V-bO8?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+                  src="https://www.youtube.com/embed/ZowrRHEwP7I?autoplay=1&rel=0&modestbranding=1&playsinline=1"
                   title="Ronnei — A história por trás do Espetos Grill"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
