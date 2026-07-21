@@ -615,53 +615,58 @@ function Hero() {
         </Reveal>
 
 
-        {/* Compact video trigger */}
-        <Reveal variant="scale" delay={3} className="mt-6 w-full sm:mt-7">
-          <button
-            type="button"
-            onClick={() => setVideoOpen(true)}
-            aria-label="Assistir à história do Ronnei"
-            className="group relative mx-auto block w-full max-w-md overflow-hidden rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ember)]"
-          >
-            <div className="absolute -inset-3 -z-10 rounded-[2rem] bg-fire opacity-25 blur-2xl transition group-hover:opacity-40" />
-            <div className="glass gradient-border relative overflow-hidden rounded-2xl p-1.5 shadow-fire">
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
-                <img
-                  src={`https://i.ytimg.com/vi/vYBqd2V-bO8/hqdefault.jpg`}
-                  alt="Ronnei — história do Espetos Grill"
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--ember)] shadow-[0_0_40px_-4px_var(--ember)] transition group-hover:scale-110">
-                    <span className="absolute inset-0 animate-ping rounded-full bg-[color:var(--ember)] opacity-40" />
-                    <svg viewBox="0 0 24 24" className="relative ml-1 h-7 w-7 fill-background"><path d="M8 5v14l11-7z" /></svg>
-                  </span>
-                </div>
-                <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-xs">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-background/70 px-2.5 py-1 font-medium text-foreground backdrop-blur">
-                    <span className="relative flex h-1.5 w-1.5">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--flame)] opacity-75" />
-                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--flame)]" />
+        {/* Video + CTA row */}
+        <div className="mt-6 grid w-full items-center gap-6 sm:mt-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8">
+          {/* Compact video trigger */}
+          <Reveal variant="scale" delay={3} className="lg:justify-self-end">
+            <button
+              type="button"
+              onClick={() => setVideoOpen(true)}
+              aria-label="Assistir à história do Ronnei"
+              className="group relative mx-auto block w-full max-w-md overflow-hidden rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ember)] lg:mx-0"
+            >
+              <div className="absolute -inset-3 -z-10 rounded-[2rem] bg-fire opacity-25 blur-2xl transition group-hover:opacity-40" />
+              <div className="glass gradient-border relative overflow-hidden rounded-2xl p-1.5 shadow-fire">
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
+                  <img
+                    src={`https://i.ytimg.com/vi/vYBqd2V-bO8/hqdefault.jpg`}
+                    alt="Ronnei — história do Espetos Grill"
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--ember)] shadow-[0_0_40px_-4px_var(--ember)] transition group-hover:scale-110">
+                      <span className="absolute inset-0 animate-ping rounded-full bg-[color:var(--ember)] opacity-40" />
+                      <svg viewBox="0 0 24 24" className="relative ml-1 h-7 w-7 fill-background"><path d="M8 5v14l11-7z" /></svg>
                     </span>
-                    A história do Ronnei
-                  </span>
-                  <span className="rounded-full bg-background/70 px-2.5 py-1 font-semibold text-[color:var(--gold)] backdrop-blur">2 min</span>
+                  </div>
+                  <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-xs">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-background/70 px-2.5 py-1 font-medium text-foreground backdrop-blur">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--flame)] opacity-75" />
+                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--flame)]" />
+                      </span>
+                      A história do Ronnei
+                    </span>
+                    <span className="rounded-full bg-background/70 px-2.5 py-1 font-semibold text-[color:var(--gold)] backdrop-blur">2 min</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </button>
-        </Reveal>
+            </button>
+          </Reveal>
 
-        <Reveal variant="up" delay={4} className="mt-6 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
-          <CTAButton size="xl">
-            Quero começar agora <ArrowRight className="h-5 w-5" />
-          </CTAButton>
-          <a href="#beneficios" className="btn-ghost-fire w-full sm:w-auto">
-            Ver o que aprendo
-          </a>
-        </Reveal>
+          {/* CTAs on the right */}
+          <Reveal variant="up" delay={4} className="flex w-full flex-col items-stretch gap-3 sm:max-w-sm sm:mx-auto lg:mx-0 lg:max-w-xs lg:items-start lg:justify-self-start">
+            <CTAButton size="lg" className="w-full justify-center">
+              Quero começar agora <ArrowRight className="h-5 w-5" />
+            </CTAButton>
+            <a href="#beneficios" className="btn-ghost-fire w-full justify-center text-center">
+              Ver o que aprendo
+            </a>
+          </Reveal>
+        </div>
+
 
         <Reveal variant="up" delay={4} className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
           <span className="inline-flex items-center gap-2">
