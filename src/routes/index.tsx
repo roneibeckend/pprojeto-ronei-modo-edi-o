@@ -307,7 +307,7 @@ function CTAButton({
 // Configuração do checkout — troque pela URL do Kiwify/Hotmart/Stripe quando disponível.
 const CHECKOUT_URL = "";
 
-function CheckoutButton({ className = "" }: { className?: string }) {
+function CheckoutButton({ className = "", label = "Quero garantir meu acesso" }: { className?: string; label?: string }) {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
@@ -346,10 +346,58 @@ function CheckoutButton({ className = "" }: { className?: string }) {
         </>
       ) : (
         <>
-          Quero garantir meu acesso <ArrowRight className="h-5 w-5" aria-hidden="true" />
+          {label} <ArrowRight className="h-5 w-5" aria-hidden="true" />
         </>
       )}
     </button>
+  );
+}
+
+function Countdown({ target }: { target: Date }) {
+  const [now, setNow] = useState<number>(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const diff = Math.max(0, target.getTime() - now);
+  const d = Math.floor(diff / 86_400_000);
+  const h = Math.floor((diff / 3_600_000) % 24);
+  const m = Math.floor((diff / 60_000) % 60);
+  const s = Math.floor((diff / 1_000) % 60);
+  const cells: { l: string; v: number }[] = [
+    { l: "dias", v: d },
+    { l: "horas", v: h },
+    { l: "min", v: m },
+    { l: "seg", v: s },
+  ];
+  return (
+    <div className="flex items-center justify-center gap-1.5 sm:gap-2" role="timer" aria-label="Contagem regressiva da oferta">
+      {cells.map((c, i) => (
+        <div key={c.l} className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex min-w-[54px] flex-col items-center rounded-xl border border-white/10 bg-white/[0.04] px-2 py-1.5 backdrop-blur sm:min-w-[64px]">
+            <span className="font-display text-2xl font-black leading-none text-gradient-fire [font-variant-numeric:tabular-nums] sm:text-3xl">
+              {String(c.v).padStart(2, "0")}
+            </span>
+            <span className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{c.l}</span>
+          </div>
+          {i < cells.length - 1 && <span className="text-base font-black text-[color:var(--gold)]/40 sm:text-lg">:</span>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function GuaranteeSeal({ className = "" }: { className?: string }) {
+  return (
+    <div className={`inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/[0.06] px-3 py-1.5 ${className}`}>
+      <span className="grid h-7 w-7 place-items-center rounded-full border border-dashed border-[color:var(--gold)]/60 bg-[color:var(--gold)]/10">
+        <ShieldCheck className="h-3.5 w-3.5 text-[color:var(--gold)]" />
+      </span>
+      <span className="text-[10px] font-black uppercase leading-tight tracking-[0.2em] text-[color:var(--gold)]">
+        7 dias<br />
+        <span className="text-muted-foreground">risco zero</span>
+      </span>
+    </div>
   );
 }
 
@@ -1056,6 +1104,16 @@ function ProfitCalculator() {
             </div>
           </div>
         </div>
+
+        {/* CTA pós-simulador */}
+        <div className="mt-8 flex flex-col items-center gap-2">
+          <a href="#oferta" className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full max-w-sm justify-center">
+            Quero faturar isso também <ArrowRight className="h-4 w-4" />
+          </a>
+          <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
+            Método completo por R$ 47,90
+          </span>
+        </div>
       </div>
     </section>
   );
@@ -1254,6 +1312,16 @@ function Bonuses() {
             </div>
           </div>
         </div>
+
+        {/* CTA pós-bônus */}
+        <div className="mx-auto mt-6 flex max-w-xl flex-col items-center gap-2">
+          <a href="#oferta" className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full justify-center">
+            Quero o eBook + os 4 bônus <ArrowRight className="h-4 w-4" />
+          </a>
+          <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
+            Tudo isso por R$ 47,90 · acesso imediato
+          </span>
+        </div>
       </div>
     </section>
   );
@@ -1438,13 +1506,28 @@ function Offer() {
               ))}
             </ul>
 
-            <div className="mt-8">
-              <CheckoutButton />
+            {/* Countdown */}
+            <div className="mt-7 rounded-2xl border border-[color:var(--ember)]/25 bg-[color:var(--ember)]/[0.05] p-4">
+              <div className="mb-2.5 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[color:var(--ember)]">
+                <Clock className="h-3 w-3" />
+                Promoção termina em
+              </div>
+              <Countdown target={new Date("2026-08-29T23:59:59-03:00")} />
+              <p className="mt-2.5 text-center text-[11px] text-muted-foreground">
+                Depois de <strong className="text-foreground">29/08</strong>, o preço volta para R$ 197,00.
+              </p>
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-white/5 pt-5 text-[11px] uppercase tracking-widest text-muted-foreground">
-              <span className="flex items-center gap-1.5"><Lock className="h-3 w-3" /> Compra segura</span>
-              <span className="flex items-center gap-1.5"><Clock className="h-3 w-3" /> Acesso imediato</span>
+            <div className="mt-6">
+              <CheckoutButton label="Testar por 7 dias sem risco" />
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+              <GuaranteeSeal />
+              <div className="flex flex-col text-[11px] uppercase tracking-widest text-muted-foreground">
+                <span className="flex items-center gap-1.5"><Lock className="h-3 w-3" /> Compra segura</span>
+                <span className="flex items-center gap-1.5"><Clock className="h-3 w-3" /> Acesso imediato</span>
+              </div>
             </div>
           </div>
 
@@ -1730,6 +1813,106 @@ function Footer() {
   );
 }
 
+function Objection() {
+  const items = [
+    {
+      icon: DollarSign,
+      title: "Não tenho dinheiro pra investir",
+      desc: "Ronnei começou sem R$ 1.000. Mostramos a lista exata do que comprar primeiro — dá pra iniciar com menos de R$ 500.",
+    },
+    {
+      icon: BookOpen,
+      title: "Nunca vendi nada na vida",
+      desc: "O eBook é passo a passo, sem termo técnico. Se você sabe ler uma receita, você aplica o método.",
+    },
+    {
+      icon: Users,
+      title: "Não tenho CNPJ nem estrutura",
+      desc: "Você começa como vendedor autônomo. CNPJ e loja física vêm depois — só quando o lucro justifica.",
+    },
+  ];
+  return (
+    <section className="relative py-12 sm:py-16">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>Quebrando objeções</SectionTag>
+          <h2 className="mt-4 max-w-2xl h-fluid-h2 font-black">
+            "Mas eu vou <span className="text-gradient-fire">conseguir mesmo</span>?"
+          </h2>
+          <p className="mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
+            As três travas mais comuns — e por que nenhuma delas te impede de começar hoje.
+          </p>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {items.map(({ icon: Icon, title, desc }) => (
+            <div
+              key={title}
+              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm transition-colors hover:border-[color:var(--gold)]/40"
+            >
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--gold)]/40 to-transparent" />
+              <div className="flex items-start gap-3">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10">
+                  <Icon className="h-5 w-5 text-[color:var(--gold)]" />
+                </span>
+                <div>
+                  <h3 className="text-sm font-black uppercase tracking-wide text-foreground sm:text-base">
+                    {title}
+                  </h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                    {desc}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function NotForYou() {
+  const items = [
+    "Quem quer ficar rico em 7 dias",
+    "Quem não topa acordar cedo",
+    "Quem já tem espetaria consolidada",
+    "Quem procura fórmula mágica",
+  ];
+  return (
+    <section className="relative py-10 sm:py-14">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur sm:p-8">
+          <div className="flex flex-col items-center text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+              <X className="h-3 w-3" />
+              Este método NÃO é para
+            </span>
+            <h2 className="mt-4 max-w-xl text-xl font-black sm:text-2xl">
+              Seja <span className="text-gradient-fire">honesto</span> com você mesmo
+            </h2>
+          </div>
+          <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            {items.map((t) => (
+              <div
+                key={t}
+                className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-background/40 px-3.5 py-2.5"
+              >
+                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10">
+                  <X className="h-3 w-3 text-[color:var(--ember)]" strokeWidth={3} />
+                </span>
+                <span className="text-xs text-muted-foreground sm:text-sm">{t}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 text-center text-xs text-muted-foreground">
+            Se você se enquadra em algum item acima, esse eBook <strong className="text-foreground">não vai funcionar pra você</strong> — e tudo bem.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ForYou() {
   const items = [
     "Quer uma renda extra",
@@ -1953,14 +2136,17 @@ function LandingPage() {
         <Hero />
 
         <ForYou />
+        <Objection />
         <Benefits />
         <ProfitCalculator />
         <AuthorSolution />
         <SocialProof />
         <Bonuses />
         <Modules />
+        <NotForYou />
         <Offer />
         <FAQ />
+
 
       </main>
       <Footer />
