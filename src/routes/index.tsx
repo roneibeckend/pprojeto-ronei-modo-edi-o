@@ -1159,7 +1159,7 @@ function FAQ() {
 
   type Msg = { role: "user" | "ai"; text: string };
   const [messages, setMessages] = useState<Msg[]>([
-    { role: "ai", text: "Olá! 👋 Sou a assistente do Ronnei. Escolhe uma pergunta ao lado que eu te respondo na hora." },
+    { role: "ai", text: "Olá! 👋 Eu sou a Brunna, assistente do Ronnei. Escolhe uma pergunta ao lado que eu te respondo na hora." },
   ]);
   const [typing, setTyping] = useState(false);
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
@@ -1237,7 +1237,7 @@ function FAQ() {
                   <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-card bg-emerald-400" />
                 </div>
                 <div className="leading-tight">
-                  <div className="text-sm font-semibold">Assistente Espetinho na Veia</div>
+                  <div className="text-sm font-semibold">Brunna • Assistente</div>
                   <div className="text-xs text-muted-foreground">Online • responde na hora</div>
                 </div>
               </div>
