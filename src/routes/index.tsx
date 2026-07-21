@@ -1991,8 +1991,8 @@ function LandingPage() {
         <AuthorSolution />
         <SocialProof />
         <Bonuses />
-        <Offer />
         <Modules />
+        <Offer />
         <FAQ />
 
       </main>
