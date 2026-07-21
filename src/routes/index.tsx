@@ -1523,7 +1523,7 @@ function Offer() {
                 <Clock className="h-3 w-3" />
                 Promoção termina em
               </div>
-              <Countdown target={new Date("2026-08-29T23:59:59-03:00")} />
+              <Countdown hours={72} />
               <p className="mt-2.5 text-center text-[11px] text-muted-foreground">
                 Depois de <strong className="text-foreground">29/08</strong>, o preço volta para R$ 197,00.
               </p>
