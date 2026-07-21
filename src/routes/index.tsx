@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type JSX } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import {
@@ -152,10 +152,125 @@ export const Route = createFileRoute("/")({
 
 // ---- Small primitives ----
 
+function Reveal({
+  children,
+  delay = 0,
+  as: Tag = "div",
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: 0 | 1 | 2 | 3 | 4 | 5;
+  as?: keyof JSX.IntrinsicElements;
+  className?: string;
+}) {
+  const ref = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            (e.target as HTMLElement).dataset.visible = "true";
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" },
+    );
+    io.observe(node);
+    return () => io.disconnect();
+  }, []);
+  const props: Record<string, unknown> = {
+    ref: ref as React.Ref<HTMLElement>,
+    className,
+    "data-reveal": "",
+  };
+  if (delay) props["data-reveal-delay"] = String(delay);
+  return <Tag {...(props as Record<string, unknown>)}>{children}</Tag>;
+}
+
+function ScrollProgress() {
+  const [pct, setPct] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = h.scrollTop;
+      const max = h.scrollHeight - h.clientHeight;
+      setPct(max > 0 ? (scrolled / max) * 100 : 0);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <div className="fixed inset-x-0 top-0 z-[60] h-[3px] bg-transparent">
+      <div
+        className="h-full bg-fire shadow-fire transition-[width] duration-100"
+        style={{ width: `${pct}%` }}
+      />
+    </div>
+  );
+}
+
+function Embers() {
+  // Deterministic layout — no hydration mismatch
+  const embers = Array.from({ length: 14 }, (_, i) => ({
+    left: (i * 7.3) % 100,
+    delay: (i * 0.31) % 4,
+    dur: 3.2 + ((i * 0.7) % 2.5),
+    size: 4 + (i % 4),
+  }));
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-64 overflow-hidden">
+      {embers.map((e, i) => (
+        <span
+          key={i}
+          className="ember"
+          style={{
+            left: `${e.left}%`,
+            width: `${e.size}px`,
+            height: `${e.size}px`,
+            animationDelay: `${e.delay}s`,
+            animationDuration: `${e.dur}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function BrasaTicker() {
+  const items = [
+    "Do zero aos 10k",
+    "Margens de até 300%",
+    "Método na prática",
+    "Brasa perfeita",
+    "Tempero exclusivo",
+    "Fornecedores certos",
+    "Sem enrolação",
+    "Feito por quem vive da grelha",
+  ];
+  const loop = [...items, ...items];
+  return (
+    <div className="relative overflow-hidden border-y border-[color:var(--gold)]/20 bg-gradient-to-r from-[color:var(--ember)]/10 via-transparent to-[color:var(--gold)]/10 py-4">
+      <div className="flex animate-marquee gap-8 whitespace-nowrap">
+        {loop.map((t, i) => (
+          <span key={i} className="flex items-center gap-3 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+            <Flame className="h-4 w-4 shrink-0 text-[color:var(--gold)]" />
+            <span className="text-foreground/90">{t}</span>
+            <span className="text-[color:var(--gold)]/60">•</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function SectionTag({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--gold)] sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs sm:tracking-[0.2em]">
-      <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+      <Flame className="h-3 w-3 animate-flicker sm:h-3.5 sm:w-3.5" />
       {children}
     </span>
   );
@@ -173,7 +288,7 @@ function CTAButton({
   return (
     <a
       href="#oferta"
-      className={`btn-fire w-full sm:w-auto ${size === "xl" ? "text-base sm:text-lg sm:!px-10 sm:!py-5" : ""} ${className}`}
+      className={`btn-fire shine-on-hover w-full sm:w-auto ${size === "xl" ? "text-base sm:text-lg sm:!px-10 sm:!py-5" : ""} ${className}`}
     >
       {children}
     </a>
@@ -213,7 +328,7 @@ function CheckoutButton({ className = "" }: { className?: string }) {
       onClick={handleClick}
       disabled={loading}
       aria-busy={loading}
-      className={`btn-fire !text-lg !px-10 !py-5 w-full max-w-md disabled:opacity-80 disabled:cursor-wait ${className}`}
+      className={`btn-fire shine-on-hover !text-lg !px-10 !py-5 w-full max-w-md disabled:opacity-80 disabled:cursor-wait ${className}`}
     >
       {loading ? (
         <>
@@ -451,14 +566,16 @@ function Hero() {
   return (
     <section id="top" className="relative overflow-hidden pt-20 pb-10 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28">
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-0 h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/20 blur-3xl sm:h-[500px] sm:w-[900px]" />
+        <div className="absolute left-1/2 top-0 h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/25 blur-3xl sm:h-[520px] sm:w-[960px] animate-pulse-glow" />
+        <div className="absolute right-0 top-40 h-[280px] w-[280px] rounded-full bg-[color:var(--gold)]/15 blur-3xl" />
       </div>
+      <Embers />
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2">
         <div className="flex flex-col items-start">
-          <SectionTag>Método completo · edição 2026</SectionTag>
+          <Reveal><SectionTag>Método completo · edição 2026</SectionTag></Reveal>
 
           {/* Mobile-only hero image (below badge) */}
-          <div className="relative mt-5 w-full lg:hidden">
+          <Reveal delay={1} className="relative mt-5 w-full lg:hidden">
             <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
             <div className="glass relative overflow-hidden rounded-[1.5rem] p-1.5 shadow-fire animate-float">
               <img
@@ -469,26 +586,39 @@ function Hero() {
                 fetchPriority="high"
               />
             </div>
-          </div>
+          </Reveal>
 
-          <h1 className="mt-5 h-fluid-hero font-black sm:mt-6">
-            Lucre até <span className="text-gradient-fire">R$ 300 por dia</span> vendendo espetinhos — começando do zero
-          </h1>
-          <p className="mt-5 max-w-xl text-fluid-lead text-muted-foreground sm:mt-6">
+          <Reveal delay={1} as="h1" className="mt-5 h-fluid-hero font-black sm:mt-6">
+            Lucre até <span className="animated-fire-text">R$ 300 por dia</span> vendendo espetinhos — começando do zero
+          </Reveal>
+          <Reveal delay={2} as="p" className="mt-5 max-w-xl text-fluid-lead text-muted-foreground sm:mt-6">
             O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
-          </p>
+          </Reveal>
 
-          <div className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
+          <Reveal delay={3} className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
             <CTAButton size="xl">
               Quero começar agora <ArrowRight className="h-5 w-5" />
             </CTAButton>
             <a href="#beneficios" className="btn-ghost-fire w-full sm:w-auto">
               Ver o que aprendo
             </a>
-          </div>
+          </Reveal>
+
+          <Reveal delay={4} className="mt-8 grid grid-cols-3 gap-3 sm:gap-4">
+            {[
+              { n: "300%", l: "margem" },
+              { n: "14", l: "capítulos" },
+              { n: "7 dias", l: "garantia" },
+            ].map((s) => (
+              <div key={s.l} className="glass rounded-xl px-3 py-3 text-center transition hover:-translate-y-0.5">
+                <div className="font-display text-xl leading-none text-gradient-fire sm:text-2xl">{s.n}</div>
+                <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-xs">{s.l}</div>
+              </div>
+            ))}
+          </Reveal>
         </div>
 
-        <div className="relative hidden lg:block">
+        <Reveal delay={2} className="relative hidden lg:block">
           <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
           <div className="glass relative overflow-hidden rounded-[2rem] p-2 shadow-fire animate-float">
             <img
@@ -498,7 +628,7 @@ function Hero() {
               loading="eager"
             />
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -1211,22 +1341,53 @@ function StickyMobileCTA() {
 }
 
 function LandingPage() {
+  useEffect(() => {
+    const selectors = [
+      "main section h2",
+      "main section > div > .flex.flex-col.items-center",
+      "main section .glass",
+      "main section .rounded-2xl",
+      "main section .rounded-3xl",
+    ].join(", ");
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>(selectors));
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            (e.target as HTMLElement).dataset.visible = "true";
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+    );
+    nodes.forEach((n, i) => {
+      if (!n.hasAttribute("data-reveal")) {
+        n.setAttribute("data-reveal", "");
+        // small stagger within a group of siblings
+        const delay = (i % 5) as 0 | 1 | 2 | 3 | 4;
+        if (delay) n.setAttribute("data-reveal-delay", String(delay));
+      }
+      io.observe(n);
+    });
+    return () => io.disconnect();
+  }, []);
   return (
     <div className="min-h-screen pb-24 md:pb-0">
+      <ScrollProgress />
       <Nav />
       <main>
         <Hero />
-        
+        <BrasaTicker />
         <ForYou />
         <Benefits />
         <Modules />
-        <Offer />
         <Author />
-        <Guarantee />
         <Bonuses />
+        <Offer />
+        <Guarantee />
         <Solution />
         <FAQ />
-        
       </main>
       <Footer />
       <StickyMobileCTA />
