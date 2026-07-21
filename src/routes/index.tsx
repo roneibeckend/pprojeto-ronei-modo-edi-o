@@ -1156,28 +1156,141 @@ function FAQ() {
     { q: "E se eu não gostar do material?", a: "Você tem 7 dias de garantia total. Se não gostar, basta pedir o reembolso e devolvemos 100% do valor. Sem perguntas." },
     { q: "Funciona também para delivery?", a: "Sim. Tem estratégias específicas para venda por WhatsApp, iFood e delivery próprio, além do ponto físico." },
   ];
+
+  type Msg = { role: "user" | "ai"; text: string };
+  const [messages, setMessages] = useState<Msg[]>([
+    { role: "ai", text: "Olá! 👋 Sou a assistente do Ronnei. Escolhe uma pergunta ao lado que eu te respondo na hora." },
+  ]);
+  const [typing, setTyping] = useState(false);
+  const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+  }, [messages, typing]);
+
+  const ask = (i: number) => {
+    if (typing) return;
+    const f = faqs[i];
+    setActiveIdx(i);
+    setMessages((m) => [...m, { role: "user", text: f.q }]);
+    setTyping(true);
+    setTimeout(() => {
+      setMessages((m) => [...m, { role: "ai", text: f.a }]);
+      setTyping(false);
+    }, 900);
+  };
+
   return (
     <section id="faq" className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Perguntas frequentes</SectionTag>
           <h2 className="mt-6 h-fluid-h2 font-black">
-            Tirando suas <span className="text-gradient-fire">últimas dúvidas</span>
+            Tire suas dúvidas com a <span className="text-gradient-fire">assistente</span>
           </h2>
+          <p className="mt-3 max-w-xl text-muted-foreground">
+            Clique em uma pergunta e receba a resposta na hora, como em um chat.
+          </p>
         </div>
-        <div className="mt-12 space-y-3">
-          {faqs.map((f, i) => (
-            <details
-              key={i}
-              className="group rounded-2xl border border-border bg-card p-5 open:border-[color:var(--gold)]/40 transition"
-            >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
-                <span>{f.q}</span>
-                <ChevronDown className="h-5 w-5 shrink-0 text-[color:var(--gold)] transition group-open:rotate-180" />
-              </summary>
-              <p className="mt-3 text-muted-foreground">{f.a}</p>
-            </details>
-          ))}
+
+        <div className="mt-10 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:gap-6">
+          {/* Left: questions */}
+          <div className="rounded-2xl border border-border bg-card/60 p-3 backdrop-blur sm:p-4">
+            <div className="mb-3 flex items-center gap-2 px-2 pt-1 text-xs uppercase tracking-widest text-muted-foreground">
+              <MessageCircle className="h-3.5 w-3.5 text-[color:var(--gold)]" />
+              Perguntas
+            </div>
+            <ul className="space-y-2">
+              {faqs.map((f, i) => {
+                const active = activeIdx === i;
+                return (
+                  <li key={i}>
+                    <button
+                      type="button"
+                      onClick={() => ask(i)}
+                      disabled={typing}
+                      className={`group flex w-full items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left text-sm transition disabled:opacity-70 ${
+                        active
+                          ? "border-[color:var(--gold)]/50 bg-[color:var(--gold)]/10 text-foreground"
+                          : "border-border bg-background/40 hover:border-[color:var(--gold)]/40 hover:bg-background/70"
+                      }`}
+                    >
+                      <span className="font-medium">{f.q}</span>
+                      <ArrowRight className={`h-4 w-4 shrink-0 transition ${active ? "text-[color:var(--gold)]" : "text-muted-foreground group-hover:text-[color:var(--gold)]"}`} />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* Right: chat */}
+          <div className="flex min-h-[520px] flex-col overflow-hidden rounded-2xl border border-border bg-card/60 backdrop-blur">
+            <div className="flex items-center justify-between gap-3 border-b border-border/60 px-4 py-3">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="grid h-10 w-10 place-items-center rounded-full bg-fire shadow-fire">
+                    <Flame className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-card bg-emerald-400" />
+                </div>
+                <div className="leading-tight">
+                  <div className="text-sm font-semibold">Assistente Espetinho na Veia</div>
+                  <div className="text-xs text-muted-foreground">Online • responde na hora</div>
+                </div>
+              </div>
+              <div className="hidden items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:flex">
+                <Sparkles className="h-3 w-3 text-[color:var(--gold)]" /> IA
+              </div>
+            </div>
+
+            <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-5">
+              {messages.map((m, i) =>
+                m.role === "ai" ? (
+                  <div key={i} className="flex items-end gap-2">
+                    <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-fire">
+                      <Flame className="h-3.5 w-3.5 text-white" />
+                    </div>
+                    <div className="max-w-[80%] rounded-2xl rounded-bl-sm border border-border bg-background/70 px-4 py-2.5 text-sm leading-relaxed text-foreground">
+                      {m.text}
+                    </div>
+                  </div>
+                ) : (
+                  <div key={i} className="flex justify-end">
+                    <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-fire px-4 py-2.5 text-sm leading-relaxed text-white shadow-fire">
+                      {m.text}
+                    </div>
+                  </div>
+                )
+              )}
+              {typing && (
+                <div className="flex items-end gap-2">
+                  <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-fire">
+                    <Flame className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <div className="rounded-2xl rounded-bl-sm border border-border bg-background/70 px-4 py-3">
+                    <span className="flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[color:var(--gold)] [animation-delay:-0.3s]" />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[color:var(--gold)] [animation-delay:-0.15s]" />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[color:var(--gold)]" />
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-border/60 bg-background/40 px-4 py-3">
+              <div className="flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2.5 text-sm text-muted-foreground">
+                <MessageCircle className="h-4 w-4 text-[color:var(--gold)]" />
+                <span className="truncate">Selecione uma pergunta ao lado…</span>
+              </div>
+              <p className="mt-2 text-center text-[11px] text-muted-foreground">
+                Ainda com dúvida? Fale com a gente pelo WhatsApp após a compra.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
