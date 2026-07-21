@@ -1813,6 +1813,106 @@ function Footer() {
   );
 }
 
+function Objection() {
+  const items = [
+    {
+      icon: DollarSign,
+      title: "Não tenho dinheiro pra investir",
+      desc: "Ronnei começou sem R$ 1.000. Mostramos a lista exata do que comprar primeiro — dá pra iniciar com menos de R$ 500.",
+    },
+    {
+      icon: BookOpen,
+      title: "Nunca vendi nada na vida",
+      desc: "O eBook é passo a passo, sem termo técnico. Se você sabe ler uma receita, você aplica o método.",
+    },
+    {
+      icon: Users,
+      title: "Não tenho CNPJ nem estrutura",
+      desc: "Você começa como vendedor autônomo. CNPJ e loja física vêm depois — só quando o lucro justifica.",
+    },
+  ];
+  return (
+    <section className="relative py-12 sm:py-16">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>Quebrando objeções</SectionTag>
+          <h2 className="mt-4 max-w-2xl h-fluid-h2 font-black">
+            "Mas eu vou <span className="text-gradient-fire">conseguir mesmo</span>?"
+          </h2>
+          <p className="mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
+            As três travas mais comuns — e por que nenhuma delas te impede de começar hoje.
+          </p>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {items.map(({ icon: Icon, title, desc }) => (
+            <div
+              key={title}
+              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm transition-colors hover:border-[color:var(--gold)]/40"
+            >
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--gold)]/40 to-transparent" />
+              <div className="flex items-start gap-3">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10">
+                  <Icon className="h-5 w-5 text-[color:var(--gold)]" />
+                </span>
+                <div>
+                  <h3 className="text-sm font-black uppercase tracking-wide text-foreground sm:text-base">
+                    {title}
+                  </h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                    {desc}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function NotForYou() {
+  const items = [
+    "Quem quer ficar rico em 7 dias",
+    "Quem não topa acordar cedo",
+    "Quem já tem espetaria consolidada",
+    "Quem procura fórmula mágica",
+  ];
+  return (
+    <section className="relative py-10 sm:py-14">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur sm:p-8">
+          <div className="flex flex-col items-center text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+              <X className="h-3 w-3" />
+              Este método NÃO é para
+            </span>
+            <h2 className="mt-4 max-w-xl text-xl font-black sm:text-2xl">
+              Seja <span className="text-gradient-fire">honesto</span> com você mesmo
+            </h2>
+          </div>
+          <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            {items.map((t) => (
+              <div
+                key={t}
+                className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-background/40 px-3.5 py-2.5"
+              >
+                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10">
+                  <X className="h-3 w-3 text-[color:var(--ember)]" strokeWidth={3} />
+                </span>
+                <span className="text-xs text-muted-foreground sm:text-sm">{t}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 text-center text-xs text-muted-foreground">
+            Se você se enquadra em algum item acima, esse eBook <strong className="text-foreground">não vai funcionar pra você</strong> — e tudo bem.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ForYou() {
   const items = [
     "Quer uma renda extra",
