@@ -755,7 +755,7 @@ function Solution() {
             </div>
 
             {/* image stage */}
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-background">
+            <div className="relative mx-auto aspect-[4/5] w-full max-w-[280px] sm:max-w-[320px] overflow-hidden rounded-2xl bg-background">
               {slides.map((s, i) => (
                 <img
                   key={s.src}
