@@ -307,7 +307,7 @@ function CTAButton({
 // Configuração do checkout — troque pela URL do Kiwify/Hotmart/Stripe quando disponível.
 const CHECKOUT_URL = "";
 
-function CheckoutButton({ className = "" }: { className?: string }) {
+function CheckoutButton({ className = "", label = "Quero garantir meu acesso" }: { className?: string; label?: string }) {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
@@ -346,10 +346,58 @@ function CheckoutButton({ className = "" }: { className?: string }) {
         </>
       ) : (
         <>
-          Quero garantir meu acesso <ArrowRight className="h-5 w-5" aria-hidden="true" />
+          {label} <ArrowRight className="h-5 w-5" aria-hidden="true" />
         </>
       )}
     </button>
+  );
+}
+
+function Countdown({ target }: { target: Date }) {
+  const [now, setNow] = useState<number>(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const diff = Math.max(0, target.getTime() - now);
+  const d = Math.floor(diff / 86_400_000);
+  const h = Math.floor((diff / 3_600_000) % 24);
+  const m = Math.floor((diff / 60_000) % 60);
+  const s = Math.floor((diff / 1_000) % 60);
+  const cells: { l: string; v: number }[] = [
+    { l: "dias", v: d },
+    { l: "horas", v: h },
+    { l: "min", v: m },
+    { l: "seg", v: s },
+  ];
+  return (
+    <div className="flex items-center justify-center gap-1.5 sm:gap-2" role="timer" aria-label="Contagem regressiva da oferta">
+      {cells.map((c, i) => (
+        <div key={c.l} className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex min-w-[54px] flex-col items-center rounded-xl border border-white/10 bg-white/[0.04] px-2 py-1.5 backdrop-blur sm:min-w-[64px]">
+            <span className="font-display text-2xl font-black leading-none text-gradient-fire [font-variant-numeric:tabular-nums] sm:text-3xl">
+              {String(c.v).padStart(2, "0")}
+            </span>
+            <span className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{c.l}</span>
+          </div>
+          {i < cells.length - 1 && <span className="text-base font-black text-[color:var(--gold)]/40 sm:text-lg">:</span>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function GuaranteeSeal({ className = "" }: { className?: string }) {
+  return (
+    <div className={`inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/[0.06] px-3 py-1.5 ${className}`}>
+      <span className="grid h-7 w-7 place-items-center rounded-full border border-dashed border-[color:var(--gold)]/60 bg-[color:var(--gold)]/10">
+        <ShieldCheck className="h-3.5 w-3.5 text-[color:var(--gold)]" />
+      </span>
+      <span className="text-[10px] font-black uppercase leading-tight tracking-[0.2em] text-[color:var(--gold)]">
+        7 dias<br />
+        <span className="text-muted-foreground">risco zero</span>
+      </span>
+    </div>
   );
 }
 
