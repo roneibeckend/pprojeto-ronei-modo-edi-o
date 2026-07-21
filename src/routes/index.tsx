@@ -704,7 +704,7 @@ function Pain() {
   );
 }
 
-function Solution() {
+function AuthorSolution() {
   const slides = [
     { src: platter1.url, alt: "Tábua premium de espetinhos variados", tag: "Análise: tábua premium", metric: "Margem 300%" },
     { src: skewersHeld.url, alt: "Espetinhos suculentos", tag: "Detecção: ponto suculento", metric: "Fidelização +82%" },
