@@ -1061,45 +1061,6 @@ function Results() {
   );
 }
 
-function Author() {
-  return (
-    <section className="relative py-14 sm:py-20">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
-        <div className="relative">
-          <div className="absolute -inset-4 -z-10 rounded-3xl bg-fire opacity-25 blur-2xl" />
-          <img
-            src={chefWorking.url}
-            alt="Autor no dia a dia da grelha"
-            className="h-[320px] w-full rounded-3xl sm:h-[500px] object-cover shadow-fire"
-            loading="lazy"
-          />
-        </div>
-        <div>
-          <SectionTag>Quem escreveu</SectionTag>
-          <h2 className="mt-6 h-fluid-h2 font-black">
-            Um método <span className="text-gradient-fire">nascido na brasa</span>
-          </h2>
-          <p className="mt-5 text-lg text-muted-foreground">
-            Anos servindo espetinho todos os dias, escutando cliente, ajustando ponto, corte e tempero.
-            O que está no eBook é o que funciona de verdade — na prática, no calor da grelha, com fila esperando.
-          </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            {[
-              { n: "+10", l: "anos na brasa" },
-              { n: "+2k", l: "leitores" },
-              { n: "4.9", l: "avaliação" },
-            ].map((s) => (
-              <div key={s.l} className="glass rounded-2xl p-4 text-center">
-                <div className="text-3xl font-black text-gradient-fire">{s.n}</div>
-                <div className="text-xs uppercase tracking-widest text-muted-foreground">{s.l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Testimonials() {
   const items = [
