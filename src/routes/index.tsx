@@ -1312,6 +1312,16 @@ function Bonuses() {
             </div>
           </div>
         </div>
+
+        {/* CTA pós-bônus */}
+        <div className="mx-auto mt-6 flex max-w-xl flex-col items-center gap-2">
+          <a href="#oferta" className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full justify-center">
+            Quero o eBook + os 4 bônus <ArrowRight className="h-4 w-4" />
+          </a>
+          <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
+            Tudo isso por R$ 47,90 · acesso imediato
+          </span>
+        </div>
       </div>
     </section>
   );
