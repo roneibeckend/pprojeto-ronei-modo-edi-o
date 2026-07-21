@@ -881,12 +881,12 @@ function AuthorSolution() {
 
 function Benefits() {
   const items = [
-    { icon: DollarSign, title: "Até 300% de margem", desc: "Aprenda a precificar cada espeto para lucrar de verdade, sem trabalhar de graça." },
-    { icon: Beef, title: "Carne que rende mais", desc: "Cortes certos, quantidade certa por espeto e menos desperdício no fim do dia." },
-    { icon: Flame, title: "Ponto e brasa perfeitos", desc: "O segredo do ponto suculento que faz o cliente voltar e indicar pra todo mundo." },
-    { icon: Sparkles, title: "Tempero que fideliza", desc: "A marinada da casa que transforma espeto comum em 'o melhor da região'." },
-    { icon: Users, title: "Fila no seu ponto", desc: "Onde montar, como atrair e como fazer o movimento não parar nem em dia de semana." },
-    { icon: TrendingUp, title: "Do carrinho ao trailer", desc: "Passo a passo real para escalar de renda extra a negócio de 10k por mês." },
+    { icon: DollarSign, title: "Até 300% de margem", desc: "Aprenda a precificar cada espeto para lucrar de verdade, sem trabalhar de graça.", featured: false },
+    { icon: Beef, title: "Carne que rende mais", desc: "Cortes certos, quantidade certa por espeto e menos desperdício no fim do dia.", featured: false },
+    { icon: Flame, title: "Ponto e brasa perfeitos", desc: "O segredo do ponto suculento que faz o cliente voltar e indicar pra todo mundo.", featured: true },
+    { icon: Sparkles, title: "Tempero que fideliza", desc: "A marinada da casa que transforma espeto comum em 'o melhor da região'.", featured: false },
+    { icon: Users, title: "Fila no seu ponto", desc: "Onde montar, como atrair e como fazer o movimento não parar nem em dia de semana.", featured: false },
+    { icon: TrendingUp, title: "Do carrinho ao trailer", desc: "Passo a passo real para escalar de renda extra a negócio de 10k por mês.", featured: false },
   ];
   return (
     <section id="beneficios" className="relative py-14 sm:py-20">
@@ -898,17 +898,26 @@ function Benefits() {
           </h2>
         </div>
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map(({ icon: Icon, title, desc }) => (
+          {items.map(({ icon: Icon, title, desc, featured }) => (
             <div
               key={title}
-              className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:border-[color:var(--gold)]/50 hover:shadow-fire"
+              className={`group relative overflow-hidden rounded-2xl border p-8 backdrop-blur-sm transition-all ${
+                featured
+                  ? "border-white/15 bg-white/[0.05]"
+                  : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"
+              }`}
             >
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-fire opacity-0 blur-3xl transition-opacity group-hover:opacity-20" />
-              <div className="grid h-12 w-12 place-items-center rounded-xl bg-fire shadow-fire">
-                <Icon className="h-6 w-6 text-white" />
+              {featured && (
+                <div
+                  aria-hidden="true"
+                  className="absolute left-0 top-1/4 bottom-1/4 w-[2px] bg-gradient-to-b from-[color:var(--flame)] to-[color:var(--ember)] shadow-[0_0_15px_color-mix(in_oklab,var(--flame)_50%,transparent)]"
+                />
+              )}
+              <div className="absolute right-4 top-4 opacity-30 group-hover:opacity-60 transition-opacity">
+                <Icon className={`h-5 w-5 ${featured ? "text-[color:var(--flame)]" : "text-foreground"}`} strokeWidth={1.5} />
               </div>
-              <h3 className="mt-5 text-lg font-bold">{title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
+              <h3 className="mb-3 text-xl font-bold pr-8">{title}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">{desc}</p>
             </div>
           ))}
         </div>
