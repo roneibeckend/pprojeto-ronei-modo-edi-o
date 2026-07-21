@@ -46,6 +46,10 @@ import ribeye from "@/assets/ribeye.asset.json";
 import chefWorking from "@/assets/chef-working.asset.json";
 import chefPortrait from "@/assets/chef-portrait.asset.json";
 import author from "@/assets/author.asset.json";
+import printWhats1 from "@/assets/print-whats-1.jpg";
+import printWhats2 from "@/assets/print-whats-2.jpg";
+import printWhats3 from "@/assets/print-whats-3.jpg";
+import printPix from "@/assets/print-pix.jpg";
 
 const SITE_URL = "https://sizzling-story-maker.lovable.app";
 const OG_IMAGE = `${SITE_URL}${heroChef.url}`;
