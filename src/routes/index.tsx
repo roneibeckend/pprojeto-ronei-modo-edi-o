@@ -578,78 +578,47 @@ function Hero() {
         <div className="absolute right-0 top-40 h-[280px] w-[280px] rounded-full bg-[color:var(--gold)]/15 blur-3xl" />
       </div>
       
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2">
-        <div className="flex flex-col items-start">
-          <Reveal variant="clip">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--ember)] shadow-[0_0_20px_-4px_var(--ember)] backdrop-blur">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--ember)]" />
-              </span>
-              Edição 2026 · Método completo
+      <div className="mx-auto flex max-w-4xl flex-col items-center px-4 text-center sm:px-6">
+        <Reveal variant="clip">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--ember)] shadow-[0_0_20px_-4px_var(--ember)] backdrop-blur">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--ember)]" />
             </span>
-          </Reveal>
+            Edição 2026 · Método completo
+          </span>
+        </Reveal>
 
-          {/* Mobile-only hero video (below badge) */}
-          <Reveal variant="scale" delay={1} className="relative mt-5 w-full lg:hidden">
-            <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
-            <div className="glass relative overflow-hidden rounded-[1.5rem] p-1.5 shadow-fire">
-              <div className="relative aspect-[9/16] w-full overflow-hidden rounded-[1.25rem] bg-background sm:aspect-video">
-                <iframe
-                  src="https://www.youtube.com/embed/vYBqd2V-bO8?rel=0&modestbranding=1&playsinline=1"
-                  title="Ronnei — A história por trás do Espetos Grill"
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="absolute inset-0 h-full w-full"
-                />
-              </div>
-            </div>
-          </Reveal>
+        <Reveal variant="blur" delay={1} as="h1" className="mt-5 h-fluid-hero font-black sm:mt-6">
+          Lucre até <span className="animated-fire-text">R$ 300 por dia</span> vendendo espetinhos — começando do zero
+        </Reveal>
+        <Reveal variant="up" delay={2} as="p" className="mt-5 max-w-2xl text-fluid-lead text-muted-foreground sm:mt-6">
+          O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
+        </Reveal>
 
-          <Reveal variant="blur" delay={1} as="h1" className="mt-5 h-fluid-hero font-black sm:mt-6">
-            Lucre até <span className="animated-fire-text">R$ 300 por dia</span> vendendo espetinhos — começando do zero
-          </Reveal>
-          <Reveal variant="up" delay={2} as="p" className="mt-5 max-w-xl text-fluid-lead text-muted-foreground sm:mt-6">
-            O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
-          </Reveal>
+        <Reveal variant="up" delay={3} className="mt-7 flex w-full flex-col items-center justify-center gap-3 sm:mt-8 sm:w-auto sm:flex-row">
+          <CTAButton size="xl">
+            Quero começar agora <ArrowRight className="h-5 w-5" />
+          </CTAButton>
+          <a href="#beneficios" className="btn-ghost-fire w-full sm:w-auto">
+            Ver o que aprendo
+          </a>
+        </Reveal>
 
-          <Reveal variant="up" delay={3} className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
-            <CTAButton size="xl">
-              Quero começar agora <ArrowRight className="h-5 w-5" />
-            </CTAButton>
-            <a href="#beneficios" className="btn-ghost-fire w-full sm:w-auto">
-              Ver o que aprendo
-            </a>
-          </Reveal>
-
-          <Reveal variant="up" delay={3} className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
-            <span className="inline-flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--flame)]" />
-              </span>
-              Método já aplicado por vendedores em <strong className="text-foreground">+120 cidades</strong> do Brasil
+        <Reveal variant="up" delay={3} className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
+          <span className="inline-flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--flame)]" />
             </span>
-          </Reveal>
+            Método já aplicado por vendedores em <strong className="text-foreground">+120 cidades</strong> do Brasil
+          </span>
+        </Reveal>
 
-          <Reveal variant="up" delay={4} className="mt-8 grid grid-cols-3 gap-3 sm:gap-4">
-            {[
-              { n: "300%", l: "margem" },
-              { n: "14", l: "capítulos" },
-              { n: "7 dias", l: "garantia" },
-            ].map((s) => (
-              <div key={s.l} className="glass gradient-border rounded-xl px-3 py-3 text-center transition hover:-translate-y-0.5">
-                <div className="font-display text-xl leading-none text-gradient-fire sm:text-2xl">{s.n}</div>
-                <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-xs">{s.l}</div>
-              </div>
-            ))}
-          </Reveal>
-        </div>
-
-        <Reveal variant="right" delay={2} className="relative hidden lg:block">
+        {/* Video below texts, centered */}
+        <Reveal variant="scale" delay={4} className="relative mt-10 w-full sm:mt-12">
           <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
-          <div className="glass gradient-border relative overflow-hidden rounded-[2rem] p-2 shadow-fire">
+          <div className="glass gradient-border relative mx-auto overflow-hidden rounded-[2rem] p-2 shadow-fire">
             <div className="relative aspect-video w-full overflow-hidden rounded-[1.75rem] bg-background">
               <iframe
                 src="https://www.youtube.com/embed/vYBqd2V-bO8?rel=0&modestbranding=1&playsinline=1"
@@ -671,6 +640,19 @@ function Hero() {
               <span className="font-semibold text-[color:var(--gold)]">2 min</span>
             </div>
           </div>
+        </Reveal>
+
+        <Reveal variant="up" delay={5} className="mt-8 grid w-full max-w-xl grid-cols-3 gap-3 sm:gap-4">
+          {[
+            { n: "300%", l: "margem" },
+            { n: "14", l: "capítulos" },
+            { n: "7 dias", l: "garantia" },
+          ].map((s) => (
+            <div key={s.l} className="glass gradient-border rounded-xl px-3 py-3 text-center transition hover:-translate-y-0.5">
+              <div className="font-display text-xl leading-none text-gradient-fire sm:text-2xl">{s.n}</div>
+              <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-xs">{s.l}</div>
+            </div>
+          ))}
         </Reveal>
       </div>
     </section>
