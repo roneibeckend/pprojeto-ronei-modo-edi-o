@@ -571,14 +571,27 @@ function Nav() {
 }
 
 function Hero() {
+  const [videoOpen, setVideoOpen] = useState(false);
+
+  useEffect(() => {
+    if (!videoOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setVideoOpen(false);
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [videoOpen]);
+
   return (
-    <section id="top" className="relative overflow-hidden pt-20 pb-10 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28">
+    <section id="top" className="relative overflow-hidden pt-16 pb-8 sm:pt-24 sm:pb-14 lg:pt-28 lg:pb-16">
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-0 h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-[color:var(--ember)]/25 blur-3xl sm:h-[520px] sm:w-[960px] animate-pulse-glow" />
         <div className="absolute right-0 top-40 h-[280px] w-[280px] rounded-full bg-[color:var(--gold)]/15 blur-3xl" />
       </div>
-      
-      <div className="mx-auto flex max-w-4xl flex-col items-center px-4 text-center sm:px-6">
+
+      <div className="mx-auto flex max-w-3xl flex-col items-center px-4 text-center sm:px-6">
         <Reveal variant="clip">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--ember)] shadow-[0_0_20px_-4px_var(--ember)] backdrop-blur">
             <span className="relative flex h-1.5 w-1.5">
@@ -589,14 +602,53 @@ function Hero() {
           </span>
         </Reveal>
 
-        <Reveal variant="blur" delay={1} as="h1" className="mt-5 h-fluid-hero font-black sm:mt-6">
+        <Reveal variant="blur" delay={1} as="h1" className="mt-4 h-fluid-hero font-black">
           Lucre até <span className="animated-fire-text">R$ 300 por dia</span> vendendo espetinhos — começando do zero
         </Reveal>
-        <Reveal variant="up" delay={2} as="p" className="mt-5 max-w-2xl text-fluid-lead text-muted-foreground sm:mt-6">
+        <Reveal variant="up" delay={2} as="p" className="mt-3 max-w-2xl text-fluid-lead text-muted-foreground sm:mt-4">
           O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
         </Reveal>
 
-        <Reveal variant="up" delay={3} className="mt-7 flex w-full flex-col items-center justify-center gap-3 sm:mt-8 sm:w-auto sm:flex-row">
+        {/* Compact video trigger */}
+        <Reveal variant="scale" delay={3} className="mt-6 w-full sm:mt-7">
+          <button
+            type="button"
+            onClick={() => setVideoOpen(true)}
+            aria-label="Assistir à história do Ronnei"
+            className="group relative mx-auto block w-full max-w-md overflow-hidden rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ember)]"
+          >
+            <div className="absolute -inset-3 -z-10 rounded-[2rem] bg-fire opacity-25 blur-2xl transition group-hover:opacity-40" />
+            <div className="glass gradient-border relative overflow-hidden rounded-2xl p-1.5 shadow-fire">
+              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
+                <img
+                  src={`https://i.ytimg.com/vi/vYBqd2V-bO8/hqdefault.jpg`}
+                  alt="Ronnei — história do Espetos Grill"
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--ember)] shadow-[0_0_40px_-4px_var(--ember)] transition group-hover:scale-110">
+                    <span className="absolute inset-0 animate-ping rounded-full bg-[color:var(--ember)] opacity-40" />
+                    <svg viewBox="0 0 24 24" className="relative ml-1 h-7 w-7 fill-background"><path d="M8 5v14l11-7z" /></svg>
+                  </span>
+                </div>
+                <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-xs">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-background/70 px-2.5 py-1 font-medium text-foreground backdrop-blur">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--flame)] opacity-75" />
+                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--flame)]" />
+                    </span>
+                    A história do Ronnei
+                  </span>
+                  <span className="rounded-full bg-background/70 px-2.5 py-1 font-semibold text-[color:var(--gold)] backdrop-blur">2 min</span>
+                </div>
+              </div>
+            </div>
+          </button>
+        </Reveal>
+
+        <Reveal variant="up" delay={4} className="mt-6 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
           <CTAButton size="xl">
             Quero começar agora <ArrowRight className="h-5 w-5" />
           </CTAButton>
@@ -605,7 +657,7 @@ function Hero() {
           </a>
         </Reveal>
 
-        <Reveal variant="up" delay={3} className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
+        <Reveal variant="up" delay={4} className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
           <span className="inline-flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
@@ -615,34 +667,7 @@ function Hero() {
           </span>
         </Reveal>
 
-        {/* Video below texts, centered */}
-        <Reveal variant="scale" delay={4} className="relative mt-10 w-full sm:mt-12">
-          <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
-          <div className="glass gradient-border relative mx-auto overflow-hidden rounded-[2rem] p-2 shadow-fire">
-            <div className="relative aspect-video w-full overflow-hidden rounded-[1.75rem] bg-background">
-              <iframe
-                src="https://www.youtube.com/embed/vYBqd2V-bO8?rel=0&modestbranding=1&playsinline=1"
-                title="Ronnei — A história por trás do Espetos Grill"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="absolute inset-0 h-full w-full"
-              />
-            </div>
-            <div className="mt-2 flex items-center justify-between px-3 pb-1 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--flame)]" />
-                </span>
-                Assista à história do Ronnei
-              </span>
-              <span className="font-semibold text-[color:var(--gold)]">2 min</span>
-            </div>
-          </div>
-        </Reveal>
-
-        <Reveal variant="up" delay={5} className="mt-8 grid w-full max-w-xl grid-cols-3 gap-3 sm:gap-4">
+        <Reveal variant="up" delay={5} className="mt-6 grid w-full max-w-xl grid-cols-3 gap-3 sm:gap-4">
           {[
             { n: "300%", l: "margem" },
             { n: "14", l: "capítulos" },
@@ -655,6 +680,42 @@ function Hero() {
           ))}
         </Reveal>
       </div>
+
+      {/* Video Modal */}
+      {videoOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Vídeo: história do Ronnei"
+          onClick={() => setVideoOpen(false)}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-background/85 px-4 backdrop-blur-md animate-fade-in"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-4xl animate-scale-in"
+          >
+            <button
+              type="button"
+              onClick={() => setVideoOpen(false)}
+              aria-label="Fechar vídeo"
+              className="absolute -top-12 right-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/80 text-foreground backdrop-blur transition hover:bg-[color:var(--ember)]/20"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="glass gradient-border overflow-hidden rounded-2xl p-2 shadow-fire">
+              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
+                <iframe
+                  src="https://www.youtube.com/embed/vYBqd2V-bO8?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+                  title="Ronnei — A história por trás do Espetos Grill"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute inset-0 h-full w-full"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
