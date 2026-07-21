@@ -1343,20 +1343,20 @@ function StickyMobileCTA() {
 function LandingPage() {
   return (
     <div className="min-h-screen pb-24 md:pb-0">
+      <ScrollProgress />
       <Nav />
       <main>
         <Hero />
-        
+        <BrasaTicker />
         <ForYou />
         <Benefits />
         <Modules />
-        <Offer />
         <Author />
-        <Guarantee />
         <Bonuses />
+        <Offer />
+        <Guarantee />
         <Solution />
         <FAQ />
-        
       </main>
       <Footer />
       <StickyMobileCTA />
