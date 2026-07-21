@@ -576,10 +576,10 @@ function Hero() {
       <Embers />
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2">
         <div className="flex flex-col items-start">
-          <Reveal><SectionTag>Método completo · edição 2026</SectionTag></Reveal>
+          <Reveal variant="clip"><SectionTag>Método completo · edição 2026</SectionTag></Reveal>
 
           {/* Mobile-only hero image (below badge) */}
-          <Reveal delay={1} className="relative mt-5 w-full lg:hidden">
+          <Reveal variant="scale" delay={1} className="relative mt-5 w-full lg:hidden">
             <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
             <div className="glass relative overflow-hidden rounded-[1.5rem] p-1.5 shadow-fire animate-float">
               <img
@@ -592,14 +592,14 @@ function Hero() {
             </div>
           </Reveal>
 
-          <Reveal delay={1} as="h1" className="mt-5 h-fluid-hero font-black sm:mt-6">
+          <Reveal variant="blur" delay={1} as="h1" className="mt-5 h-fluid-hero font-black sm:mt-6">
             Lucre até <span className="animated-fire-text">R$ 300 por dia</span> vendendo espetinhos — começando do zero
           </Reveal>
-          <Reveal delay={2} as="p" className="mt-5 max-w-xl text-fluid-lead text-muted-foreground sm:mt-6">
+          <Reveal variant="up" delay={2} as="p" className="mt-5 max-w-xl text-fluid-lead text-muted-foreground sm:mt-6">
             O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
           </Reveal>
 
-          <Reveal delay={3} className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
+          <Reveal variant="up" delay={3} className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
             <CTAButton size="xl">
               Quero começar agora <ArrowRight className="h-5 w-5" />
             </CTAButton>
@@ -608,13 +608,13 @@ function Hero() {
             </a>
           </Reveal>
 
-          <Reveal delay={4} className="mt-8 grid grid-cols-3 gap-3 sm:gap-4">
+          <Reveal variant="up" delay={4} className="mt-8 grid grid-cols-3 gap-3 sm:gap-4">
             {[
               { n: "300%", l: "margem" },
               { n: "14", l: "capítulos" },
               { n: "7 dias", l: "garantia" },
             ].map((s) => (
-              <div key={s.l} className="glass rounded-xl px-3 py-3 text-center transition hover:-translate-y-0.5">
+              <div key={s.l} className="glass gradient-border rounded-xl px-3 py-3 text-center transition hover:-translate-y-0.5">
                 <div className="font-display text-xl leading-none text-gradient-fire sm:text-2xl">{s.n}</div>
                 <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-xs">{s.l}</div>
               </div>
@@ -622,9 +622,9 @@ function Hero() {
           </Reveal>
         </div>
 
-        <Reveal delay={2} className="relative hidden lg:block">
+        <Reveal variant="right" delay={2} className="relative hidden lg:block">
           <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-fire opacity-30 blur-3xl animate-pulse-glow" />
-          <div className="glass relative overflow-hidden rounded-[2rem] p-2 shadow-fire animate-float">
+          <div className="glass gradient-border relative overflow-hidden rounded-[2rem] p-2 shadow-fire animate-float">
             <img
               src={heroChef.url}
               alt="Chef especialista em espetinhos com espetos flamejantes"
