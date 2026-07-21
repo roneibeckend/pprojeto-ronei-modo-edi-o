@@ -977,6 +977,139 @@ function Benefits() {
   );
 }
 
+function ProfitCalculator() {
+  const [qty, setQty] = useState(50);
+  const [price, setPrice] = useState(8);
+  const cost = 2.2; // custo médio por espeto (carne + carvão + palito + tempero)
+  const daysMonth = 26;
+
+  const revenueDay = qty * price;
+  const costDay = qty * cost;
+  const profitDay = revenueDay - costDay;
+  const profitMonth = profitDay * daysMonth;
+  const marginPct = revenueDay > 0 ? Math.round((profitDay / revenueDay) * 100) : 0;
+
+  const fmt = (n: number) =>
+    n.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+
+  return (
+    <section id="calculadora" className="relative py-14 sm:py-20">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionTag>Simulador · quanto você pode faturar</SectionTag>
+          <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
+            Faça a <span className="text-gradient-fire">conta na sua tela</span> agora
+          </h2>
+          <p className="mt-4 max-w-2xl text-muted-foreground">
+            Ajuste a quantidade e o preço do espeto. O cálculo é feito em tempo real com um custo médio de {fmt(cost)} por espeto (carne, carvão, palito e tempero).
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-5 lg:grid-cols-[1fr_1.1fr]">
+          {/* Inputs */}
+          <div className="glass rounded-3xl border border-white/10 p-6 sm:p-8">
+            <div className="space-y-8">
+              <div>
+                <div className="flex items-baseline justify-between">
+                  <label htmlFor="qty" className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+                    Espetos vendidos por dia
+                  </label>
+                  <span className="text-2xl font-black text-gradient-fire">{qty}</span>
+                </div>
+                <input
+                  id="qty"
+                  type="range"
+                  min={10}
+                  max={200}
+                  step={5}
+                  value={qty}
+                  onChange={(e) => setQty(Number(e.target.value))}
+                  className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[color:var(--gold)]"
+                  aria-label="Espetos vendidos por dia"
+                />
+                <div className="mt-1 flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <span>10</span><span>100</span><span>200</span>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-baseline justify-between">
+                  <label htmlFor="price" className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+                    Preço por espeto
+                  </label>
+                  <span className="text-2xl font-black text-gradient-fire">{fmt(price)}</span>
+                </div>
+                <input
+                  id="price"
+                  type="range"
+                  min={5}
+                  max={20}
+                  step={0.5}
+                  value={price}
+                  onChange={(e) => setPrice(Number(e.target.value))}
+                  className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[color:var(--gold)]"
+                  aria-label="Preço por espeto"
+                />
+                <div className="mt-1 flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <span>R$ 5</span><span>R$ 12</span><span>R$ 20</span>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-border/60 bg-background/40 p-4 text-sm">
+                <div className="flex justify-between py-1">
+                  <span className="text-muted-foreground">Faturamento/dia</span>
+                  <span className="font-bold">{fmt(revenueDay)}</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-muted-foreground">Custo/dia</span>
+                  <span className="font-bold text-red-400/90">− {fmt(costDay)}</span>
+                </div>
+                <div className="mt-2 flex justify-between border-t border-border/60 pt-2">
+                  <span className="text-muted-foreground">Margem</span>
+                  <span className="font-bold">{marginPct}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Results */}
+          <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/30 bg-card/60 p-6 shadow-fire sm:p-8">
+            <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-fire opacity-20 blur-3xl" />
+            <div className="relative">
+              <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+                <Flame className="h-4 w-4 text-[color:var(--gold)]" />
+                Seu lucro estimado
+              </div>
+
+              <div className="mt-6">
+                <div className="text-sm uppercase tracking-widest text-muted-foreground">Lucro por dia</div>
+                <div className="mt-1 text-5xl font-black text-gradient-fire sm:text-6xl">
+                  {fmt(profitDay)}
+                </div>
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-border bg-background/40 p-4">
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Por semana</div>
+                  <div className="mt-1 text-xl font-black">{fmt(profitDay * 6)}</div>
+                </div>
+                <div className="rounded-2xl border border-[color:var(--gold)]/40 bg-fire/10 p-4">
+                  <div className="text-[10px] uppercase tracking-widest text-[color:var(--gold)]">Por mês (26 dias)</div>
+                  <div className="mt-1 text-xl font-black text-gradient-fire">{fmt(profitMonth)}</div>
+                </div>
+              </div>
+
+              <p className="mt-6 text-xs text-muted-foreground">
+                * Estimativa baseada em custos médios reais do mercado. O eBook te ensina a otimizar cada centavo dessa conta.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function SocialProof() {
   const prints = [
     { src: printWhats1, alt: "Print de WhatsApp: aluno faturou R$ 480 no primeiro fim de semana", tag: "R$ 480 / fim de semana" },
