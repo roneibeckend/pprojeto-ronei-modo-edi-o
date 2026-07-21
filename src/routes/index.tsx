@@ -1716,32 +1716,30 @@ function Footer() {
 
 function ForYou() {
   const items = [
-    "Você quer uma renda extra sem depender de patrão",
-    "Já tentou vender espetinho e não conseguiu lucrar",
-    "Curte churrasco e quer transformar isso em dinheiro",
-    "Está desempregado e precisa começar com pouco",
-    "Já vende, mas quer aumentar a margem e o volume",
-    "Sonha em ter o próprio negócio para chamar de seu",
+    "Quer uma renda extra",
+    "Já tentou e não lucrou",
+    "Curte churrasco",
+    "Está desempregado",
+    "Quer aumentar a margem",
+    "Sonha com o próprio negócio",
   ];
   return (
     <section className="relative py-10 sm:py-14">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Isso é pra você se…</SectionTag>
           <h2 className="mt-4 max-w-2xl text-2xl sm:text-3xl font-black">
             Você se <span className="text-gradient-fire">identifica</span>?
           </h2>
         </div>
-        <div className="mt-8 grid gap-2.5 sm:grid-cols-2">
-          {items.map((t, i) => (
+        <div className="mt-8 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+          {items.map((t) => (
             <div
               key={t}
-              className="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 backdrop-blur-sm transition-all hover:border-[color:var(--gold)]/30 hover:bg-white/[0.05]"
+              className="group flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2.5 text-center backdrop-blur-sm transition-all hover:border-[color:var(--gold)]/40 hover:bg-white/[0.06]"
             >
-              <span className="font-mono text-[10px] tracking-widest text-muted-foreground group-hover:text-[color:var(--gold)] shrink-0">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span className="text-sm leading-snug text-foreground/90">{t}</span>
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--flame)] shadow-[0_0_8px_color-mix(in_oklab,var(--flame)_60%,transparent)]" />
+              <span className="text-xs sm:text-sm font-medium text-foreground/90">{t}</span>
             </div>
           ))}
         </div>
