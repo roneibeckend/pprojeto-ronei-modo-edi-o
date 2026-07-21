@@ -783,20 +783,22 @@ function AuthorSolution() {
               da empresa não é seu e que a culpa de todo BO é do dono. Hoje o <strong className="text-foreground">Espetos Grill</strong> fatura
               mais de <span className="text-gradient-fire font-black">R$ 350 mil/mês</span> — e o que está nesse eBook é o passo a passo que eu queria ter recebido lá atrás.
             </p>
-            <div className="mt-6 grid max-w-md gap-3 sm:grid-cols-3">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 { n: "10+", l: "anos na brasa" },
                 { n: "R$350k", l: "faturamento/mês" },
                 { n: "0", l: "começou do zero" },
               ].map((s) => (
-                <div key={s.l} className="glass rounded-2xl p-3 text-center">
+                <div key={s.l} className="glass flex flex-col items-center justify-center rounded-2xl p-3 text-center">
                   <div className="text-xl font-black text-gradient-fire sm:text-2xl">{s.n}</div>
                   <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.l}</div>
                 </div>
               ))}
-            </div>
-            <div className="mt-8">
-              <CTAButton>Quero acessar o método <ArrowRight className="h-4 w-4" /></CTAButton>
+              <div className="flex items-center justify-center sm:col-span-2 lg:col-span-1">
+                <CTAButton className="w-full justify-center">
+                  Quero o método <ArrowRight className="h-4 w-4" />
+                </CTAButton>
+              </div>
             </div>
           </div>
         </div>
