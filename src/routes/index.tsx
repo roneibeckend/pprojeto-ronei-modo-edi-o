@@ -1340,16 +1340,62 @@ function StickyMobileCTA() {
   );
 }
 
+function AuroraBackdrop() {
+  return (
+    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+      <div
+        className="animate-aurora absolute -top-40 -left-32 h-[520px] w-[520px] rounded-full blur-3xl"
+        style={{ background: "radial-gradient(circle at 30% 30%, oklch(0.63 0.24 27 / 0.45), transparent 60%)" }}
+      />
+      <div
+        className="animate-aurora-2 absolute top-1/3 -right-40 h-[600px] w-[600px] rounded-full blur-3xl"
+        style={{ background: "radial-gradient(circle at 60% 40%, oklch(0.72 0.20 50 / 0.35), transparent 65%)" }}
+      />
+      <div
+        className="animate-aurora absolute bottom-0 left-1/3 h-[480px] w-[480px] rounded-full blur-3xl"
+        style={{ background: "radial-gradient(circle at 50% 50%, oklch(0.82 0.15 85 / 0.22), transparent 70%)" }}
+      />
+    </div>
+  );
+}
+
 function LandingPage() {
   useEffect(() => {
-    const selectors = [
-      "main section h2",
-      "main section > div > .flex.flex-col.items-center",
-      "main section .glass",
-      "main section .rounded-2xl",
-      "main section .rounded-3xl",
-    ].join(", ");
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>(selectors));
+    // Assign varied reveal variants per section so animations don't all feel the same.
+    // Order below matches <main> children.
+    const variantsBySection: Array<{ headline: string; card: string }> = [
+      { headline: "up",    card: "up"     }, // Hero (mostly handled by <Reveal>)
+      { headline: "clip",  card: "left"   }, // BrasaTicker (no h2)
+      { headline: "clip",  card: "scale"  }, // ForYou
+      { headline: "up",    card: "tilt"   }, // Benefits
+      { headline: "left",  card: "rotate" }, // Modules
+      { headline: "right", card: "right"  }, // Author
+      { headline: "clip",  card: "scale"  }, // Bonuses
+      { headline: "up",    card: "blur"   }, // Offer
+      { headline: "scale", card: "up"     }, // Guarantee
+      { headline: "clip",  card: "left"   }, // Solution
+      { headline: "up",    card: "up"     }, // FAQ
+    ];
+
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("main > section, main > div"));
+    sections.forEach((section, sIdx) => {
+      const v = variantsBySection[sIdx] ?? { headline: "up", card: "up" };
+      const headline = section.querySelector<HTMLElement>("h2");
+      if (headline && !headline.hasAttribute("data-reveal")) {
+        headline.setAttribute("data-reveal", v.headline);
+      }
+      const cards = Array.from(
+        section.querySelectorAll<HTMLElement>(".glass, .rounded-2xl, .rounded-3xl"),
+      );
+      cards.forEach((n, i) => {
+        if (!n.hasAttribute("data-reveal")) {
+          n.setAttribute("data-reveal", v.card);
+          const delay = ((i % 6) + 1) as 1 | 2 | 3 | 4 | 5 | 6;
+          if (delay > 1) n.setAttribute("data-reveal-delay", String(delay - 1));
+        }
+      });
+    });
+
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -1359,21 +1405,14 @@ function LandingPage() {
           }
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      { threshold: 0.12, rootMargin: "0px 0px -60px 0px" },
     );
-    nodes.forEach((n, i) => {
-      if (!n.hasAttribute("data-reveal")) {
-        n.setAttribute("data-reveal", "");
-        // small stagger within a group of siblings
-        const delay = (i % 5) as 0 | 1 | 2 | 3 | 4;
-        if (delay) n.setAttribute("data-reveal-delay", String(delay));
-      }
-      io.observe(n);
-    });
+    document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((n) => io.observe(n));
     return () => io.disconnect();
   }, []);
   return (
     <div className="min-h-screen pb-24 md:pb-0">
+      <AuroraBackdrop />
       <ScrollProgress />
       <Nav />
       <main>
