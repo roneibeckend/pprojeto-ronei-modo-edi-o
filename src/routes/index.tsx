@@ -1756,6 +1756,7 @@ function LandingPage() {
       { headline: "up",    card: "tilt"   }, // Benefits
       { headline: "left",  card: "rotate" }, // Modules
       { headline: "right", card: "right"  }, // AuthorSolution
+      { headline: "clip",  card: "tilt"   }, // SocialProof
       { headline: "clip",  card: "scale"  }, // Bonuses
       { headline: "up",    card: "blur"   }, // Offer
 
