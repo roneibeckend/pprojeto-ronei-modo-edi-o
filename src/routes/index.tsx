@@ -1341,6 +1341,37 @@ function StickyMobileCTA() {
 }
 
 function LandingPage() {
+  useEffect(() => {
+    const selectors = [
+      "main section h2",
+      "main section > div > .flex.flex-col.items-center",
+      "main section .glass",
+      "main section .rounded-2xl",
+      "main section .rounded-3xl",
+    ].join(", ");
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>(selectors));
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            (e.target as HTMLElement).dataset.visible = "true";
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+    );
+    nodes.forEach((n, i) => {
+      if (!n.hasAttribute("data-reveal")) {
+        n.setAttribute("data-reveal", "");
+        // small stagger within a group of siblings
+        const delay = (i % 5) as 0 | 1 | 2 | 3 | 4;
+        if (delay) n.setAttribute("data-reveal-delay", String(delay));
+      }
+      io.observe(n);
+    });
+    return () => io.disconnect();
+  }, []);
   return (
     <div className="min-h-screen pb-24 md:pb-0">
       <ScrollProgress />
