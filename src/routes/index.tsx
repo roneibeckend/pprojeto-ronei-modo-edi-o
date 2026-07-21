@@ -720,48 +720,54 @@ function Pain() {
 
 function AuthorSolution() {
   const slides = [
-    { src: platter1.url, alt: "Tábua premium de espetinhos variados", tag: "Análise: tábua premium", metric: "Margem 300%" },
-    { src: skewersHeld.url, alt: "Espetinhos suculentos", tag: "Detecção: ponto suculento", metric: "Fidelização +82%" },
-    { src: ribeye.url, alt: "Corte nobre bovino", tag: "Identificado: corte nobre", metric: "Custo/kg otimizado" },
-    { src: platter2.url, alt: "Espetinhos servidos", tag: "Padrão: apresentação PRO", metric: "Ticket médio +40%" },
-  ];
-  const bullets = [
-    "Passo a passo direto ao ponto — sem enrolação.",
-    "Temperos exclusivos que fidelizam qualquer cliente.",
-    "Precificação inteligente para lucrar de verdade.",
-    "Estratégias de venda para atrair clientes todo dia.",
+    { src: chefWorking.url, alt: "Ronnei na grelha preparando espetinhos" },
+    { src: platter1.url, alt: "Tábua premium de espetinhos variados" },
+    { src: skewersHeld.url, alt: "Espetinhos suculentos no ponto" },
+    { src: ribeye.url, alt: "Corte nobre bovino selecionado" },
+    { src: platter2.url, alt: "Espetinhos servidos com apresentação profissional" },
   ];
 
   const [idx, setIdx] = useState(0);
-  const [visibleBullets, setVisibleBullets] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % slides.length), 2800);
+    const t = setInterval(() => setIdx((i) => (i + 1) % slides.length), 3500);
     return () => clearInterval(t);
   }, [slides.length]);
-
-  useEffect(() => {
-    if (visibleBullets >= bullets.length) return;
-    const t = setTimeout(() => setVisibleBullets((n) => n + 1), 450);
-    return () => clearTimeout(t);
-  }, [visibleBullets, bullets.length]);
-
-  const current = slides[idx];
 
   return (
     <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        {/* Author header */}
-        <div className="grid items-center gap-8 lg:grid-cols-[auto_1fr]">
+        <div className="grid items-center gap-10 lg:grid-cols-[auto_1fr]">
+          {/* Slideshow */}
           <div className="relative mx-auto lg:mx-0">
             <div className="absolute -inset-3 -z-10 rounded-3xl bg-fire opacity-25 blur-2xl" />
-            <img
-              src={chefWorking.url}
-              alt="Autor no dia a dia da grelha"
-              className="h-[220px] w-[220px] rounded-3xl object-cover shadow-fire sm:h-[260px] sm:w-[260px]"
-              loading="lazy"
-            />
+            <div className="relative h-[260px] w-[260px] overflow-hidden rounded-3xl shadow-fire sm:h-[300px] sm:w-[300px]">
+              {slides.map((s, i) => (
+                <img
+                  key={s.src}
+                  src={s.src}
+                  alt={s.alt}
+                  loading="lazy"
+                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
+                    i === idx ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+              ))}
+              {/* subtle dots */}
+              <div className="absolute inset-x-0 bottom-3 flex items-center justify-center gap-1.5">
+                {slides.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`h-1.5 rounded-full transition-all duration-500 ${
+                      i === idx ? "w-5 bg-white" : "w-1.5 bg-white/40"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
+
+          {/* Copy */}
           <div>
             <SectionTag>Quem escreveu · A história real</SectionTag>
             <h2 className="mt-5 h-fluid-h2 font-black">
@@ -789,153 +795,13 @@ function AuthorSolution() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className="my-12 h-px w-full bg-gradient-to-r from-transparent via-[color:var(--gold)]/30 to-transparent" />
-
-        {/* AI Solution */}
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          {/* AI viewer */}
-        <div className="relative lg:order-2">
-          <div className="relative overflow-hidden rounded-3xl border border-[color:var(--gold)]/20 bg-card/60 p-3 shadow-fire backdrop-blur">
-            {/* header bar */}
-            <div className="flex items-center justify-between px-2 pb-3">
-              <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
-                <span className="grid h-5 w-5 place-items-center rounded-md bg-fire">
-                  <Sparkles className="h-3 w-3 text-white" />
-                </span>
-                IA · Análise de mercado
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-emerald-400" style={{ animation: "ai-blip 1.4s ease-in-out infinite" }} />
-                <span className="text-[10px] uppercase tracking-widest text-emerald-400/90">live</span>
-              </div>
-            </div>
-
-            {/* image stage */}
-            <div className="relative mx-auto aspect-[4/5] w-full max-w-[220px] sm:max-w-[240px] overflow-hidden rounded-2xl bg-background">
-              {slides.map((s, i) => (
-                <img
-                  key={s.src}
-                  src={s.src}
-                  alt={s.alt}
-                  loading="lazy"
-                  className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ${
-                    i === idx ? "opacity-100 scale-100" : "opacity-0 scale-105"
-                  }`}
-                />
-              ))}
-
-              {/* gradient overlays */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-background/40" />
-
-              {/* grid overlay */}
-              <div
-                className="pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(oklch(1 0 0 / 0.08) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.08) 1px, transparent 1px)",
-                  backgroundSize: "28px 28px",
-                }}
-              />
-
-              {/* corner brackets */}
-              {[
-                "top-3 left-3 border-t-2 border-l-2",
-                "top-3 right-3 border-t-2 border-r-2",
-                "bottom-3 left-3 border-b-2 border-l-2",
-                "bottom-3 right-3 border-b-2 border-r-2",
-              ].map((c) => (
-                <span key={c} className={`pointer-events-none absolute h-6 w-6 border-[color:var(--gold)] ${c}`} />
-              ))}
-
-              {/* scan line */}
-              <div
-                className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-transparent via-[color:var(--gold)]/40 to-transparent"
-                style={{ animation: "ai-scan 2.8s linear infinite" }}
-              />
-
-              {/* floating tag */}
-              <div key={idx} className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-background/70 px-3 py-1.5 text-[11px] font-medium backdrop-blur animate-fade-in">
-                <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--gold)]" style={{ animation: "ai-blip 1.2s ease-in-out infinite" }} />
-                {current.tag}
-              </div>
-
-              {/* metric card */}
-              <div key={`m-${idx}`} className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-xl border border-border bg-background/80 px-4 py-3 backdrop-blur animate-fade-in">
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Insight detectado</div>
-                  <div className="text-sm font-bold text-foreground">{current.metric}</div>
-                </div>
-                <TrendingUp className="h-5 w-5 text-[color:var(--gold)]" />
-              </div>
-            </div>
-
-            {/* dots / progress */}
-            <div className="mt-3 flex items-center justify-center gap-1.5 pb-1">
-              {slides.map((_, i) => (
-                <span
-                  key={i}
-                  className={`h-1.5 rounded-full transition-all duration-500 ${
-                    i === idx ? "w-6 bg-[color:var(--gold)]" : "w-1.5 bg-muted-foreground/30"
-                  }`}
-                />
-              ))}
+            <div className="mt-8">
+              <CTAButton>Quero acessar o método <ArrowRight className="h-4 w-4" /></CTAButton>
             </div>
           </div>
-
-          {/* ambient glow */}
-          <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] bg-[color:var(--ember)]/20 blur-3xl" />
         </div>
-
-        {/* Copy */}
-        <div className="lg:order-1">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[color:var(--gold)]">
-            <Sparkles className="h-3 w-3" /> IA · A solução
-          </div>
-          <h2 className="mt-4 h-fluid-h3 font-black sm:text-2xl">
-            Um método <span className="text-gradient-fire">testado na brasa</span>, feito para quem quer resultado.
-          </h2>
-          <p className="mt-3 text-sm text-muted-foreground sm:text-base">
-            O <strong className="text-foreground">Espetinho na Veia</strong> reúne, num só material,
-            tudo o que você precisa para transformar espetinho em uma máquina de fazer dinheiro:
-            da escolha da carne ao pós-venda.
-          </p>
-          <ul className="mt-5 space-y-2 text-sm sm:text-base">
-            {bullets.map((t, i) => (
-              <li
-                key={t}
-                className={`flex items-start gap-3 transition-all duration-500 ${
-                  i < visibleBullets ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"
-                }`}
-              >
-                <span className="mt-1 grid h-5 w-5 place-items-center rounded-full bg-fire">
-                  <Check className="h-3 w-3 text-white" />
-                </span>
-                <span>{t}</span>
-              </li>
-            ))}
-            {visibleBullets < bullets.length && (
-              <li className="flex items-center gap-2 pl-8 text-xs text-muted-foreground">
-                <span className="flex gap-1">
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-[color:var(--gold)] [animation-delay:-0.3s]" />
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-[color:var(--gold)] [animation-delay:-0.15s]" />
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-[color:var(--gold)]" />
-                </span>
-                Gerando insights…
-              </li>
-            )}
-          </ul>
-          <div className="mt-8">
-            <CTAButton>Quero acessar o método <ArrowRight className="h-4 w-4" /></CTAButton>
-          </div>
-        </div>
-      </div>
       </div>
     </section>
-
   );
 }
 
