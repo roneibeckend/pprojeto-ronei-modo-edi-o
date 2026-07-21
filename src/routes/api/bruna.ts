@@ -34,12 +34,12 @@ REGRAS:
 BASE DE CONHECIMENTO:
 ${faqAsContext()}`;
 
-        const modelMessages: ModelMessage[] = [
-          { role: "system", content: system },
-          ...messages.map((m) => ({ role: m.role, content: m.content })),
-        ];
+        const modelMessages: ModelMessage[] = messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        }));
 
-        const result = streamText({ model, messages: modelMessages });
+        const result = streamText({ model, system, messages: modelMessages });
         return result.toTextStreamResponse();
       },
     },
