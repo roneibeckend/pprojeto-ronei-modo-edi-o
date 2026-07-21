@@ -12,6 +12,7 @@ import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { initPixel, trackEvent } from "../lib/pixel";
 
 function NotFoundComponent() {
   return (
@@ -130,6 +131,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    initPixel();
+    // Rastreia mudanças de rota SPA como PageView.
+    const unsub = router.subscribe("onResolved", () => {
+      trackEvent("PageView");
+    });
+    return () => unsub();
+  }, [router]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
