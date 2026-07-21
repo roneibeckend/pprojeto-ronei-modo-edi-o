@@ -1411,7 +1411,16 @@ function LandingPage() {
       },
       { threshold: 0.12, rootMargin: "0px 0px -60px 0px" },
     );
-    document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((n) => io.observe(n));
+    document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((n) => {
+      // If element is already above the current viewport (e.g. fast scroll or reload),
+      // mark it visible immediately so it doesn't stay hidden.
+      const r = n.getBoundingClientRect();
+      if (r.bottom < 0) {
+        n.dataset.visible = "true";
+        return;
+      }
+      io.observe(n);
+    });
     return () => io.disconnect();
   }, []);
   return (
