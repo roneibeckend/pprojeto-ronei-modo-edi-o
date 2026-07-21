@@ -576,7 +576,15 @@ function Hero() {
       <Embers />
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2">
         <div className="flex flex-col items-start">
-          <Reveal variant="clip"><SectionTag>Método completo · edição 2026</SectionTag></Reveal>
+          <Reveal variant="clip">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--ember)] shadow-[0_0_20px_-4px_var(--ember)] backdrop-blur">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--ember)]" />
+              </span>
+              Edição 2026 · Método completo
+            </span>
+          </Reveal>
 
           {/* Mobile-only hero image (below badge) */}
           <Reveal variant="scale" delay={1} className="relative mt-5 w-full lg:hidden">
