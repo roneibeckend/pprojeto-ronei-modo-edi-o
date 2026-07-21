@@ -1817,8 +1817,14 @@ function Footer() {
           </div>
         </div>
       </div>
-      <div className="mx-auto mt-10 max-w-6xl border-t border-border/60 px-4 pt-6 text-center text-xs text-muted-foreground sm:px-6">
-        © {new Date().getFullYear()} Espetinho na Veia. Todos os direitos reservados. Este produto não garante retornos financeiros — os resultados dependem da aplicação do método.
+      <div className="mx-auto mt-10 max-w-6xl border-t border-border/60 px-4 pt-6 text-center text-xs leading-relaxed text-muted-foreground sm:px-6">
+        <p className="mb-2">
+          <strong className="text-foreground">Espetinho na Veia</strong> · CNPJ 00.000.000/0001-00 · contato@espetinhonaveia.com
+        </p>
+        <p className="mb-2 opacity-80">
+          Endereço comercial informado no rodapé conforme Art. 2º do Decreto 7.962/2013 (CDC — comércio eletrônico). Suporte de segunda a sexta, das 9h às 18h.
+        </p>
+        <p>© {new Date().getFullYear()} Espetinho na Veia. Todos os direitos reservados. Este produto não garante retornos financeiros — os resultados dependem da aplicação do método.</p>
       </div>
     </footer>
   );
@@ -2152,8 +2158,8 @@ function LandingPage() {
         <ProfitCalculator />
         <AuthorSolution />
         <SocialProof />
-        <Bonuses />
         <Modules />
+        <Bonuses />
         <NotForYou />
         <Offer />
         <FAQ />
