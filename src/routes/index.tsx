@@ -1738,7 +1738,7 @@ function LandingPage() {
         <Author />
         <Bonuses />
         <Offer />
-        <Guarantee />
+        
         <Solution />
         <FAQ />
       </main>
