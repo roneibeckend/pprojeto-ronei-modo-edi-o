@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Users, GraduationCap, BookOpen, Play, TrendingUp, Activity, Plus, Settings, Video, ChefHat, FileSpreadsheet, Award } from "lucide-react";
+import { Users, GraduationCap, BookOpen, Play, TrendingUp, Activity, Plus, Settings, Video, ChefHat, FileSpreadsheet, Award, Calculator, Trash2, DollarSign, PieChart } from "lucide-react";
+import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/platform/Shell";
 import { adminStats } from "@/lib/platform-data";
 
@@ -51,6 +52,8 @@ function AdminPage() {
         <AdminAction icon={FileSpreadsheet} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." />
         <AdminAction icon={Users} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." />
       </section>
+
+      <FinancePanel />
 
       <section className="glass mt-8 rounded-2xl p-6">
         <div className="flex items-center justify-between">
@@ -120,5 +123,171 @@ function AdminAction({ icon: Icon, title, desc }: { icon: React.ElementType; tit
         <Plus className="ml-auto h-4 w-4 text-muted-foreground transition group-hover:text-primary" />
       </div>
     </button>
+  );
+}
+
+type Cost = { id: string; label: string; value: number };
+type Partner = { id: string; name: string; percent: number };
+
+const brl = (n: number) =>
+  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+function FinancePanel() {
+  const [revenue, setRevenue] = useState<number>(137240);
+  const [costs, setCosts] = useState<Cost[]>([
+    { id: "c1", label: "Plataforma / hospedagem", value: 1200 },
+    { id: "c2", label: "Tráfego pago (ads)", value: 28000 },
+    { id: "c3", label: "Taxas de gateway", value: 8200 },
+    { id: "c4", label: "Produção de conteúdo", value: 6500 },
+    { id: "c5", label: "Suporte e equipe", value: 9800 },
+  ]);
+  const [partners, setPartners] = useState<Partner[]>([
+    { id: "p1", name: "Ronnei (Sócio fundador)", percent: 50 },
+    { id: "p2", name: "Sócio operacional", percent: 30 },
+    { id: "p3", name: "Sócio investidor", percent: 20 },
+  ]);
+
+  const totalCost = useMemo(() => costs.reduce((s, c) => s + (c.value || 0), 0), [costs]);
+  const profit = revenue - totalCost;
+  const totalPercent = useMemo(() => partners.reduce((s, p) => s + (p.percent || 0), 0), [partners]);
+  const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
+
+  const updateCost = (id: string, patch: Partial<Cost>) =>
+    setCosts((cs) => cs.map((c) => (c.id === id ? { ...c, ...patch } : c)));
+  const removeCost = (id: string) => setCosts((cs) => cs.filter((c) => c.id !== id));
+  const addCost = () =>
+    setCosts((cs) => [...cs, { id: `c${Date.now()}`, label: "Novo custo", value: 0 }]);
+
+  const updatePartner = (id: string, patch: Partial<Partner>) =>
+    setPartners((ps) => ps.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+  const removePartner = (id: string) => setPartners((ps) => ps.filter((p) => p.id !== id));
+  const addPartner = () =>
+    setPartners((ps) => [...ps, { id: `p${Date.now()}`, name: "Novo sócio", percent: 0 }]);
+
+  return (
+    <section className="glass mt-8 rounded-2xl p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="grid h-10 w-10 place-items-center rounded-xl bg-fire text-white shadow-fire">
+            <Calculator className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="font-display text-lg font-bold">Financeiro — Custos, lucro e divisão de sócios</h3>
+            <p className="text-xs text-muted-foreground">Calcule em tempo real o resultado da empresa e a distribuição do lucro.</p>
+          </div>
+        </div>
+        <div className="text-xs text-muted-foreground">
+          Margem líquida: <span className={`font-bold ${margin >= 0 ? "text-emerald-400" : "text-red-400"}`}>{margin.toFixed(1)}%</span>
+        </div>
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-3">
+        {/* Receita */}
+        <div className="glass rounded-2xl p-5">
+          <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+            <DollarSign className="h-4 w-4" /> Receita bruta do período
+          </div>
+          <input
+            type="number"
+            value={revenue}
+            onChange={(e) => setRevenue(parseFloat(e.target.value) || 0)}
+            className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 font-display text-2xl font-bold text-emerald-400 outline-none focus:border-primary"
+          />
+          <div className="mt-2 text-xs text-muted-foreground">{brl(revenue)}</div>
+
+          <div className="mt-6 space-y-2 text-sm">
+            <div className="flex justify-between"><span className="text-muted-foreground">Receita</span><span className="font-semibold text-emerald-400">{brl(revenue)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Custos totais</span><span className="font-semibold text-red-400">− {brl(totalCost)}</span></div>
+            <div className="my-2 border-t border-white/10" />
+            <div className="flex justify-between"><span className="font-semibold">Lucro líquido</span><span className={`font-display text-xl font-bold ${profit >= 0 ? "text-emerald-400" : "text-red-400"}`}>{brl(profit)}</span></div>
+          </div>
+        </div>
+
+        {/* Custos */}
+        <div className="glass rounded-2xl p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+              <FileSpreadsheet className="h-4 w-4" /> Custos da empresa
+            </div>
+            <button onClick={addCost} className="btn-ghost-fire text-xs"><Plus className="h-3 w-3" /> Adicionar</button>
+          </div>
+          <div className="space-y-2">
+            {costs.map((c) => (
+              <div key={c.id} className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/20 p-2">
+                <input
+                  value={c.label}
+                  onChange={(e) => updateCost(c.id, { label: e.target.value })}
+                  className="flex-1 bg-transparent px-2 py-1 text-sm outline-none"
+                />
+                <input
+                  type="number"
+                  value={c.value}
+                  onChange={(e) => updateCost(c.id, { value: parseFloat(e.target.value) || 0 })}
+                  className="w-28 rounded-lg bg-black/40 px-2 py-1 text-right text-sm outline-none focus:ring-1 focus:ring-primary"
+                />
+                <button onClick={() => removeCost(c.id)} className="text-muted-foreground hover:text-red-400">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex justify-between border-t border-white/10 pt-3 text-sm">
+            <span className="text-muted-foreground">Total de custos</span>
+            <span className="font-display text-lg font-bold text-red-400">{brl(totalCost)}</span>
+          </div>
+        </div>
+
+        {/* Sócios */}
+        <div className="glass rounded-2xl p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+              <PieChart className="h-4 w-4" /> Divisão do lucro
+            </div>
+            <button onClick={addPartner} className="btn-ghost-fire text-xs"><Plus className="h-3 w-3" /> Sócio</button>
+          </div>
+          <div className="space-y-2">
+            {partners.map((p) => {
+              const share = (profit * (p.percent || 0)) / 100;
+              return (
+                <div key={p.id} className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <div className="flex items-center gap-2">
+                    <input
+                      value={p.name}
+                      onChange={(e) => updatePartner(p.id, { name: e.target.value })}
+                      className="flex-1 bg-transparent px-1 text-sm font-medium outline-none"
+                    />
+                    <input
+                      type="number"
+                      value={p.percent}
+                      onChange={(e) => updatePartner(p.id, { percent: parseFloat(e.target.value) || 0 })}
+                      className="w-16 rounded-lg bg-black/40 px-2 py-1 text-right text-sm outline-none focus:ring-1 focus:ring-primary"
+                    />
+                    <span className="text-xs text-muted-foreground">%</span>
+                    <button onClick={() => removePartner(p.id)} className="text-muted-foreground hover:text-red-400">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between">
+                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
+                      <div className="h-full bg-fire" style={{ width: `${Math.min(100, p.percent)}%` }} />
+                    </div>
+                    <span className={`ml-3 text-sm font-bold ${share >= 0 ? "text-emerald-400" : "text-red-400"}`}>{brl(share)}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-4 flex justify-between border-t border-white/10 pt-3 text-sm">
+            <span className="text-muted-foreground">Total distribuído</span>
+            <span className={`font-display text-lg font-bold ${totalPercent === 100 ? "text-emerald-400" : "text-yellow-400"}`}>
+              {totalPercent}%{totalPercent !== 100 && " ⚠"}
+            </span>
+          </div>
+          {totalPercent !== 100 && (
+            <p className="mt-1 text-[11px] text-yellow-400/80">A soma dos percentuais precisa fechar em 100%.</p>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
