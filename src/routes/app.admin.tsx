@@ -53,6 +53,8 @@ function AdminPage() {
         <AdminAction icon={Users} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." />
       </section>
 
+      <FinancePanel />
+
       <section className="glass mt-8 rounded-2xl p-6">
         <div className="flex items-center justify-between">
           <h3 className="font-display text-lg font-bold">Últimos alunos cadastrados</h3>
