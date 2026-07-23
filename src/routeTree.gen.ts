@@ -12,7 +12,21 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppSuporteRouteImport } from './routes/app.suporte'
+import { Route as AppReceitasRouteImport } from './routes/app.receitas'
+import { Route as AppProgressoRouteImport } from './routes/app.progresso'
+import { Route as AppPerfilRouteImport } from './routes/app.perfil'
+import { Route as AppMateriaisRouteImport } from './routes/app.materiais'
+import { Route as AppEbooksRouteImport } from './routes/app.ebooks'
+import { Route as AppCursosRouteImport } from './routes/app.cursos'
+import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
+import { Route as AppAdminRouteImport } from './routes/app.admin'
+import { Route as AppEbooksEbookIdRouteImport } from './routes/app.ebooks.$ebookId'
+import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
 
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   id: '/termos-de-uso',
@@ -29,54 +43,208 @@ const PerguntasFrequentesRoute = PerguntasFrequentesRouteImport.update({
   path: '/perguntas-frequentes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuporteRoute = AppSuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReceitasRoute = AppReceitasRouteImport.update({
+  id: '/receitas',
+  path: '/receitas',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProgressoRoute = AppProgressoRouteImport.update({
+  id: '/progresso',
+  path: '/progresso',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPerfilRoute = AppPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMateriaisRoute = AppMateriaisRouteImport.update({
+  id: '/materiais',
+  path: '/materiais',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEbooksRoute = AppEbooksRouteImport.update({
+  id: '/ebooks',
+  path: '/ebooks',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCursosRoute = AppCursosRouteImport.update({
+  id: '/cursos',
+  path: '/cursos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCertificadosRoute = AppCertificadosRouteImport.update({
+  id: '/certificados',
+  path: '/certificados',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEbooksEbookIdRoute = AppEbooksEbookIdRouteImport.update({
+  id: '/$ebookId',
+  path: '/$ebookId',
+  getParentRoute: () => AppEbooksRoute,
+} as any)
+const AppCursosCourseIdRoute = AppCursosCourseIdRouteImport.update({
+  id: '/$courseId',
+  path: '/$courseId',
+  getParentRoute: () => AppCursosRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/app/admin': typeof AppAdminRoute
+  '/app/certificados': typeof AppCertificadosRoute
+  '/app/cursos': typeof AppCursosRouteWithChildren
+  '/app/ebooks': typeof AppEbooksRouteWithChildren
+  '/app/materiais': typeof AppMateriaisRoute
+  '/app/perfil': typeof AppPerfilRoute
+  '/app/progresso': typeof AppProgressoRoute
+  '/app/receitas': typeof AppReceitasRoute
+  '/app/suporte': typeof AppSuporteRoute
+  '/app/': typeof AppIndexRoute
+  '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
+  '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/app/admin': typeof AppAdminRoute
+  '/app/certificados': typeof AppCertificadosRoute
+  '/app/cursos': typeof AppCursosRouteWithChildren
+  '/app/ebooks': typeof AppEbooksRouteWithChildren
+  '/app/materiais': typeof AppMateriaisRoute
+  '/app/perfil': typeof AppPerfilRoute
+  '/app/progresso': typeof AppProgressoRoute
+  '/app/receitas': typeof AppReceitasRoute
+  '/app/suporte': typeof AppSuporteRoute
+  '/app': typeof AppIndexRoute
+  '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
+  '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/app/admin': typeof AppAdminRoute
+  '/app/certificados': typeof AppCertificadosRoute
+  '/app/cursos': typeof AppCursosRouteWithChildren
+  '/app/ebooks': typeof AppEbooksRouteWithChildren
+  '/app/materiais': typeof AppMateriaisRoute
+  '/app/perfil': typeof AppPerfilRoute
+  '/app/progresso': typeof AppProgressoRoute
+  '/app/receitas': typeof AppReceitasRoute
+  '/app/suporte': typeof AppSuporteRoute
+  '/app/': typeof AppIndexRoute
+  '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
+  '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/app'
+    | '/login'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/app/admin'
+    | '/app/certificados'
+    | '/app/cursos'
+    | '/app/ebooks'
+    | '/app/materiais'
+    | '/app/perfil'
+    | '/app/progresso'
+    | '/app/receitas'
+    | '/app/suporte'
+    | '/app/'
+    | '/app/cursos/$courseId'
+    | '/app/ebooks/$ebookId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/login'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/app/admin'
+    | '/app/certificados'
+    | '/app/cursos'
+    | '/app/ebooks'
+    | '/app/materiais'
+    | '/app/perfil'
+    | '/app/progresso'
+    | '/app/receitas'
+    | '/app/suporte'
+    | '/app'
+    | '/app/cursos/$courseId'
+    | '/app/ebooks/$ebookId'
   id:
     | '__root__'
     | '/'
+    | '/app'
+    | '/login'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/app/admin'
+    | '/app/certificados'
+    | '/app/cursos'
+    | '/app/ebooks'
+    | '/app/materiais'
+    | '/app/perfil'
+    | '/app/progresso'
+    | '/app/receitas'
+    | '/app/suporte'
+    | '/app/'
+    | '/app/cursos/$courseId'
+    | '/app/ebooks/$ebookId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
@@ -105,6 +273,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PerguntasFrequentesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -112,11 +294,149 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/suporte': {
+      id: '/app/suporte'
+      path: '/suporte'
+      fullPath: '/app/suporte'
+      preLoaderRoute: typeof AppSuporteRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/receitas': {
+      id: '/app/receitas'
+      path: '/receitas'
+      fullPath: '/app/receitas'
+      preLoaderRoute: typeof AppReceitasRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/progresso': {
+      id: '/app/progresso'
+      path: '/progresso'
+      fullPath: '/app/progresso'
+      preLoaderRoute: typeof AppProgressoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/perfil': {
+      id: '/app/perfil'
+      path: '/perfil'
+      fullPath: '/app/perfil'
+      preLoaderRoute: typeof AppPerfilRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/materiais': {
+      id: '/app/materiais'
+      path: '/materiais'
+      fullPath: '/app/materiais'
+      preLoaderRoute: typeof AppMateriaisRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/ebooks': {
+      id: '/app/ebooks'
+      path: '/ebooks'
+      fullPath: '/app/ebooks'
+      preLoaderRoute: typeof AppEbooksRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/cursos': {
+      id: '/app/cursos'
+      path: '/cursos'
+      fullPath: '/app/cursos'
+      preLoaderRoute: typeof AppCursosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/certificados': {
+      id: '/app/certificados'
+      path: '/certificados'
+      fullPath: '/app/certificados'
+      preLoaderRoute: typeof AppCertificadosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin': {
+      id: '/app/admin'
+      path: '/admin'
+      fullPath: '/app/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/ebooks/$ebookId': {
+      id: '/app/ebooks/$ebookId'
+      path: '/$ebookId'
+      fullPath: '/app/ebooks/$ebookId'
+      preLoaderRoute: typeof AppEbooksEbookIdRouteImport
+      parentRoute: typeof AppEbooksRoute
+    }
+    '/app/cursos/$courseId': {
+      id: '/app/cursos/$courseId'
+      path: '/$courseId'
+      fullPath: '/app/cursos/$courseId'
+      preLoaderRoute: typeof AppCursosCourseIdRouteImport
+      parentRoute: typeof AppCursosRoute
+    }
   }
 }
 
+interface AppCursosRouteChildren {
+  AppCursosCourseIdRoute: typeof AppCursosCourseIdRoute
+}
+
+const AppCursosRouteChildren: AppCursosRouteChildren = {
+  AppCursosCourseIdRoute: AppCursosCourseIdRoute,
+}
+
+const AppCursosRouteWithChildren = AppCursosRoute._addFileChildren(
+  AppCursosRouteChildren,
+)
+
+interface AppEbooksRouteChildren {
+  AppEbooksEbookIdRoute: typeof AppEbooksEbookIdRoute
+}
+
+const AppEbooksRouteChildren: AppEbooksRouteChildren = {
+  AppEbooksEbookIdRoute: AppEbooksEbookIdRoute,
+}
+
+const AppEbooksRouteWithChildren = AppEbooksRoute._addFileChildren(
+  AppEbooksRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppAdminRoute: typeof AppAdminRoute
+  AppCertificadosRoute: typeof AppCertificadosRoute
+  AppCursosRoute: typeof AppCursosRouteWithChildren
+  AppEbooksRoute: typeof AppEbooksRouteWithChildren
+  AppMateriaisRoute: typeof AppMateriaisRoute
+  AppPerfilRoute: typeof AppPerfilRoute
+  AppProgressoRoute: typeof AppProgressoRoute
+  AppReceitasRoute: typeof AppReceitasRoute
+  AppSuporteRoute: typeof AppSuporteRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAdminRoute: AppAdminRoute,
+  AppCertificadosRoute: AppCertificadosRoute,
+  AppCursosRoute: AppCursosRouteWithChildren,
+  AppEbooksRoute: AppEbooksRouteWithChildren,
+  AppMateriaisRoute: AppMateriaisRoute,
+  AppPerfilRoute: AppPerfilRoute,
+  AppProgressoRoute: AppProgressoRoute,
+  AppReceitasRoute: AppReceitasRoute,
+  AppSuporteRoute: AppSuporteRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
@@ -124,13 +444,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

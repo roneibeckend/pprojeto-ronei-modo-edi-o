@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { courses } from "@/lib/platform-data";
+import { courses, type Course } from "@/lib/platform-data";
 
 export const Route = createFileRoute("/app/cursos/$courseId")({
   head: ({ params }) => {
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/app/cursos/$courseId")({
 });
 
 function CoursePage() {
-  const { course } = Route.useLoaderData();
+  const { course } = Route.useLoaderData() as { course: Course };
   const flat = course.modules.flatMap((m) => m.lessons);
   const firstNotDone = flat.find((l) => !l.completed && !l.locked) ?? flat[0];
   const [activeId, setActiveId] = useState(firstNotDone.id);
