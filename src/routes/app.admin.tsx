@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Users, GraduationCap, BookOpen, Play, TrendingUp, Activity, Plus, Settings, Video, ChefHat, FileSpreadsheet, Award } from "lucide-react";
+import { Users, GraduationCap, BookOpen, Play, TrendingUp, Activity, Plus, Settings, Video, ChefHat, FileSpreadsheet, Award, Calculator, Trash2, DollarSign, PieChart } from "lucide-react";
+import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/platform/Shell";
 import { adminStats } from "@/lib/platform-data";
 
