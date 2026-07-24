@@ -463,17 +463,22 @@ function LeadForm() {
     setErrors({});
     setStatus("loading");
     try {
-      // Simula envio (troque por chamada real ao seu CRM/webhook).
-      await new Promise((r) => setTimeout(r, 900));
-      try {
-        const list = JSON.parse(localStorage.getItem("espetinho_leads") || "[]");
-        list.push({ ...parsed.data, at: new Date().toISOString() });
-        localStorage.setItem("espetinho_leads", JSON.stringify(list));
-      } catch {
-        // ignore storage errors
-      }
+      // Deriva um "email" a partir do WhatsApp para satisfazer a policy (NOT NULL + regex).
+      // Guardamos o WhatsApp real no campo phone.
+      const digits = parsed.data.whatsapp.replace(/\D/g, "");
+      const syntheticEmail = `wa-${digits}@lead.espetinhonaveia.com`;
+      const { error } = await supabase.from("leads").insert({
+        name: parsed.data.name,
+        email: syntheticEmail,
+        phone: parsed.data.whatsapp,
+        source: "landing-popup",
+      });
+      if (error) throw error;
       setStatus("success");
       trackEvent("Lead", { content_name: "lead-popup", value: 47.9, currency: "BRL" });
+      try {
+        localStorage.setItem("espetinho_lead_sent", "1");
+      } catch {}
       toast.success("Cupom reservado!", {
         description: "Enviamos os detalhes no seu WhatsApp.",
       });
