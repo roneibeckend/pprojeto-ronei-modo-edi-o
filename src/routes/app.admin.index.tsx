@@ -8,9 +8,11 @@ import {
   Activity,
   Plus,
   Settings,
-  Video,
-  ChefHat,
-  FileSpreadsheet,
+  Clapperboard,
+  Flame,
+  LayoutTemplate,
+  UserCog,
+  Library,
   Award,
   Calculator,
   Trash2,
@@ -20,6 +22,8 @@ import {
   ArrowDown,
   ArrowUp,
   BarChart3,
+  Command,
+  Sparkles,
 } from "lucide-react";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -127,19 +131,26 @@ function AdminPage() {
 
       {/* Quick actions */}
       <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-display text-sm font-bold uppercase tracking-[0.2em] text-white/60">
-            Ações rápidas
-          </h2>
-          <div className="h-px flex-1 mx-4 bg-white/5" />
+        <div className="mb-4 flex items-end justify-between">
+          <div>
+            <div className="mb-1 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-white/40">
+              <Sparkles className="h-3 w-3" style={{ color: ORANGE }} /> Comando executivo
+            </div>
+            <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-white">
+              Ações rápidas
+            </h2>
+          </div>
+          <div className="hidden items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-white/40 sm:flex">
+            <Command className="h-3 w-3" /> atalhos habilitados
+          </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <AdminAction icon={GraduationCap} title="Cadastrar curso" desc="Crie um novo curso e organize módulos." delay={0} />
-          <AdminAction icon={Video} title="Upload de vídeos" desc="Envie aulas em MP4 direto para as trilhas." delay={40} />
-          <AdminAction icon={BookOpen} title="Cadastrar e-book" desc="Publique um novo material na biblioteca." delay={80} />
-          <AdminAction icon={ChefHat} title="Cadastrar receita" desc="Adicione receitas com custo e lucro." delay={120} />
-          <AdminAction icon={FileSpreadsheet} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." delay={160} />
-          <AdminAction icon={Users} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." delay={200} />
+          <AdminAction index={1} icon={GraduationCap} title="Cadastrar curso" desc="Estruture módulos, aulas e trilhas premium." meta="12 cursos ativos" shortcut="C" delay={0} />
+          <AdminAction index={2} icon={Clapperboard} title="Upload de vídeos" desc="Envie aulas em 4K direto para as trilhas." meta="Streaming HLS" shortcut="V" delay={40} />
+          <AdminAction index={3} icon={Library} title="Cadastrar e-book" desc="Publique material interativo na biblioteca." meta="Slides + IA" shortcut="E" delay={80} />
+          <AdminAction index={4} icon={Flame} title="Cadastrar receita" desc="Adicione fichas técnicas com custo e lucro." meta="Margem auto" shortcut="R" delay={120} />
+          <AdminAction index={5} icon={LayoutTemplate} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." meta="Templates prontos" shortcut="M" delay={160} />
+          <AdminAction index={6} icon={UserCog} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." meta="1.284 ativos" shortcut="A" delay={200} />
         </div>
       </section>
 
@@ -335,28 +346,84 @@ function AdminAction({
   icon: Icon,
   title,
   desc,
+  meta,
+  shortcut,
+  index,
   delay = 0,
 }: {
   icon: React.ElementType;
   title: string;
   desc: string;
+  meta?: string;
+  shortcut?: string;
+  index?: number;
   delay?: number;
 }) {
   return (
     <button
-      className="group relative overflow-hidden border border-white/5 bg-[#111] p-5 text-left transition hover:-translate-y-0.5 hover:border-[color:var(--orange)] animate-fade-in"
+      className="group relative overflow-hidden border border-white/[0.07] bg-gradient-to-b from-[#161616] to-[#0d0d0d] p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-[color:var(--orange)]/60 hover:shadow-[0_20px_50px_-20px_rgba(255,106,0,0.55)] animate-fade-in"
       style={{ ["--orange" as any]: ORANGE, animationDelay: `${delay}ms`, animationFillMode: "backwards" }}
     >
-      <span className="absolute left-0 top-0 h-full w-0.5 origin-top scale-y-0 transition-transform duration-300 group-hover:scale-y-100" style={{ backgroundColor: ORANGE }} />
-      <div className="flex items-start gap-3">
-        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-sm text-black transition group-hover:scale-105" style={{ backgroundColor: ORANGE }}>
-          <Icon className="h-5 w-5" strokeWidth={2.25} />
+      {/* Sheen overlay */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 -left-full w-1/2 bg-gradient-to-r from-transparent via-white/[0.07] to-transparent transition-all duration-700 group-hover:left-full"
+      />
+      {/* Corner ticks */}
+      <span aria-hidden className="pointer-events-none absolute left-2 top-2 h-2 w-2 border-l border-t border-white/20 transition-colors group-hover:border-[color:var(--orange)]" />
+      <span aria-hidden className="pointer-events-none absolute right-2 top-2 h-2 w-2 border-r border-t border-white/20 transition-colors group-hover:border-[color:var(--orange)]" />
+      <span aria-hidden className="pointer-events-none absolute bottom-2 left-2 h-2 w-2 border-b border-l border-white/20 transition-colors group-hover:border-[color:var(--orange)]" />
+      <span aria-hidden className="pointer-events-none absolute bottom-2 right-2 h-2 w-2 border-b border-r border-white/20 transition-colors group-hover:border-[color:var(--orange)]" />
+      {/* Left ember bar */}
+      <span className="absolute left-0 top-0 h-full w-[3px] origin-top scale-y-0 transition-transform duration-300 group-hover:scale-y-100" style={{ backgroundColor: ORANGE, boxShadow: `0 0 20px ${ORANGE}` }} />
+
+      {/* Index number */}
+      {index !== undefined && (
+        <span className="absolute right-5 top-4 font-display text-[10px] font-bold tracking-[0.2em] text-white/25">
+          0{index}
+        </span>
+      )}
+
+      <div className="relative flex items-start gap-4">
+        {/* Icon medallion */}
+        <div className="relative shrink-0">
+          <span aria-hidden className="absolute inset-0 rounded-full opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-70" style={{ backgroundColor: ORANGE }} />
+          <div
+            className="relative grid h-12 w-12 place-items-center rounded-sm border transition-all duration-300 group-hover:scale-105 group-hover:rotate-[-3deg]"
+            style={{
+              borderColor: `${ORANGE}55`,
+              background: `linear-gradient(135deg, ${ORANGE} 0%, #cc4a00 100%)`,
+              boxShadow: `inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 12px -2px ${ORANGE}66`,
+            }}
+          >
+            <Icon className="h-5 w-5 text-black" strokeWidth={2.5} />
+          </div>
         </div>
-        <div className="min-w-0 flex-1">
-          <div className="font-display text-base font-extrabold uppercase tracking-wide text-white">{title}</div>
-          <p className="mt-1 text-xs text-white/50">{desc}</p>
+
+        <div className="min-w-0 flex-1 pr-6">
+          <div className="font-display text-[15px] font-extrabold uppercase tracking-wide text-white">
+            {title}
+          </div>
+          <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/55">{desc}</p>
         </div>
-        <ArrowUpRight className="ml-auto h-4 w-4 text-white/30 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[color:var(--orange)]" />
+      </div>
+
+      {/* Footer meta */}
+      <div className="relative mt-4 flex items-center justify-between border-t border-white/[0.06] pt-3">
+        {meta && (
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/40">
+            <span className="h-1 w-1 rounded-full" style={{ backgroundColor: ORANGE }} />
+            {meta}
+          </span>
+        )}
+        <div className="flex items-center gap-2">
+          {shortcut && (
+            <kbd className="hidden items-center gap-0.5 rounded-sm border border-white/10 bg-black/60 px-1.5 py-0.5 font-mono text-[9px] font-bold text-white/50 group-hover:border-[color:var(--orange)]/40 group-hover:text-white/80 sm:inline-flex">
+              <Command className="h-2.5 w-2.5" />{shortcut}
+            </kbd>
+          )}
+          <ArrowUpRight className="h-4 w-4 text-white/30 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[color:var(--orange)]" />
+        </div>
       </div>
     </button>
   );
@@ -547,7 +614,7 @@ function FinancePanel() {
         <div className="border border-white/5 bg-black/40 p-5">
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-              <FileSpreadsheet className="h-4 w-4" style={{ color: ORANGE }} /> Custos da empresa
+              <LayoutTemplate className="h-4 w-4" style={{ color: ORANGE }} /> Custos da empresa
             </div>
             <button
               onClick={addCost}
