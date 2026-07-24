@@ -25,6 +25,7 @@ import { Route as AppEbooksRouteImport } from './routes/app.ebooks'
 import { Route as AppCursosRouteImport } from './routes/app.cursos'
 import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
+import { Route as AppEbooksIndexRouteImport } from './routes/app.ebooks.index'
 import { Route as AppCursosIndexRouteImport } from './routes/app.cursos.index'
 import { Route as AppEbooksEbookIdRouteImport } from './routes/app.ebooks.$ebookId'
 import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.preview'
@@ -111,6 +112,11 @@ const AppAdminRoute = AppAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEbooksIndexRoute = AppEbooksIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppEbooksRoute,
+} as any)
 const AppCursosIndexRoute = AppCursosIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/cursos/': typeof AppCursosIndexRoute
+  '/app/ebooks/': typeof AppEbooksIndexRoute
   '/app/ebooks/premium/$ebookId': typeof AppEbooksPremiumEbookIdRoute
 }
 export interface FileRoutesByTo {
@@ -168,7 +175,6 @@ export interface FileRoutesByTo {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/admin': typeof AppAdminRoute
   '/app/certificados': typeof AppCertificadosRoute
-  '/app/ebooks': typeof AppEbooksRouteWithChildren
   '/app/materiais': typeof AppMateriaisRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/progresso': typeof AppProgressoRoute
@@ -179,6 +185,7 @@ export interface FileRoutesByTo {
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/cursos': typeof AppCursosIndexRoute
+  '/app/ebooks': typeof AppEbooksIndexRoute
   '/app/ebooks/premium/$ebookId': typeof AppEbooksPremiumEbookIdRoute
 }
 export interface FileRoutesById {
@@ -203,6 +210,7 @@ export interface FileRoutesById {
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/cursos/': typeof AppCursosIndexRoute
+  '/app/ebooks/': typeof AppEbooksIndexRoute
   '/app/ebooks/premium/$ebookId': typeof AppEbooksPremiumEbookIdRoute
 }
 export interface FileRouteTypes {
@@ -228,6 +236,7 @@ export interface FileRouteTypes {
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
     | '/app/cursos/'
+    | '/app/ebooks/'
     | '/app/ebooks/premium/$ebookId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -238,7 +247,6 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/app/admin'
     | '/app/certificados'
-    | '/app/ebooks'
     | '/app/materiais'
     | '/app/perfil'
     | '/app/progresso'
@@ -249,6 +257,7 @@ export interface FileRouteTypes {
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
     | '/app/cursos'
+    | '/app/ebooks'
     | '/app/ebooks/premium/$ebookId'
   id:
     | '__root__'
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
     | '/app/cursos/'
+    | '/app/ebooks/'
     | '/app/ebooks/premium/$ebookId'
   fileRoutesById: FileRoutesById
 }
@@ -398,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/ebooks/': {
+      id: '/app/ebooks/'
+      path: '/'
+      fullPath: '/app/ebooks/'
+      preLoaderRoute: typeof AppEbooksIndexRouteImport
+      parentRoute: typeof AppEbooksRoute
+    }
     '/app/cursos/': {
       id: '/app/cursos/'
       path: '/'
@@ -454,11 +471,13 @@ const AppCursosRouteWithChildren = AppCursosRoute._addFileChildren(
 
 interface AppEbooksRouteChildren {
   AppEbooksEbookIdRoute: typeof AppEbooksEbookIdRoute
+  AppEbooksIndexRoute: typeof AppEbooksIndexRoute
   AppEbooksPremiumEbookIdRoute: typeof AppEbooksPremiumEbookIdRoute
 }
 
 const AppEbooksRouteChildren: AppEbooksRouteChildren = {
   AppEbooksEbookIdRoute: AppEbooksEbookIdRoute,
+  AppEbooksIndexRoute: AppEbooksIndexRoute,
   AppEbooksPremiumEbookIdRoute: AppEbooksPremiumEbookIdRoute,
 }
 
