@@ -81,7 +81,7 @@ function CertificatesPage() {
         </div>
       </div>
 
-      {preview && <CertificateModal cert={preview} onClose={() => setPreview(null)} />}
+      {preview && <CertificateModal cert={preview.cert} autoDownload={preview.autoDownload} onClose={() => setPreview(null)} />}
     </div>
   );
 }
