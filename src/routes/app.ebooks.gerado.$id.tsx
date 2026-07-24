@@ -154,12 +154,18 @@ function GeneratedEbookReader() {
   const [i, setI] = useState(0);
   const [toc, setToc] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [publishOpen, setPublishOpen] = useState(false);
+  const [published, setPublished] = useState(false);
+  const [price, setPrice] = useState("47.90");
+  const [originalPrice, setOriginalPrice] = useState("97.00");
+  const [category, setCategory] = useState("Gerado por IA");
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(`eiv:ebook:${id}`);
       if (!raw) { setNotFound(true); return; }
       setEbook(JSON.parse(raw));
+      setPublished(isInLibrary(id));
     } catch {
       setNotFound(true);
     }
