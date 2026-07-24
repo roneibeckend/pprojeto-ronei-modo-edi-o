@@ -25,6 +25,7 @@ import { Route as AppEbooksRouteImport } from './routes/app.ebooks'
 import { Route as AppCursosRouteImport } from './routes/app.cursos'
 import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
+import { Route as AppCursosIndexRouteImport } from './routes/app.cursos.index'
 import { Route as AppEbooksEbookIdRouteImport } from './routes/app.ebooks.$ebookId'
 import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.preview'
 import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
@@ -109,6 +110,11 @@ const AppAdminRoute = AppAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCursosIndexRoute = AppCursosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppCursosRoute,
+} as any)
 const AppEbooksEbookIdRoute = AppEbooksEbookIdRouteImport.update({
   id: '/$ebookId',
   path: '/$ebookId',
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
+  '/app/cursos/': typeof AppCursosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -154,7 +161,6 @@ export interface FileRoutesByTo {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/admin': typeof AppAdminRoute
   '/app/certificados': typeof AppCertificadosRoute
-  '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/ebooks': typeof AppEbooksRouteWithChildren
   '/app/materiais': typeof AppMateriaisRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -165,6 +171,7 @@ export interface FileRoutesByTo {
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
+  '/app/cursos': typeof AppCursosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -187,6 +194,7 @@ export interface FileRoutesById {
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
+  '/app/cursos/': typeof AppCursosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -210,6 +218,7 @@ export interface FileRouteTypes {
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
+    | '/app/cursos/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -219,7 +228,6 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/app/admin'
     | '/app/certificados'
-    | '/app/cursos'
     | '/app/ebooks'
     | '/app/materiais'
     | '/app/perfil'
@@ -230,6 +238,7 @@ export interface FileRouteTypes {
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
+    | '/app/cursos'
   id:
     | '__root__'
     | '/'
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
+    | '/app/cursos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -376,6 +386,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/cursos/': {
+      id: '/app/cursos/'
+      path: '/'
+      fullPath: '/app/cursos/'
+      preLoaderRoute: typeof AppCursosIndexRouteImport
+      parentRoute: typeof AppCursosRoute
+    }
     '/app/ebooks/$ebookId': {
       id: '/app/ebooks/$ebookId'
       path: '/$ebookId'
@@ -403,11 +420,13 @@ declare module '@tanstack/react-router' {
 interface AppCursosRouteChildren {
   AppCursosCourseIdRoute: typeof AppCursosCourseIdRoute
   AppCursosPreviewRoute: typeof AppCursosPreviewRoute
+  AppCursosIndexRoute: typeof AppCursosIndexRoute
 }
 
 const AppCursosRouteChildren: AppCursosRouteChildren = {
   AppCursosCourseIdRoute: AppCursosCourseIdRoute,
   AppCursosPreviewRoute: AppCursosPreviewRoute,
+  AppCursosIndexRoute: AppCursosIndexRoute,
 }
 
 const AppCursosRouteWithChildren = AppCursosRoute._addFileChildren(
