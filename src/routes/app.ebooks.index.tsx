@@ -3,7 +3,7 @@ import { BookOpen, Download, Sparkles, ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { ebooks, IMG } from "@/lib/platform-data";
 
-export const Route = createFileRoute("/app/ebooks")({
+export const Route = createFileRoute("/app/ebooks/")({
   head: () => ({ meta: [{ title: "Biblioteca de e-books — Espetinho na Veia" }] }),
   component: EbooksPage,
 });
