@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, Download, Sparkles, ArrowRight } from "lucide-react";
+import { BookOpen, Download, Sparkles, ArrowRight, Lock, ShoppingCart } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { ebooks, IMG } from "@/lib/platform-data";
 
