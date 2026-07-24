@@ -226,7 +226,12 @@ function AdminStat({
 /* ---------------- Chart ---------------- */
 
 function ChartCard() {
-  const { ref, inView } = useInView<HTMLElement>();
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setInView(true), 60);
+    return () => clearTimeout(t);
+  }, []);
+
   const max = Math.max(...adminStats.chart);
   return (
     <section
