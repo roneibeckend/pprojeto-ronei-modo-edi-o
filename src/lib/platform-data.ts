@@ -177,8 +177,10 @@ export const courses: Course[] = [
     description: "Organização de estoque, custos, lucros e planejamento de compras.",
     cover: IMG.ribeye,
     teacher: "Ronnei — Espetos Grill",
-    progress: 5,
+    progress: 0,
     totalLessons: 14,
+    locked: true,
+    price: 97.0,
     modules: [
       { id: "m1", title: "Controle financeiro", lessons: [
         { id: "l1", title: "Separar PF e PJ", duration: "9:00", completed: true },
