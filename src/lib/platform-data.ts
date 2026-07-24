@@ -42,6 +42,29 @@ export type Course = {
 
 export const courses: Course[] = [
   {
+    id: "curso-demo-teste",
+    title: "Curso Demo — Ambiente de Testes",
+    description:
+      "Curso fictício liberado para validação da plataforma. Use para testar player, progresso, materiais e certificados.",
+    cover: IMG.skewersHeld,
+    teacher: "Equipe Espetinho na Veia",
+    progress: 20,
+    totalLessons: 4,
+    badge: "DEMO",
+    modules: [
+      {
+        id: "m1",
+        title: "Módulo Demo — Fluxo de validação",
+        lessons: [
+          { id: "l1", title: "Tour da plataforma", duration: "3:20", completed: true },
+          { id: "l2", title: "Testando o player de vídeo", duration: "2:45" },
+          { id: "l3", title: "Testando materiais e anotações", duration: "4:10" },
+          { id: "l4", title: "Encerramento e certificado de teste", duration: "1:50" },
+        ],
+      },
+    ],
+  },
+  {
     id: "espetinho-lucrativo",
     title: "Espetinho Lucrativo",
     description:
