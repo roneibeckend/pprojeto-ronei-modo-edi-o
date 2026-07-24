@@ -79,7 +79,7 @@ function AdminPage() {
           <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
             Espetinho na Veia · Cockpit
           </div>
-          <h1 className="font-display text-3xl font-bold sm:text-4xl">
+          <h1 className="font-display text-3xl font-bold leading-tight sm:text-4xl">
             Painel{" "}
             <span className="bg-gradient-to-r from-fire via-gold to-fire bg-clip-text text-transparent">
               Administrativo
