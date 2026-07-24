@@ -2,9 +2,10 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft, ArrowRight, BookOpen, Check, Flame, Grid3x3, Lightbulb, ListChecks,
-  MessageCircle, Play, Quote, Sparkles, X, Rocket,
+  MessageCircle, Play, Quote, Sparkles, X, Rocket, Store, Check as CheckIcon,
 } from "lucide-react";
 import type { Ebook, EbookSlide } from "@/lib/ebook-ai.functions";
+import { addToLibrary, isInLibrary, type LibraryEbook } from "@/lib/ebook-library";
 
 export const Route = createFileRoute("/app/ebooks/gerado/$id")({
   head: () => ({ meta: [{ title: "Ebook gerado por IA — Espetinho na Veia" }] }),
@@ -153,12 +154,18 @@ function GeneratedEbookReader() {
   const [i, setI] = useState(0);
   const [toc, setToc] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [publishOpen, setPublishOpen] = useState(false);
+  const [published, setPublished] = useState(false);
+  const [price, setPrice] = useState("47.90");
+  const [originalPrice, setOriginalPrice] = useState("97.00");
+  const [category, setCategory] = useState("Gerado por IA");
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(`eiv:ebook:${id}`);
       if (!raw) { setNotFound(true); return; }
       setEbook(JSON.parse(raw));
+      setPublished(isInLibrary(id));
     } catch {
       setNotFound(true);
     }
@@ -208,6 +215,13 @@ function GeneratedEbookReader() {
           <div className="truncate text-sm font-semibold">{ebook.title}</div>
           <div className="text-[11px] text-muted-foreground">Slide {i + 1} de {total}</div>
         </div>
+        <button
+          onClick={() => setPublishOpen(true)}
+          className={`hidden items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold sm:inline-flex ${published ? "bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30" : "bg-fire text-black hover:brightness-110"}`}
+          title={published ? "Já está na biblioteca" : "Publicar na biblioteca"}
+        >
+          {published ? <><CheckIcon className="h-3.5 w-3.5" /> Na biblioteca</> : <><Store className="h-3.5 w-3.5" /> Publicar</>}
+        </button>
         <button onClick={() => setToc(true)} className="rounded-full bg-white/5 px-3 py-2 text-xs hover:bg-white/10">
           <Grid3x3 className="mr-1 inline h-3.5 w-3.5" /> Sumário
         </button>
@@ -255,6 +269,66 @@ function GeneratedEbookReader() {
                   </button>
                 );
               })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* publish modal */}
+      {publishOpen && (
+        <div className="animate-fade-in absolute inset-0 z-20 grid place-items-center bg-black/80 p-4 backdrop-blur-sm" onClick={() => setPublishOpen(false)}>
+          <div className="w-full max-w-lg rounded-2xl border border-fire/30 bg-charcoal p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="grid h-9 w-9 place-items-center rounded-full bg-fire text-black"><Store className="h-4 w-4" /></div>
+                <h2 className="font-display text-xl font-bold">Publicar na biblioteca</h2>
+              </div>
+              <button onClick={() => setPublishOpen(false)} className="rounded-full bg-white/5 p-2 hover:bg-white/10"><X className="h-4 w-4" /></button>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Disponibilize este ebook na loja para venda. Ele aparecerá bloqueado com preço para os alunos.
+            </p>
+
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                Preço (R$)
+                <input value={price} onChange={(e) => setPrice(e.target.value)} inputMode="decimal" className="mt-1 w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white outline-none focus:border-fire" />
+              </label>
+              <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                De (riscado)
+                <input value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} inputMode="decimal" className="mt-1 w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white outline-none focus:border-fire" />
+              </label>
+              <label className="col-span-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                Categoria
+                <input value={category} onChange={(e) => setCategory(e.target.value)} className="mt-1 w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white outline-none focus:border-fire" />
+              </label>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-2">
+              <button onClick={() => setPublishOpen(false)} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10">Cancelar</button>
+              <button
+                onClick={() => {
+                  const p = parseFloat(String(price).replace(",", ".")) || 0;
+                  const op = parseFloat(String(originalPrice).replace(",", ".")) || undefined;
+                  const cover = `https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=60`;
+                  addToLibrary({
+                    id: ebook.id,
+                    title: ebook.title,
+                    description: ebook.subtitle || "Ebook gerado com IA.",
+                    cover,
+                    pages: ebook.slides.length,
+                    price: p,
+                    originalPrice: op,
+                    category: category || "Gerado por IA",
+                    publishedAt: new Date().toISOString(),
+                  });
+                  setPublished(true);
+                  setPublishOpen(false);
+                }}
+                className="btn-fire text-sm"
+              >
+                <Store className="h-4 w-4" /> Publicar na biblioteca
+              </button>
             </div>
           </div>
         </div>
