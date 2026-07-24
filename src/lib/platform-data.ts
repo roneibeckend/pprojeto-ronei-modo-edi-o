@@ -35,6 +35,9 @@ export type Course = {
   progress: number;
   totalLessons: number;
   modules: Module[];
+  locked?: boolean;
+  price?: number;
+  badge?: string;
 };
 
 export const courses: Course[] = [
