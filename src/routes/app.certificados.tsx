@@ -251,14 +251,13 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: typeof certif
   };
 
   // Auto-trigger when opened via card download button
-  useState(() => {
+  useEffect(() => {
     if (autoDownload) {
-      setTimeout(() => {
-        handleDownload();
-      }, 400);
+      const t = setTimeout(() => { handleDownload(); }, 400);
+      return () => clearTimeout(t);
     }
-    return null;
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoDownload]);
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/90 p-4 backdrop-blur-md" onClick={onClose}>
