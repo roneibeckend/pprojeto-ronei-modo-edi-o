@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/platform/Shell";
 import { adminStats } from "@/lib/platform-data";
 
-export const Route = createFileRoute("/app/admin")({
+export const Route = createFileRoute("/app/admin/")({
   head: () => ({ meta: [{ title: "Admin — Espetinho na Veia" }] }),
   component: AdminPage,
 });
