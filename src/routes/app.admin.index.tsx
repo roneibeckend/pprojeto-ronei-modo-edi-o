@@ -145,12 +145,13 @@ function AdminPage() {
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <AdminAction index={1} icon={GraduationCap} title="Cadastrar curso" desc="Estruture módulos, aulas e trilhas premium." meta="12 cursos ativos" shortcut="C" delay={0} />
-          <AdminAction index={2} icon={Clapperboard} title="Upload de vídeos" desc="Envie aulas em 4K direto para as trilhas." meta="Streaming HLS" shortcut="V" delay={40} />
-          <AdminAction index={3} icon={Library} title="Cadastrar e-book" desc="Publique material interativo na biblioteca." meta="Slides + IA" shortcut="E" delay={80} />
-          <AdminAction index={4} icon={Flame} title="Cadastrar receita" desc="Adicione fichas técnicas com custo e lucro." meta="Margem auto" shortcut="R" delay={120} />
-          <AdminAction index={5} icon={LayoutTemplate} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." meta="Templates prontos" shortcut="M" delay={160} />
-          <AdminAction index={6} icon={UserCog} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." meta="1.284 ativos" shortcut="A" delay={200} />
+          <AdminAction index={1} icon={Sparkles} title="Criar ebook com IA" desc="Gere ebook interativo a partir de um prompt." meta="Lovable AI · Gemini" shortcut="I" delay={0} to="/app/admin/ebook-ai" highlight />
+          <AdminAction index={2} icon={GraduationCap} title="Cadastrar curso" desc="Estruture módulos, aulas e trilhas premium." meta="12 cursos ativos" shortcut="C" delay={40} />
+          <AdminAction index={3} icon={Clapperboard} title="Upload de vídeos" desc="Envie aulas em 4K direto para as trilhas." meta="Streaming HLS" shortcut="V" delay={80} />
+          <AdminAction index={4} icon={Library} title="Cadastrar e-book" desc="Publique material interativo na biblioteca." meta="Slides + IA" shortcut="E" delay={120} />
+          <AdminAction index={5} icon={Flame} title="Cadastrar receita" desc="Adicione fichas técnicas com custo e lucro." meta="Margem auto" shortcut="R" delay={160} />
+          <AdminAction index={6} icon={LayoutTemplate} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." meta="Templates prontos" shortcut="M" delay={200} />
+          <AdminAction index={7} icon={UserCog} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." meta="1.284 ativos" shortcut="A" delay={240} />
         </div>
       </section>
 
