@@ -261,8 +261,9 @@ function ChartCard() {
                 className={`relative w-full rounded-t-lg transition-[height] duration-1000 ease-out ${
                   isPeak
                     ? "bg-gradient-to-t from-fire via-fire to-gold shadow-[0_0_30px_rgba(255,77,0,0.4)]"
-                    : "bg-gradient-to-t from-fire/70 to-gold/40 opacity-80 group-hover:opacity-100"
+                    : "bg-gradient-to-t from-fire to-gold/70 group-hover:brightness-125"
                 }`}
+
                 style={{ height: inView ? `${h}px` : "0px", transitionDelay: `${i * 60}ms` }}
               >
                 {isPeak && (
