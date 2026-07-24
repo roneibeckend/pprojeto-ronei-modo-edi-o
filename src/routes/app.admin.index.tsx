@@ -551,7 +551,7 @@ function FinancePanel() {
         <div className="border border-white/5 bg-black/40 p-5">
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-              <FileSpreadsheet className="h-4 w-4" style={{ color: ORANGE }} /> Custos da empresa
+              <LayoutTemplate className="h-4 w-4" style={{ color: ORANGE }} /> Custos da empresa
             </div>
             <button
               onClick={addCost}
