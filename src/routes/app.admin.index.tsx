@@ -429,7 +429,15 @@ function AdminAction({
           <ArrowUpRight className="h-4 w-4 text-white/30 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[color:var(--orange)]" />
         </div>
       </div>
-    </button>
+    </>
+  );
+  if (to) {
+    return (
+      <Link to={to} className={className} style={style}>{inner}</Link>
+    );
+  }
+  return (
+    <button className={className} style={style}>{inner}</button>
   );
 }
 
