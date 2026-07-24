@@ -131,19 +131,26 @@ function AdminPage() {
 
       {/* Quick actions */}
       <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-display text-sm font-bold uppercase tracking-[0.2em] text-white/60">
-            Ações rápidas
-          </h2>
-          <div className="h-px flex-1 mx-4 bg-white/5" />
+        <div className="mb-4 flex items-end justify-between">
+          <div>
+            <div className="mb-1 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-white/40">
+              <Sparkles className="h-3 w-3" style={{ color: ORANGE }} /> Comando executivo
+            </div>
+            <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-white">
+              Ações rápidas
+            </h2>
+          </div>
+          <div className="hidden items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-white/40 sm:flex">
+            <Command className="h-3 w-3" /> atalhos habilitados
+          </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <AdminAction icon={GraduationCap} title="Cadastrar curso" desc="Crie um novo curso e organize módulos." delay={0} />
-          <AdminAction icon={Video} title="Upload de vídeos" desc="Envie aulas em MP4 direto para as trilhas." delay={40} />
-          <AdminAction icon={BookOpen} title="Cadastrar e-book" desc="Publique um novo material na biblioteca." delay={80} />
-          <AdminAction icon={ChefHat} title="Cadastrar receita" desc="Adicione receitas com custo e lucro." delay={120} />
-          <AdminAction icon={FileSpreadsheet} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." delay={160} />
-          <AdminAction icon={Users} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." delay={200} />
+          <AdminAction index={1} icon={GraduationCap} title="Cadastrar curso" desc="Estruture módulos, aulas e trilhas premium." meta="12 cursos ativos" shortcut="C" delay={0} />
+          <AdminAction index={2} icon={Clapperboard} title="Upload de vídeos" desc="Envie aulas em 4K direto para as trilhas." meta="Streaming HLS" shortcut="V" delay={40} />
+          <AdminAction index={3} icon={Library} title="Cadastrar e-book" desc="Publique material interativo na biblioteca." meta="Slides + IA" shortcut="E" delay={80} />
+          <AdminAction index={4} icon={Flame} title="Cadastrar receita" desc="Adicione fichas técnicas com custo e lucro." meta="Margem auto" shortcut="R" delay={120} />
+          <AdminAction index={5} icon={LayoutTemplate} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." meta="Templates prontos" shortcut="M" delay={160} />
+          <AdminAction index={6} icon={UserCog} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." meta="1.284 ativos" shortcut="A" delay={200} />
         </div>
       </section>
 
