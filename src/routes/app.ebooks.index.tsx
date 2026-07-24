@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, Download, Sparkles, ArrowRight, Lock, ShoppingCart } from "lucide-react";
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/platform/Shell";
 import { ebooks, IMG } from "@/lib/platform-data";
+import { loadLibrary, type LibraryEbook } from "@/lib/ebook-library";
 
 export const Route = createFileRoute("/app/ebooks/")({
   head: () => ({ meta: [{ title: "Biblioteca de e-books — Espetinho na Veia" }] }),
@@ -9,6 +11,9 @@ export const Route = createFileRoute("/app/ebooks/")({
 });
 
 function EbooksPage() {
+  const [aiEbooks, setAiEbooks] = useState<LibraryEbook[]>([]);
+  useEffect(() => { setAiEbooks(loadLibrary()); }, []);
+
   return (
     <div>
       <PageHeader title="Biblioteca de e-books" subtitle="Sua estante digital com todo o material didático." />
