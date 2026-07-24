@@ -158,7 +158,7 @@ function CertCard({ cert, onPreview, onDownload }: { cert: typeof certificates[n
             >
               <Eye className="h-3.5 w-3.5" strokeWidth={2.75} /> Visualizar
             </button>
-            <button className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 text-white/70 transition hover:border-[#ff6a00]/50 hover:text-[#ff6a00]" title="Baixar PDF">
+            <button onClick={onDownload} className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 text-white/70 transition hover:border-[#ff6a00]/50 hover:text-[#ff6a00]" title="Baixar PDF">
               <Download className="h-4 w-4" />
             </button>
             <button className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 text-white/70 transition hover:border-[#ff6a00]/50 hover:text-[#ff6a00]" title="Compartilhar">
