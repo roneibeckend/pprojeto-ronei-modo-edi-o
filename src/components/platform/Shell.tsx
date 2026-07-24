@@ -1,5 +1,6 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import {
   Home,
   GraduationCap,
@@ -17,6 +18,7 @@ import {
   Shield,
 } from "lucide-react";
 import { student } from "@/lib/platform-data";
+import { supabase } from "@/integrations/supabase/client";
 
 const nav = [
   { to: "/app", label: "Início", icon: Home, exact: true },
@@ -77,7 +79,11 @@ export function Shell({ children }: { children: ReactNode }) {
 
       <div className="border-t border-white/5 p-3">
         <button
-          onClick={() => navigate({ to: "/login" })}
+          onClick={async () => {
+            await supabase.auth.signOut();
+            toast.success("Você saiu da plataforma.");
+            navigate({ to: "/login" });
+          }}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition hover:bg-white/5 hover:text-foreground"
         >
           <LogOut className="h-4 w-4" />
