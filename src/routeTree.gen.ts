@@ -32,6 +32,7 @@ import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.previe
 import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
 import { Route as AppAdminEbookAiRouteImport } from './routes/app.admin.ebook-ai'
 import { Route as AppEbooksPremiumEbookIdRouteImport } from './routes/app.ebooks.premium.$ebookId'
+import { Route as AppEbooksGeradoIdRouteImport } from './routes/app.ebooks.gerado.$id'
 
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   id: '/termos-de-uso',
@@ -148,6 +149,11 @@ const AppEbooksPremiumEbookIdRoute = AppEbooksPremiumEbookIdRouteImport.update({
   path: '/premium/$ebookId',
   getParentRoute: () => AppEbooksRoute,
 } as any)
+const AppEbooksGeradoIdRoute = AppEbooksGeradoIdRouteImport.update({
+  id: '/gerado/$id',
+  path: '/gerado/$id',
+  getParentRoute: () => AppEbooksRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/cursos/': typeof AppCursosIndexRoute
   '/app/ebooks/': typeof AppEbooksIndexRoute
+  '/app/ebooks/gerado/$id': typeof AppEbooksGeradoIdRoute
   '/app/ebooks/premium/$ebookId': typeof AppEbooksPremiumEbookIdRoute
 }
 export interface FileRoutesByTo {
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/cursos': typeof AppCursosIndexRoute
   '/app/ebooks': typeof AppEbooksIndexRoute
+  '/app/ebooks/gerado/$id': typeof AppEbooksGeradoIdRoute
   '/app/ebooks/premium/$ebookId': typeof AppEbooksPremiumEbookIdRoute
 }
 export interface FileRoutesById {
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/cursos/': typeof AppCursosIndexRoute
   '/app/ebooks/': typeof AppEbooksIndexRoute
+  '/app/ebooks/gerado/$id': typeof AppEbooksGeradoIdRoute
   '/app/ebooks/premium/$ebookId': typeof AppEbooksPremiumEbookIdRoute
 }
 export interface FileRouteTypes {
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/app/ebooks/$ebookId'
     | '/app/cursos/'
     | '/app/ebooks/'
+    | '/app/ebooks/gerado/$id'
     | '/app/ebooks/premium/$ebookId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/app/ebooks/$ebookId'
     | '/app/cursos'
     | '/app/ebooks'
+    | '/app/ebooks/gerado/$id'
     | '/app/ebooks/premium/$ebookId'
   id:
     | '__root__'
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/app/ebooks/$ebookId'
     | '/app/cursos/'
     | '/app/ebooks/'
+    | '/app/ebooks/gerado/$id'
     | '/app/ebooks/premium/$ebookId'
   fileRoutesById: FileRoutesById
 }
@@ -469,6 +481,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEbooksPremiumEbookIdRouteImport
       parentRoute: typeof AppEbooksRoute
     }
+    '/app/ebooks/gerado/$id': {
+      id: '/app/ebooks/gerado/$id'
+      path: '/gerado/$id'
+      fullPath: '/app/ebooks/gerado/$id'
+      preLoaderRoute: typeof AppEbooksGeradoIdRouteImport
+      parentRoute: typeof AppEbooksRoute
+    }
   }
 }
 
@@ -503,12 +522,14 @@ const AppCursosRouteWithChildren = AppCursosRoute._addFileChildren(
 interface AppEbooksRouteChildren {
   AppEbooksEbookIdRoute: typeof AppEbooksEbookIdRoute
   AppEbooksIndexRoute: typeof AppEbooksIndexRoute
+  AppEbooksGeradoIdRoute: typeof AppEbooksGeradoIdRoute
   AppEbooksPremiumEbookIdRoute: typeof AppEbooksPremiumEbookIdRoute
 }
 
 const AppEbooksRouteChildren: AppEbooksRouteChildren = {
   AppEbooksEbookIdRoute: AppEbooksEbookIdRoute,
   AppEbooksIndexRoute: AppEbooksIndexRoute,
+  AppEbooksGeradoIdRoute: AppEbooksGeradoIdRoute,
   AppEbooksPremiumEbookIdRoute: AppEbooksPremiumEbookIdRoute,
 }
 
