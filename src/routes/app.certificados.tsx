@@ -1,8 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap } from "lucide-react";
+import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { certificates, student } from "@/lib/platform-data";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+
+async function downloadCertificatePDF(node: HTMLElement, cert: { id: string; course: string }) {
+  const canvas = await html2canvas(node, {
+    scale: 2,
+    backgroundColor: "#f5efe4",
+    useCORS: true,
+    logging: false,
+  });
+  const imgData = canvas.toDataURL("image/jpeg", 0.95);
+  const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+  const ratio = canvas.width / canvas.height;
+  let w = pageW;
+  let h = pageW / ratio;
+  if (h > pageH) {
+    h = pageH;
+    w = pageH * ratio;
+  }
+  const x = (pageW - w) / 2;
+  const y = (pageH - h) / 2;
+  pdf.addImage(imgData, "JPEG", x, y, w, h);
+  const safe = cert.course.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+  pdf.save(`certificado-${safe}-${cert.id}.pdf`);
+}
 
 export const Route = createFileRoute("/app/certificados")({
   head: () => ({ meta: [{ title: "Certificados — Espetinho na Veia" }] }),
