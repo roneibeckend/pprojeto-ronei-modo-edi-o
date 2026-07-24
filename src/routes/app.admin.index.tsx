@@ -253,17 +253,17 @@ function ChartCard() {
       </div>
       <div className="relative flex h-52 items-end gap-2">
         {adminStats.chart.map((v, i) => {
-          const h = (v / max) * 100;
+          const h = Math.round((v / max) * 180);
           const isPeak = v === max;
           return (
-            <div key={i} className="group flex h-full flex-1 flex-col items-center justify-end gap-2">
+            <div key={i} className="group flex flex-1 flex-col items-center gap-2">
               <div
                 className={`relative w-full rounded-t-lg transition-[height] duration-1000 ease-out ${
                   isPeak
                     ? "bg-gradient-to-t from-fire via-fire to-gold shadow-[0_0_30px_rgba(255,77,0,0.4)]"
                     : "bg-gradient-to-t from-fire/70 to-gold/40 opacity-80 group-hover:opacity-100"
                 }`}
-                style={{ height: inView ? `${h}%` : "0%", transitionDelay: `${i * 60}ms` }}
+                style={{ height: inView ? `${h}px` : "0px", transitionDelay: `${i * 60}ms` }}
               >
                 {isPeak && (
                   <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-fire/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-fire">
@@ -277,6 +277,7 @@ function ChartCard() {
             </div>
           );
         })}
+
 
       </div>
     </section>
