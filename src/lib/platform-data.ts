@@ -133,8 +133,10 @@ export const courses: Course[] = [
       "Receitas para aumentar o valor do pedido e melhorar a experiência do cliente.",
     cover: IMG.platter2,
     teacher: "Ronnei — Espetos Grill",
-    progress: 18,
+    progress: 0,
     totalLessons: 12,
+    locked: true,
+    price: 47.9,
     modules: [
       { id: "m1", title: "Molhos clássicos", lessons: [
         { id: "l1", title: "Vinagrete artesanal", duration: "6:20", completed: true },
