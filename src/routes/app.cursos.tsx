@@ -14,7 +14,15 @@ function CoursesPage() {
 
   return (
     <div>
-      <PageHeader title="Meus cursos" subtitle="Continue de onde parou ou desbloqueie novos módulos." />
+      <PageHeader
+        title="Meus cursos"
+        subtitle="Continue de onde parou ou desbloqueie novos módulos."
+        action={
+          <Link to="/app/cursos/preview" className="btn-ghost-fire text-sm">
+            <Sparkles className="h-4 w-4" /> Ver previews interativas
+          </Link>
+        }
+      />
 
       <section className="mb-10">
         <h2 className="mb-4 font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
