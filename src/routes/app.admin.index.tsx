@@ -20,8 +20,8 @@ import {
   Wand2,
   ArrowRight,
   ArrowUpRight,
-  Circle,
 } from "lucide-react";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PageHeader } from "@/components/platform/Shell";
 import { adminStats } from "@/lib/platform-data";
