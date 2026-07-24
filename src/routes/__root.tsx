@@ -59,25 +59,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Espetinho na Veia — Do Zero aos 10k" },
+      { title: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
       {
         name: "description",
         content:
-          "Aprenda o passo a passo para montar, temperar, precificar e vender espetinhos com alto lucro. Método completo do zero aos 10k por mês.",
+          "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
       },
       { name: "theme-color", content: "#1a0d08" },
-      { property: "og:title", content: "Espetinho na Veia — Do Zero aos 10k" },
+      { property: "og:title", content: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
       {
         property: "og:description",
         content:
-          "Do zero à primeira venda: escolha das carnes, temperos, precificação e vendas diárias. Método prático e direto ao ponto.",
+          "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Espetinho na Veia" },
       { property: "og:locale", content: "pt_BR" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Espetinho na Veia — Do Zero aos 10k" },
-      { name: "twitter:description", content: "O método completo para lucrar vendendo espetinhos — do zero aos 10k." },
+      { name: "twitter:title", content: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
+      { name: "twitter:description", content: "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4a3ab4b2-697e-4265-9cc2-26c31eb5da7c/id-preview-97f464f3--28d3c13e-4c7d-45b5-8d3d-fa05057ac015.lovable.app-1784863120206.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4a3ab4b2-697e-4265-9cc2-26c31eb5da7c/id-preview-97f464f3--28d3c13e-4c7d-45b5-8d3d-fa05057ac015.lovable.app-1784863120206.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

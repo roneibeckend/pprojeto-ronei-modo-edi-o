@@ -73,22 +73,22 @@ export const Route = createFileRoute("/")({
       { name: "robots", content: "index, follow, max-image-preview:large" },
       { property: "og:type", content: "product" },
       { property: "og:url", content: `${SITE_URL}/` },
-      { property: "og:title", content: "Espetinho na Veia — Do Zero aos 10k" },
+      { property: "og:title", content: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
       {
         property: "og:description",
         content:
-          "Método completo para lucrar vendendo espetinhos: carnes, temperos, brasa, precificação e vendas. 14 capítulos + bônus exclusivos.",
+          "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
       },
       { property: "og:image", content: OG_IMAGE },
       { property: "og:image:alt", content: "Chef especialista em espetinhos com espetos flamejantes" },
       { property: "og:locale", content: "pt_BR" },
       { property: "og:site_name", content: "Espetinho na Veia" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Espetinho na Veia — Do Zero aos 10k" },
+      { name: "twitter:title", content: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
       {
         name: "twitter:description",
         content:
-          "eBook prático para montar, temperar, precificar e vender espetinhos com alto lucro. Do zero aos 10k por mês.",
+          "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
       },
       { name: "twitter:image", content: OG_IMAGE },
       { name: "twitter:image:alt", content: "Chef especialista em espetinhos" },
