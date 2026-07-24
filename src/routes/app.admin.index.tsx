@@ -235,7 +235,7 @@ function ChartCard() {
   const max = Math.max(...adminStats.chart);
   return (
     <section
-      ref={ref}
+      
       className="relative overflow-hidden rounded-3xl border border-white/5 bg-charcoal/80 p-6 backdrop-blur lg:col-span-8"
     >
       <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-fire/10 blur-3xl" />
