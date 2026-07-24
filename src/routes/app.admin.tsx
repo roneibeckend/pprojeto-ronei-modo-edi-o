@@ -44,6 +44,26 @@ function AdminPage() {
         </div>
       </section>
 
+      <Link
+        to="/app/admin/ebook-ai"
+        className="glass card-tilt mt-8 flex items-center gap-4 rounded-2xl border border-fire/30 bg-gradient-to-r from-fire/15 via-charcoal to-gold/10 p-5 transition hover:border-fire/60"
+      >
+        <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-fire to-gold text-white shadow-fire">
+          <Wand2 className="h-6 w-6" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-fire/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-fire">Novo</span>
+            <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">IA generativa</span>
+          </div>
+          <div className="mt-1 font-display text-lg font-bold">Criar ebook com IA</div>
+          <p className="text-xs text-muted-foreground">Descreva o tema e a IA escreve o ebook já no formato interativo premium — pronto pra leitura em segundos.</p>
+        </div>
+        <div className="hidden sm:flex items-center gap-2 rounded-full bg-fire px-4 py-2 text-sm font-bold text-white shadow-fire">
+          <Sparkles className="h-4 w-4" /> Gerar agora <ArrowRight className="h-4 w-4" />
+        </div>
+      </Link>
+
       <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <AdminAction icon={GraduationCap} title="Cadastrar curso" desc="Crie um novo curso e organize módulos." />
         <AdminAction icon={Video} title="Upload de vídeos" desc="Envie aulas em MP4 direto para as trilhas." />
