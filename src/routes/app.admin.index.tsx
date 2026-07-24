@@ -653,5 +653,3 @@ function FinancePanel() {
 }
 
 /* keep unused imports referenced to avoid tree-shake surprises */
-void PageHeader;
-void Circle;
