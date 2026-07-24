@@ -215,6 +215,13 @@ function GeneratedEbookReader() {
           <div className="truncate text-sm font-semibold">{ebook.title}</div>
           <div className="text-[11px] text-muted-foreground">Slide {i + 1} de {total}</div>
         </div>
+        <button
+          onClick={() => setPublishOpen(true)}
+          className={`hidden items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold sm:inline-flex ${published ? "bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30" : "bg-fire text-black hover:brightness-110"}`}
+          title={published ? "Já está na biblioteca" : "Publicar na biblioteca"}
+        >
+          {published ? <><CheckIcon className="h-3.5 w-3.5" /> Na biblioteca</> : <><Store className="h-3.5 w-3.5" /> Publicar</>}
+        </button>
         <button onClick={() => setToc(true)} className="rounded-full bg-white/5 px-3 py-2 text-xs hover:bg-white/10">
           <Grid3x3 className="mr-1 inline h-3.5 w-3.5" /> Sumário
         </button>
