@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Users,
   GraduationCap,
@@ -145,12 +145,13 @@ function AdminPage() {
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <AdminAction index={1} icon={GraduationCap} title="Cadastrar curso" desc="Estruture módulos, aulas e trilhas premium." meta="12 cursos ativos" shortcut="C" delay={0} />
-          <AdminAction index={2} icon={Clapperboard} title="Upload de vídeos" desc="Envie aulas em 4K direto para as trilhas." meta="Streaming HLS" shortcut="V" delay={40} />
-          <AdminAction index={3} icon={Library} title="Cadastrar e-book" desc="Publique material interativo na biblioteca." meta="Slides + IA" shortcut="E" delay={80} />
-          <AdminAction index={4} icon={Flame} title="Cadastrar receita" desc="Adicione fichas técnicas com custo e lucro." meta="Margem auto" shortcut="R" delay={120} />
-          <AdminAction index={5} icon={LayoutTemplate} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." meta="Templates prontos" shortcut="M" delay={160} />
-          <AdminAction index={6} icon={UserCog} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." meta="1.284 ativos" shortcut="A" delay={200} />
+          <AdminAction index={1} icon={Sparkles} title="Criar ebook com IA" desc="Gere ebook interativo a partir de um prompt." meta="Lovable AI · Gemini" shortcut="I" delay={0} to="/app/admin/ebook-ai" highlight />
+          <AdminAction index={2} icon={GraduationCap} title="Cadastrar curso" desc="Estruture módulos, aulas e trilhas premium." meta="12 cursos ativos" shortcut="C" delay={40} />
+          <AdminAction index={3} icon={Clapperboard} title="Upload de vídeos" desc="Envie aulas em 4K direto para as trilhas." meta="Streaming HLS" shortcut="V" delay={80} />
+          <AdminAction index={4} icon={Library} title="Cadastrar e-book" desc="Publique material interativo na biblioteca." meta="Slides + IA" shortcut="E" delay={120} />
+          <AdminAction index={5} icon={Flame} title="Cadastrar receita" desc="Adicione fichas técnicas com custo e lucro." meta="Margem auto" shortcut="R" delay={160} />
+          <AdminAction index={6} icon={LayoutTemplate} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." meta="Templates prontos" shortcut="M" delay={200} />
+          <AdminAction index={7} icon={UserCog} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." meta="1.284 ativos" shortcut="A" delay={240} />
         </div>
       </section>
 
@@ -350,6 +351,8 @@ function AdminAction({
   shortcut,
   index,
   delay = 0,
+  to,
+  highlight,
 }: {
   icon: React.ElementType;
   title: string;
@@ -358,12 +361,13 @@ function AdminAction({
   shortcut?: string;
   index?: number;
   delay?: number;
+  to?: string;
+  highlight?: boolean;
 }) {
-  return (
-    <button
-      className="group relative overflow-hidden border border-white/[0.07] bg-gradient-to-b from-[#161616] to-[#0d0d0d] p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-[color:var(--orange)]/60 hover:shadow-[0_20px_50px_-20px_rgba(255,106,0,0.55)] animate-fade-in"
-      style={{ ["--orange" as any]: ORANGE, animationDelay: `${delay}ms`, animationFillMode: "backwards" }}
-    >
+  const className = `group relative overflow-hidden border ${highlight ? "border-[color:var(--orange)]/60" : "border-white/[0.07]"} bg-gradient-to-b from-[#161616] to-[#0d0d0d] p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-[color:var(--orange)]/60 hover:shadow-[0_20px_50px_-20px_rgba(255,106,0,0.55)] animate-fade-in block`;
+  const style = { ["--orange" as any]: ORANGE, animationDelay: `${delay}ms`, animationFillMode: "backwards" as const };
+  const inner = (
+    <>
       {/* Sheen overlay */}
       <span
         aria-hidden
@@ -425,7 +429,15 @@ function AdminAction({
           <ArrowUpRight className="h-4 w-4 text-white/30 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[color:var(--orange)]" />
         </div>
       </div>
-    </button>
+    </>
+  );
+  if (to) {
+    return (
+      <Link to={to} className={className} style={style}>{inner}</Link>
+    );
+  }
+  return (
+    <button className={className} style={style}>{inner}</button>
   );
 }
 
