@@ -58,7 +58,12 @@ function CertificatesPage() {
       {/* Grid */}
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {certificates.map((c) => (
-          <CertCard key={c.id} cert={c} onPreview={() => setPreview(c)} />
+          <CertCard
+            key={c.id}
+            cert={c}
+            onPreview={() => setPreview({ cert: c })}
+            onDownload={() => setPreview({ cert: c, autoDownload: true })}
+          />
         ))}
       </div>
 
