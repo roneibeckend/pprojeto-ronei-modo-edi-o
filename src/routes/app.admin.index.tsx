@@ -351,6 +351,8 @@ function AdminAction({
   shortcut,
   index,
   delay = 0,
+  to,
+  highlight,
 }: {
   icon: React.ElementType;
   title: string;
@@ -359,12 +361,13 @@ function AdminAction({
   shortcut?: string;
   index?: number;
   delay?: number;
+  to?: string;
+  highlight?: boolean;
 }) {
-  return (
-    <button
-      className="group relative overflow-hidden border border-white/[0.07] bg-gradient-to-b from-[#161616] to-[#0d0d0d] p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-[color:var(--orange)]/60 hover:shadow-[0_20px_50px_-20px_rgba(255,106,0,0.55)] animate-fade-in"
-      style={{ ["--orange" as any]: ORANGE, animationDelay: `${delay}ms`, animationFillMode: "backwards" }}
-    >
+  const className = `group relative overflow-hidden border ${highlight ? "border-[color:var(--orange)]/60" : "border-white/[0.07]"} bg-gradient-to-b from-[#161616] to-[#0d0d0d] p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-[color:var(--orange)]/60 hover:shadow-[0_20px_50px_-20px_rgba(255,106,0,0.55)] animate-fade-in block`;
+  const style = { ["--orange" as any]: ORANGE, animationDelay: `${delay}ms`, animationFillMode: "backwards" as const };
+  const inner = (
+    <>
       {/* Sheen overlay */}
       <span
         aria-hidden
