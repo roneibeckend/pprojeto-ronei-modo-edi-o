@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { PageHeader } from "@/components/platform/Shell";
+
 import { adminStats } from "@/lib/platform-data";
 
 export const Route = createFileRoute("/app/admin/")({
