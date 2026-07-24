@@ -1987,7 +1987,7 @@ function LeadPopup() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (sessionStorage.getItem("espetinho_lead_popup_dismissed") === "1") return;
-    if (localStorage.getItem("espetinho_leads")) return;
+    if (localStorage.getItem("espetinho_lead_sent") === "1") return;
 
     const trigger = () => setOpen(true);
     const t = setTimeout(trigger, 300_000);
