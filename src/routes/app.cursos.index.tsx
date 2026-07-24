@@ -3,7 +3,7 @@ import { Play, Lock, ShoppingCart, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { courses } from "@/lib/platform-data";
 
-export const Route = createFileRoute("/app/cursos")({
+export const Route = createFileRoute("/app/cursos/")({
   head: () => ({ meta: [{ title: "Meus cursos — Espetinho na Veia" }] }),
   component: CoursesPage,
 });
