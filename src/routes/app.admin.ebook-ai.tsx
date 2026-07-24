@@ -85,7 +85,7 @@ function EbookAIPage() {
       <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
         <section className="glass rounded-2xl p-6">
           <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-fire to-gold text-white shadow-fire">
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#ff6a00] text-black shadow-lg">
               <Wand2 className="h-5 w-5" />
             </div>
             <div>
