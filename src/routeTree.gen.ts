@@ -30,6 +30,7 @@ import { Route as AppCursosIndexRouteImport } from './routes/app.cursos.index'
 import { Route as AppEbooksEbookIdRouteImport } from './routes/app.ebooks.$ebookId'
 import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.preview'
 import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
+import { Route as AppAdminEbookAiRouteImport } from './routes/app.admin.ebook-ai'
 import { Route as AppEbooksPremiumEbookIdRouteImport } from './routes/app.ebooks.premium.$ebookId'
 
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
@@ -137,6 +138,11 @@ const AppCursosCourseIdRoute = AppCursosCourseIdRouteImport.update({
   path: '/$courseId',
   getParentRoute: () => AppCursosRoute,
 } as any)
+const AppAdminEbookAiRoute = AppAdminEbookAiRouteImport.update({
+  id: '/ebook-ai',
+  path: '/ebook-ai',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 const AppEbooksPremiumEbookIdRoute = AppEbooksPremiumEbookIdRouteImport.update({
   id: '/premium/$ebookId',
   path: '/premium/$ebookId',
@@ -150,7 +156,7 @@ export interface FileRoutesByFullPath {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
-  '/app/admin': typeof AppAdminRoute
+  '/app/admin': typeof AppAdminRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/ebooks': typeof AppEbooksRouteWithChildren
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
   '/app/': typeof AppIndexRoute
+  '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
@@ -173,7 +180,7 @@ export interface FileRoutesByTo {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
-  '/app/admin': typeof AppAdminRoute
+  '/app/admin': typeof AppAdminRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
   '/app/materiais': typeof AppMateriaisRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
   '/app': typeof AppIndexRoute
+  '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
@@ -196,7 +204,7 @@ export interface FileRoutesById {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
-  '/app/admin': typeof AppAdminRoute
+  '/app/admin': typeof AppAdminRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/ebooks': typeof AppEbooksRouteWithChildren
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
   '/app/': typeof AppIndexRoute
+  '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/app/receitas'
     | '/app/suporte'
     | '/app/'
+    | '/app/admin/ebook-ai'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/app/receitas'
     | '/app/suporte'
     | '/app'
+    | '/app/admin/ebook-ai'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/app/receitas'
     | '/app/suporte'
     | '/app/'
+    | '/app/admin/ebook-ai'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
@@ -443,6 +455,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCursosCourseIdRouteImport
       parentRoute: typeof AppCursosRoute
     }
+    '/app/admin/ebook-ai': {
+      id: '/app/admin/ebook-ai'
+      path: '/ebook-ai'
+      fullPath: '/app/admin/ebook-ai'
+      preLoaderRoute: typeof AppAdminEbookAiRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
     '/app/ebooks/premium/$ebookId': {
       id: '/app/ebooks/premium/$ebookId'
       path: '/premium/$ebookId'
@@ -452,6 +471,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AppAdminRouteChildren {
+  AppAdminEbookAiRoute: typeof AppAdminEbookAiRoute
+}
+
+const AppAdminRouteChildren: AppAdminRouteChildren = {
+  AppAdminEbookAiRoute: AppAdminEbookAiRoute,
+}
+
+const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(
+  AppAdminRouteChildren,
+)
 
 interface AppCursosRouteChildren {
   AppCursosCourseIdRoute: typeof AppCursosCourseIdRoute
@@ -486,7 +517,7 @@ const AppEbooksRouteWithChildren = AppEbooksRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
-  AppAdminRoute: typeof AppAdminRoute
+  AppAdminRoute: typeof AppAdminRouteWithChildren
   AppCertificadosRoute: typeof AppCertificadosRoute
   AppCursosRoute: typeof AppCursosRouteWithChildren
   AppEbooksRoute: typeof AppEbooksRouteWithChildren
@@ -499,7 +530,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppAdminRoute: AppAdminRoute,
+  AppAdminRoute: AppAdminRouteWithChildren,
   AppCertificadosRoute: AppCertificadosRoute,
   AppCursosRoute: AppCursosRouteWithChildren,
   AppEbooksRoute: AppEbooksRouteWithChildren,
