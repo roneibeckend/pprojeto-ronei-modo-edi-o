@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type JSX } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { trackEvent, trackInitiateCheckout } from "@/lib/pixel";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Flame,
   Check,
