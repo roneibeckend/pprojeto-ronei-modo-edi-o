@@ -158,6 +158,8 @@ export const courses: Course[] = [
     teacher: "Ronnei — Espetos Grill",
     progress: 0,
     totalLessons: 10,
+    locked: true,
+    price: 67.0,
     modules: [
       { id: "m1", title: "Precificação inteligente", lessons: [
         { id: "l1", title: "Preço percebido x preço real", duration: "10:15" },
