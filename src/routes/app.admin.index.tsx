@@ -8,9 +8,11 @@ import {
   Activity,
   Plus,
   Settings,
-  Video,
-  ChefHat,
-  FileSpreadsheet,
+  Clapperboard,
+  Flame,
+  LayoutTemplate,
+  UserCog,
+  Library,
   Award,
   Calculator,
   Trash2,
@@ -20,6 +22,8 @@ import {
   ArrowDown,
   ArrowUp,
   BarChart3,
+  Command,
+  Sparkles,
 } from "lucide-react";
 
 import { useEffect, useMemo, useRef, useState } from "react";
