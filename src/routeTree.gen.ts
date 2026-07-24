@@ -22,6 +22,7 @@ import { Route as AppProgressoRouteImport } from './routes/app.progresso'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppMateriaisRouteImport } from './routes/app.materiais'
 import { Route as AppEbooksRouteImport } from './routes/app.ebooks'
+import { Route as AppCursosRouteImport } from './routes/app.cursos'
 import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AppCursosIndexRouteImport } from './routes/app.cursos.index'
@@ -94,6 +95,11 @@ const AppEbooksRoute = AppEbooksRouteImport.update({
   path: '/ebooks',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCursosRoute = AppCursosRouteImport.update({
+  id: '/cursos',
+  path: '/cursos',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCertificadosRoute = AppCertificadosRouteImport.update({
   id: '/certificados',
   path: '/certificados',
@@ -105,9 +111,9 @@ const AppAdminRoute = AppAdminRouteImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 const AppCursosIndexRoute = AppCursosIndexRouteImport.update({
-  id: '/cursos/',
-  path: '/cursos/',
-  getParentRoute: () => AppRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppCursosRoute,
 } as any)
 const AppEbooksEbookIdRoute = AppEbooksEbookIdRouteImport.update({
   id: '/$ebookId',
@@ -115,14 +121,14 @@ const AppEbooksEbookIdRoute = AppEbooksEbookIdRouteImport.update({
   getParentRoute: () => AppEbooksRoute,
 } as any)
 const AppCursosPreviewRoute = AppCursosPreviewRouteImport.update({
-  id: '/cursos/preview',
-  path: '/cursos/preview',
-  getParentRoute: () => AppRoute,
+  id: '/preview',
+  path: '/preview',
+  getParentRoute: () => AppCursosRoute,
 } as any)
 const AppCursosCourseIdRoute = AppCursosCourseIdRouteImport.update({
-  id: '/cursos/$courseId',
-  path: '/cursos/$courseId',
-  getParentRoute: () => AppRoute,
+  id: '/$courseId',
+  path: '/$courseId',
+  getParentRoute: () => AppCursosRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/admin': typeof AppAdminRoute
   '/app/certificados': typeof AppCertificadosRoute
+  '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/ebooks': typeof AppEbooksRouteWithChildren
   '/app/materiais': typeof AppMateriaisRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -176,6 +183,7 @@ export interface FileRoutesById {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/admin': typeof AppAdminRoute
   '/app/certificados': typeof AppCertificadosRoute
+  '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/ebooks': typeof AppEbooksRouteWithChildren
   '/app/materiais': typeof AppMateriaisRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -199,6 +207,7 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/app/admin'
     | '/app/certificados'
+    | '/app/cursos'
     | '/app/ebooks'
     | '/app/materiais'
     | '/app/perfil'
@@ -240,6 +249,7 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/app/admin'
     | '/app/certificados'
+    | '/app/cursos'
     | '/app/ebooks'
     | '/app/materiais'
     | '/app/perfil'
@@ -355,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEbooksRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/cursos': {
+      id: '/app/cursos'
+      path: '/cursos'
+      fullPath: '/app/cursos'
+      preLoaderRoute: typeof AppCursosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/certificados': {
       id: '/app/certificados'
       path: '/certificados'
@@ -371,10 +388,10 @@ declare module '@tanstack/react-router' {
     }
     '/app/cursos/': {
       id: '/app/cursos/'
-      path: '/cursos'
+      path: '/'
       fullPath: '/app/cursos/'
       preLoaderRoute: typeof AppCursosIndexRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppCursosRoute
     }
     '/app/ebooks/$ebookId': {
       id: '/app/ebooks/$ebookId'
@@ -385,20 +402,36 @@ declare module '@tanstack/react-router' {
     }
     '/app/cursos/preview': {
       id: '/app/cursos/preview'
-      path: '/cursos/preview'
+      path: '/preview'
       fullPath: '/app/cursos/preview'
       preLoaderRoute: typeof AppCursosPreviewRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppCursosRoute
     }
     '/app/cursos/$courseId': {
       id: '/app/cursos/$courseId'
-      path: '/cursos/$courseId'
+      path: '/$courseId'
       fullPath: '/app/cursos/$courseId'
       preLoaderRoute: typeof AppCursosCourseIdRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppCursosRoute
     }
   }
 }
+
+interface AppCursosRouteChildren {
+  AppCursosCourseIdRoute: typeof AppCursosCourseIdRoute
+  AppCursosPreviewRoute: typeof AppCursosPreviewRoute
+  AppCursosIndexRoute: typeof AppCursosIndexRoute
+}
+
+const AppCursosRouteChildren: AppCursosRouteChildren = {
+  AppCursosCourseIdRoute: AppCursosCourseIdRoute,
+  AppCursosPreviewRoute: AppCursosPreviewRoute,
+  AppCursosIndexRoute: AppCursosIndexRoute,
+}
+
+const AppCursosRouteWithChildren = AppCursosRoute._addFileChildren(
+  AppCursosRouteChildren,
+)
 
 interface AppEbooksRouteChildren {
   AppEbooksEbookIdRoute: typeof AppEbooksEbookIdRoute
@@ -415,6 +448,7 @@ const AppEbooksRouteWithChildren = AppEbooksRoute._addFileChildren(
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
   AppCertificadosRoute: typeof AppCertificadosRoute
+  AppCursosRoute: typeof AppCursosRouteWithChildren
   AppEbooksRoute: typeof AppEbooksRouteWithChildren
   AppMateriaisRoute: typeof AppMateriaisRoute
   AppPerfilRoute: typeof AppPerfilRoute
@@ -422,14 +456,12 @@ interface AppRouteChildren {
   AppReceitasRoute: typeof AppReceitasRoute
   AppSuporteRoute: typeof AppSuporteRoute
   AppIndexRoute: typeof AppIndexRoute
-  AppCursosCourseIdRoute: typeof AppCursosCourseIdRoute
-  AppCursosPreviewRoute: typeof AppCursosPreviewRoute
-  AppCursosIndexRoute: typeof AppCursosIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
   AppCertificadosRoute: AppCertificadosRoute,
+  AppCursosRoute: AppCursosRouteWithChildren,
   AppEbooksRoute: AppEbooksRouteWithChildren,
   AppMateriaisRoute: AppMateriaisRoute,
   AppPerfilRoute: AppPerfilRoute,
@@ -437,9 +469,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppReceitasRoute: AppReceitasRoute,
   AppSuporteRoute: AppSuporteRoute,
   AppIndexRoute: AppIndexRoute,
-  AppCursosCourseIdRoute: AppCursosCourseIdRoute,
-  AppCursosPreviewRoute: AppCursosPreviewRoute,
-  AppCursosIndexRoute: AppCursosIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
