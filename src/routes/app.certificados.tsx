@@ -1,8 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap } from "lucide-react";
+import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { certificates, student } from "@/lib/platform-data";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+
+async function downloadCertificatePDF(node: HTMLElement, cert: { id: string; course: string }) {
+  const canvas = await html2canvas(node, {
+    scale: 2,
+    backgroundColor: "#f5efe4",
+    useCORS: true,
+    logging: false,
+  });
+  const imgData = canvas.toDataURL("image/jpeg", 0.95);
+  const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+  const ratio = canvas.width / canvas.height;
+  let w = pageW;
+  let h = pageW / ratio;
+  if (h > pageH) {
+    h = pageH;
+    w = pageH * ratio;
+  }
+  const x = (pageW - w) / 2;
+  const y = (pageH - h) / 2;
+  pdf.addImage(imgData, "JPEG", x, y, w, h);
+  const safe = cert.course.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+  pdf.save(`certificado-${safe}-${cert.id}.pdf`);
+}
 
 export const Route = createFileRoute("/app/certificados")({
   head: () => ({ meta: [{ title: "Certificados — Espetinho na Veia" }] }),
@@ -12,7 +39,7 @@ export const Route = createFileRoute("/app/certificados")({
 const BRAND = "#ff6a00";
 
 function CertificatesPage() {
-  const [preview, setPreview] = useState<typeof certificates[number] | null>(null);
+  const [preview, setPreview] = useState<{ cert: typeof certificates[number]; autoDownload?: boolean } | null>(null);
   const unlockedCount = certificates.filter((c) => c.unlocked).length;
   const totalHours = certificates.filter((c) => c.unlocked).reduce((s, c) => s + c.hours, 0);
   const nextCert = certificates.find((c) => !c.unlocked);
@@ -31,7 +58,12 @@ function CertificatesPage() {
       {/* Grid */}
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {certificates.map((c) => (
-          <CertCard key={c.id} cert={c} onPreview={() => setPreview(c)} />
+          <CertCard
+            key={c.id}
+            cert={c}
+            onPreview={() => setPreview({ cert: c })}
+            onDownload={() => setPreview({ cert: c, autoDownload: true })}
+          />
         ))}
       </div>
 
@@ -49,7 +81,7 @@ function CertificatesPage() {
         </div>
       </div>
 
-      {preview && <CertificateModal cert={preview} onClose={() => setPreview(null)} />}
+      {preview && <CertificateModal cert={preview.cert} autoDownload={preview.autoDownload} onClose={() => setPreview(null)} />}
     </div>
   );
 }
@@ -67,7 +99,7 @@ function StatCard({ icon, label, value, accent, small }: { icon: React.ReactNode
 
 /* -------------------- CARD -------------------- */
 
-function CertCard({ cert, onPreview }: { cert: typeof certificates[number]; onPreview: () => void }) {
+function CertCard({ cert, onPreview, onDownload }: { cert: typeof certificates[number]; onPreview: () => void; onDownload: () => void }) {
   const locked = !cert.unlocked;
   return (
     <article
@@ -126,7 +158,7 @@ function CertCard({ cert, onPreview }: { cert: typeof certificates[number]; onPr
             >
               <Eye className="h-3.5 w-3.5" strokeWidth={2.75} /> Visualizar
             </button>
-            <button className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 text-white/70 transition hover:border-[#ff6a00]/50 hover:text-[#ff6a00]" title="Baixar PDF">
+            <button onClick={onDownload} className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 text-white/70 transition hover:border-[#ff6a00]/50 hover:text-[#ff6a00]" title="Baixar PDF">
               <Download className="h-4 w-4" />
             </button>
             <button className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 text-white/70 transition hover:border-[#ff6a00]/50 hover:text-[#ff6a00]" title="Compartilhar">
@@ -202,7 +234,31 @@ function CornerOrnament({ className = "" }: { className?: string }) {
 
 /* -------------------- FULL MODAL -------------------- */
 
-function CertificateModal({ cert, onClose }: { cert: typeof certificates[number]; onClose: () => void }) {
+function CertificateModal({ cert, onClose, autoDownload }: { cert: typeof certificates[number]; onClose: () => void; autoDownload?: boolean }) {
+  const certRef = useRef<HTMLDivElement | null>(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!certRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      await downloadCertificatePDF(certRef.current, cert);
+    } catch (err) {
+      console.error("PDF generation failed", err);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  // Auto-trigger when opened via card download button
+  useEffect(() => {
+    if (autoDownload) {
+      const t = setTimeout(() => { handleDownload(); }, 400);
+      return () => clearTimeout(t);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoDownload]);
+
   return (
     <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/90 p-4 backdrop-blur-md" onClick={onClose}>
       <div className="w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
@@ -218,8 +274,13 @@ function CertificateModal({ cert, onClose }: { cert: typeof certificates[number]
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 rounded-md bg-[#ff6a00] px-4 py-2 text-xs font-bold uppercase tracking-widest text-black transition hover:brightness-110">
-              <Download className="h-4 w-4" strokeWidth={2.5} /> Baixar PDF
+            <button
+              onClick={handleDownload}
+              disabled={downloading}
+              className="flex items-center gap-1.5 rounded-md bg-[#ff6a00] px-4 py-2 text-xs font-bold uppercase tracking-widest text-black transition hover:brightness-110 disabled:opacity-70"
+            >
+              {downloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" strokeWidth={2.5} />}
+              {downloading ? "Gerando..." : "Baixar PDF"}
             </button>
             <button className="flex items-center gap-1.5 rounded-md border border-white/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:border-[#ff6a00]/50">
               <Share2 className="h-4 w-4" /> Compartilhar
@@ -231,7 +292,9 @@ function CertificateModal({ cert, onClose }: { cert: typeof certificates[number]
         </div>
 
         {/* Certificate */}
-        <FullCertificate cert={cert} />
+        <div ref={certRef}>
+          <FullCertificate cert={cert} />
+        </div>
       </div>
     </div>
   );
