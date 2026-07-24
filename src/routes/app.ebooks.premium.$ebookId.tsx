@@ -1106,7 +1106,7 @@ function PremiumReader() {
         <button
           onClick={() => go(i + 1)}
           disabled={i === total - 1}
-          className="flex items-center gap-2 rounded-full bg-gradient-to-r from-fire to-gold px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-105 disabled:opacity-30"
+          className="flex items-center gap-2 rounded-full bg-[#ff6a00] px-4 py-2 text-sm font-bold text-black shadow-lg transition hover:brightness-110 disabled:opacity-30"
         >
           <span className="hidden sm:inline">Próxima</span> <ArrowRight className="h-4 w-4" />
         </button>

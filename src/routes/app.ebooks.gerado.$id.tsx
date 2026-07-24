@@ -228,7 +228,7 @@ function GeneratedEbookReader() {
             <button key={j} onClick={() => go(j)} className={`h-1.5 flex-1 rounded-full transition-all ${j === i ? "bg-fire" : j < i ? "bg-fire/40" : "bg-white/10"}`} aria-label={`Ir para slide ${j + 1}`} />
           ))}
         </div>
-        <button onClick={() => go(i + 1)} disabled={i === total - 1} className="flex items-center gap-2 rounded-full bg-gradient-to-r from-fire to-gold px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:scale-105 disabled:opacity-30">
+        <button onClick={() => go(i + 1)} disabled={i === total - 1} className="flex items-center gap-2 rounded-full bg-[#ff6a00] px-4 py-2 text-sm font-bold text-black shadow-lg transition hover:brightness-110 disabled:opacity-30">
           <span className="hidden sm:inline">Próxima</span> <ArrowRight className="h-4 w-4" />
         </button>
       </div>
