@@ -35,9 +35,35 @@ export type Course = {
   progress: number;
   totalLessons: number;
   modules: Module[];
+  locked?: boolean;
+  price?: number;
+  badge?: string;
 };
 
 export const courses: Course[] = [
+  {
+    id: "curso-demo-teste",
+    title: "Curso Demo — Ambiente de Testes",
+    description:
+      "Curso fictício liberado para validação da plataforma. Use para testar player, progresso, materiais e certificados.",
+    cover: IMG.skewersHeld,
+    teacher: "Equipe Espetinho na Veia",
+    progress: 20,
+    totalLessons: 4,
+    badge: "DEMO",
+    modules: [
+      {
+        id: "m1",
+        title: "Módulo Demo — Fluxo de validação",
+        lessons: [
+          { id: "l1", title: "Tour da plataforma", duration: "3:20", completed: true },
+          { id: "l2", title: "Testando o player de vídeo", duration: "2:45" },
+          { id: "l3", title: "Testando materiais e anotações", duration: "4:10" },
+          { id: "l4", title: "Encerramento e certificado de teste", duration: "1:50" },
+        ],
+      },
+    ],
+  },
   {
     id: "espetinho-lucrativo",
     title: "Espetinho Lucrativo",
@@ -107,8 +133,10 @@ export const courses: Course[] = [
       "Receitas para aumentar o valor do pedido e melhorar a experiência do cliente.",
     cover: IMG.platter2,
     teacher: "Ronnei — Espetos Grill",
-    progress: 18,
+    progress: 0,
     totalLessons: 12,
+    locked: true,
+    price: 47.9,
     modules: [
       { id: "m1", title: "Molhos clássicos", lessons: [
         { id: "l1", title: "Vinagrete artesanal", duration: "6:20", completed: true },
@@ -130,6 +158,8 @@ export const courses: Course[] = [
     teacher: "Ronnei — Espetos Grill",
     progress: 0,
     totalLessons: 10,
+    locked: true,
+    price: 67.0,
     modules: [
       { id: "m1", title: "Precificação inteligente", lessons: [
         { id: "l1", title: "Preço percebido x preço real", duration: "10:15" },
@@ -147,8 +177,10 @@ export const courses: Course[] = [
     description: "Organização de estoque, custos, lucros e planejamento de compras.",
     cover: IMG.ribeye,
     teacher: "Ronnei — Espetos Grill",
-    progress: 5,
+    progress: 0,
     totalLessons: 14,
+    locked: true,
+    price: 97.0,
     modules: [
       { id: "m1", title: "Controle financeiro", lessons: [
         { id: "l1", title: "Separar PF e PJ", duration: "9:00", completed: true },
