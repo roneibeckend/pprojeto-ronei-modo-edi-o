@@ -100,7 +100,7 @@
 }
 
 @utility bg-fire {
-  background: var(--grad-fire);
+  background: #ff6a00;
 }
 
 @utility glass {
