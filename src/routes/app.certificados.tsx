@@ -39,7 +39,7 @@ export const Route = createFileRoute("/app/certificados")({
 const BRAND = "#ff6a00";
 
 function CertificatesPage() {
-  const [preview, setPreview] = useState<typeof certificates[number] | null>(null);
+  const [preview, setPreview] = useState<{ cert: typeof certificates[number]; autoDownload?: boolean } | null>(null);
   const unlockedCount = certificates.filter((c) => c.unlocked).length;
   const totalHours = certificates.filter((c) => c.unlocked).reduce((s, c) => s + c.hours, 0);
   const nextCert = certificates.find((c) => !c.unlocked);
