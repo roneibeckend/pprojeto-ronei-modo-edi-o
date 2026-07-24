@@ -234,7 +234,32 @@ function CornerOrnament({ className = "" }: { className?: string }) {
 
 /* -------------------- FULL MODAL -------------------- */
 
-function CertificateModal({ cert, onClose }: { cert: typeof certificates[number]; onClose: () => void }) {
+function CertificateModal({ cert, onClose, autoDownload }: { cert: typeof certificates[number]; onClose: () => void; autoDownload?: boolean }) {
+  const certRef = useRef<HTMLDivElement | null>(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!certRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      await downloadCertificatePDF(certRef.current, cert);
+    } catch (err) {
+      console.error("PDF generation failed", err);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  // Auto-trigger when opened via card download button
+  useState(() => {
+    if (autoDownload) {
+      setTimeout(() => {
+        handleDownload();
+      }, 400);
+    }
+    return null;
+  });
+
   return (
     <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/90 p-4 backdrop-blur-md" onClick={onClose}>
       <div className="w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
@@ -250,8 +275,13 @@ function CertificateModal({ cert, onClose }: { cert: typeof certificates[number]
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 rounded-md bg-[#ff6a00] px-4 py-2 text-xs font-bold uppercase tracking-widest text-black transition hover:brightness-110">
-              <Download className="h-4 w-4" strokeWidth={2.5} /> Baixar PDF
+            <button
+              onClick={handleDownload}
+              disabled={downloading}
+              className="flex items-center gap-1.5 rounded-md bg-[#ff6a00] px-4 py-2 text-xs font-bold uppercase tracking-widest text-black transition hover:brightness-110 disabled:opacity-70"
+            >
+              {downloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" strokeWidth={2.5} />}
+              {downloading ? "Gerando..." : "Baixar PDF"}
             </button>
             <button className="flex items-center gap-1.5 rounded-md border border-white/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:border-[#ff6a00]/50">
               <Share2 className="h-4 w-4" /> Compartilhar
@@ -263,7 +293,9 @@ function CertificateModal({ cert, onClose }: { cert: typeof certificates[number]
         </div>
 
         {/* Certificate */}
-        <FullCertificate cert={cert} />
+        <div ref={certRef}>
+          <FullCertificate cert={cert} />
+        </div>
       </div>
     </div>
   );
