@@ -12,7 +12,31 @@ function EbooksPage() {
   return (
     <div>
       <PageHeader title="Biblioteca de e-books" subtitle="Sua estante digital com todo o material didático." />
+
+      <Link
+        to="/app/ebooks/premium/$ebookId"
+        params={{ ebookId: "do-zero-aos-10k" }}
+        className="group relative mb-8 flex flex-col overflow-hidden rounded-3xl border border-fire/30 bg-gradient-to-br from-fire/20 via-black to-gold/10 p-6 transition hover:scale-[1.01] hover:border-fire/60 sm:flex-row sm:items-center sm:p-8"
+      >
+        <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-fire/30 blur-3xl transition group-hover:bg-fire/50" />
+        <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-gold/20 blur-3xl" />
+        <img src={IMG.hero} alt="Do Zero aos 10k" className="relative h-40 w-full rounded-2xl object-cover shadow-2xl sm:h-48 sm:w-40 sm:shrink-0" loading="lazy" />
+        <div className="relative mt-4 flex-1 sm:ml-6 sm:mt-0">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-fire/40 bg-fire/20 px-3 py-1 text-xs font-bold uppercase tracking-widest text-fire">
+            <Sparkles className="h-3 w-3" /> Novo · Ebook Premium Interativo
+          </div>
+          <h2 className="mt-3 font-display text-2xl font-black leading-tight sm:text-3xl">Do Zero aos R$ 10k com Espetinho</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            30 páginas em estilo slide, com calculadoras, checklists, quizzes e roteiros prontos. Uma experiência de leitura totalmente nova.
+          </p>
+          <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-fire px-5 py-2 text-sm font-bold text-white shadow-lg">
+            Abrir experiência premium <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+          </span>
+        </div>
+      </Link>
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
         {ebooks.map((b) => (
           <article key={b.id} className="glass card-tilt flex flex-col overflow-hidden rounded-2xl">
             <div className="relative aspect-[3/4]">
