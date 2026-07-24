@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Users,
   GraduationCap,
@@ -16,10 +16,10 @@ import {
   Trash2,
   DollarSign,
   PieChart,
-  Sparkles,
-  Wand2,
-  ArrowRight,
   ArrowUpRight,
+  ArrowDown,
+  ArrowUp,
+  BarChart3,
 } from "lucide-react";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -31,9 +31,11 @@ export const Route = createFileRoute("/app/admin/")({
   component: AdminPage,
 });
 
-/* ---------------- Hooks & helpers ---------------- */
+/* ---------------- Helpers ---------------- */
 
-function useCountUp(target: number, duration = 1200) {
+const ORANGE = "#ff6a00";
+
+function useCountUp(target: number, duration = 1100) {
   const [value, setValue] = useState(0);
   useEffect(() => {
     let raf = 0;
@@ -72,25 +74,22 @@ const brl = (n: number) =>
 
 function AdminPage() {
   return (
-    <div className="space-y-8">
-      {/* Header with live status */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="space-y-6">
+      {/* Header */}
+      <header className="flex flex-col gap-4 border-b border-white/5 pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
+          <div className="mb-2 inline-flex items-center gap-2 rounded-sm border-l-2 border-[color:var(--orange)] pl-3 text-[10px] font-bold uppercase tracking-[0.28em] text-white/50" style={{ ["--orange" as any]: ORANGE }}>
             Espetinho na Veia · Cockpit
           </div>
-          <h1 className="font-display text-3xl font-bold leading-tight sm:text-4xl">
-            Painel{" "}
-            <span className="bg-gradient-to-r from-fire via-gold to-fire bg-clip-text text-transparent">
-              Administrativo
-            </span>
+          <h1 className="font-display text-3xl font-extrabold uppercase leading-tight tracking-tight text-white sm:text-4xl">
+            Painel <span style={{ color: ORANGE }}>Administrativo</span>
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-white/50">
             Visão em tempo real da sua operação.
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5">
+          <div className="flex items-center gap-2 rounded-sm border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
@@ -99,41 +98,49 @@ function AdminPage() {
               Operacional
             </span>
           </div>
-          <button className="btn-fire text-sm">
+          <button
+            className="inline-flex items-center gap-2 rounded-sm px-4 py-2 text-sm font-bold uppercase tracking-widest text-black transition hover:brightness-110"
+            style={{ backgroundColor: ORANGE }}
+          >
             <Settings className="h-4 w-4" /> Configurações
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* Hero KPI strip */}
+      {/* Hero KPIs */}
       <HeroKpis />
 
       {/* Secondary KPIs */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <AdminStat icon={Users} label="Alunos" value={adminStats.students} format="int" delay={0} />
-        <AdminStat icon={GraduationCap} label="Cursos ativos" value={adminStats.activeCourses} format="int" delay={80} />
-        <AdminStat icon={BookOpen} label="E-books" value={adminStats.ebooks} format="int" delay={160} />
-        <AdminStat icon={Play} label="Aulas assistidas" value={adminStats.lessonsWatched} format="int" delay={240} />
-        <AdminStat icon={TrendingUp} label="Conclusão média" value={adminStats.avgCompletion} suffix="%" delay={320} accent />
-        <AdminStat icon={Activity} label="Ativos recentemente" value={adminStats.activeRecent} format="int" delay={400} />
-        <AdminStat icon={Award} label="Certificados" value={1284} format="int" delay={480} />
-        <AdminStat icon={TrendingUp} label="Faturamento" value={137240} format="brl" delay={560} accent />
+        <AdminStat icon={GraduationCap} label="Cursos ativos" value={adminStats.activeCourses} format="int" delay={60} />
+        <AdminStat icon={BookOpen} label="E-books" value={adminStats.ebooks} format="int" delay={120} />
+        <AdminStat icon={Play} label="Aulas assistidas" value={adminStats.lessonsWatched} format="int" delay={180} />
+        <AdminStat icon={TrendingUp} label="Conclusão média" value={adminStats.avgCompletion} suffix="%" delay={240} accent />
+        <AdminStat icon={Activity} label="Ativos recentemente" value={adminStats.activeRecent} format="int" delay={300} />
+        <AdminStat icon={Award} label="Certificados" value={1284} format="int" delay={360} />
+        <AdminStat icon={TrendingUp} label="Faturamento" value={137240} format="brl" delay={420} accent />
       </div>
 
-      {/* Chart + IA */}
-      <div className="grid gap-6 lg:grid-cols-12">
-        <ChartCard />
-        <IaBanner />
-      </div>
+      {/* Chart */}
+      <ChartCard />
 
       {/* Quick actions */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <AdminAction icon={GraduationCap} title="Cadastrar curso" desc="Crie um novo curso e organize módulos." delay={0} />
-        <AdminAction icon={Video} title="Upload de vídeos" desc="Envie aulas em MP4 direto para as trilhas." delay={60} />
-        <AdminAction icon={BookOpen} title="Cadastrar e-book" desc="Publique um novo material na biblioteca." delay={120} />
-        <AdminAction icon={ChefHat} title="Cadastrar receita" desc="Adicione receitas com custo e lucro." delay={180} />
-        <AdminAction icon={FileSpreadsheet} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." delay={240} />
-        <AdminAction icon={Users} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." delay={300} />
+      <section>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-display text-sm font-bold uppercase tracking-[0.2em] text-white/60">
+            Ações rápidas
+          </h2>
+          <div className="h-px flex-1 mx-4 bg-white/5" />
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <AdminAction icon={GraduationCap} title="Cadastrar curso" desc="Crie um novo curso e organize módulos." delay={0} />
+          <AdminAction icon={Video} title="Upload de vídeos" desc="Envie aulas em MP4 direto para as trilhas." delay={40} />
+          <AdminAction icon={BookOpen} title="Cadastrar e-book" desc="Publique um novo material na biblioteca." delay={80} />
+          <AdminAction icon={ChefHat} title="Cadastrar receita" desc="Adicione receitas com custo e lucro." delay={120} />
+          <AdminAction icon={FileSpreadsheet} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." delay={160} />
+          <AdminAction icon={Users} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." delay={200} />
+        </div>
       </section>
 
       <FinancePanel />
@@ -149,26 +156,52 @@ function HeroKpis() {
   const revenue = useCountUp(137240);
   const students = useCountUp(adminStats.students);
   const active = useCountUp(adminStats.activeRecent);
+
+  const items = [
+    { label: "Faturamento total", value: brl(revenue), delta: "+12%", up: true, icon: DollarSign },
+    { label: "Alunos matriculados", value: Math.round(students).toLocaleString("pt-BR"), delta: "+8%", up: true, icon: Users },
+    { label: "Ativos agora", value: Math.round(active).toLocaleString("pt-BR"), delta: "Live", up: true, icon: Activity },
+  ];
+
   return (
-    <div className="grid gap-4 md:grid-cols-3">
-      {[
-        { label: "Faturamento total", value: brl(revenue), delta: "+12%", tone: "text-emerald-400" },
-        { label: "Alunos", value: Math.round(students).toLocaleString("pt-BR"), delta: "High", tone: "text-fire" },
-        { label: "Ativos agora", value: Math.round(active).toLocaleString("pt-BR"), delta: "Live", tone: "text-gold" },
-      ].map((k, i) => (
-        <div key={k.label} className="group relative animate-fade-in" style={{ animationDelay: `${i * 90}ms`, animationFillMode: "backwards" }}>
-          <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-r from-fire/60 via-gold/40 to-fire/60 opacity-30 blur transition duration-500 group-hover:opacity-70" />
-          <div className="relative rounded-3xl border border-white/5 bg-charcoal/80 p-6 backdrop-blur">
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
-              {k.label}
-            </p>
+    <div className="grid gap-3 md:grid-cols-3">
+      {items.map((k, i) => {
+        const Icon = k.icon;
+        return (
+          <div
+            key={k.label}
+            className="group relative overflow-hidden border border-white/5 bg-[#111] p-6 transition hover:border-[color:var(--orange)]"
+            style={{ ["--orange" as any]: ORANGE, animationDelay: `${i * 80}ms`, animationFillMode: "backwards" }}
+          >
+            {/* Left orange bar */}
+            <span className="absolute left-0 top-0 h-full w-1" style={{ backgroundColor: ORANGE }} />
+
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/40">
+                {k.label}
+              </p>
+              <div className="grid h-9 w-9 place-items-center rounded-sm bg-[#ff6a00]/10 text-[color:var(--orange)]">
+                <Icon className="h-4 w-4" />
+              </div>
+            </div>
             <div className="flex items-baseline gap-3">
-              <span className="font-display text-4xl font-bold text-white">{k.value}</span>
-              <span className={`text-sm font-bold ${k.tone}`}>{k.delta}</span>
+              <span className="font-display text-4xl font-extrabold tracking-tight text-white">
+                {k.value}
+              </span>
+              <span className={`inline-flex items-center gap-1 text-xs font-bold ${k.up ? "text-emerald-400" : "text-red-400"}`}>
+                {k.up ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+                {k.delta}
+              </span>
+            </div>
+            <div className="mt-4 h-1 w-full overflow-hidden bg-white/5">
+              <div
+                className="h-full transition-all duration-1000"
+                style={{ backgroundColor: ORANGE, width: `${60 + i * 12}%` }}
+              />
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -192,7 +225,7 @@ function AdminStat({
   accent?: boolean;
   delay?: number;
 }) {
-  const v = useCountUp(value, 1400);
+  const v = useCountUp(value, 1300);
   const shown =
     format === "brl"
       ? brl(v)
@@ -202,21 +235,23 @@ function AdminStat({
 
   return (
     <div
-      className="group relative animate-fade-in"
-      style={{ animationDelay: `${delay}ms`, animationFillMode: "backwards" }}
+      className="group relative border border-white/5 bg-[#111] p-4 transition hover:border-[color:var(--orange)] animate-fade-in"
+      style={{ ["--orange" as any]: ORANGE, animationDelay: `${delay}ms`, animationFillMode: "backwards" }}
     >
-      <div className={`absolute -inset-[1px] rounded-2xl bg-gradient-to-b ${accent ? "from-fire/60 to-gold/30" : "from-white/10 to-white/0"} opacity-40 blur-sm transition group-hover:opacity-80`} />
-      <div className="relative h-full rounded-2xl border border-white/5 bg-charcoal/80 p-5 backdrop-blur">
-        <div className="flex items-center gap-3">
-          <div className={`grid h-10 w-10 place-items-center rounded-xl ${accent ? "bg-gradient-to-br from-fire to-gold text-white shadow-fire" : "bg-white/5 text-fire"}`}>
-            <Icon className="h-5 w-5" />
+      <div className="flex items-center gap-3">
+        <div
+          className={`grid h-10 w-10 shrink-0 place-items-center rounded-sm ${
+            accent ? "text-black" : "bg-white/[0.04] text-[color:var(--orange)]"
+          }`}
+          style={accent ? { backgroundColor: ORANGE } : undefined}
+        >
+          <Icon className="h-5 w-5" strokeWidth={2.25} />
+        </div>
+        <div className="min-w-0">
+          <div className="truncate text-[10px] font-bold uppercase tracking-[0.22em] text-white/40">
+            {label}
           </div>
-          <div className="min-w-0">
-            <div className="truncate text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
-              {label}
-            </div>
-            <div className="font-display text-xl font-bold">{shown}</div>
-          </div>
+          <div className="font-display text-xl font-extrabold text-white">{shown}</div>
         </div>
       </div>
     </div>
@@ -226,100 +261,71 @@ function AdminStat({
 /* ---------------- Chart ---------------- */
 
 function ChartCard() {
-  const [inView, setInView] = useState(false);
+  const { ref, inView } = useInView<HTMLElement>(0.1);
+  const [ready, setReady] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => setInView(true), 60);
+    const t = setTimeout(() => setReady(true), 80);
     return () => clearTimeout(t);
   }, []);
+  const show = inView || ready;
 
   const max = Math.max(...adminStats.chart);
   return (
     <section
-      
-      className="relative overflow-hidden rounded-3xl border border-white/5 bg-charcoal/80 p-6 backdrop-blur lg:col-span-8"
+      ref={ref}
+      className="border border-white/5 bg-[#111] p-6"
     >
-      <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-fire/10 blur-3xl" />
       <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h3 className="font-display text-lg font-bold uppercase tracking-wide">
-            Alunos ativos por mês
-          </h3>
-          <p className="text-xs text-muted-foreground">Últimos 12 meses</p>
+        <div className="flex items-center gap-3">
+          <div className="grid h-10 w-10 place-items-center rounded-sm" style={{ backgroundColor: ORANGE }}>
+            <BarChart3 className="h-5 w-5 text-black" />
+          </div>
+          <div>
+            <h3 className="font-display text-lg font-extrabold uppercase tracking-wide text-white">
+              Alunos ativos por mês
+            </h3>
+            <p className="text-xs text-white/40">Últimos 12 meses</p>
+          </div>
         </div>
-        <select className="rounded-lg border border-white/10 bg-black/40 px-3 py-1 text-xs text-muted-foreground outline-none focus:border-fire">
+        <select className="rounded-sm border border-white/10 bg-black px-3 py-1.5 text-xs font-medium text-white/70 outline-none focus:border-[color:var(--orange)]" style={{ ["--orange" as any]: ORANGE }}>
           <option>12 meses</option>
           <option>6 meses</option>
         </select>
       </div>
-      <div className="relative flex h-52 items-end gap-2">
+      <div className="relative flex h-56 items-end gap-2">
         {adminStats.chart.map((v, i) => {
-          const h = Math.round((v / max) * 180);
+          const h = Math.round((v / max) * 190);
           const isPeak = v === max;
           return (
             <div key={i} className="group flex flex-1 flex-col items-center gap-2">
-              <div
-                className={`relative w-full rounded-t-lg transition-[height] duration-1000 ease-out ${
-                  isPeak
-                    ? "bg-gradient-to-t from-fire via-fire to-gold shadow-[0_0_30px_rgba(255,77,0,0.4)]"
-                    : "bg-gradient-to-t from-fire to-gold/70 group-hover:brightness-125"
-                }`}
-
-                style={{ height: inView ? `${h}px` : "0px", transitionDelay: `${i * 60}ms` }}
-              >
+              <div className="relative w-full flex justify-center">
                 {isPeak && (
-                  <span className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-fire/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-fire">
+                  <span className="absolute -top-6 whitespace-nowrap rounded-sm px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-black" style={{ backgroundColor: ORANGE }}>
                     Peak
                   </span>
                 )}
               </div>
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+              <div
+                className="relative w-full transition-[height] duration-1000 ease-out"
+                style={{
+                  height: show ? `${h}px` : "0px",
+                  transitionDelay: `${i * 50}ms`,
+                  backgroundColor: isPeak ? ORANGE : "#7a3300",
+                }}
+              >
+                <div
+                  className="absolute inset-x-0 top-0 h-1"
+                  style={{ backgroundColor: isPeak ? "#ffb066" : ORANGE }}
+                />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
                 M{i + 1}
               </span>
             </div>
           );
         })}
-
-
       </div>
     </section>
-  );
-}
-
-/* ---------------- IA Banner ---------------- */
-
-function IaBanner() {
-  return (
-    <Link
-      to="/app/admin/ebook-ai"
-      className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-fire via-fire/90 to-gold p-6 shadow-[0_20px_60px_-15px_rgba(255,77,0,0.5)] transition hover:scale-[1.01] lg:col-span-4"
-    >
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-white/20 blur-3xl transition duration-700 group-hover:scale-150" />
-        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
-      </div>
-      <div className="relative z-10 flex h-full flex-col">
-        <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-black/20 backdrop-blur">
-          <Wand2 className="h-6 w-6 text-white" />
-        </div>
-        <div className="mb-3 flex items-center gap-2">
-          <span className="rounded-full bg-black/30 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white">
-            Novo
-          </span>
-          <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-white/80">
-            <Sparkles className="h-3 w-3" /> IA Generativa
-          </span>
-        </div>
-        <h3 className="font-display text-2xl font-bold uppercase leading-tight text-white">
-          Criar ebook<br />com IA
-        </h3>
-        <p className="mt-2 text-sm leading-snug text-white/80">
-          Descreva o tema. A IA escreve e transforma no formato interativo premium em segundos.
-        </p>
-        <div className="mt-6 inline-flex items-center gap-2 self-start rounded-xl bg-black px-4 py-3 text-sm font-bold uppercase tracking-widest text-white transition group-hover:bg-black/80">
-          Gerar agora <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-        </div>
-      </div>
-    </Link>
   );
 }
 
@@ -338,19 +344,19 @@ function AdminAction({
 }) {
   return (
     <button
-      className="group relative overflow-hidden rounded-2xl border border-white/5 bg-charcoal/80 p-5 text-left transition hover:-translate-y-1 hover:border-fire/40 animate-fade-in"
-      style={{ animationDelay: `${delay}ms`, animationFillMode: "backwards" }}
+      className="group relative overflow-hidden border border-white/5 bg-[#111] p-5 text-left transition hover:-translate-y-0.5 hover:border-[color:var(--orange)] animate-fade-in"
+      style={{ ["--orange" as any]: ORANGE, animationDelay: `${delay}ms`, animationFillMode: "backwards" }}
     >
-      <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-fire/5 blur-2xl transition group-hover:bg-fire/20" />
-      <div className="relative flex items-start gap-3">
-        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-fire to-gold text-white shadow-fire transition group-hover:scale-110">
-          <Icon className="h-5 w-5" />
+      <span className="absolute left-0 top-0 h-full w-0.5 origin-top scale-y-0 transition-transform duration-300 group-hover:scale-y-100" style={{ backgroundColor: ORANGE }} />
+      <div className="flex items-start gap-3">
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-sm text-black transition group-hover:scale-105" style={{ backgroundColor: ORANGE }}>
+          <Icon className="h-5 w-5" strokeWidth={2.25} />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="font-display text-base font-bold">{title}</div>
-          <p className="mt-1 text-xs text-muted-foreground">{desc}</p>
+          <div className="font-display text-base font-extrabold uppercase tracking-wide text-white">{title}</div>
+          <p className="mt-1 text-xs text-white/50">{desc}</p>
         </div>
-        <ArrowUpRight className="ml-auto h-4 w-4 text-muted-foreground transition group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-fire" />
+        <ArrowUpRight className="ml-auto h-4 w-4 text-white/30 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[color:var(--orange)]" />
       </div>
     </button>
   );
@@ -367,22 +373,25 @@ function StudentsTable() {
     ["Tiago Almeida", "tiago@exemplo.com", "Espetinho Lucrativo", 92],
   ] as const;
   return (
-    <section className="overflow-hidden rounded-3xl border border-white/5 bg-charcoal/80 backdrop-blur">
+    <section className="overflow-hidden border border-white/5 bg-[#111]">
       <div className="flex items-center justify-between border-b border-white/5 p-6">
-        <div>
-          <h3 className="font-display text-lg font-bold uppercase tracking-wide">
-            Últimos alunos
-          </h3>
-          <p className="text-xs text-muted-foreground">Cadastros recentes</p>
+        <div className="flex items-center gap-3">
+          <div className="h-6 w-1" style={{ backgroundColor: ORANGE }} />
+          <div>
+            <h3 className="font-display text-lg font-extrabold uppercase tracking-wide text-white">
+              Últimos alunos
+            </h3>
+            <p className="text-xs text-white/40">Cadastros recentes</p>
+          </div>
         </div>
-        <button className="text-xs font-bold uppercase tracking-widest text-fire hover:text-gold">
+        <button className="text-xs font-bold uppercase tracking-widest transition hover:brightness-125" style={{ color: ORANGE }}>
           Ver todos →
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
-            <tr className="bg-white/[0.03] text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            <tr className="bg-white/[0.02] text-[10px] uppercase tracking-[0.22em] text-white/40">
               <th className="px-6 py-4 font-bold">Aluno</th>
               <th className="px-6 py-4 font-bold">E-mail</th>
               <th className="px-6 py-4 font-bold">Curso</th>
@@ -401,27 +410,27 @@ function StudentsTable() {
                 <tr
                   key={r[1] as string}
                   className="group animate-fade-in transition hover:bg-white/[0.03]"
-                  style={{ animationDelay: `${i * 60}ms`, animationFillMode: "backwards" }}
+                  style={{ animationDelay: `${i * 50}ms`, animationFillMode: "backwards" }}
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-fire to-gold text-xs font-bold text-white shadow-fire">
+                      <div className="grid h-9 w-9 place-items-center rounded-sm text-xs font-extrabold text-black" style={{ backgroundColor: ORANGE }}>
                         {initials}
                       </div>
-                      <span className="font-medium">{r[0]}</span>
+                      <span className="font-medium text-white">{r[0]}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-muted-foreground">{r[1]}</td>
-                  <td className="px-6 py-4">{r[2]}</td>
+                  <td className="px-6 py-4 text-white/50">{r[1]}</td>
+                  <td className="px-6 py-4 text-white/80">{r[2]}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-3">
-                      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/5">
+                      <div className="h-1.5 w-24 overflow-hidden bg-white/5">
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-fire to-gold transition-all duration-1000"
-                          style={{ width: `${pct}%` }}
+                          className="h-full transition-all duration-1000"
+                          style={{ width: `${pct}%`, backgroundColor: ORANGE }}
                         />
                       </div>
-                      <span className="w-10 text-right font-display font-bold text-fire">
+                      <span className="w-10 text-right font-display font-extrabold" style={{ color: ORANGE }}>
                         {pct}%
                       </span>
                     </div>
@@ -474,58 +483,57 @@ function FinancePanel() {
     setPartners((ps) => [...ps, { id: `p${Date.now()}`, name: "Novo sócio", percent: 0 }]);
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-white/5 bg-charcoal/80 p-6 backdrop-blur">
-      <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
-      <div className="relative flex flex-wrap items-center justify-between gap-4">
+    <section className="border border-white/5 bg-[#111] p-6" style={{ ["--orange" as any]: ORANGE }}>
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/5 pb-5">
         <div className="flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-fire to-gold text-white shadow-fire">
-            <Calculator className="h-5 w-5" />
+          <div className="grid h-11 w-11 place-items-center rounded-sm text-black" style={{ backgroundColor: ORANGE }}>
+            <Calculator className="h-5 w-5" strokeWidth={2.5} />
           </div>
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
+            <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               Painel Financeiro
             </div>
-            <h3 className="font-display text-xl font-bold uppercase">
+            <h3 className="font-display text-xl font-extrabold uppercase text-white">
               Custos, lucro e divisão de sócios
             </h3>
           </div>
         </div>
-        <div className="rounded-full border border-white/10 bg-black/30 px-4 py-2 text-xs">
-          Margem líquida:{" "}
+        <div className="rounded-sm border border-white/10 bg-black px-4 py-2 text-xs">
+          <span className="text-white/50">Margem líquida:</span>{" "}
           <span className={`font-bold ${margin >= 0 ? "text-emerald-400" : "text-red-400"}`}>
             {margin.toFixed(1)}%
           </span>
         </div>
       </div>
 
-      <div className="relative mt-6 grid gap-6 lg:grid-cols-3">
+      <div className="mt-6 grid gap-4 lg:grid-cols-3">
         {/* Receita */}
-        <div className="rounded-2xl border border-white/5 bg-black/30 p-5">
-          <div className="mb-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
-            <DollarSign className="h-4 w-4" /> Receita bruta
+        <div className="border border-white/5 bg-black/40 p-5">
+          <div className="mb-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+            <DollarSign className="h-4 w-4" style={{ color: ORANGE }} /> Receita bruta
           </div>
           <input
             type="number"
             value={revenue}
             onChange={(e) => setRevenue(parseFloat(e.target.value) || 0)}
-            className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 font-display text-2xl font-bold text-emerald-400 outline-none transition focus:border-fire"
+            className="w-full rounded-sm border border-white/10 bg-black px-4 py-3 font-display text-2xl font-extrabold text-emerald-400 outline-none transition focus:border-[color:var(--orange)]"
           />
-          <div className="mt-2 text-xs text-muted-foreground">{brl(revenue)}</div>
+          <div className="mt-2 text-xs text-white/40">{brl(revenue)}</div>
 
           <div className="mt-6 space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Receita</span>
+              <span className="text-white/50">Receita</span>
               <span className="font-semibold text-emerald-400">{brl(revenue)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Custos totais</span>
+              <span className="text-white/50">Custos totais</span>
               <span className="font-semibold text-red-400">− {brl(totalCost)}</span>
             </div>
             <div className="my-2 border-t border-white/10" />
             <div className="flex justify-between">
-              <span className="font-semibold">Lucro líquido</span>
+              <span className="font-semibold text-white">Lucro líquido</span>
               <span
-                className={`font-display text-xl font-bold ${
+                className={`font-display text-xl font-extrabold ${
                   profit >= 0 ? "text-emerald-400" : "text-red-400"
                 }`}
               >
@@ -536,12 +544,16 @@ function FinancePanel() {
         </div>
 
         {/* Custos */}
-        <div className="rounded-2xl border border-white/5 bg-black/30 p-5">
+        <div className="border border-white/5 bg-black/40 p-5">
           <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
-              <FileSpreadsheet className="h-4 w-4" /> Custos da empresa
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+              <FileSpreadsheet className="h-4 w-4" style={{ color: ORANGE }} /> Custos da empresa
             </div>
-            <button onClick={addCost} className="btn-ghost-fire text-xs">
+            <button
+              onClick={addCost}
+              className="inline-flex items-center gap-1 rounded-sm px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-black transition hover:brightness-110"
+              style={{ backgroundColor: ORANGE }}
+            >
               <Plus className="h-3 w-3" /> Adicionar
             </button>
           </div>
@@ -549,12 +561,12 @@ function FinancePanel() {
             {costs.map((c) => (
               <div
                 key={c.id}
-                className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/30 p-2 transition hover:border-fire/30"
+                className="flex items-center gap-2 border border-white/10 bg-black/40 p-2 transition hover:border-[color:var(--orange)]"
               >
                 <input
                   value={c.label}
                   onChange={(e) => updateCost(c.id, { label: e.target.value })}
-                  className="flex-1 bg-transparent px-2 py-1 text-sm outline-none"
+                  className="flex-1 bg-transparent px-2 py-1 text-sm text-white outline-none"
                 />
                 <input
                   type="number"
@@ -562,11 +574,11 @@ function FinancePanel() {
                   onChange={(e) =>
                     updateCost(c.id, { value: parseFloat(e.target.value) || 0 })
                   }
-                  className="w-28 rounded-lg bg-black/40 px-2 py-1 text-right text-sm outline-none focus:ring-1 focus:ring-fire"
+                  className="w-28 rounded-sm bg-black px-2 py-1 text-right text-sm text-white outline-none"
                 />
                 <button
                   onClick={() => removeCost(c.id)}
-                  className="text-muted-foreground transition hover:text-red-400"
+                  className="text-white/30 transition hover:text-red-400"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -574,18 +586,22 @@ function FinancePanel() {
             ))}
           </div>
           <div className="mt-4 flex justify-between border-t border-white/10 pt-3 text-sm">
-            <span className="text-muted-foreground">Total de custos</span>
-            <span className="font-display text-lg font-bold text-red-400">{brl(totalCost)}</span>
+            <span className="text-white/50">Total de custos</span>
+            <span className="font-display text-lg font-extrabold text-red-400">{brl(totalCost)}</span>
           </div>
         </div>
 
         {/* Sócios */}
-        <div className="rounded-2xl border border-white/5 bg-black/30 p-5">
+        <div className="border border-white/5 bg-black/40 p-5">
           <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
-              <PieChart className="h-4 w-4" /> Divisão do lucro
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+              <PieChart className="h-4 w-4" style={{ color: ORANGE }} /> Divisão do lucro
             </div>
-            <button onClick={addPartner} className="btn-ghost-fire text-xs">
+            <button
+              onClick={addPartner}
+              className="inline-flex items-center gap-1 rounded-sm px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-black transition hover:brightness-110"
+              style={{ backgroundColor: ORANGE }}
+            >
               <Plus className="h-3 w-3" /> Sócio
             </button>
           </div>
@@ -595,13 +611,13 @@ function FinancePanel() {
               return (
                 <div
                   key={p.id}
-                  className="rounded-xl border border-white/10 bg-black/30 p-3 transition hover:border-gold/30"
+                  className="border border-white/10 bg-black/40 p-3 transition hover:border-[color:var(--orange)]"
                 >
                   <div className="flex items-center gap-2">
                     <input
                       value={p.name}
                       onChange={(e) => updatePartner(p.id, { name: e.target.value })}
-                      className="flex-1 bg-transparent px-1 text-sm font-medium outline-none"
+                      className="flex-1 bg-transparent px-1 text-sm font-medium text-white outline-none"
                     />
                     <input
                       type="number"
@@ -609,21 +625,21 @@ function FinancePanel() {
                       onChange={(e) =>
                         updatePartner(p.id, { percent: parseFloat(e.target.value) || 0 })
                       }
-                      className="w-16 rounded-lg bg-black/40 px-2 py-1 text-right text-sm outline-none focus:ring-1 focus:ring-fire"
+                      className="w-16 rounded-sm bg-black px-2 py-1 text-right text-sm text-white outline-none"
                     />
-                    <span className="text-xs text-muted-foreground">%</span>
+                    <span className="text-xs text-white/40">%</span>
                     <button
                       onClick={() => removePartner(p.id)}
-                      className="text-muted-foreground transition hover:text-red-400"
+                      className="text-white/30 transition hover:text-red-400"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
                   <div className="mt-2 flex items-center justify-between">
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
+                    <div className="h-1.5 flex-1 overflow-hidden bg-white/5">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-fire to-gold transition-all duration-700"
-                        style={{ width: `${Math.min(100, p.percent)}%` }}
+                        className="h-full transition-all duration-700"
+                        style={{ width: `${Math.min(100, p.percent)}%`, backgroundColor: ORANGE }}
                       />
                     </div>
                     <span
@@ -639,9 +655,9 @@ function FinancePanel() {
             })}
           </div>
           <div className="mt-4 flex justify-between border-t border-white/10 pt-3 text-sm">
-            <span className="text-muted-foreground">Total distribuído</span>
+            <span className="text-white/50">Total distribuído</span>
             <span
-              className={`font-display text-lg font-bold ${
+              className={`font-display text-lg font-extrabold ${
                 totalPercent === 100 ? "text-emerald-400" : "text-yellow-400"
               }`}
             >
@@ -658,5 +674,3 @@ function FinancePanel() {
     </section>
   );
 }
-
-/* keep unused imports referenced to avoid tree-shake surprises */
