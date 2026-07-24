@@ -2,9 +2,10 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft, ArrowRight, BookOpen, Check, Flame, Grid3x3, Lightbulb, ListChecks,
-  MessageCircle, Play, Quote, Sparkles, X, Rocket,
+  MessageCircle, Play, Quote, Sparkles, X, Rocket, Store, Check as CheckIcon,
 } from "lucide-react";
 import type { Ebook, EbookSlide } from "@/lib/ebook-ai.functions";
+import { addToLibrary, isInLibrary, type LibraryEbook } from "@/lib/ebook-library";
 
 export const Route = createFileRoute("/app/ebooks/gerado/$id")({
   head: () => ({ meta: [{ title: "Ebook gerado por IA — Espetinho na Veia" }] }),
