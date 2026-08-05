@@ -267,7 +267,7 @@ export const achievements = [
 ];
 
 export const supportQuestions = [
-  { q: "Qual carne é melhor para começar?", a: "Alcatra e coxão mole têm ótimo custo-benefício e agradam a maioria dos clientes. Comece com uma dessas para reduzir desperdício." },
+  { q: "Envie o link do painel administrativo, por favor.", a: "Você pode acessar o painel administrativo clicando em 'Painel Admin' no menu lateral ou acessando diretamente /app/admin." },
   { q: "Como calcular o preço do espetinho?", a: "Some custo da carne + tempero + palito + embalagem. Multiplique por 3 para obter uma margem saudável de ~200%." },
   { q: "Quanto preciso investir?", a: "Com R$ 800 a R$ 1.500 você monta uma operação inicial com churrasqueira, carnes, temperos, embalagens e divulgação básica." },
   { q: "Como conservar as carnes?", a: "Mantenha entre 0°C e 4°C, sempre em recipientes fechados. Temperos com sal só nas últimas 2 horas antes de assar." },
