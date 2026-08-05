@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { Flame, Send } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { supportQuestions } from "@/lib/platform-data";
+import { supabase } from "@/integrations/supabase/client";
+import { useProfile } from "@/hooks/use-queries";
 
 export const Route = createFileRoute("/app/suporte")({
   head: () => ({ meta: [{ title: "Suporte — Espetinho na Veia" }] }),
@@ -12,6 +14,7 @@ export const Route = createFileRoute("/app/suporte")({
 type Msg = { role: "user" | "ai"; text: string };
 
 function SupportPage() {
+  const { data: profile } = useProfile();
   const [messages, setMessages] = useState<Msg[]>([
     { role: "ai", text: "Oi! Eu sou a Brasa, sua assistente da plataforma. Como posso te ajudar hoje?" },
   ]);
@@ -23,13 +26,26 @@ function SupportPage() {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing]);
 
-  const send = (text: string) => {
+  const send = async (text: string) => {
     if (!text.trim()) return;
+    
     setMessages((m) => [...m, { role: "user", text }]);
     setInput("");
     setTyping(true);
+
+    // Salva no Supabase se o usuário estiver logado
+    if (profile) {
+      await supabase.from("support_tickets").insert({
+        user_id: profile.id,
+        subject: "Chat com Brasa",
+        message: text,
+        status: "open"
+      });
+    }
+
     const match = supportQuestions.find((q) => q.q.toLowerCase() === text.toLowerCase());
     const answer = match?.a ?? "Boa pergunta! Nossa equipe vai te responder por aqui em breve. Enquanto isso, veja se uma das dúvidas frequentes ao lado ajuda.";
+    
     setTimeout(() => {
       setMessages((m) => [...m, { role: "ai", text: answer }]);
       setTyping(false);
