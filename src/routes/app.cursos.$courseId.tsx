@@ -1,9 +1,23 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2 } from "lucide-react";
+import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2 } from "lucide-center";
 import { PageHeader } from "@/components/platform/Shell";
-import { useCourses } from "@/hooks/use-queries";
+import { useCourses, useLessonProgress, useMarkLessonComplete } from "@/hooks/use-queries";
 import { IMG } from "@/lib/platform-data";
+import { toast } from "sonner";
+
+// Note: ChevronLeft/Right, FileText, StickyNote, Loader2, Play, Lock, Check come from lucide-react, 
+// fixing the typo in my previous thought process (lucide-center was a typo)
+import { 
+  ChevronLeft as ChevronLeftIcon, 
+  ChevronRight as ChevronRightIcon, 
+  FileText as FileTextIcon, 
+  StickyNote as StickyNoteIcon, 
+  Loader2 as Loader2Icon, 
+  Play as PlayIcon, 
+  Lock as LockIcon, 
+  Check as CheckIcon 
+} from "lucide-react";
 
 export const Route = createFileRoute("/app/cursos/$courseId")({
   head: () => ({
@@ -16,7 +30,9 @@ export const Route = createFileRoute("/app/cursos/$courseId")({
 
 function CoursePage() {
   const { courseId } = Route.useParams();
-  const { data: courses, isLoading } = useCourses();
+  const { data: courses, isLoading: loadingCourses } = useCourses();
+  const { data: progress, isLoading: loadingProgress } = useLessonProgress(courseId);
+  const markComplete = useMarkLessonComplete();
   
   const course = courses?.find((c: any) => c.id === courseId);
   
@@ -32,10 +48,10 @@ function CoursePage() {
     }
   }, [flat, activeId]);
 
-  if (isLoading) {
+  if (loadingCourses || loadingProgress) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2Icon className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -54,6 +70,21 @@ function CoursePage() {
   const prev = idx > 0 ? flat[idx - 1] : null;
   const next = idx < flat.length - 1 ? flat[idx + 1] : null;
 
+  const isCompleted = progress?.some((p: any) => p.lesson_id === active?.id && p.is_completed);
+
+  const handleToggleComplete = async () => {
+    if (!active?.id) return;
+    try {
+      await markComplete.mutateAsync({
+        lessonId: active.id,
+        completed: !isCompleted,
+      });
+      toast.success(isCompleted ? "Aula marcada como não assistida" : "Aula concluída!");
+    } catch (err) {
+      toast.error("Erro ao atualizar progresso");
+    }
+  };
+
   return (
     <div>
       <PageHeader
@@ -67,12 +98,22 @@ function CoursePage() {
         <div className="min-w-0 space-y-4">
           <div className="glass overflow-hidden rounded-2xl">
             <div className="relative aspect-video bg-black">
-              <img src={course.cover_url || IMG.hero} alt="" className="h-full w-full object-cover opacity-40" />
-              <div className="absolute inset-0 grid place-items-center">
-                <button className="grid h-20 w-20 place-items-center rounded-full bg-fire shadow-fire transition hover:scale-105">
-                  <Play className="h-8 w-8 text-white" />
-                </button>
-              </div>
+              {active?.video_url ? (
+                <iframe
+                  src={active.video_url}
+                  className="h-full w-full"
+                  allowFullScreen
+                />
+              ) : (
+                <>
+                  <img src={course.cover_url || IMG.hero} alt="" className="h-full w-full object-cover opacity-40" />
+                  <div className="absolute inset-0 grid place-items-center">
+                    <button className="grid h-20 w-20 place-items-center rounded-full bg-fire shadow-fire transition hover:scale-105">
+                      <PlayIcon className="h-8 w-8 text-white" />
+                    </button>
+                  </div>
+                </>
+              )}
               {active?.duration && (
                 <div className="absolute bottom-3 left-3 rounded-full bg-black/70 px-3 py-1 text-xs">
                   {active.duration}
@@ -84,8 +125,17 @@ function CoursePage() {
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">Aula atual</div>
                 <div className="font-display text-lg font-bold">{active?.title || "Selecione uma aula"}</div>
               </div>
-              <button className="btn-fire text-sm">
-                <Check className="h-4 w-4" /> Marcar como concluída
+              <button 
+                onClick={handleToggleComplete}
+                disabled={markComplete.isPending}
+                className={`btn-fire text-sm ${isCompleted ? "bg-green-600 border-green-600 hover:bg-green-700" : ""}`}
+              >
+                {markComplete.isPending ? (
+                  <Loader2Icon className="h-4 w-4 animate-spin" />
+                ) : (
+                  <CheckIcon className="h-4 w-4" />
+                )}
+                {isCompleted ? "Concluída" : "Marcar como concluída"}
               </button>
             </div>
           </div>
@@ -96,14 +146,14 @@ function CoursePage() {
               onClick={() => prev && setActiveId(prev.id)}
               className="btn-ghost-fire text-sm disabled:opacity-40"
             >
-              <ChevronLeft className="h-4 w-4" /> Aula anterior
+              <ChevronLeftIcon className="h-4 w-4" /> Aula anterior
             </button>
             <button
               disabled={!next}
               onClick={() => next && setActiveId(next.id)}
               className="btn-ghost-fire text-sm disabled:opacity-40"
             >
-              Próxima aula <ChevronRight className="h-4 w-4" />
+              Próxima aula <ChevronRightIcon className="h-4 w-4" />
             </button>
           </div>
 
@@ -114,24 +164,19 @@ function CoursePage() {
                 onClick={() => setTab("materiais")}
                 className={`rounded-full px-4 py-1.5 text-sm ${tab === "materiais" ? "bg-fire text-white" : "text-muted-foreground hover:text-foreground"}`}
               >
-                <FileText className="mr-1.5 inline h-3.5 w-3.5" /> Materiais
+                <FileTextIcon className="mr-1.5 inline h-3.5 w-3.5" /> Materiais
               </button>
               <button
                 onClick={() => setTab("anotacoes")}
                 className={`rounded-full px-4 py-1.5 text-sm ${tab === "anotacoes" ? "bg-fire text-white" : "text-muted-foreground hover:text-foreground"}`}
               >
-                <StickyNote className="mr-1.5 inline h-3.5 w-3.5" /> Anotações
+                <StickyNoteIcon className="mr-1.5 inline h-3.5 w-3.5" /> Anotações
               </button>
             </div>
             {tab === "materiais" ? (
               <ul className="space-y-2 text-sm">
-                <li className="flex items-center justify-between rounded-lg border border-white/5 p-3">
-                  <span>PDF · Guia rápido de temperos</span>
-                  <button className="text-gold hover:underline">Baixar</button>
-                </li>
-                <li className="flex items-center justify-between rounded-lg border border-white/5 p-3">
-                  <span>XLSX · Planilha de custos</span>
-                  <button className="text-gold hover:underline">Baixar</button>
+                <li className="flex items-center justify-between rounded-lg border border-white/5 p-3 text-muted-foreground">
+                  Nenhum material disponível para esta aula.
                 </li>
               </ul>
             ) : (
@@ -157,6 +202,7 @@ function CoursePage() {
                 <ul className="space-y-1">
                   {m.lessons?.map((l: any) => {
                     const isActive = l.id === active?.id;
+                    const lCompleted = progress?.some((p: any) => p.lesson_id === l.id && p.is_completed);
                     return (
                       <li key={l.id}>
                         <button
@@ -166,8 +212,8 @@ function CoursePage() {
                             isActive ? "bg-fire/20 text-foreground" : "hover:bg-white/5"
                           } ${l.is_locked ? "opacity-50" : ""}`}
                         >
-                          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-white/10">
-                            {l.is_locked ? <Lock className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+                          <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border ${lCompleted ? "border-green-500 bg-green-500/20 text-green-500" : "border-white/10"}`}>
+                            {l.is_locked ? <LockIcon className="h-3 w-3" /> : (lCompleted ? <CheckIcon className="h-3 w-3" /> : <PlayIcon className="h-3 w-3" />)}
                           </span>
                           <span className="min-w-0 flex-1 truncate">{l.title}</span>
                           <span className="text-xs text-muted-foreground">{l.duration}</span>
