@@ -72,7 +72,7 @@ export const useRecipes = () => {
   });
 };
 
-export const useLessonProgress = (courseId: string) => {
+export const useLessonProgress = (courseId?: string) => {
   return useQuery({
     queryKey: ["lesson_progress", courseId],
     queryFn: async () => {
@@ -81,13 +81,13 @@ export const useLessonProgress = (courseId: string) => {
       
       const { data, error } = await supabase
         .from("lesson_progress")
-        .select("lesson_id, completed")
+        .select("lesson_id, is_completed")
         .eq("user_id", user.id);
         
       if (error) throw error;
-      return data;
+      return data || [];
     },
-    enabled: !!courseId,
+    enabled: true,
   });
 };
 
@@ -104,7 +104,7 @@ export const useMarkLessonComplete = () => {
         .upsert({
           user_id: user.id,
           lesson_id: lessonId,
-          completed,
+          is_completed: completed,
           updated_at: new Date().toISOString(),
         }, {
           onConflict: "user_id,lesson_id"
@@ -112,7 +112,7 @@ export const useMarkLessonComplete = () => {
         
       if (error) throw error;
     },
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lesson_progress"] });
     },
   });
