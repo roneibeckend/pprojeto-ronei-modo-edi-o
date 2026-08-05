@@ -284,7 +284,7 @@ function AdminStat({
 
 /* ---------------- Chart ---------------- */
 
-function ChartCard() {
+function ChartCard({ chart }: { chart: number[] }) {
   const { ref, inView } = useInView<HTMLElement>(0.1);
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -293,7 +293,7 @@ function ChartCard() {
   }, []);
   const show = inView || ready;
 
-  const max = Math.max(...adminStats.chart);
+  const max = Math.max(...chart, 1);
   return (
     <section
       ref={ref}
@@ -317,9 +317,9 @@ function ChartCard() {
         </select>
       </div>
       <div className="relative flex h-56 items-end gap-2">
-        {adminStats.chart.map((v: number, i: number) => {
+        {chart.map((v: number, i: number) => {
           const h = Math.round((v / max) * 190);
-          const isPeak = v === max;
+          const isPeak = v > 0 && v === Math.max(...chart);
           return (
             <div key={i} className="group flex flex-1 flex-col items-center gap-2">
               <div className="relative w-full flex justify-center">
