@@ -10,12 +10,24 @@ export const useProfile = () => {
       
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select(`
+          *,
+          roles:user_roles (role)
+        `)
         .eq("id", user.id)
         .single();
         
       if (error) throw error;
-      return data;
+      
+      // Mapeia o role para facilitar o uso no frontend
+      const roles = (data as any).roles || [];
+      const isAdmin = roles.some((r: any) => r.role === 'admin');
+      
+      return {
+        ...data,
+        isAdmin,
+        displayRole: isAdmin ? "Administrador" : "Aluno ativo"
+      };
     },
   });
 };
