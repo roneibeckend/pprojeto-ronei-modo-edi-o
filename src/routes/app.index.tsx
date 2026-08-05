@@ -59,7 +59,7 @@ function Dashboard() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard icon={TrendingUp} label="Progresso geral" value="0%" accent />
         <StatCard icon={Play} label="Aulas assistidas" value="0" />
-        <StatCard icon={BookOpen} label="Materiais disponíveis" value="8" />
+        <StatCard icon={BookOpen} label="Materiais disponíveis" value="0" />
         <StatCard icon={Award} label="Sequência" value="0 dias" />
       </div>
 
