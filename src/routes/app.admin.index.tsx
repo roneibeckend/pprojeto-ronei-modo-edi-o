@@ -28,7 +28,15 @@ import {
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { adminStats } from "@/lib/platform-data";
+const adminStats = {
+  students: 0,
+  activeCourses: 0,
+  ebooks: 0,
+  lessonsWatched: 0,
+  avgCompletion: 0,
+  activeRecent: 0,
+  chart: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+};
 
 export const Route = createFileRoute("/app/admin/")({
   head: () => ({ meta: [{ title: "Admin — Espetinho na Veia" }] }),
@@ -116,14 +124,14 @@ function AdminPage() {
 
       {/* Secondary KPIs */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <AdminStat icon={Users} label="Alunos" value={adminStats.students} format="int" delay={0} />
-        <AdminStat icon={GraduationCap} label="Cursos ativos" value={adminStats.activeCourses} format="int" delay={60} />
-        <AdminStat icon={BookOpen} label="E-books" value={adminStats.ebooks} format="int" delay={120} />
-        <AdminStat icon={Play} label="Aulas assistidas" value={adminStats.lessonsWatched} format="int" delay={180} />
-        <AdminStat icon={TrendingUp} label="Conclusão média" value={adminStats.avgCompletion} suffix="%" delay={240} accent />
-        <AdminStat icon={Activity} label="Ativos recentemente" value={adminStats.activeRecent} format="int" delay={300} />
-        <AdminStat icon={Award} label="Certificados" value={1284} format="int" delay={360} />
-        <AdminStat icon={TrendingUp} label="Faturamento" value={137240} format="brl" delay={420} accent />
+        <AdminStat icon={Users} label="Alunos" value={0} format="int" delay={0} />
+        <AdminStat icon={GraduationCap} label="Cursos ativos" value={0} format="int" delay={60} />
+        <AdminStat icon={BookOpen} label="E-books" value={0} format="int" delay={120} />
+        <AdminStat icon={Play} label="Aulas assistidas" value={0} format="int" delay={180} />
+        <AdminStat icon={TrendingUp} label="Conclusão média" value={0} suffix="%" delay={240} accent />
+        <AdminStat icon={Activity} label="Ativos recentemente" value={0} format="int" delay={300} />
+        <AdminStat icon={Award} label="Certificados" value={0} format="int" delay={360} />
+        <AdminStat icon={TrendingUp} label="Faturamento" value={0} format="brl" delay={420} accent />
       </div>
 
       {/* Chart */}
@@ -165,9 +173,9 @@ function AdminPage() {
 /* ---------------- Hero KPIs ---------------- */
 
 function HeroKpis() {
-  const revenue = useCountUp(137240);
-  const students = useCountUp(adminStats.students);
-  const active = useCountUp(adminStats.activeRecent);
+  const revenue = useCountUp(0);
+  const students = useCountUp(0);
+  const active = useCountUp(0);
 
   const items = [
     { label: "Faturamento total", value: brl(revenue), delta: "+12%", up: true, icon: DollarSign },
@@ -305,7 +313,7 @@ function ChartCard() {
         </select>
       </div>
       <div className="relative flex h-56 items-end gap-2">
-        {adminStats.chart.map((v, i) => {
+        {adminStats.chart.map((v: number, i: number) => {
           const h = Math.round((v / max) * 190);
           const isPeak = v === max;
           return (

@@ -3,7 +3,7 @@ import { Play, BookOpen, TrendingUp, Award, ArrowRight, Flame, Loader2 } from "l
 import { CoverImage } from "@/components/platform/CoverImage";
 import { PageHeader } from "@/components/platform/Shell";
 import { useProfile, useCourses } from "@/hooks/use-queries";
-import { IMG } from "@/lib/platform-data";
+
 
 export const Route = createFileRoute("/app/")({
   head: () => ({
@@ -35,8 +35,8 @@ function Dashboard() {
       />
 
       {/* Banner */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/10">
-        <img src={IMG.hero} alt="Espetinhos na brasa" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-card/50 aspect-[21/9] sm:aspect-[3/1]">
+        <CoverImage src={null} alt="Espetinhos na brasa" className="absolute inset-0 h-full w-full" />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/20" />
         <div className="relative grid gap-6 p-8 sm:p-12 lg:grid-cols-[1.2fr_1fr]">
           <div>

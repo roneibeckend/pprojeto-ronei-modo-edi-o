@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { certificates, student } from "@/lib/platform-data";
+const certificates: any[] = [];
+const student = { name: "Aluno" };
 import { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -39,10 +40,10 @@ export const Route = createFileRoute("/app/certificados")({
 const BRAND = "#ff6a00";
 
 function CertificatesPage() {
-  const [preview, setPreview] = useState<{ cert: typeof certificates[number]; autoDownload?: boolean } | null>(null);
-  const unlockedCount = certificates.filter((c) => c.unlocked).length;
-  const totalHours = certificates.filter((c) => c.unlocked).reduce((s, c) => s + c.hours, 0);
-  const nextCert = certificates.find((c) => !c.unlocked);
+  const [preview, setPreview] = useState<{ cert: any; autoDownload?: boolean } | null>(null);
+  const unlockedCount = certificates.filter((c: any) => c.unlocked).length;
+  const totalHours = certificates.filter((c: any) => c.unlocked).reduce((s: number, c: any) => s + c.hours, 0);
+  const nextCert = certificates.find((c: any) => !c.unlocked);
 
   return (
     <div>
@@ -57,7 +58,7 @@ function CertificatesPage() {
 
       {/* Grid */}
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {certificates.map((c) => (
+        {certificates.map((c: any) => (
           <CertCard
             key={c.id}
             cert={c}
@@ -99,7 +100,7 @@ function StatCard({ icon, label, value, accent, small }: { icon: React.ReactNode
 
 /* -------------------- CARD -------------------- */
 
-function CertCard({ cert, onPreview, onDownload }: { cert: typeof certificates[number]; onPreview: () => void; onDownload: () => void }) {
+function CertCard({ cert, onPreview, onDownload }: { cert: any; onPreview: () => void; onDownload: () => void }) {
   const locked = !cert.unlocked;
   return (
     <article
@@ -177,7 +178,7 @@ function CertCard({ cert, onPreview, onDownload }: { cert: typeof certificates[n
 
 /* -------------------- MINI THUMBNAIL -------------------- */
 
-function MiniCertificate({ cert, locked }: { cert: typeof certificates[number]; locked: boolean }) {
+function MiniCertificate({ cert, locked }: { cert: any; locked: boolean }) {
   return (
     <div className="relative h-full w-full bg-[#f5efe4]">
       {/* Guilloché pattern */}
@@ -234,7 +235,7 @@ function CornerOrnament({ className = "" }: { className?: string }) {
 
 /* -------------------- FULL MODAL -------------------- */
 
-function CertificateModal({ cert, onClose, autoDownload }: { cert: typeof certificates[number]; onClose: () => void; autoDownload?: boolean }) {
+function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose: () => void; autoDownload?: boolean }) {
   const certRef = useRef<HTMLDivElement | null>(null);
   const [downloading, setDownloading] = useState(false);
 
@@ -300,7 +301,7 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: typeof certif
   );
 }
 
-function FullCertificate({ cert }: { cert: typeof certificates[number] }) {
+function FullCertificate({ cert }: { cert: any }) {
   const verifyUrl = `verifica.espetinhonaveia.com/${cert.code ?? "—"}`;
   return (
     <div className="relative overflow-hidden bg-[#f5efe4] text-[#1a1207] shadow-2xl">

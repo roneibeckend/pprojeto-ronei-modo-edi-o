@@ -45,7 +45,7 @@ function SupportPage() {
       setInput("");
       setIsTyping(true);
 
-      const match = supportQuestions.find((q) => q.q.toLowerCase() === text.toLowerCase());
+      const match = supportQuestions.find((q: any) => q.q.toLowerCase() === text.toLowerCase());
       const answer = match?.a ?? "Boa pergunta! Nossa equipe vai te responder por aqui em breve. Enquanto isso, veja se uma das dúvidas frequentes ao lado ajuda.";
       
       setTimeout(async () => {
