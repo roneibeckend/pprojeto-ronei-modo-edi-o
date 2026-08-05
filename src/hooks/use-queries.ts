@@ -123,7 +123,6 @@ export const useSendMessage = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
       
-      // 1. Get or create open ticket
       let { data: ticket, error: ticketError } = await supabase
         .from("support_tickets")
         .select("id")
@@ -148,7 +147,6 @@ export const useSendMessage = () => {
         ticket = newTicket;
       }
       
-      // 2. Insert message
       const { error: msgError } = await supabase
         .from("support_messages")
         .insert({
@@ -190,4 +188,28 @@ export const useSendAIMessage = () => {
 };
 
 export const useMarkLessonComplete = () => {
-...
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ lessonId, completed }: { lessonId: string; completed: boolean }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+      
+      const { error } = await supabase
+        .from("lesson_progress")
+        .upsert({
+          user_id: user.id,
+          lesson_id: lessonId,
+          is_completed: completed,
+          updated_at: new Date().toISOString(),
+        }, {
+          onConflict: "user_id,lesson_id"
+        });
+        
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lesson_progress"] });
+    },
+  });
+};
