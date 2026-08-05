@@ -41,9 +41,9 @@ const BRAND = "#ff6a00";
 
 function CertificatesPage() {
   const [preview, setPreview] = useState<{ cert: any; autoDownload?: boolean } | null>(null);
-  const unlockedCount = certificates.filter((c) => c.unlocked).length;
-  const totalHours = certificates.filter((c) => c.unlocked).reduce((s, c) => s + c.hours, 0);
-  const nextCert = certificates.find((c) => !c.unlocked);
+  const unlockedCount = certificates.filter((c: any) => c.unlocked).length;
+  const totalHours = certificates.filter((c: any) => c.unlocked).reduce((s: number, c: any) => s + c.hours, 0);
+  const nextCert = certificates.find((c: any) => !c.unlocked);
 
   return (
     <div>
@@ -58,7 +58,7 @@ function CertificatesPage() {
 
       {/* Grid */}
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {certificates.map((c) => (
+        {certificates.map((c: any) => (
           <CertCard
             key={c.id}
             cert={c}
