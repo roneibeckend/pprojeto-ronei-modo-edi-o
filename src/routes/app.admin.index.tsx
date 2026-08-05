@@ -313,7 +313,7 @@ function ChartCard() {
         </select>
       </div>
       <div className="relative flex h-56 items-end gap-2">
-        {adminStats.chart.map((v, i) => {
+        {adminStats.chart.map((v: number, i: number) => {
           const h = Math.round((v / max) * 190);
           const isPeak = v === max;
           return (
