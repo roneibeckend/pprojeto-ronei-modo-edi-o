@@ -210,3 +210,61 @@ export const useMarkLessonComplete = () => {
     },
   });
 };
+
+export const useAdminStats = () => {
+  return useQuery({
+    queryKey: ["admin_stats"],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Não autenticado");
+
+      // Verificar se o usuário é admin via RPC
+      const { data: isAdmin } = await supabase.rpc('has_role', { 
+        _user_id: user.id, 
+        _role: 'admin' 
+      });
+
+      if (!isAdmin) throw new Error("Acesso negado");
+
+      const [
+        { count: students },
+        { count: admins },
+        { count: courses },
+        { count: modules },
+        { count: lessons },
+        { count: ebooks },
+        { count: recipes },
+        { count: enrollments },
+        { count: progress },
+        { count: tickets },
+        { count: messages }
+      ] = await Promise.all([
+        supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "student"),
+        supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "admin"),
+        supabase.from("courses").select("*", { count: "exact", head: true }),
+        supabase.from("modules").select("*", { count: "exact", head: true }),
+        supabase.from("lessons").select("*", { count: "exact", head: true }),
+        supabase.from("ebooks").select("*", { count: "exact", head: true }),
+        supabase.from("recipes").select("*", { count: "exact", head: true }),
+        supabase.from("course_enrollments").select("*", { count: "exact", head: true }),
+        supabase.from("lesson_progress").select("*", { count: "exact", head: true }),
+        supabase.from("support_tickets").select("*", { count: "exact", head: true }),
+        supabase.from("support_messages").select("*", { count: "exact", head: true })
+      ]);
+
+      return {
+        students: students || 0,
+        admins: admins || 0,
+        courses: courses || 0,
+        modules: modules || 0,
+        lessons: lessons || 0,
+        ebooks: ebooks || 0,
+        recipes: recipes || 0,
+        enrollments: enrollments || 0,
+        progress: progress || 0,
+        tickets: tickets || 0,
+        messages: messages || 0
+      };
+    }
+  });
+};
