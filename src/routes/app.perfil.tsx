@@ -69,7 +69,7 @@ function ProfilePage() {
         <section className="glass rounded-2xl p-6 text-center">
           <img 
             src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profile?.name || 'User'}&backgroundColor=e11d48`} 
-            alt={profile?.name} 
+            alt={profile?.name || "avatar"} 
             className="mx-auto h-28 w-28 rounded-full ring-4 ring-primary/30" 
           />
           <h3 className="mt-4 font-display text-2xl font-bold">{profile?.name || "Usuário"}</h3>
