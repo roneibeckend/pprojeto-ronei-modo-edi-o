@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
-import { Route as SetupAdminRouteImport } from './routes/setup-admin'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
 import { Route as LoginRouteImport } from './routes/login'
@@ -38,11 +37,6 @@ import { Route as AppEbooksGeradoIdRouteImport } from './routes/app.ebooks.gerad
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   id: '/termos-de-uso',
   path: '/termos-de-uso',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SetupAdminRoute = SetupAdminRouteImport.update({
-  id: '/setup-admin',
-  path: '/setup-admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
@@ -167,7 +161,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
-  '/setup-admin': typeof SetupAdminRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/admin': typeof AppAdminRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
@@ -193,7 +186,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
-  '/setup-admin': typeof SetupAdminRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/admin': typeof AppAdminRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
@@ -219,7 +211,6 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
-  '/setup-admin': typeof SetupAdminRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/admin': typeof AppAdminRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
@@ -248,7 +239,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
-    | '/setup-admin'
     | '/termos-de-uso'
     | '/app/admin'
     | '/app/certificados'
@@ -274,7 +264,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
-    | '/setup-admin'
     | '/termos-de-uso'
     | '/app/admin'
     | '/app/certificados'
@@ -299,7 +288,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
-    | '/setup-admin'
     | '/termos-de-uso'
     | '/app/admin'
     | '/app/certificados'
@@ -327,7 +315,6 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
-  SetupAdminRoute: typeof SetupAdminRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
 }
 
@@ -338,13 +325,6 @@ declare module '@tanstack/react-router' {
       path: '/termos-de-uso'
       fullPath: '/termos-de-uso'
       preLoaderRoute: typeof TermosDeUsoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/setup-admin': {
-      id: '/setup-admin'
-      path: '/setup-admin'
-      fullPath: '/setup-admin'
-      preLoaderRoute: typeof SetupAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/politica-de-privacidade': {
@@ -591,7 +571,6 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
-  SetupAdminRoute: SetupAdminRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
 }
 export const routeTree = rootRouteImport
