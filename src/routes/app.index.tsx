@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Play, BookOpen, TrendingUp, Award, ArrowRight, Flame } from "lucide-react";
+import { Play, BookOpen, TrendingUp, Award, ArrowRight, Flame, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { student, courses, IMG } from "@/lib/platform-data";
+import { useProfile, useCourses } from "@/hooks/use-queries";
+import { IMG } from "@/lib/platform-data";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({
@@ -11,11 +12,24 @@ export const Route = createFileRoute("/app/")({
 });
 
 function Dashboard() {
-  const last = courses.find((c) => c.id === student.lastLesson.courseId)!;
+  const { data: profile, isLoading: loadingProfile } = useProfile();
+  const { data: courses, isLoading: loadingCourses } = useCourses();
+
+  if (loadingProfile || loadingCourses) {
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const firstName = profile?.name ? profile.name.split(" ")[0] : "Aluno";
+  const featuredCourse = courses?.[0];
+
   return (
     <div className="space-y-8">
       <PageHeader
-        title={`Olá, ${student.name.split(" ")[0]}! Pronto para continuar aprendendo?`}
+        title={`Olá, ${firstName}! Pronto para continuar aprendendo?`}
         subtitle="Sua jornada rumo aos 10k por mês vendendo espetinhos."
       />
 
@@ -31,67 +45,46 @@ function Dashboard() {
             <h2 className="mt-4 font-display text-2xl font-bold leading-tight text-white sm:text-4xl">
               Seu negócio pode começar com uma churrasqueira, bons espetinhos e o <span className="text-gradient-fire">conhecimento certo</span>.
             </h2>
-            <Link to="/app/cursos/$courseId" params={{ courseId: last.id }} className="btn-fire mt-6 inline-flex">
-              <Play className="h-4 w-4" /> Continuar assistindo
-            </Link>
+            {featuredCourse && (
+              <Link to="/app/cursos/$courseId" params={{ courseId: featuredCourse.id }} className="btn-fire mt-6 inline-flex">
+                <Play className="h-4 w-4" /> Começar curso agora
+              </Link>
+            )}
           </div>
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={TrendingUp} label="Progresso geral" value={`${student.totalProgress}%`} accent />
-        <StatCard icon={Play} label="Aulas assistidas" value={String(student.lessonsWatched)} />
-        <StatCard icon={BookOpen} label="Materiais disponíveis" value={String(student.materials)} />
-        <StatCard icon={Award} label="Sequência" value={`${student.streak} dias`} />
+        <StatCard icon={TrendingUp} label="Progresso geral" value="0%" accent />
+        <StatCard icon={Play} label="Aulas assistidas" value="0" />
+        <StatCard icon={BookOpen} label="Materiais disponíveis" value="8" />
+        <StatCard icon={Award} label="Sequência" value="0 dias" />
       </div>
 
-      {/* Continue where you left off */}
+      {/* Recommended */}
       <section>
-        <h3 className="mb-4 font-display text-xl font-bold">Continue de onde parou</h3>
-        <div className="glass overflow-hidden rounded-2xl">
-          <div className="grid gap-0 sm:grid-cols-[220px_1fr]">
-            <div className="relative aspect-video sm:aspect-auto">
-              <img src={last.cover} alt={last.title} className="h-full w-full object-cover" loading="lazy" />
-              <div className="absolute inset-0 grid place-items-center bg-black/40">
-                <div className="grid h-12 w-12 place-items-center rounded-full bg-fire shadow-fire">
-                  <Play className="h-5 w-5 text-white" />
+        <h3 className="mb-4 font-display text-xl font-bold">Cursos recomendados</h3>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {courses?.map((course: any) => (
+            <div key={course.id} className="glass overflow-hidden rounded-2xl group border border-white/5 hover:border-primary/30 transition-colors">
+              <div className="relative aspect-video">
+                <img src={course.cover_url || IMG.platter1} alt={course.title} className="h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity grid place-items-center">
+                   <div className="h-10 w-10 rounded-full bg-fire grid place-items-center shadow-fire">
+                     <Play className="h-4 w-4 text-white" />
+                   </div>
                 </div>
               </div>
-            </div>
-            <div className="p-5">
-              <div className="text-xs uppercase tracking-widest text-muted-foreground">{last.title}</div>
-              <div className="mt-1 font-display text-lg font-bold">{student.lastLesson.lessonTitle}</div>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full bg-fire" style={{ width: `${student.lastLesson.percent}%` }} />
+              <div className="p-4">
+                <h4 className="font-bold text-sm line-clamp-1">{course.title}</h4>
+                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{course.description}</p>
+                <Link to="/app/cursos/$courseId" params={{ courseId: course.id }} className="mt-4 text-xs font-bold text-primary flex items-center gap-1 hover:underline">
+                  Ver curso <ArrowRight className="h-3 w-3" />
+                </Link>
               </div>
-              <div className="mt-1 text-xs text-muted-foreground">{student.lastLesson.percent}% concluído</div>
-              <Link to="/app/cursos/$courseId" params={{ courseId: last.id }} className="btn-fire mt-4 inline-flex">
-                Retomar aula <ArrowRight className="h-4 w-4" />
-              </Link>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Next recommended */}
-      <section>
-        <h3 className="mb-4 font-display text-xl font-bold">Próximo passo recomendado</h3>
-        <div className="glass gradient-border rounded-2xl p-5">
-          <div className="flex items-start gap-4">
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-fire shadow-fire">
-              <Flame className="h-6 w-6 text-white" />
-            </div>
-            <div className="min-w-0">
-              <div className="font-display text-lg font-bold">Complete o Módulo 2 — Escolha e preparação das carnes</div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Faltam 2 aulas para você desbloquear o módulo de Montagem e Produção.
-              </p>
-              <Link to="/app/cursos/$courseId" params={{ courseId: "espetinho-lucrativo" }} className="btn-ghost-fire mt-4 inline-flex text-sm">
-                Ir para o módulo <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
     </div>

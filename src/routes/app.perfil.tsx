@@ -126,11 +126,11 @@ function ProfilePage() {
   );
 }
 
-function Field({ label, ...rest }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+function Field({ label, value, ...rest }: { label: string; value?: string } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value'>) {
   return (
     <label className="block">
       <span className="mb-1.5 block text-xs uppercase tracking-widest text-muted-foreground">{label}</span>
-      <input {...rest} className="w-full rounded-xl border border-white/10 bg-secondary/50 px-4 py-2.5 text-sm outline-none focus:border-primary" />
+      <input {...rest} value={value ?? ""} className="w-full rounded-xl border border-white/10 bg-secondary/50 px-4 py-2.5 text-sm outline-none focus:border-primary" />
     </label>
   );
 }
