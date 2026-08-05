@@ -11,6 +11,12 @@ export const Route = createFileRoute("/app/suporte")({
   component: SupportPage,
 });
 
+type MessageUI = {
+  role: "user" | "ai";
+  text: string;
+  id?: string;
+};
+
 function SupportPage() {
   const { data: profile } = useProfile();
   const { data: ticket, isLoading: loadingTicket } = useSupportTicket();
@@ -21,11 +27,11 @@ function SupportPage() {
   const [isTyping, setIsTyping] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
-  const messages = ticket?.messages?.map(m => ({
-    role: m.sender_type === "student" ? "user" : "ai",
+  const messages: MessageUI[] = ticket?.messages?.map(m => ({
+    role: m.sender_type === "student" ? "user" as const : "ai" as const,
     text: m.message,
     id: m.id
-  })) || [{ role: "ai", text: "Oi! Eu sou a Brasa, sua assistente da plataforma. Como posso te ajudar hoje?" }];
+  })) || [{ role: "ai" as const, text: "Oi! Eu sou a Brasa, sua assistente da plataforma. Como posso te ajudar hoje?" }];
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
