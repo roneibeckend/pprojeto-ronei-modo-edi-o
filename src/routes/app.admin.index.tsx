@@ -27,23 +27,7 @@ import {
 } from "lucide-react";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-
-const adminStats = {
-  students: 0,
-  activeCourses: 0,
-  ebooks: 0,
-  lessonsWatched: 0,
-  avgCompletion: 0,
-  activeRecent: 0,
-  chart: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-};
-
-export const Route = createFileRoute("/app/admin/")({
-  head: () => ({ meta: [{ title: "Admin — Espetinho na Veia" }] }),
-  component: AdminPage,
-});
-
-/* ---------------- Helpers ---------------- */
+import { useAdminStats } from "@/hooks/use-queries";
 
 const ORANGE = "#ff6a00";
 
@@ -85,6 +69,26 @@ const brl = (n: number) =>
 /* ---------------- Page ---------------- */
 
 function AdminPage() {
+  const { data: stats, isLoading, error } = useAdminStats();
+
+  if (isLoading) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-white/10 border-t-[color:var(--orange)]" style={{ ["--orange" as any]: ORANGE }} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-sm border border-red-500/30 bg-red-500/10 p-6 text-center">
+        <h2 className="text-lg font-bold text-red-400">Erro ao carregar dados</h2>
+        <p className="mt-1 text-sm text-white/50">{(error as Error).message}</p>
+      </div>
+    );
+  }
+
+  const chartData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -120,22 +124,22 @@ function AdminPage() {
       </header>
 
       {/* Hero KPIs */}
-      <HeroKpis />
+      <HeroKpis stats={stats} />
 
       {/* Secondary KPIs */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <AdminStat icon={Users} label="Alunos" value={0} format="int" delay={0} />
-        <AdminStat icon={GraduationCap} label="Cursos ativos" value={0} format="int" delay={60} />
-        <AdminStat icon={BookOpen} label="E-books" value={0} format="int" delay={120} />
-        <AdminStat icon={Play} label="Aulas assistidas" value={0} format="int" delay={180} />
+        <AdminStat icon={Users} label="Alunos" value={stats?.students || 0} format="int" delay={0} />
+        <AdminStat icon={GraduationCap} label="Cursos ativos" value={stats?.courses || 0} format="int" delay={60} />
+        <AdminStat icon={BookOpen} label="E-books" value={stats?.ebooks || 0} format="int" delay={120} />
+        <AdminStat icon={Play} label="Aulas assistidas" value={stats?.progress || 0} format="int" delay={180} />
         <AdminStat icon={TrendingUp} label="Conclusão média" value={0} suffix="%" delay={240} accent />
         <AdminStat icon={Activity} label="Ativos recentemente" value={0} format="int" delay={300} />
         <AdminStat icon={Award} label="Certificados" value={0} format="int" delay={360} />
-        <AdminStat icon={TrendingUp} label="Faturamento" value={0} format="brl" delay={420} accent />
+        <AdminStat icon={Users} label="Administradores" value={stats?.admins || 0} format="int" delay={420} accent />
       </div>
 
       {/* Chart */}
-      <ChartCard />
+      <ChartCard chart={chartData} />
 
       {/* Quick actions */}
       <section>
@@ -172,9 +176,9 @@ function AdminPage() {
 
 /* ---------------- Hero KPIs ---------------- */
 
-function HeroKpis() {
+function HeroKpis({ stats }: { stats: any }) {
   const revenue = useCountUp(0);
-  const students = useCountUp(0);
+  const students = useCountUp(stats?.students || 0);
   const active = useCountUp(0);
 
   const items = [
