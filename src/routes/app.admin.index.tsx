@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   Users,
   GraduationCap,
@@ -456,13 +456,11 @@ function AdminAction({
 /* ---------------- Students Table ---------------- */
 
 function StudentsTable() {
-  const rows = [
-    ["André Silva", "andre@exemplo.com", "Espetinho Lucrativo", 42],
-    ["Mariana Costa", "mari@exemplo.com", "Molhos e Acompanhamentos", 78],
-    ["Carlos Mendes", "carlos@exemplo.com", "Como Vender Mais", 15],
-    ["Fernanda Rocha", "fe@exemplo.com", "Gestão do Negócio", 60],
-    ["Tiago Almeida", "tiago@exemplo.com", "Espetinho Lucrativo", 92],
-  ] as const;
+  const { data: stats } = useAdminStats();
+  
+  // Como não temos alunos reais ainda, mostramos estado vazio
+  const rows = [] as any[];
+  
   return (
     <section className="overflow-hidden border border-white/5 bg-[#111]">
       <div className="flex items-center justify-between border-b border-white/5 p-6">
@@ -490,45 +488,53 @@ function StudentsTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {rows.map((r, i) => {
-              const initials = (r[0] as string)
-                .split(" ")
-                .map((p) => p[0])
-                .slice(0, 2)
-                .join("");
-              const pct = r[3] as number;
-              return (
-                <tr
-                  key={r[1] as string}
-                  className="group animate-fade-in transition hover:bg-white/[0.03]"
-                  style={{ animationDelay: `${i * 50}ms`, animationFillMode: "backwards" }}
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="grid h-9 w-9 place-items-center rounded-sm text-xs font-extrabold text-black" style={{ backgroundColor: ORANGE }}>
-                        {initials}
+            {rows.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="px-6 py-12 text-center text-white/20">
+                  Nenhum aluno cadastrado no momento.
+                </td>
+              </tr>
+            ) : (
+              rows.map((r, i) => {
+                const initials = (r[0] as string)
+                  .split(" ")
+                  .map((p) => p[0])
+                  .slice(0, 2)
+                  .join("");
+                const pct = r[3] as number;
+                return (
+                  <tr
+                    key={r[1] as string}
+                    className="group animate-fade-in transition hover:bg-white/[0.03]"
+                    style={{ animationDelay: `${i * 50}ms`, animationFillMode: "backwards" }}
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="grid h-9 w-9 place-items-center rounded-sm text-xs font-extrabold text-black" style={{ backgroundColor: ORANGE }}>
+                          {initials}
+                        </div>
+                        <span className="font-medium text-white">{r[0]}</span>
                       </div>
-                      <span className="font-medium text-white">{r[0]}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-white/50">{r[1]}</td>
-                  <td className="px-6 py-4 text-white/80">{r[2]}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-3">
-                      <div className="h-1.5 w-24 overflow-hidden bg-white/5">
-                        <div
-                          className="h-full transition-all duration-1000"
-                          style={{ width: `${pct}%`, backgroundColor: ORANGE }}
-                        />
+                    </td>
+                    <td className="px-6 py-4 text-white/50">{r[1]}</td>
+                    <td className="px-6 py-4 text-white/80">{r[2]}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-3">
+                        <div className="h-1.5 w-24 overflow-hidden bg-white/5">
+                          <div
+                            className="h-full transition-all duration-1000"
+                            style={{ width: `${pct}%`, backgroundColor: ORANGE }}
+                          />
+                        </div>
+                        <span className="w-10 text-right font-display font-extrabold" style={{ color: ORANGE }}>
+                          {pct}%
+                        </span>
                       </div>
-                      <span className="w-10 text-right font-display font-extrabold" style={{ color: ORANGE }}>
-                        {pct}%
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
@@ -542,19 +548,9 @@ type Cost = { id: string; label: string; value: number };
 type Partner = { id: string; name: string; percent: number };
 
 function FinancePanel() {
-  const [revenue, setRevenue] = useState<number>(137240);
-  const [costs, setCosts] = useState<Cost[]>([
-    { id: "c1", label: "Plataforma / hospedagem", value: 1200 },
-    { id: "c2", label: "Tráfego pago (ads)", value: 28000 },
-    { id: "c3", label: "Taxas de gateway", value: 8200 },
-    { id: "c4", label: "Produção de conteúdo", value: 6500 },
-    { id: "c5", label: "Suporte e equipe", value: 9800 },
-  ]);
-  const [partners, setPartners] = useState<Partner[]>([
-    { id: "p1", name: "Ronnei (Sócio fundador)", percent: 50 },
-    { id: "p2", name: "Sócio operacional", percent: 30 },
-    { id: "p3", name: "Sócio investidor", percent: 20 },
-  ]);
+  const [revenue, setRevenue] = useState<number>(0);
+  const [costs, setCosts] = useState<Cost[]>([]);
+  const [partners, setPartners] = useState<Partner[]>([]);
 
   const totalCost = useMemo(() => costs.reduce((s, c) => s + (c.value || 0), 0), [costs]);
   const profit = revenue - totalCost;
