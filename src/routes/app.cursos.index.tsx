@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Play, Lock, ShoppingCart, Sparkles, Loader2 } from "lucide-react";
+import { CoverImage } from "@/components/platform/CoverImage";
 import { PageHeader } from "@/components/platform/Shell";
 import { useCourses } from "@/hooks/use-queries";
 
@@ -43,7 +44,7 @@ function CoursesPage() {
             {owned.map((c: any) => (
               <article key={c.id} className="glass card-tilt overflow-hidden rounded-2xl">
                 <div className="relative aspect-video">
-                  <img src={c.cover_url || "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80"} alt={c.title} className="h-full w-full object-cover" loading="lazy" />
+                  <CoverImage src={c.cover_url} alt={c.title} loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                   {c.badge && (
                     <div className="absolute left-3 top-3 rounded-full bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-black">
@@ -84,10 +85,10 @@ function CoursesPage() {
             {locked.map((c: any) => (
               <article key={c.id} className="glass overflow-hidden rounded-2xl">
                 <div className="relative aspect-video">
-                  <img
-                    src={c.cover_url || "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80"}
+                  <CoverImage
+                    src={c.cover_url}
                     alt={c.title}
-                    className="h-full w-full object-cover blur-[2px] brightness-50"
+                    className="object-cover blur-[2px] brightness-50"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" />

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Clock, Users, TrendingUp, Loader2 } from "lucide-react";
+import { CoverImage } from "@/components/platform/CoverImage";
 import { PageHeader } from "@/components/platform/Shell";
 import { useRecipes } from "@/hooks/use-queries";
 import { recipeCategories } from "@/lib/platform-data";
@@ -48,7 +49,7 @@ function RecipesPage() {
           {filtered.map((r: any) => (
             <article key={r.id} className="glass card-tilt overflow-hidden rounded-2xl">
               <div className="aspect-video overflow-hidden">
-                <img src={r.image_url || "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80"} alt={r.name} className="h-full w-full object-cover" loading="lazy" />
+                <CoverImage src={r.image_url} alt={r.name} loading="lazy" />
               </div>
               <div className="p-5">
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">{r.category}</div>
@@ -86,7 +87,7 @@ function RecipesPage() {
       {open && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/80 p-4" onClick={() => setOpen(null)}>
           <div className="glass max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl" onClick={(e) => e.stopPropagation()}>
-            <img src={open.image_url || "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80"} alt={open.name} className="h-56 w-full object-cover" />
+            <div className="h-56 w-full"><CoverImage src={open.image_url} alt={open.name} /></div>
             <div className="p-6">
               <h3 className="font-display text-2xl font-bold">{open.name}</h3>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">

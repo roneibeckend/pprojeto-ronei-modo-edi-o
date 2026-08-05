@@ -8,11 +8,12 @@ import {
   ChevronRight, 
   FileText, 
   StickyNote, 
-  Loader2 
+  Loader2,
+  VideoOff
 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { useCourses, useLessonProgress, useMarkLessonComplete } from "@/hooks/use-queries";
-import { IMG } from "@/lib/platform-data";
+import { resolveVideoSource } from "@/lib/video";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/cursos/$courseId")({

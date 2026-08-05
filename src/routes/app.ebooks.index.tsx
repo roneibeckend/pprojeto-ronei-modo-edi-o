@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, Download, Sparkles, ArrowRight, Lock, ShoppingCart, Loader2 } from "lucide-react";
+import { CoverImage } from "@/components/platform/CoverImage";
 import { PageHeader } from "@/components/platform/Shell";
 import { useEbooks } from "@/hooks/use-queries";
 import { IMG } from "@/lib/platform-data";
@@ -51,7 +52,7 @@ function EbooksPage() {
           {ebooksData.map((b: any) => (
             <article key={b.id} className={`glass card-tilt flex flex-col overflow-hidden rounded-2xl ${b.is_locked ? "ring-1 ring-fire/30" : ""}`}>
               <div className="relative aspect-[3/4]">
-                <img src={b.cover_url || "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80"} alt={b.title} className={`h-full w-full object-cover ${b.is_locked ? "opacity-60 blur-[1px]" : ""}`} loading="lazy" />
+                <CoverImage src={b.cover_url} alt={b.title} className={b.is_locked ? "opacity-60 blur-[1px]" : ""} loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent" />
                 <div className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-xs backdrop-blur">
                   {b.category}
