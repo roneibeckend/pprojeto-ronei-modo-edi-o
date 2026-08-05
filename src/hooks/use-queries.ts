@@ -171,13 +171,10 @@ export const useSendAIMessage = () => {
   
   return useMutation({
     mutationFn: async ({ ticketId, message }: { ticketId: string; message: string }) => {
-      const { error } = await supabase
-        .from("support_messages")
-        .insert({
-          ticket_id: ticketId,
-          sender_type: "assistant",
-          message
-        });
+      const { error } = await supabase.rpc('save_assistant_response', {
+        p_ticket_id: ticketId,
+        p_content: message
+      });
         
       if (error) throw error;
     },
