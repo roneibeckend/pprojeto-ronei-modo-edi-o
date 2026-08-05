@@ -4,7 +4,7 @@ import { Clock, Users, TrendingUp, Loader2 } from "lucide-react";
 import { CoverImage } from "@/components/platform/CoverImage";
 import { PageHeader } from "@/components/platform/Shell";
 import { useRecipes } from "@/hooks/use-queries";
-import { recipeCategories } from "@/lib/platform-data";
+const recipeCategories = ["Todos", "Carne bovina", "Frango", "Linguiça", "Suíno", "Queijo", "Vegetarianos", "Molhos", "Acompanhamentos"];
 
 export const Route = createFileRoute("/app/receitas")({
   head: () => ({ meta: [{ title: "Receitas — Espetinho na Veia" }] }),
