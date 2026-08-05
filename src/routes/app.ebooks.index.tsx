@@ -3,7 +3,7 @@ import { BookOpen, Download, Sparkles, ArrowRight, Lock, ShoppingCart, Loader2 }
 import { CoverImage } from "@/components/platform/CoverImage";
 import { PageHeader } from "@/components/platform/Shell";
 import { useEbooks } from "@/hooks/use-queries";
-import { IMG } from "@/lib/platform-data";
+
 
 export const Route = createFileRoute("/app/ebooks/")({
   head: () => ({ meta: [{ title: "Biblioteca de e-books — Espetinho na Veia" }] }),
@@ -32,7 +32,7 @@ function EbooksPage() {
       >
         <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-fire/30 blur-3xl transition group-hover:bg-fire/50" />
         <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-gold/20 blur-3xl" />
-        <img src={IMG.hero} alt="Do Zero aos 10k" className="relative h-40 w-full rounded-2xl object-cover shadow-2xl sm:h-48 sm:w-40 sm:shrink-0" loading="lazy" />
+        <CoverImage src={null} alt="Do Zero aos 10k" className="relative h-40 w-full rounded-2xl sm:h-48 sm:w-40 sm:shrink-0" />
         <div className="relative mt-4 flex-1 sm:ml-6 sm:mt-0">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-fire/40 bg-fire/20 px-3 py-1 text-xs font-bold uppercase tracking-widest text-fire">
             <Sparkles className="h-3 w-3" /> Novo · Ebook Premium Interativo
