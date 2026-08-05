@@ -1,4 +1,3 @@
-como estamos na parte dos clientes?
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type JSX } from "react";
 import { toast } from "sonner";
