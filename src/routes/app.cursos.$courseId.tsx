@@ -94,22 +94,39 @@ function CoursePage() {
         <div className="min-w-0 space-y-4">
           <div className="glass overflow-hidden rounded-2xl">
             <div className="relative aspect-video bg-black">
-              {active?.video_url ? (
-                <iframe
-                  src={active.video_url}
-                  className="h-full w-full"
-                  allowFullScreen
-                />
-              ) : (
-                <>
-                  <img src={course.cover_url || IMG.hero} alt="" className="h-full w-full object-cover opacity-40" />
-                  <div className="absolute inset-0 grid place-items-center">
-                    <button className="grid h-20 w-20 place-items-center rounded-full bg-fire shadow-fire transition hover:scale-105">
-                      <Play className="h-8 w-8 text-white" />
-                    </button>
+              {(() => {
+                const source = resolveVideoSource(active?.video_url);
+                if (source.kind === "embed") {
+                  return (
+                    <iframe
+                      key={source.url}
+                      src={source.url}
+                      title={active?.title || "Aula"}
+                      className="h-full w-full"
+                      loading="lazy"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  );
+                }
+                if (source.kind === "file") {
+                  return <video key={source.url} src={source.url} controls playsInline className="h-full w-full" />;
+                }
+                return (
+                  <div className="grid h-full w-full place-items-center bg-secondary/40 px-6 text-center">
+                    <div>
+                      <VideoOff className="mx-auto h-8 w-8 text-muted-foreground opacity-60" />
+                      <p className="mt-3 text-sm text-muted-foreground">
+                        {source.kind === "invalid"
+                          ? "O link de vídeo desta aula é inválido ou não é suportado."
+                          : "Vídeo ainda não cadastrado para esta aula."}
+                      </p>
+                    </div>
                   </div>
-                </>
-              )}
+                );
+              })()}
+
               {active?.duration && (
                 <div className="absolute bottom-3 left-3 rounded-full bg-black/70 px-3 py-1 text-xs">
                   {active.duration}
