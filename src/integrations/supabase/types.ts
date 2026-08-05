@@ -302,29 +302,79 @@ export type Database = {
         }
         Relationships: []
       }
+      support_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          metadata: Json | null
+          sender_id: string | null
+          sender_type: Database["public"]["Enums"]["support_sender_type"]
+          ticket_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          metadata?: Json | null
+          sender_id?: string | null
+          sender_type: Database["public"]["Enums"]["support_sender_type"]
+          ticket_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          metadata?: Json | null
+          sender_id?: string | null
+          sender_type?: Database["public"]["Enums"]["support_sender_type"]
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       support_tickets: {
         Row: {
+          assigned_to: string | null
+          closed_at: string | null
           created_at: string
           id: string
-          message: string | null
+          legacy_message: string | null
+          priority: string | null
           status: string | null
           subject: string | null
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          assigned_to?: string | null
+          closed_at?: string | null
           created_at?: string
           id?: string
-          message?: string | null
+          legacy_message?: string | null
+          priority?: string | null
           status?: string | null
           subject?: string | null
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          assigned_to?: string | null
+          closed_at?: string | null
           created_at?: string
           id?: string
-          message?: string | null
+          legacy_message?: string | null
+          priority?: string | null
           status?: string | null
           subject?: string | null
+          updated_at?: string | null
           user_id?: string | null
         }
         Relationships: []
@@ -366,6 +416,8 @@ export type Database = {
     Enums: {
       app_role: "admin" | "student"
       difficulty_level: "Fácil" | "Médio" | "Avançado"
+      support_sender_type: "student" | "assistant" | "support_agent" | "system"
+      support_ticket_status: "open" | "in_progress" | "resolved" | "closed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -495,6 +547,8 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "student"],
       difficulty_level: ["Fácil", "Médio", "Avançado"],
+      support_sender_type: ["student", "assistant", "support_agent", "system"],
+      support_ticket_status: ["open", "in_progress", "resolved", "closed"],
     },
   },
 } as const
