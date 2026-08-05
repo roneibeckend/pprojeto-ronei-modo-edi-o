@@ -12,31 +12,17 @@ function AdminLayout() {
   const { data: profile, isLoading: isLoadingProfile } = useProfile();
   const navigate = useNavigate();
 
-  const { data: isAdmin, isLoading: isLoadingRole } = useQuery({
-    queryKey: ["is-admin", profile?.id],
-    queryFn: async () => {
-      if (!profile?.id) return false;
-      const { data, error } = await supabase.rpc("has_role", {
-        _user_id: profile.id,
-        _role: "admin",
-      });
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!profile?.id,
-  });
-
   useEffect(() => {
-    if (!isLoadingProfile && !isLoadingRole) {
+    if (!isLoadingProfile) {
       if (!profile) {
         navigate({ to: "/auth" });
-      } else if (isAdmin === false) {
+      } else if (profile.isAdmin === false) {
         navigate({ to: "/app" });
       }
     }
-  }, [profile, isAdmin, isLoadingProfile, isLoadingRole, navigate]);
+  }, [profile, isLoadingProfile, navigate]);
 
-  if (isLoadingProfile || isLoadingRole) {
+  if (isLoadingProfile) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
         <div 
@@ -46,7 +32,7 @@ function AdminLayout() {
     );
   }
 
-  if (!isAdmin) return null;
+  if (!profile?.isAdmin) return null;
 
   return <Outlet />;
 }
