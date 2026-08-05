@@ -12,15 +12,14 @@ export const useProfile = () => {
         .from("profiles")
         .select(`
           *,
-          roles:user_roles (role)
+          user_roles (role)
         `)
         .eq("id", user.id)
         .single();
         
       if (error) throw error;
       
-      // Mapeia o role para facilitar o uso no frontend
-      const roles = (data as any).roles || [];
+      const roles = (data as any).user_roles || [];
       const isAdmin = roles.some((r: any) => r.role === 'admin');
       
       return {
