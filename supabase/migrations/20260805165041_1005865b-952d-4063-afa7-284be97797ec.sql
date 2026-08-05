@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "allow_first_admin_bootstrap" ON public.user_roles;
