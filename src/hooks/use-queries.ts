@@ -91,29 +91,103 @@ export const useLessonProgress = (courseId?: string) => {
   });
 };
 
-export const useMarkLessonComplete = () => {
+export const useSupportTicket = () => {
+  return useQuery({
+    queryKey: ["support_ticket"],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+      
+      const { data, error } = await supabase
+        .from("support_tickets")
+        .select(`
+          *,
+          messages:support_messages (*)
+        `)
+        .eq("user_id", user.id)
+        .eq("status", "open")
+        .order("created_at", { foreignTable: "support_messages", ascending: true })
+        .maybeSingle();
+        
+      if (error) throw error;
+      return data;
+    },
+  });
+};
+
+export const useSendMessage = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ lessonId, completed }: { lessonId: string; completed: boolean }) => {
+    mutationFn: async ({ message }: { message: string }) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
       
+      // 1. Get or create open ticket
+      let { data: ticket, error: ticketError } = await supabase
+        .from("support_tickets")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("status", "open")
+        .maybeSingle();
+        
+      if (ticketError) throw ticketError;
+      
+      if (!ticket) {
+        const { data: newTicket, error: createError } = await supabase
+          .from("support_tickets")
+          .insert({
+            user_id: user.id,
+            subject: "Chat com Brasa",
+            status: "open"
+          })
+          .select("id")
+          .single();
+          
+        if (createError) throw createError;
+        ticket = newTicket;
+      }
+      
+      // 2. Insert message
+      const { error: msgError } = await supabase
+        .from("support_messages")
+        .insert({
+          ticket_id: ticket.id,
+          sender_id: user.id,
+          sender_type: "student",
+          message
+        });
+        
+      if (msgError) throw msgError;
+
+      return ticket.id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["support_ticket"] });
+    },
+  });
+};
+
+export const useSendAIMessage = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ ticketId, message }: { ticketId: string; message: string }) => {
       const { error } = await supabase
-        .from("lesson_progress")
-        .upsert({
-          user_id: user.id,
-          lesson_id: lessonId,
-          is_completed: completed,
-          updated_at: new Date().toISOString(),
-        }, {
-          onConflict: "user_id,lesson_id"
+        .from("support_messages")
+        .insert({
+          ticket_id: ticketId,
+          sender_type: "assistant",
+          message
         });
         
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lesson_progress"] });
+      queryClient.invalidateQueries({ queryKey: ["support_ticket"] });
     },
   });
 };
+
+export const useMarkLessonComplete = () => {
+...
