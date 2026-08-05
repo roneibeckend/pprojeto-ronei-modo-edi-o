@@ -14,6 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
+      courses: {
+        Row: {
+          badge: string | null
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_locked: boolean | null
+          price: number | null
+          teacher_name: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          badge?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id: string
+          is_locked?: boolean | null
+          price?: number | null
+          teacher_name?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          badge?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_locked?: boolean | null
+          price?: number | null
+          teacher_name?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ebooks: {
+        Row: {
+          category: string | null
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_locked: boolean | null
+          original_price: number | null
+          pages_count: number | null
+          price: number | null
+          title: string
+        }
+        Insert: {
+          category?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id: string
+          is_locked?: boolean | null
+          original_price?: number | null
+          pages_count?: number | null
+          price?: number | null
+          title: string
+        }
+        Update: {
+          category?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_locked?: boolean | null
+          original_price?: number | null
+          pages_count?: number | null
+          price?: number | null
+          title?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
@@ -41,6 +119,114 @@ export type Database = {
         }
         Relationships: []
       }
+      lesson_progress: {
+        Row: {
+          id: string
+          is_completed: boolean | null
+          last_position_seconds: number | null
+          lesson_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          is_completed?: boolean | null
+          last_position_seconds?: number | null
+          lesson_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          is_completed?: boolean | null
+          last_position_seconds?: number | null
+          lesson_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          created_at: string
+          duration: string | null
+          id: string
+          is_locked: boolean | null
+          module_id: string | null
+          order_index: number | null
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration?: string | null
+          id: string
+          is_locked?: boolean | null
+          module_id?: string | null
+          order_index?: number | null
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration?: string | null
+          id?: string
+          is_locked?: boolean | null
+          module_id?: string | null
+          order_index?: number | null
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      modules: {
+        Row: {
+          course_id: string | null
+          created_at: string
+          id: string
+          order_index: number | null
+          title: string
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string
+          id: string
+          order_index?: number | null
+          title: string
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          order_index?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "modules_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -65,6 +251,81 @@ export type Database = {
           name?: string | null
           phone?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      recipes: {
+        Row: {
+          category: string | null
+          cost: string | null
+          created_at: string
+          difficulty: Database["public"]["Enums"]["difficulty_level"] | null
+          id: string
+          image_url: string | null
+          ingredients: string[] | null
+          name: string
+          prep_time: string | null
+          profit_margin: string | null
+          sell_price: string | null
+          steps: string[] | null
+          yield: string | null
+        }
+        Insert: {
+          category?: string | null
+          cost?: string | null
+          created_at?: string
+          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
+          id?: string
+          image_url?: string | null
+          ingredients?: string[] | null
+          name: string
+          prep_time?: string | null
+          profit_margin?: string | null
+          sell_price?: string | null
+          steps?: string[] | null
+          yield?: string | null
+        }
+        Update: {
+          category?: string | null
+          cost?: string | null
+          created_at?: string
+          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
+          id?: string
+          image_url?: string | null
+          ingredients?: string[] | null
+          name?: string
+          prep_time?: string | null
+          profit_margin?: string | null
+          sell_price?: string | null
+          steps?: string[] | null
+          yield?: string | null
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          status: string | null
+          subject: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          status?: string | null
+          subject?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          status?: string | null
+          subject?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -104,6 +365,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "student"
+      difficulty_level: "Fácil" | "Médio" | "Avançado"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -232,6 +494,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "student"],
+      difficulty_level: ["Fácil", "Médio", "Avançado"],
     },
   },
 } as const
