@@ -441,6 +441,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      save_assistant_response: {
+        Args: { p_content: string; p_ticket_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "student"
