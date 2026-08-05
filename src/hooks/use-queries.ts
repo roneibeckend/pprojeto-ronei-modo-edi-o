@@ -239,17 +239,17 @@ export const useAdminStats = () => {
         { count: tickets },
         { count: messages }
       ] = await Promise.all([
-        supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "student"),
-        supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "admin"),
-        supabase.from("courses").select("*", { count: "exact", head: true }),
-        supabase.from("modules").select("*", { count: "exact", head: true }),
-        supabase.from("lessons").select("*", { count: "exact", head: true }),
-        supabase.from("ebooks").select("*", { count: "exact", head: true }),
-        supabase.from("recipes").select("*", { count: "exact", head: true }),
-        supabase.from("course_enrollments").select("*", { count: "exact", head: true }),
-        supabase.from("lesson_progress").select("*", { count: "exact", head: true }),
-        supabase.from("support_tickets").select("*", { count: "exact", head: true }),
-        supabase.from("support_messages").select("*", { count: "exact", head: true })
+        supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "student").then(res => ({ count: res.count ?? 0 })),
+        supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "admin").then(res => ({ count: res.count ?? 0 })),
+        supabase.from("courses").select("*", { count: "exact", head: true }).then(res => ({ count: res.count ?? 0 })),
+        supabase.from("modules").select("*", { count: "exact", head: true }).then(res => ({ count: res.count ?? 0 })),
+        supabase.from("lessons").select("*", { count: "exact", head: true }).then(res => ({ count: res.count ?? 0 })),
+        supabase.from("ebooks").select("*", { count: "exact", head: true }).then(res => ({ count: res.count ?? 0 })),
+        supabase.from("recipes").select("*", { count: "exact", head: true }).then(res => ({ count: res.count ?? 0 })),
+        supabase.from("course_enrollments").select("*", { count: "exact", head: true }).then(res => ({ count: res.count ?? 0 })),
+        supabase.from("lesson_progress").select("*", { count: "exact", head: true }).then(res => ({ count: res.count ?? 0 })),
+        supabase.from("support_tickets").select("*", { count: "exact", head: true }).then(res => ({ count: res.count ?? 0 })),
+        supabase.from("support_messages").select("*", { count: "exact", head: true }).then(res => ({ count: res.count ?? 0 }))
       ]);
 
       return {
