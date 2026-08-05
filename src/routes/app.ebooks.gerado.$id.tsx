@@ -310,7 +310,7 @@ function GeneratedEbookReader() {
                 onClick={() => {
                   const p = parseFloat(String(price).replace(",", ".")) || 0;
                   const op = parseFloat(String(originalPrice).replace(",", ".")) || undefined;
-                  const cover = `https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=60`;
+                  const cover = "";
                   addToLibrary({
                     id: ebook.id,
                     title: ebook.title,

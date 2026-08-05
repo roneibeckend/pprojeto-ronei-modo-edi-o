@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Play, BookOpen, TrendingUp, Award, ArrowRight, Flame, Loader2 } from "lucide-react";
+import { CoverImage } from "@/components/platform/CoverImage";
 import { PageHeader } from "@/components/platform/Shell";
 import { useProfile, useCourses } from "@/hooks/use-queries";
 import { IMG } from "@/lib/platform-data";
@@ -58,7 +59,7 @@ function Dashboard() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard icon={TrendingUp} label="Progresso geral" value="0%" accent />
         <StatCard icon={Play} label="Aulas assistidas" value="0" />
-        <StatCard icon={BookOpen} label="Materiais disponíveis" value="8" />
+        <StatCard icon={BookOpen} label="Materiais disponíveis" value="0" />
         <StatCard icon={Award} label="Sequência" value="0 dias" />
       </div>
 
@@ -69,7 +70,7 @@ function Dashboard() {
           {courses?.map((course: any) => (
             <div key={course.id} className="glass overflow-hidden rounded-2xl group border border-white/5 hover:border-primary/30 transition-colors">
               <div className="relative aspect-video">
-                <img src={course.cover_url || IMG.platter1} alt={course.title} className="h-full w-full object-cover" />
+                <CoverImage src={course.cover_url} alt={course.title} />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity grid place-items-center">
                    <div className="h-10 w-10 rounded-full bg-fire grid place-items-center shadow-fire">
                      <Play className="h-4 w-4 text-white" />
