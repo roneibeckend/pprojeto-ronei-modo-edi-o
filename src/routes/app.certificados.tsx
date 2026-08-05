@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { certificates, student } from "@/lib/platform-data";
+const certificates: any[] = [];
+const student = { name: "Aluno" };
 import { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";

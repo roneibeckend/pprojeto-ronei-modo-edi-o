@@ -28,7 +28,15 @@ import {
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { adminStats } from "@/lib/platform-data";
+const adminStats = {
+  students: 0,
+  activeCourses: 0,
+  ebooks: 0,
+  lessonsWatched: 0,
+  avgCompletion: 0,
+  activeRecent: 0,
+  chart: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+};
 
 export const Route = createFileRoute("/app/admin/")({
   head: () => ({ meta: [{ title: "Admin — Espetinho na Veia" }] }),

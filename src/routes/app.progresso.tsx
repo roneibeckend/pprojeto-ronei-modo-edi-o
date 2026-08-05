@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Award, Flame, Trophy, Lock } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { student, achievements, courses, ebooks, certificates } from "@/lib/platform-data";
+const student = { totalProgress: 0, streak: 0, lessonsWatched: 0 };
+const achievements: any[] = [];
+const courses: any[] = [];
+const ebooks: any[] = [];
+const certificates: any[] = [];
 
 export const Route = createFileRoute("/app/progresso")({
   head: () => ({ meta: [{ title: "Meu progresso — Espetinho na Veia" }] }),
