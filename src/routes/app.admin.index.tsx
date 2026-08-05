@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Users,
   GraduationCap,
@@ -27,7 +27,15 @@ import {
 } from "lucide-react";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useAdminStats } from "@/hooks/use-queries";
+
+import { adminStats } from "@/lib/platform-data";
+
+export const Route = createFileRoute("/app/admin/")({
+  head: () => ({ meta: [{ title: "Admin — Espetinho na Veia" }] }),
+  component: AdminPage,
+});
+
+/* ---------------- Helpers ---------------- */
 
 const ORANGE = "#ff6a00";
 
@@ -69,26 +77,6 @@ const brl = (n: number) =>
 /* ---------------- Page ---------------- */
 
 function AdminPage() {
-  const { data: stats, isLoading, error } = useAdminStats();
-
-  if (isLoading) {
-    return (
-      <div className="flex h-96 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-white/10 border-t-[color:var(--orange)]" style={{ ["--orange" as any]: ORANGE }} />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="rounded-sm border border-red-500/30 bg-red-500/10 p-6 text-center">
-        <h2 className="text-lg font-bold text-red-400">Erro ao carregar dados</h2>
-        <p className="mt-1 text-sm text-white/50">{(error as Error).message}</p>
-      </div>
-    );
-  }
-
-  const chartData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -124,22 +112,22 @@ function AdminPage() {
       </header>
 
       {/* Hero KPIs */}
-      <HeroKpis stats={stats} />
+      <HeroKpis />
 
       {/* Secondary KPIs */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <AdminStat icon={Users} label="Alunos" value={stats?.students || 0} format="int" delay={0} />
-        <AdminStat icon={GraduationCap} label="Cursos ativos" value={stats?.courses || 0} format="int" delay={60} />
-        <AdminStat icon={BookOpen} label="E-books" value={stats?.ebooks || 0} format="int" delay={120} />
-        <AdminStat icon={Play} label="Aulas assistidas" value={stats?.progress || 0} format="int" delay={180} />
-        <AdminStat icon={TrendingUp} label="Conclusão média" value={0} suffix="%" delay={240} accent />
-        <AdminStat icon={Activity} label="Ativos recentemente" value={0} format="int" delay={300} />
-        <AdminStat icon={Award} label="Certificados" value={0} format="int" delay={360} />
-        <AdminStat icon={Users} label="Administradores" value={stats?.admins || 0} format="int" delay={420} accent />
+        <AdminStat icon={Users} label="Alunos" value={adminStats.students} format="int" delay={0} />
+        <AdminStat icon={GraduationCap} label="Cursos ativos" value={adminStats.activeCourses} format="int" delay={60} />
+        <AdminStat icon={BookOpen} label="E-books" value={adminStats.ebooks} format="int" delay={120} />
+        <AdminStat icon={Play} label="Aulas assistidas" value={adminStats.lessonsWatched} format="int" delay={180} />
+        <AdminStat icon={TrendingUp} label="Conclusão média" value={adminStats.avgCompletion} suffix="%" delay={240} accent />
+        <AdminStat icon={Activity} label="Ativos recentemente" value={adminStats.activeRecent} format="int" delay={300} />
+        <AdminStat icon={Award} label="Certificados" value={1284} format="int" delay={360} />
+        <AdminStat icon={TrendingUp} label="Faturamento" value={137240} format="brl" delay={420} accent />
       </div>
 
       {/* Chart */}
-      <ChartCard chart={chartData} />
+      <ChartCard />
 
       {/* Quick actions */}
       <section>
@@ -176,10 +164,10 @@ function AdminPage() {
 
 /* ---------------- Hero KPIs ---------------- */
 
-function HeroKpis({ stats }: { stats: any }) {
-  const revenue = useCountUp(0);
-  const students = useCountUp(stats?.students || 0);
-  const active = useCountUp(0);
+function HeroKpis() {
+  const revenue = useCountUp(137240);
+  const students = useCountUp(adminStats.students);
+  const active = useCountUp(adminStats.activeRecent);
 
   const items = [
     { label: "Faturamento total", value: brl(revenue), delta: "+12%", up: true, icon: DollarSign },
@@ -284,7 +272,7 @@ function AdminStat({
 
 /* ---------------- Chart ---------------- */
 
-function ChartCard({ chart }: { chart: number[] }) {
+function ChartCard() {
   const { ref, inView } = useInView<HTMLElement>(0.1);
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -293,7 +281,7 @@ function ChartCard({ chart }: { chart: number[] }) {
   }, []);
   const show = inView || ready;
 
-  const max = Math.max(...chart, 1);
+  const max = Math.max(...adminStats.chart);
   return (
     <section
       ref={ref}
@@ -317,9 +305,9 @@ function ChartCard({ chart }: { chart: number[] }) {
         </select>
       </div>
       <div className="relative flex h-56 items-end gap-2">
-        {chart.map((v: number, i: number) => {
+        {adminStats.chart.map((v, i) => {
           const h = Math.round((v / max) * 190);
-          const isPeak = v > 0 && v === Math.max(...chart);
+          const isPeak = v === max;
           return (
             <div key={i} className="group flex flex-1 flex-col items-center gap-2">
               <div className="relative w-full flex justify-center">
@@ -456,11 +444,13 @@ function AdminAction({
 /* ---------------- Students Table ---------------- */
 
 function StudentsTable() {
-  const { data: stats } = useAdminStats();
-  
-  // Como não temos alunos reais ainda, mostramos estado vazio
-  const rows = [] as any[];
-  
+  const rows = [
+    ["André Silva", "andre@exemplo.com", "Espetinho Lucrativo", 42],
+    ["Mariana Costa", "mari@exemplo.com", "Molhos e Acompanhamentos", 78],
+    ["Carlos Mendes", "carlos@exemplo.com", "Como Vender Mais", 15],
+    ["Fernanda Rocha", "fe@exemplo.com", "Gestão do Negócio", 60],
+    ["Tiago Almeida", "tiago@exemplo.com", "Espetinho Lucrativo", 92],
+  ] as const;
   return (
     <section className="overflow-hidden border border-white/5 bg-[#111]">
       <div className="flex items-center justify-between border-b border-white/5 p-6">
@@ -488,53 +478,45 @@ function StudentsTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {rows.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-white/20">
-                  Nenhum aluno cadastrado no momento.
-                </td>
-              </tr>
-            ) : (
-              rows.map((r, i) => {
-                const initials = (r[0] as string)
-                  .split(" ")
-                  .map((p) => p[0])
-                  .slice(0, 2)
-                  .join("");
-                const pct = r[3] as number;
-                return (
-                  <tr
-                    key={r[1] as string}
-                    className="group animate-fade-in transition hover:bg-white/[0.03]"
-                    style={{ animationDelay: `${i * 50}ms`, animationFillMode: "backwards" }}
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="grid h-9 w-9 place-items-center rounded-sm text-xs font-extrabold text-black" style={{ backgroundColor: ORANGE }}>
-                          {initials}
-                        </div>
-                        <span className="font-medium text-white">{r[0]}</span>
+            {rows.map((r, i) => {
+              const initials = (r[0] as string)
+                .split(" ")
+                .map((p) => p[0])
+                .slice(0, 2)
+                .join("");
+              const pct = r[3] as number;
+              return (
+                <tr
+                  key={r[1] as string}
+                  className="group animate-fade-in transition hover:bg-white/[0.03]"
+                  style={{ animationDelay: `${i * 50}ms`, animationFillMode: "backwards" }}
+                >
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="grid h-9 w-9 place-items-center rounded-sm text-xs font-extrabold text-black" style={{ backgroundColor: ORANGE }}>
+                        {initials}
                       </div>
-                    </td>
-                    <td className="px-6 py-4 text-white/50">{r[1]}</td>
-                    <td className="px-6 py-4 text-white/80">{r[2]}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-3">
-                        <div className="h-1.5 w-24 overflow-hidden bg-white/5">
-                          <div
-                            className="h-full transition-all duration-1000"
-                            style={{ width: `${pct}%`, backgroundColor: ORANGE }}
-                          />
-                        </div>
-                        <span className="w-10 text-right font-display font-extrabold" style={{ color: ORANGE }}>
-                          {pct}%
-                        </span>
+                      <span className="font-medium text-white">{r[0]}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-white/50">{r[1]}</td>
+                  <td className="px-6 py-4 text-white/80">{r[2]}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-end gap-3">
+                      <div className="h-1.5 w-24 overflow-hidden bg-white/5">
+                        <div
+                          className="h-full transition-all duration-1000"
+                          style={{ width: `${pct}%`, backgroundColor: ORANGE }}
+                        />
                       </div>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
+                      <span className="w-10 text-right font-display font-extrabold" style={{ color: ORANGE }}>
+                        {pct}%
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -548,9 +530,19 @@ type Cost = { id: string; label: string; value: number };
 type Partner = { id: string; name: string; percent: number };
 
 function FinancePanel() {
-  const [revenue, setRevenue] = useState<number>(0);
-  const [costs, setCosts] = useState<Cost[]>([]);
-  const [partners, setPartners] = useState<Partner[]>([]);
+  const [revenue, setRevenue] = useState<number>(137240);
+  const [costs, setCosts] = useState<Cost[]>([
+    { id: "c1", label: "Plataforma / hospedagem", value: 1200 },
+    { id: "c2", label: "Tráfego pago (ads)", value: 28000 },
+    { id: "c3", label: "Taxas de gateway", value: 8200 },
+    { id: "c4", label: "Produção de conteúdo", value: 6500 },
+    { id: "c5", label: "Suporte e equipe", value: 9800 },
+  ]);
+  const [partners, setPartners] = useState<Partner[]>([
+    { id: "p1", name: "Ronnei (Sócio fundador)", percent: 50 },
+    { id: "p2", name: "Sócio operacional", percent: 30 },
+    { id: "p3", name: "Sócio investidor", percent: 20 },
+  ]);
 
   const totalCost = useMemo(() => costs.reduce((s, c) => s + (c.value || 0), 0), [costs]);
   const profit = revenue - totalCost;

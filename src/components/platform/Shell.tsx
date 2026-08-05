@@ -18,8 +18,7 @@ import {
   Shield,
   ChevronRight,
 } from "lucide-react";
-import { useProfile } from "@/hooks/use-queries";
-import { CoverImage } from "@/components/platform/CoverImage";
+import { student } from "@/lib/platform-data";
 import { supabase } from "@/integrations/supabase/client";
 
 type NavItem = {
@@ -65,11 +64,6 @@ export function Shell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { data: profile } = useProfile();
-  // Nome/avatar reais vindos da tabela de perfis. Sem dados cadastrados usamos
-  // um rótulo neutro em vez de um aluno fictício.
-  const studentName = profile?.name?.trim() || "Aluno";
-  const studentAvatar = profile?.avatar_url || null;
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
@@ -94,14 +88,12 @@ export function Shell({ children }: { children: ReactNode }) {
       {/* Student mini card */}
       <div className="mx-3 mt-3 flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5">
         <div className="relative">
-          <div className="h-9 w-9 overflow-hidden rounded-md">
-            <CoverImage src={studentAvatar} alt={studentName} />
-          </div>
+          <img src={student.avatar} alt={student.name} className="h-9 w-9 rounded-md object-cover" />
           <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#0e0e0e] bg-emerald-500" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-semibold text-white">{studentName}</div>
-          <div className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00]">{profile?.displayRole || "Aluno ativo"}</div>
+          <div className="truncate text-sm font-semibold text-white">{student.name}</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00]">Aluno ativo</div>
         </div>
       </div>
 
@@ -208,10 +200,8 @@ export function Shell({ children }: { children: ReactNode }) {
             to="/app/perfil"
             className="flex items-center gap-2 rounded-md border border-white/10 py-1 pl-1 pr-3 transition hover:border-[#ff6a00]/50"
           >
-            <div className="h-8 w-8 overflow-hidden rounded">
-              <CoverImage src={studentAvatar} alt={studentName} />
-            </div>
-            <span className="hidden text-sm font-medium sm:inline">{studentName.split(" ")[0]}</span>
+            <img src={student.avatar} alt={student.name} className="h-8 w-8 rounded" />
+            <span className="hidden text-sm font-medium sm:inline">{student.name.split(" ")[0]}</span>
           </Link>
           {open && (
             <button className="lg:hidden" onClick={() => setOpen(false)} aria-label="Fechar">
