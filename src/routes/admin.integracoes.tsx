@@ -14,23 +14,38 @@ import {
   Plus,
   Save,
   Globe,
-  Key
+  Key,
+  Copy,
+  Check,
+  ExternalLink,
+  BookOpen,
+  Terminal,
+  Clock,
+  RotateCcw,
+  Zap,
+  Info
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { testAIConnection, saveIntegration } from "@/lib/integrations.functions";
+import { testIntegrationConnection, saveIntegration, getIntegrationHistory } from "@/lib/integrations.functions";
 import { useServerFn } from "@tanstack/react-start";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const Route = createFileRoute('/admin/integracoes')({
-  head: () => ({ meta: [{ title: "Hub de Integrações · Admin" }] }),
+  head: () => ({ meta: [{ title: "Centro de Integrações · Admin" }] }),
   component: IntegrationsPage,
 });
 
 const ORANGE = "#ff6a00";
-
-type IntegrationStatus = 'connected' | 'error' | 'disconnected' | 'loading';
 
 interface Integration {
   id: string;
@@ -38,42 +53,56 @@ interface Integration {
   type: 'ia' | 'payment';
   category: string;
   status: boolean;
-  credentials: any;
-  settings: any;
+  credentials: Record<string, string>;
+  settings: Record<string, string>;
   updated_at?: string;
 }
 
+const WEBHOOKS = [
+  { name: 'Mercado Pago (Aprovado)', url: '/api/webhooks/mercadopago/success', category: 'mercadopago' },
+  { name: 'Mercado Pago (Recusado)', url: '/api/webhooks/mercadopago/refused', category: 'mercadopago' },
+  { name: 'Asaas Webhook', url: '/api/webhooks/asaas', category: 'asaas' },
+  { name: 'Stripe Webhook', url: '/api/webhooks/stripe', category: 'stripe' },
+  { name: 'OpenAI Callback', url: '/api/webhooks/openai', category: 'openai' },
+];
+
+const GUIDES: Record<string, string[]> = {
+  openai: [
+    "Acesse a sua conta no dashboard da OpenAI.",
+    "Navegue até 'API Keys' nas configurações da conta.",
+    "Clique em 'Create new secret key'.",
+    "Copie a chave gerada e cole no campo 'API Key' abaixo.",
+    "Clique em 'Salvar' e depois em 'Testar Conexão'."
+  ],
+  mercadopago: [
+    "Crie uma conta no Mercado Pago Developers.",
+    "Crie uma nova aplicação no painel.",
+    "Navegue até 'Credenciais de Produção' ou 'Credenciais de Teste'.",
+    "Copie o 'Access Token' e a 'Public Key'.",
+    "Configure os Webhooks apontando para as URLs mostradas na aba 'Webhooks'.",
+    "Salve e realize um teste de conexão."
+  ],
+  asaas: [
+    "Acesse sua conta Asaas e vá em 'Minha Conta' -> 'Integrações'.",
+    "Gere uma nova 'API Key'.",
+    "Copie a chave e cole no campo correspondente.",
+    "Configure a URL de Webhook para receber notificações de pagamento.",
+    "Salve e teste a conexão."
+  ]
+};
+
 function IntegrationsPage() {
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<'ia' | 'payment'>('ia');
-  const [editingItem, setEditingItem] = useState<Integration | null>(null);
+  const [activeCategory, setActiveCategory] = useState<'ia' | 'payment' | 'webhooks'>('ia');
+  const [selectedItem, setSelectedItem] = useState<Integration | null>(null);
   const [isTesting, setIsTesting] = useState(false);
-  const [logs, setLogs] = useState<any[]>([]);
-  const [loadingLogs, setLoadingLogs] = useState(false);
+  const [testResult, setTestResult] = useState<any>(null);
+  const [copiedAll, setCopiedAll] = useState(false);
+  const [originalItem, setOriginalItem] = useState<Integration | null>(null);
 
-  const testConnectionFn = useServerFn(testAIConnection);
+  const testConnectionFn = useServerFn(testIntegrationConnection);
   const saveIntegrationFn = useServerFn(saveIntegration);
-
-  useEffect(() => {
-    fetchLogs();
-  }, []);
-
-  async function fetchLogs() {
-    try {
-      setLoadingLogs(true);
-      const { data, error } = await supabase
-        .from('integration_logs' as any)
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-      if (error) throw error;
-      setLogs(data || []);
-    } catch (err) {
-      console.error("Erro ao carregar logs", err);
-    } finally {
-      setLoadingLogs(false);
-    }
-  }
+  const getHistoryFn = useServerFn(getIntegrationHistory);
 
   const { data: integrations, isLoading } = useQuery({
     queryKey: ['integrations'],
@@ -84,33 +113,57 @@ function IntegrationsPage() {
     }
   });
 
-  const updateStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string, status: boolean }) => {
-      const { error } = await supabase.from('integrations').update({ status }).eq('id', id);
-      if (error) throw error;
+  const { data: historyLogs, refetch: refetchHistory } = useQuery({
+    queryKey: ['integration_history', selectedItem?.category],
+    queryFn: async () => {
+      if (!selectedItem) return [];
+      return await getHistoryFn({ data: { category: selectedItem.category, limit: 10 } });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['integrations'] });
-      toast.success("Status atualizado");
-    }
+    enabled: !!selectedItem
   });
 
+  const handleCopy = (text: string) => {
+    const fullUrl = `${window.location.origin}${text}`;
+    navigator.clipboard.writeText(fullUrl);
+    toast.success("Webhook copiado.");
+  };
+
+  const handleCopyAll = () => {
+    const allUrls = WEBHOOKS.map(w => `${w.name}: ${window.location.origin}${w.url}`).join('\n');
+    navigator.clipboard.writeText(allUrls);
+    setCopiedAll(true);
+    toast.success("Todos os webhooks copiados.");
+    setTimeout(() => setCopiedAll(false), 2000);
+  };
+
+  const validateStatus = (item: Integration) => {
+    const hasCreds = Object.values(item.credentials).every(v => v && v.length > 5);
+    if (!hasCreds) return 'incomplete';
+    if (!item.status) return 'disabled';
+    return 'connected';
+  };
+
   const handleTest = async () => {
-    if (!editingItem) return;
+    if (!selectedItem) return;
     try {
       setIsTesting(true);
+      setTestResult(null);
       const result = await testConnectionFn({
         data: {
-          category: editingItem.category,
-          credentials: editingItem.credentials
+          id: selectedItem.id,
+          category: selectedItem.category,
+          credentials: selectedItem.credentials,
+          settings: selectedItem.settings,
+          environment: selectedItem.settings?.environment || 'sandbox'
         }
       });
+      setTestResult(result);
       if (result.success) {
         toast.success(result.message);
       } else {
         toast.error(result.message);
       }
-      fetchLogs(); // Atualizar logs após teste
+      refetchHistory();
     } catch (err: any) {
       toast.error(err.message || "Erro no teste");
     } finally {
@@ -118,231 +171,418 @@ function IntegrationsPage() {
     }
   };
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingItem) return;
+  const handleSave = async () => {
+    if (!selectedItem) return;
     try {
-      await saveIntegrationFn({ data: editingItem });
-      toast.success("Configurações salvas");
-      setEditingItem(null);
+      await saveIntegrationFn({ data: selectedItem });
+      toast.success("Configurações salvas com sucesso.");
+      setOriginalItem(JSON.parse(JSON.stringify(selectedItem)));
       queryClient.invalidateQueries({ queryKey: ['integrations'] });
     } catch (err: any) {
       toast.error(err.message || "Erro ao salvar");
     }
   };
 
-  const filtered = integrations?.filter(i => i.type === activeTab) || [];
+  const handleRestore = () => {
+    if (originalItem) {
+      setSelectedItem(JSON.parse(JSON.stringify(originalItem)));
+      toast.info("Valores restaurados.");
+    }
+  };
+
+  const filtered = integrations?.filter(i => i.type === activeCategory) || [];
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      {/* Header section remains similar but updated */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-white/5 pb-8">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Settings2 className="h-4 w-4" style={{ color: ORANGE }} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40">Sistema & Conexões</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40">Gerenciamento Central</span>
           </div>
           <h1 className="font-display text-3xl font-extrabold uppercase tracking-tight text-white">
-            Hub de <span style={{ color: ORANGE }}>Integrações</span>
+            Centro de <span style={{ color: ORANGE }}>Integrações</span>
           </h1>
           <p className="mt-2 text-sm text-white/50 max-w-2xl text-left">
-            Gerencie todas as conexões externas, desde modelos de inteligência artificial até gateways de pagamento.
+            Gerencie credenciais, webhooks e monitore a saúde das conexões do sistema em tempo real.
           </p>
         </div>
         
         <div className="flex items-center gap-1 rounded-sm border border-white/5 bg-black/40 p-1 self-start sm:self-auto">
-          <button 
-            onClick={() => setActiveTab('ia')}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition ${activeTab === 'ia' ? 'bg-[#ff6a00] text-black shadow-[0_0_20px_rgba(255,106,0,0.3)]' : 'text-white/40 hover:text-white'}`}
+          <Button 
+            variant="ghost"
+            onClick={() => { setActiveCategory('ia'); setSelectedItem(null); }}
+            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'ia' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <BrainCircuit className="h-3.5 w-3.5" /> IA
-          </button>
-          <button 
-            onClick={() => setActiveTab('payment')}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition ${activeTab === 'payment' ? 'bg-[#ff6a00] text-black shadow-[0_0_20px_rgba(255,106,0,0.3)]' : 'text-white/40 hover:text-white'}`}
+          </Button>
+          <Button 
+            variant="ghost"
+            onClick={() => { setActiveCategory('payment'); setSelectedItem(null); }}
+            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'payment' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <Wallet className="h-3.5 w-3.5" /> Pagamentos
-          </button>
+          </Button>
+          <Button 
+            variant="ghost"
+            onClick={() => { setActiveCategory('webhooks'); setSelectedItem(null); }}
+            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'webhooks' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+          >
+            <Zap className="h-3.5 w-3.5" /> Webhooks
+          </Button>
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-8">
-          {isLoading ? (
-            <div className="flex h-64 items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
-            </div>
+      <div className="grid gap-8 grid-cols-1 lg:grid-cols-12">
+        {/* Sidebar List */}
+        <div className="lg:col-span-4 space-y-4">
+          {activeCategory === 'webhooks' ? (
+             <Card className="bg-[#111] border-white/5">
+               <CardHeader className="pb-4">
+                 <div className="flex items-center justify-between">
+                   <CardTitle className="text-sm font-bold uppercase tracking-widest flex items-center gap-2">
+                     <Zap className="h-4 w-4 text-[#ff6a00]" /> Endpoints
+                   </CardTitle>
+                   <Button variant="outline" size="sm" onClick={handleCopyAll} className="h-7 text-[9px] uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10">
+                     {copiedAll ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
+                     Copiar Todos
+                   </Button>
+                 </div>
+               </CardHeader>
+               <CardContent className="space-y-4">
+                 {WEBHOOKS.map((webhook, idx) => (
+                   <div key={idx} className="p-3 bg-black/40 border border-white/5 rounded-lg group">
+                     <div className="flex items-center justify-between mb-2">
+                       <span className="text-[10px] font-bold text-white/60 uppercase">{webhook.name}</span>
+                       <Button variant="ghost" size="icon" onClick={() => handleCopy(webhook.url)} className="h-6 w-6 opacity-0 group-hover:opacity-100 transition">
+                         <Copy className="h-3 w-3" />
+                       </Button>
+                     </div>
+                     <code className="text-[9px] text-[#ff6a00] break-all bg-orange-500/5 p-1.5 rounded block">
+                       {webhook.url}
+                     </code>
+                   </div>
+                 ))}
+               </CardContent>
+             </Card>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2">
-              {filtered.map((item) => (
-                <div key={item.id} className="group relative overflow-hidden border border-white/5 bg-[#111] p-5 transition hover:border-[#ff6a00]/30">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-white/5 text-[#ff6a00] transition group-hover:bg-[#ff6a00] group-hover:text-black">
-                      {item.type === 'ia' ? <Sparkles className="h-5 w-5" /> : <CreditCard className="h-5 w-5" />}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button 
-                        onClick={() => updateStatusMutation.mutate({ id: item.id, status: !item.status })}
-                        className={`h-4 w-8 rounded-full transition-colors relative ${item.status ? 'bg-[#ff6a00]' : 'bg-white/10'}`}
-                      >
-                        <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-black transition-all ${item.status ? 'left-4.5' : 'left-0.5'}`} />
-                      </button>
-                      {item.status ? 
-                        <span className="flex items-center gap-1 text-[10px] font-bold uppercase text-emerald-400"><CheckCircle2 className="h-3 w-3" /> Online</span> :
-                        <span className="flex items-center gap-1 text-[10px] font-bold uppercase text-white/20">Inativo</span>
-                      }
-                    </div>
-                  </div>
-                  
-                  <h3 className="font-display text-base font-bold text-white mb-1 uppercase tracking-tight">{item.name}</h3>
-                  <p className="text-xs text-white/40 mb-6 line-clamp-2">Provedor de {item.type === 'ia' ? 'Inteligência Artificial' : 'Pagamentos'} ({item.category})</p>
-                  
-                  <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-white/20">{item.category}</span>
+            <div className="space-y-3">
+              {isLoading ? (
+                Array(4).fill(0).map((_, i) => <div key={i} className="h-24 bg-white/5 animate-pulse rounded-lg border border-white/5" />)
+              ) : (
+                filtered.map((item) => {
+                  const status = validateStatus(item);
+                  return (
                     <button 
-                      onClick={() => setEditingItem(item)}
-                      className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00] hover:brightness-125 flex items-center gap-1 transition"
+                      key={item.id}
+                      onClick={() => { setSelectedItem(item); setOriginalItem(JSON.parse(JSON.stringify(item))); setTestResult(null); }}
+                      className={`w-full text-left p-4 rounded-xl border transition-all duration-300 group ${selectedItem?.id === item.id ? 'bg-[#ff6a00]/10 border-[#ff6a00] shadow-[0_0_20px_rgba(255,106,0,0.1)]' : 'bg-[#111] border-white/5 hover:border-white/20'}`}
                     >
-                      Configurar <ChevronRight className="h-3 w-3" />
+                      <div className="flex items-center justify-between mb-3">
+                        <div className={`p-2 rounded-lg ${selectedItem?.id === item.id ? 'bg-[#ff6a00] text-black' : 'bg-white/5 text-[#ff6a00]'}`}>
+                          {item.type === 'ia' ? <Sparkles className="h-4 w-4" /> : <CreditCard className="h-4 w-4" />}
+                        </div>
+                        <Badge variant="outline" className={`text-[8px] uppercase tracking-widest border-none ${status === 'connected' ? 'text-emerald-400 bg-emerald-400/10' : status === 'incomplete' ? 'text-amber-400 bg-amber-400/10' : 'text-white/20 bg-white/5'}`}>
+                          {status === 'connected' ? '✅ Configurado' : status === 'incomplete' ? '⚠ Incompleto' : '❌ Não Configurado'}
+                        </Badge>
+                      </div>
+                      <h4 className="font-bold text-sm text-white uppercase tracking-tight">{item.name}</h4>
+                      <div className="flex items-center justify-between mt-4">
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-white/20">{item.category}</span>
+                        <ChevronRight className={`h-3 w-3 transition-transform ${selectedItem?.id === item.id ? 'translate-x-1 text-[#ff6a00]' : 'text-white/20'}`} />
+                      </div>
                     </button>
-                  </div>
-                </div>
-              ))}
+                  );
+                })
+              )}
             </div>
           )}
-
-          <div className="flex items-center gap-4 border border-white/5 bg-white/[0.02] p-6 rounded-sm">
-            <div className="h-12 w-12 shrink-0 flex items-center justify-center rounded-sm bg-[#ff6a00]/10 text-[#ff6a00]">
-              <ShieldCheck className="h-6 w-6" />
-            </div>
-            <div className="text-left">
-              <h4 className="font-display text-sm font-bold uppercase tracking-wide text-white">Segurança de Dados</h4>
-              <p className="text-xs text-white/40 mt-1 leading-relaxed">
-                Todas as API Keys e credenciais são criptografadas em nível de banco de dados. 
-                Apenas usuários com privilégios administrativos podem gerenciar estas configurações.
-              </p>
-            </div>
-          </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Activity className="h-4 w-4 text-[#ff6a00]" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Atividade Recente</span>
-            </div>
-            <button 
-              onClick={fetchLogs} 
-              disabled={loadingLogs}
-              className="text-[9px] font-bold uppercase tracking-widest text-white/20 hover:text-white transition"
-            >
-              {loadingLogs ? "Atualizando..." : "Atualizar"}
-            </button>
-          </div>
+        {/* Detail Panel */}
+        <div className="lg:col-span-8">
+          {selectedItem ? (
+            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
+              <Tabs defaultValue="config" className="w-full">
+                <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
+                  <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+                    Configuração
+                  </TabsTrigger>
+                  <TabsTrigger value="guide" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+                    Como Configurar
+                  </TabsTrigger>
+                  <TabsTrigger value="history" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+                    Histórico & Logs
+                  </TabsTrigger>
+                </TabsList>
 
-          <div className="space-y-3">
-            {logs.length > 0 ? logs.map((log) => (
-              <div key={log.id} className="p-3 border border-white/5 bg-[#111] rounded-sm text-left">
-                <div className="flex items-center justify-between mb-1">
-                  <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-sm ${log.status === 'success' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-                    {log.status}
-                  </span>
-                  <span className="text-[8px] text-white/20">{new Date(log.created_at).toLocaleTimeString()}</span>
-                </div>
-                <h5 className="text-[10px] font-bold text-white uppercase tracking-tight">{log.integration_name}</h5>
-                <p className="text-[9px] text-white/40 mt-0.5 line-clamp-1">{log.message}</p>
-                {log.latency && <p className="text-[8px] text-white/20 mt-1 uppercase tracking-widest">Latência: {log.latency}</p>}
+                <TabsContent value="config" className="space-y-6 m-0">
+                  <Card className="bg-[#111] border-white/5 overflow-hidden">
+                    <CardHeader className="border-b border-white/5 bg-white/[0.02]">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="text-lg font-bold uppercase">Credenciais de Acesso</CardTitle>
+                          <CardDescription className="text-xs text-white/40">Insira as chaves e tokens fornecidos pelo provedor.</CardDescription>
+                        </div>
+                        <div className="flex items-center gap-2">
+                           <Label className="text-[10px] font-bold uppercase text-white/40">Status</Label>
+                           <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setSelectedItem({ ...selectedItem, status: !selectedItem.status })}
+                            className={`h-7 rounded-full px-4 border-none transition-all ${selectedItem.status ? 'bg-[#ff6a00] text-black shadow-[0_0_10px_rgba(255,106,0,0.3)]' : 'bg-white/10 text-white/40'}`}
+                           >
+                            {selectedItem.status ? 'ATIVO' : 'INATIVO'}
+                           </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-6 space-y-6">
+                      <div className="grid gap-6 md:grid-cols-2">
+                        {Object.keys(selectedItem.credentials).map((key) => (
+                          <div key={key} className="space-y-2">
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
+                              <Key className="h-3 w-3 text-[#ff6a00]" /> {key.replace(/([A-Z])/g, ' $1').trim()}
+                            </Label>
+                            <Input 
+                              type="password"
+                              value={selectedItem.credentials[key]}
+                              onChange={(e) => setSelectedItem({
+                                ...selectedItem,
+                                credentials: { ...selectedItem.credentials, [key]: e.target.value }
+                              })}
+                              className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm font-mono"
+                              placeholder="sk-..."
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="pt-6 border-t border-white/5">
+                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-4 flex items-center gap-2">
+                          <Globe className="h-3.5 w-3.5 text-[#ff6a00]" /> Parâmetros Adicionais
+                        </h4>
+                        <div className="grid gap-6 md:grid-cols-2">
+                          {Object.keys(selectedItem.settings).map((key) => (
+                            <div key={key} className="space-y-2">
+                              <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
+                              {key === 'environment' ? (
+                                <select 
+                                  value={selectedItem.settings[key]}
+                                  onChange={(e) => setSelectedItem({
+                                    ...selectedItem,
+                                    settings: { ...selectedItem.settings, [key]: e.target.value }
+                                  })}
+                                  className="w-full bg-black/40 border border-white/10 rounded-lg h-11 px-3 text-sm focus:border-[#ff6a00] outline-none appearance-none cursor-pointer"
+                                >
+                                  <option value="sandbox">Sandbox (Teste)</option>
+                                  <option value="production">Produção</option>
+                                </select>
+                              ) : (
+                                <Input 
+                                  value={selectedItem.settings[key]}
+                                  onChange={(e) => setSelectedItem({
+                                    ...selectedItem,
+                                    settings: { ...selectedItem.settings, [key]: e.target.value }
+                                  })}
+                                  className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="bg-white/[0.01] border-t border-white/5 p-4 flex justify-between">
+                       <div className="flex gap-2">
+                         <Button variant="ghost" size="sm" onClick={handleRestore} className="text-[9px] uppercase tracking-widest hover:bg-white/5">
+                           <RotateCcw className="h-3 w-3 mr-1.5" /> Descartar
+                         </Button>
+                       </div>
+                       <Button onClick={handleSave} className="bg-[#ff6a00] text-black hover:bg-[#ff6a00]/90 text-[10px] font-bold uppercase tracking-widest h-9 px-6">
+                         <Save className="h-3.5 w-3.5 mr-2" /> Salvar Alterações
+                       </Button>
+                    </CardFooter>
+                  </Card>
+
+                  {/* Test Section */}
+                  <Card className="bg-[#111] border-white/5 overflow-hidden">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="text-sm font-bold uppercase flex items-center gap-2">
+                        <Terminal className="h-4 w-4 text-[#ff6a00]" /> Console de Diagnóstico
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex flex-wrap gap-4 items-center justify-between p-4 bg-black/40 border border-white/5 rounded-xl">
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Ação Necessária</p>
+                          <p className="text-xs text-white">Execute um teste para validar as credenciais configuradas.</p>
+                        </div>
+                        <Button 
+                          onClick={handleTest} 
+                          disabled={isTesting}
+                          className="bg-white/5 border border-white/10 hover:bg-white/10 text-[10px] font-bold uppercase tracking-widest h-10 px-6"
+                        >
+                          {isTesting ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" /> : <Zap className="h-3.5 w-3.5 mr-2 text-[#ff6a00]" />}
+                          Testar Conexão
+                        </Button>
+                      </div>
+
+                      {testResult && (
+                        <div className={`p-5 rounded-xl border ${testResult.success ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-red-500/5 border-red-500/20'} animate-in slide-in-from-top-2 duration-300`}>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <div>
+                              <p className="text-[8px] font-bold text-white/30 uppercase tracking-[0.2em] mb-1">Status</p>
+                              <Badge variant="outline" className={`h-5 text-[9px] border-none ${testResult.success ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                                {testResult.httpCode} {testResult.success ? 'OK' : 'ERROR'}
+                              </Badge>
+                            </div>
+                            <div>
+                              <p className="text-[8px] font-bold text-white/30 uppercase tracking-[0.2em] mb-1">Latência</p>
+                              <p className="text-xs font-mono text-white">{testResult.latency}</p>
+                            </div>
+                            <div>
+                              <p className="text-[8px] font-bold text-white/30 uppercase tracking-[0.2em] mb-1">Ambiente</p>
+                              <p className="text-xs text-white uppercase tracking-wider">{testResult.environment}</p>
+                            </div>
+                            <div>
+                              <p className="text-[8px] font-bold text-white/30 uppercase tracking-[0.2em] mb-1">Timestamp</p>
+                              <p className="text-xs text-white">{new Date(testResult.timestamp).toLocaleTimeString()}</p>
+                            </div>
+                          </div>
+                          <div className="mt-6 pt-6 border-t border-white/5">
+                            <p className="text-[8px] font-bold text-white/30 uppercase tracking-[0.2em] mb-2">Endpoint Utilizado</p>
+                            <code className="text-[10px] text-[#ff6a00] break-all bg-black/40 p-2 rounded block">{testResult.endpoint}</code>
+                          </div>
+                          <div className="mt-4">
+                            <p className="text-[8px] font-bold text-white/30 uppercase tracking-[0.2em] mb-2">Resposta da API</p>
+                            <pre className="text-[10px] text-white/60 overflow-auto bg-black/40 p-3 rounded max-h-32 font-mono leading-relaxed">
+                              {JSON.stringify(testResult.responseBody, null, 2)}
+                            </pre>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="guide" className="m-0 space-y-6">
+                  <Card className="bg-[#111] border-white/5">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-bold uppercase flex items-center gap-2">
+                        <BookOpen className="h-5 w-5 text-[#ff6a00]" /> Guia de Configuração
+                      </CardTitle>
+                      <CardDescription className="text-xs text-white/40">Siga o passo a passo para integrar {selectedItem.name} corretamente.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        {(GUIDES[selectedItem.category] || ["Documentação em breve para este provedor."]).map((step, idx) => (
+                          <div key={idx} className="flex gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-xl hover:border-white/10 transition group">
+                            <div className="h-8 w-8 shrink-0 flex items-center justify-center rounded-lg bg-[#ff6a00]/10 text-[#ff6a00] font-bold text-sm border border-[#ff6a00]/20 group-hover:scale-110 transition">
+                              {idx + 1}
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-sm text-white/80 leading-relaxed">{step}</p>
+                              {step.toLowerCase().includes('webhook') && (
+                                <Button variant="link" onClick={() => setActiveCategory('webhooks')} className="p-0 h-auto text-[10px] text-[#ff6a00] uppercase tracking-widest font-bold hover:no-underline hover:brightness-125">
+                                  Ver URLs de Webhook <ExternalLink className="h-3 w-3 ml-1" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <Alert className="mt-8 bg-orange-500/5 border-orange-500/20">
+                        <Info className="h-4 w-4 text-[#ff6a00]" />
+                        <AlertTitle className="text-xs font-bold uppercase tracking-widest text-[#ff6a00]">Dica de Segurança</AlertTitle>
+                        <AlertDescription className="text-[11px] text-white/60">
+                          Nunca compartilhe suas chaves privadas. O sistema criptografa todos os dados sensíveis antes do armazenamento.
+                        </AlertDescription>
+                      </Alert>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="history" className="m-0 space-y-6">
+                  <Card className="bg-[#111] border-white/5">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                      <div>
+                        <CardTitle className="text-lg font-bold uppercase">Registro de Atividades</CardTitle>
+                        <CardDescription className="text-xs text-white/40">Últimos testes e alterações realizadas para {selectedItem.name}.</CardDescription>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => refetchHistory()} className="h-8 text-[9px] uppercase tracking-widest hover:bg-white/5">
+                        <Activity className="h-3 w-3 mr-1.5" /> Atualizar
+                      </Button>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        {historyLogs && historyLogs.length > 0 ? historyLogs.map((log: any) => (
+                          <div key={log.id} className="p-4 border border-white/5 bg-black/40 rounded-xl hover:border-white/10 transition">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-3">
+                                <Badge variant="outline" className={`h-5 text-[8px] uppercase tracking-widest border-none ${log.status === 'success' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
+                                  {log.status}
+                                </Badge>
+                                <span className="text-[10px] font-bold text-white uppercase tracking-tight">{log.message}</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-white/20">
+                                <Clock className="h-3 w-3" />
+                                <span className="text-[9px] font-medium">{new Date(log.created_at).toLocaleString()}</span>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-4 mt-4 text-[9px] font-bold uppercase tracking-widest text-white/30">
+                              <div className="flex items-center gap-1.5">
+                                <Zap className="h-3 w-3 text-[#ff6a00]" /> {log.latency || 'N/A'}
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <Globe className="h-3 w-3 text-[#ff6a00]" /> {log.environment || 'N/A'}
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <Terminal className="h-3 w-3 text-[#ff6a00]" /> HTTP {log.http_code || '---'}
+                              </div>
+                            </div>
+                          </div>
+                        )) : (
+                          <div className="py-20 flex flex-col items-center justify-center text-white/10 border border-dashed border-white/10 rounded-xl">
+                            <Activity className="h-10 w-10 mb-4 opacity-5" />
+                            <p className="text-[10px] font-bold uppercase tracking-widest">Nenhum registro encontrado</p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </div>
+          ) : (
+            <div className="h-[600px] border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center bg-white/[0.01] p-12 text-center animate-pulse">
+              <div className="h-20 w-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                <Settings2 className="h-10 w-10 text-white/10" />
               </div>
-            )) : (
-              <div className="py-12 border border-dashed border-white/10 rounded-sm flex flex-col items-center justify-center text-white/20">
-                <Activity className="h-6 w-6 mb-2 opacity-10" />
-                <span className="text-[10px] font-bold uppercase tracking-widest">Nenhum log disponível</span>
-              </div>
-            )}
-          </div>
+              <h3 className="text-xl font-bold text-white/40 uppercase tracking-tight">Selecione uma Integração</h3>
+              <p className="text-sm text-white/20 mt-2 max-w-sm">
+                Escolha um serviço ao lado para visualizar suas credenciais, guias de configuração e diagnósticos.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Modal de Configuração */}
-      {editingItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="w-full max-w-xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-8 animate-in zoom-in-95 duration-200 text-left">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h3 className="text-xl font-bold uppercase tracking-tight">Configurar {editingItem.name}</h3>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/40">Gerencie credenciais e definições técnicas</p>
-              </div>
-              <button onClick={() => setEditingItem(null)} className="p-2 hover:bg-white/5 rounded-full transition"><XCircle className="h-5 w-5" /></button>
-            </div>
-
-            <form onSubmit={handleSave} className="space-y-6">
-              {/* Credentials Section */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 border-b border-white/5 pb-2">
-                  <Key className="h-3.5 w-3.5 text-[#ff6a00]" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Credenciais</span>
-                </div>
-                
-                {Object.keys(editingItem.credentials).map((key) => (
-                  <div key={key} className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">{key.replace(/([A-Z])/g, ' $1').trim()}</label>
-                    <input 
-                      type="password"
-                      value={editingItem.credentials[key]} 
-                      onChange={e => setEditingItem({
-                        ...editingItem, 
-                        credentials: { ...editingItem.credentials, [key]: e.target.value }
-                      })} 
-                      className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" 
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Settings Section */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 border-b border-white/5 pb-2">
-                  <Globe className="h-3.5 w-3.5 text-[#ff6a00]" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Configurações Gerais</span>
-                </div>
-                
-                {Object.keys(editingItem.settings).map((key) => (
-                  <div key={key} className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">{key.replace(/([A-Z])/g, ' $1').trim()}</label>
-                    <input 
-                      value={editingItem.settings[key]} 
-                      onChange={e => setEditingItem({
-                        ...editingItem, 
-                        settings: { ...editingItem.settings, [key]: e.target.value }
-                      })} 
-                      className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" 
-                    />
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-6 flex gap-3 border-t border-white/5">
-                <button 
-                  type="button" 
-                  onClick={handleTest}
-                  disabled={isTesting}
-                  className="flex-1 py-3.5 rounded-xl border border-white/10 bg-white/5 font-bold hover:bg-white/10 transition uppercase tracking-widest text-[10px] flex items-center justify-center gap-2"
-                >
-                  {isTesting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Activity className="h-3.5 w-3.5" />}
-                  Testar Conexão
-                </button>
-                <button 
-                  type="submit" 
-                  className="flex-1 py-3.5 rounded-xl bg-[#ff6a00] text-black font-bold hover:scale-[1.02] active:scale-[0.98] transition uppercase tracking-widest text-[10px] flex items-center justify-center gap-2"
-                >
-                  <Save className="h-3.5 w-3.5" />
-                  Salvar Alterações
-                </button>
-              </div>
-            </form>
-          </div>
+      {/* Security Footer Info */}
+      <div className="flex items-center gap-4 border border-white/5 bg-white/[0.02] p-6 rounded-2xl max-w-4xl mx-auto">
+        <div className="h-12 w-12 shrink-0 flex items-center justify-center rounded-xl bg-[#ff6a00]/10 text-[#ff6a00] border border-[#ff6a00]/20">
+          <ShieldCheck className="h-6 w-6" />
         </div>
-      )}
-
+        <div className="text-left">
+          <h4 className="font-display text-sm font-bold uppercase tracking-wide text-white">Arquitetura de Segurança de Camada Militar</h4>
+          <p className="text-xs text-white/40 mt-1 leading-relaxed">
+            Suas credenciais são protegidas por criptografia de nível industrial no banco de dados. 
+            Todas as chaves sensíveis são mascaradas no frontend e os logs de auditoria registram cada interação técnica para conformidade total.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
