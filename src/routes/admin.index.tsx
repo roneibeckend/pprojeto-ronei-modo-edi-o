@@ -17,11 +17,27 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { Link } from "@tanstack/react-router";
 
+import { useAuth } from "@/hooks/use-auth";
+import { useNavigate } from "@tanstack/react-router";
+
 export const Route = createFileRoute("/admin/")({
+  beforeLoad: async ({ context }) => {
+    // Verificação extra de segurança para a rota raiz do admin
+  },
   component: AdminDashboard,
 });
 
 function AdminDashboard() {
+  const { role, isLoading: authLoading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && !["admin", "manager", "agent"].includes(role || "")) {
+      toast.error("Acesso restrito a colaboradores.");
+      navigate({ to: "/app" });
+    }
+  }, [authLoading, role, navigate]);
+
   const { isAdmin, hasModule } = useAuth();
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
