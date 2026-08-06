@@ -152,7 +152,7 @@ function EbooksPage() {
                 <Link 
                   to="/app/ebooks/$ebookId" 
                   params={{ ebookId: b.id }}
-                  className="btn-fire flex-1 text-xs"
+                  className="btn-fire flex-1 text-xs pointer-events-auto cursor-pointer"
                 >
                   <ShoppingCart className="h-3.5 w-3.5" /> Comprar
                 </Link>

@@ -143,7 +143,7 @@ function CourseShowcaseCard({ course, isEnrolled }: { course: any; isEnrolled: b
               <Link 
                 to="/app/cursos/$courseId" 
                 params={{ courseId: course.id }}
-                className="btn-fire px-4 py-2 text-xs"
+                className="btn-fire px-4 py-2 text-xs pointer-events-auto cursor-pointer"
               >
                 <ShoppingCart className="mr-1.5 h-3.5 w-3.5" /> Comprar
               </Link>

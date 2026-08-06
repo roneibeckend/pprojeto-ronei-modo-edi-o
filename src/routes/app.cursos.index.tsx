@@ -167,7 +167,7 @@ function CoursesPage() {
                   <Link 
                     to="/app/cursos/$courseId" 
                     params={{ courseId: c.id }}
-                    className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10"
+                    className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10 pointer-events-auto cursor-pointer"
                   >
                     <ShoppingCart className="h-4 w-4" /> Comprar e Liberar
                   </Link>
