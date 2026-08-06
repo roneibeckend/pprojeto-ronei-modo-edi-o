@@ -141,7 +141,7 @@ function StatCard({ icon, label, value, accent, small }: { icon: React.ReactNode
 
 /* -------------------- CARD -------------------- */
 
-function CertCard({ cert, onPreview, onDownload }: { cert: typeof certificates[number]; onPreview: () => void; onDownload: () => void }) {
+function CertCard({ cert, onPreview, onDownload }: { cert: any; onPreview: () => void; onDownload: () => void }) {
   const locked = !cert.unlocked;
   return (
     <article
