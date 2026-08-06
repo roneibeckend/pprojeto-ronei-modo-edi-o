@@ -48,6 +48,7 @@ function AdminRootLayout() {
     { to: "/admin/receitas", label: "Receitas", icon: ChefHat },
     { to: "/admin/ebooks", label: "E-books", icon: BookOpen },
     { to: "/admin/alunos", label: "Alunos", icon: Users },
+    { to: "/admin/integracoes", label: "Integrações", icon: BrainCircuit },
   ];
 
   return (
