@@ -69,6 +69,17 @@ export const Route = createFileRoute("/app/certificados")({
 const BRAND = "#ff6a00";
 
 function CertificatesPage() {
+  // Sincronizar dinamicamente com o progresso dos cursos
+  const certificates = baseCertificates.map(cert => {
+    const course = courses.find(c => c.id === cert.courseId);
+    const isUnlocked = course ? course.progress === 100 : cert.unlocked;
+    return {
+      ...cert,
+      unlocked: isUnlocked,
+      completedAt: isUnlocked ? (cert.completedAt === "—" ? "06/08/2026" : cert.completedAt) : "—"
+    };
+  });
+
   const [preview, setPreview] = useState<{ cert: typeof certificates[number]; autoDownload?: boolean } | null>(null);
   const unlockedCount = certificates.filter((c) => c.unlocked).length;
   const totalHours = certificates.filter((c) => c.unlocked).reduce((s, c) => s + c.hours, 0);
@@ -76,6 +87,7 @@ function CertificatesPage() {
 
   return (
     <div>
+      <style>{printStyles}</style>
       <PageHeader title="Certificados" subtitle="Sua vitrine oficial de conquistas — assinada por Ronnei e verificável por código único." />
 
       {/* Hero stats */}
