@@ -79,38 +79,6 @@ const brl = (n: number) =>
 function AdminPage() {
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <header className="flex flex-col gap-4 border-b border-white/5 pb-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <div className="mb-2 inline-flex items-center gap-2 rounded-sm border-l-2 border-[color:var(--orange)] pl-3 text-[10px] font-bold uppercase tracking-[0.28em] text-white/50" style={{ ["--orange" as any]: ORANGE }}>
-            Espetinho na Veia · Cockpit
-          </div>
-          <h1 className="font-display text-3xl font-extrabold uppercase leading-tight tracking-tight text-white sm:text-4xl">
-            Painel <span style={{ color: ORANGE }}>Administrativo</span>
-          </h1>
-          <p className="mt-2 text-sm text-white/50">
-            Visão em tempo real da sua operação.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-sm border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
-              Operacional
-            </span>
-          </div>
-          <button
-            className="inline-flex items-center gap-2 rounded-sm px-4 py-2 text-sm font-bold uppercase tracking-widest text-black transition hover:brightness-110"
-            style={{ backgroundColor: ORANGE }}
-          >
-            <Settings className="h-4 w-4" /> Configurações
-          </button>
-        </div>
-      </header>
-
       {/* Hero KPIs */}
       <HeroKpis />
 
@@ -126,41 +94,83 @@ function AdminPage() {
         <AdminStat icon={TrendingUp} label="Faturamento" value={137240} format="brl" delay={420} accent />
       </div>
 
-      {/* Chart */}
-      <ChartCard />
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Chart */}
+        <ChartCard />
 
-      {/* Quick actions */}
-      <section>
-        <div className="mb-4 flex items-end justify-between">
-          <div>
-            <div className="mb-1 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-white/40">
-              <Sparkles className="h-3 w-3" style={{ color: ORANGE }} /> Comando executivo
+        {/* Quick actions */}
+        <section className="flex flex-col">
+          <div className="mb-4 flex items-end justify-between">
+            <div>
+              <div className="mb-1 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-white/40">
+                <Sparkles className="h-3 w-3" style={{ color: ORANGE }} /> Comando executivo
+              </div>
+              <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-white">
+                Ferramentas IA
+              </h2>
             </div>
-            <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-white">
-              Ações rápidas
-            </h2>
           </div>
-          <div className="hidden items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-white/40 sm:flex">
-            <Command className="h-3 w-3" /> atalhos habilitados
+          <div className="flex-1 grid gap-3">
+            <AdminAction index={1} icon={Sparkles} title="Criar ebook com IA" desc="Gere ebook interativo a partir de um prompt." meta="Lovable AI · Gemini" shortcut="I" delay={0} to="/app/admin/ebook-ai" highlight />
+            <AdminAction index={2} icon={GraduationCap} title="Upload Inteligente" desc="Estruture módulos e trilhas usando IA." meta="Novo" shortcut="U" delay={40} />
           </div>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <AdminAction index={1} icon={Sparkles} title="Criar ebook com IA" desc="Gere ebook interativo a partir de um prompt." meta="Lovable AI · Gemini" shortcut="I" delay={0} to="/app/admin/ebook-ai" highlight />
-          <AdminAction index={2} icon={GraduationCap} title="Cadastrar curso" desc="Estruture módulos, aulas e trilhas premium." meta="12 cursos ativos" shortcut="C" delay={40} />
-          <AdminAction index={3} icon={Clapperboard} title="Upload de vídeos" desc="Envie aulas em 4K direto para as trilhas." meta="Streaming HLS" shortcut="V" delay={80} />
-          <AdminAction index={4} icon={Library} title="Cadastrar e-book" desc="Publique material interativo na biblioteca." meta="Slides + IA" shortcut="E" delay={120} />
-          <AdminAction index={5} icon={Flame} title="Cadastrar receita" desc="Adicione fichas técnicas com custo e lucro." meta="Margem auto" shortcut="R" delay={160} />
-          <AdminAction index={6} icon={LayoutTemplate} title="Novo material" desc="Planilhas, PDFs e artes de divulgação." meta="Templates prontos" shortcut="M" delay={200} />
-          <AdminAction index={7} icon={UserCog} title="Gerenciar alunos" desc="Consulte, edite e libere acessos." meta="1.284 ativos" shortcut="A" delay={240} />
-        </div>
-      </section>
+        </section>
+      </div>
 
-      <FinancePanel />
+      <div className="grid gap-6 lg:grid-cols-2">
+         {/* Finance Shortcut */}
+         <section className="border border-white/5 bg-[#111] p-6">
+            <div className="flex items-center justify-between mb-6">
+               <div className="flex items-center gap-3">
+                  <Calculator className="h-5 w-5" style={{ color: ORANGE }} />
+                  <h3 className="font-display text-lg font-extrabold uppercase tracking-wide text-white">Saúde Financeira</h3>
+               </div>
+               <Link to="/app/admin/financeiro" className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--orange)] hover:brightness-125" style={{ ["--orange" as any]: ORANGE }}>Abrir Painel →</Link>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+               <div className="bg-black/40 p-4 border border-white/5">
+                  <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-1">Lucro Estimado</div>
+                  <div className="text-xl font-display font-extrabold text-emerald-400">R$ 83.340,00</div>
+               </div>
+               <div className="bg-black/40 p-4 border border-white/5">
+                  <div className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-1">Margem Líquida</div>
+                  <div className="text-xl font-display font-extrabold text-white">60.7%</div>
+               </div>
+            </div>
+         </section>
 
-      <StudentsTable />
+         {/* Students Shortcut */}
+         <section className="border border-white/5 bg-[#111] p-6">
+            <div className="flex items-center justify-between mb-6">
+               <div className="flex items-center gap-3">
+                  <Users className="h-5 w-5" style={{ color: ORANGE }} />
+                  <h3 className="font-display text-lg font-extrabold uppercase tracking-wide text-white">Últimos Alunos</h3>
+               </div>
+               <Link to="/app/admin/alunos" className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--orange)] hover:brightness-125" style={{ ["--orange" as any]: ORANGE }}>Ver Analítico →</Link>
+            </div>
+            <div className="space-y-3">
+                {[
+                  { name: "André Silva", pct: 42 },
+                  { name: "Mariana Costa", pct: 78 },
+                  { name: "Carlos Mendes", pct: 15 }
+                ].map((s, i) => (
+                  <div key={i} className="flex items-center justify-between bg-black/20 p-2 text-xs">
+                    <span className="font-medium text-white/80">{s.name}</span>
+                    <div className="flex items-center gap-2">
+                       <div className="h-1 w-12 bg-white/5 overflow-hidden">
+                          <div className="h-full bg-[color:var(--orange)]" style={{ ["--orange" as any]: ORANGE, width: `${s.pct}%` }} />
+                       </div>
+                       <span className="font-bold text-[color:var(--orange)]" style={{ ["--orange" as any]: ORANGE }}>{s.pct}%</span>
+                    </div>
+                  </div>
+                ))}
+            </div>
+         </section>
+      </div>
     </div>
   );
 }
+
 
 /* ---------------- Hero KPIs ---------------- */
 
