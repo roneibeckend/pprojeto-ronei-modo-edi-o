@@ -10,7 +10,8 @@ import {
   TrendingUp,
   ChevronRight,
   AlertCircle,
-  MessageSquare
+  MessageSquare,
+  Activity
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
