@@ -77,22 +77,27 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
 
       if (modError) throw modError;
 
-      const { data: less, error: lesError } = await supabase
-        .from("course_lessons" as any)
-        .select("*")
-        .in("module_id", mods?.map(m => m.id) || [])
-        .order("order_index");
+      const modIds = (mods as any[])?.map(m => m.id) || [];
+      
+      let less: any[] = [];
+      if (modIds.length > 0) {
+        const { data: lessData, error: lesError } = await supabase
+          .from("course_lessons" as any)
+          .select("*")
+          .in("module_id", modIds)
+          .order("order_index");
+        if (lesError) throw lesError;
+        less = lessData || [];
+      }
 
-      if (lesError && mods?.length) throw lesError;
-
-      setModules(mods?.map(m => ({
+      setModules((mods as any[])?.map(m => ({
         id: m.id,
         title: m.title,
         description: m.description,
         order_index: m.order_index || 0
       })) || []);
 
-      setLessons(less?.map(l => ({
+      setLessons(less.map(l => ({
         id: l.id,
         module_id: l.module_id,
         title: l.title,
@@ -103,7 +108,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
         order_index: l.order_index || 0,
         is_free: l.is_free || false,
         content: l.content
-      })) || []);
+      })));
     } catch (error: any) {
       toast.error("Erro ao carregar conteúdo: " + error.message);
     } finally {
@@ -219,7 +224,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
         <Dialog open={!!editingModule} onOpenChange={() => setEditingModule(null)}>
           <DialogContent className="bg-[#0e0e0e] border-white/10 text-white">
             <DialogHeader><DialogTitle>Módulo</DialogTitle></DialogHeader>
-            <form onSubmit={handleSaveModule} className="space-y-4 pt-4">
+            <form onSubmit={handleSaveModule} className="space-y-4 pt-4 text-left">
               <input 
                 required 
                 placeholder="Título do Módulo"
@@ -243,18 +248,33 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
 
       {editingLesson && (
         <Dialog open={!!editingLesson} onOpenChange={() => setEditingLesson(null)}>
-          <DialogContent className="bg-[#0e0e0e] border-white/10 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="bg-[#0e0e0e] border-white/10 text-white max-w-2xl max-h-[90vh] overflow-y-auto text-left">
             <DialogHeader><DialogTitle>Aula</DialogTitle></DialogHeader>
             <form onSubmit={handleSaveLesson} className="space-y-4 pt-4">
               <div className="grid grid-cols-2 gap-4">
-                <input required placeholder="Título" value={editingLesson.title} onChange={e => setEditingLesson({...editingLesson, title: e.target.value})} className="bg-white/5 border border-white/10 p-3 rounded-lg outline-none" />
-                <input placeholder="URL do Vídeo" value={editingLesson.video_url || ""} onChange={e => setEditingLesson({...editingLesson, video_url: e.target.value})} className="bg-white/5 border border-white/10 p-3 rounded-lg outline-none" />
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título</label>
+                  <input required placeholder="Título" value={editingLesson.title} onChange={e => setEditingLesson({...editingLesson, title: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg outline-none" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL do Vídeo</label>
+                  <input placeholder="URL do Vídeo" value={editingLesson.video_url || ""} onChange={e => setEditingLesson({...editingLesson, video_url: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg outline-none" />
+                </div>
               </div>
-              <textarea placeholder="Descrição" value={editingLesson.description || ""} onChange={e => setEditingLesson({...editingLesson, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg h-24 outline-none" />
-              <textarea placeholder="Conteúdo (Markdown/Rich Text)" value={editingLesson.content || ""} onChange={e => setEditingLesson({...editingLesson, content: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg h-40 outline-none" />
-              <div className="flex items-center gap-4">
-                <input type="number" placeholder="Duração (min)" value={editingLesson.duration_minutes} onChange={e => setEditingLesson({...editingLesson, duration_minutes: parseInt(e.target.value)})} className="bg-white/5 border border-white/10 p-3 rounded-lg w-32 outline-none" />
-                <label className="flex items-center gap-2 cursor-pointer">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição Curta</label>
+                <textarea placeholder="Descrição" value={editingLesson.description || ""} onChange={e => setEditingLesson({...editingLesson, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg h-24 outline-none resize-none" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo da Aula (Markdown)</label>
+                <textarea placeholder="Conteúdo (Markdown/Rich Text)" value={editingLesson.content || ""} onChange={e => setEditingLesson({...editingLesson, content: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg h-40 outline-none resize-none" />
+              </div>
+              <div className="flex items-center gap-6">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Duração (min)</label>
+                  <input type="number" value={editingLesson.duration_minutes} onChange={e => setEditingLesson({...editingLesson, duration_minutes: parseInt(e.target.value)})} className="bg-white/5 border border-white/10 p-3 rounded-lg w-32 outline-none" />
+                </div>
+                <label className="flex items-center gap-2 cursor-pointer mt-4">
                   <Checkbox checked={editingLesson.is_free} onCheckedChange={(val) => setEditingLesson({...editingLesson, is_free: !!val})} />
                   <span className="text-sm">Aula Grátis (Preview)</span>
                 </label>
