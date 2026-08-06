@@ -1,4 +1,5 @@
-import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { 
   LayoutDashboard, 
   Library, 
@@ -7,8 +8,10 @@ import {
   Settings,
   ShieldCheck,
   ArrowLeft,
-  ChevronLeft
+  ChevronLeft,
+  Loader2
 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/admin")({
   component: AdminRootLayout,
