@@ -94,7 +94,7 @@ function SupportPage() {
     const formData = new FormData(e.currentTarget);
     const subject = formData.get("subject") as string;
     const category = formData.get("category") as string;
-    const message = (formData.get("message") as string) || "";
+    const message = (formData.get("message") as string) || "(sem mensagem)";
     
     try {
       // 1. Criar o ticket
