@@ -20,7 +20,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { testAIConnection, saveIntegration } from "@/lib/integrations.functions";
+import { testIntegrationConnection, saveIntegration } from "@/lib/integrations.functions";
 import { useServerFn } from "@tanstack/react-start";
 
 export const Route = createFileRoute('/admin/integracoes')({
