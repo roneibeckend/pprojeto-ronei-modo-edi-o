@@ -201,13 +201,13 @@ export function Shell({ children }: { children: ReactNode }) {
           </Sheet>
 
           <div className="min-w-0 flex-1">
-            <div className="truncate font-display text-lg font-extrabold uppercase tracking-wide sm:text-xl">
-              Espetinho <span className="text-[#ff6a00]">na Veia</span>
+            <div className="truncate font-display text-lg font-extrabold uppercase tracking-wide sm:text-xl text-foreground">
+              Espetinho <span className="text-primary">na Veia</span>
             </div>
           </div>
           <Link
             to="/app/perfil"
-            className="flex items-center gap-2 rounded-md border border-white/10 py-1 pl-1 pr-3 transition-colors hover:border-[#ff6a00]/50"
+            className="flex items-center gap-2 rounded-md border border-white/10 py-1 pl-1 pr-3 transition-colors hover:border-primary/50"
           >
             <img src={student.avatar} alt={student.name} className="h-8 w-8 rounded" />
             <span className="hidden text-sm font-medium sm:inline">{student.name.split(" ")[0]}</span>
@@ -224,7 +224,7 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
   return (
     <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 sm:flex sm:flex-wrap sm:justify-between">
       <div className="min-w-0">
-        <h1 className="truncate font-display text-2xl font-bold sm:text-3xl">{title}</h1>
+        <h1 className="truncate font-display text-2xl font-bold sm:text-3xl text-foreground">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       {action}
