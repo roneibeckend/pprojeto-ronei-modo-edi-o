@@ -10,7 +10,8 @@ import {
   TrendingUp,
   ChevronRight,
   AlertCircle,
-  MessageSquare
+  MessageSquare,
+  Activity
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -27,13 +28,15 @@ function AdminDashboard() {
         coursesRes,
         ebooksRes,
         enrollmentsRes,
-        ticketsRes
+        ticketsRes,
+        recentLogsRes
       ] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('courses').select('id'),
         supabase.from('ebooks').select('id'),
         supabase.from('course_enrollments' as any).select('id', { count: 'exact' }),
-        supabase.from('support_tickets').select('id', { count: 'exact', head: true }).eq('status', 'open')
+        supabase.from('support_tickets').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+        supabase.from('integration_logs' as any).select('*').order('created_at', { ascending: false }).limit(3)
       ]);
 
       return {
@@ -42,7 +45,8 @@ function AdminDashboard() {
         ebooks: ebooksRes.data?.length || 0,
         sales: enrollmentsRes.count || 0,
         revenue: (enrollmentsRes.count || 0) * 197.00,
-        pendingTickets: ticketsRes.count || 0
+        pendingTickets: ticketsRes.count || 0,
+        recentLogs: recentLogsRes.data || []
       };
     }
   });
@@ -109,15 +113,42 @@ function AdminDashboard() {
           </div>
         </div>
 
-        <div className="p-6 rounded-xl border border-white/5 bg-[#111] flex flex-col justify-center items-center text-center">
-          <div className="h-16 w-16 rounded-full bg-[#ff6a00]/10 flex items-center justify-center text-[#ff6a00] mb-4">
-            <DollarSign className="h-8 w-8" />
+        <div className="p-6 rounded-xl border border-white/5 bg-[#111]">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-bold uppercase tracking-tight flex items-center gap-2">
+              <Activity className="h-4 w-4 text-[#ff6a00]" />
+              Saúde do Sistema
+            </h3>
+            <Link to="/admin/integracoes" className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00] hover:brightness-125 transition">Ver Todos</Link>
           </div>
-          <h3 className="text-2xl font-bold tracking-tight">
-            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats?.revenue || 0)}
-          </h3>
-          <p className="text-sm text-white/40 mt-1 uppercase tracking-widest font-bold">Faturamento Estimado</p>
-          <p className="text-[10px] text-white/20 mt-4 max-w-[200px]">Cálculo baseado no volume de matrículas e ticket médio da plataforma.</p>
+          
+          <div className="space-y-4">
+            <div className="flex flex-col items-center justify-center py-2">
+              <div className="h-16 w-16 rounded-full bg-[#ff6a00]/10 flex items-center justify-center text-[#ff6a00] mb-4">
+                <DollarSign className="h-8 w-8" />
+              </div>
+              <h3 className="text-2xl font-bold tracking-tight">
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats?.revenue || 0)}
+              </h3>
+              <p className="text-sm text-white/40 mt-1 uppercase tracking-widest font-bold">Faturamento Estimado</p>
+            </div>
+
+            <div className="pt-4 border-t border-white/5 space-y-2">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-white/20 mb-2">Logs de Integração</p>
+              {stats?.recentLogs && stats.recentLogs.length > 0 ? (
+                stats.recentLogs.map((log: any) => (
+                  <div key={log.id} className="flex items-center justify-between text-[10px]">
+                    <span className="text-white/40">{log.integration_name}</span>
+                    <span className={log.status === 'success' ? 'text-emerald-400' : 'text-red-400'}>
+                      {log.status === 'success' ? 'OK' : 'Falha'}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-[10px] text-white/20 italic">Nenhuma atividade recente</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

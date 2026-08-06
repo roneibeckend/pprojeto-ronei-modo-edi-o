@@ -7,7 +7,9 @@ import {
   Edit3, 
   Loader2,
   X,
-  Sparkles
+  Sparkles,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { saveContent } from "@/lib/content-admin.functions";
@@ -24,17 +26,26 @@ function AdminCursosPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const ITEMS_PER_PAGE = 8;
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentPage]);
 
   async function fetchData() {
     try {
       setLoading(true);
-      const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: false });
+      const { data, error, count } = await supabase
+        .from('courses')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE - 1);
+        
       if (error) throw error;
       setCourses(data || []);
+      setTotalCount(count || 0);
     } catch (error: any) {
       toast.error("Erro ao carregar cursos: " + error.message);
     } finally {
@@ -108,6 +119,30 @@ function AdminCursosPage() {
               </div>
             </div>
           ))}
+          {/* Pagination */}
+          {totalCount > ITEMS_PER_PAGE && (
+            <div className="mt-6 flex items-center justify-between p-4 rounded-xl border border-white/5 bg-[#111]">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-white/20">
+                Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1} a {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} de {totalCount} cursos
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 transition"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(Math.ceil(totalCount / ITEMS_PER_PAGE), p + 1))}
+                  disabled={currentPage === Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                  className="p-2 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 transition"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

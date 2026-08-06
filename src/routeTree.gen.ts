@@ -28,6 +28,7 @@ import { Route as AppEbooksRouteImport } from './routes/app.ebooks'
 import { Route as AppCursosRouteImport } from './routes/app.cursos'
 import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
+import { Route as AdminSuporteRouteImport } from './routes/admin.suporte'
 import { Route as AdminReceitasRouteImport } from './routes/admin.receitas'
 import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin.financeiro'
@@ -140,6 +141,11 @@ const AppAdminRoute = AppAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
+const AdminSuporteRoute = AdminSuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminReceitasRoute = AdminReceitasRouteImport.update({
   id: '/receitas',
   path: '/receitas',
@@ -238,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
+  '/admin/suporte': typeof AdminSuporteRoute
   '/app/admin': typeof AppAdminRoute
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
@@ -273,6 +280,7 @@ export interface FileRoutesByTo {
   '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
+  '/admin/suporte': typeof AdminSuporteRoute
   '/app/admin': typeof AppAdminRoute
   '/app/certificados': typeof AppCertificadosRoute
   '/app/materiais': typeof AppMateriaisRoute
@@ -309,6 +317,7 @@ export interface FileRoutesById {
   '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
+  '/admin/suporte': typeof AdminSuporteRoute
   '/app/admin': typeof AppAdminRoute
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
@@ -348,6 +357,7 @@ export interface FileRouteTypes {
     | '/admin/financeiro'
     | '/admin/integracoes'
     | '/admin/receitas'
+    | '/admin/suporte'
     | '/app/admin'
     | '/app/certificados'
     | '/app/cursos'
@@ -383,6 +393,7 @@ export interface FileRouteTypes {
     | '/admin/financeiro'
     | '/admin/integracoes'
     | '/admin/receitas'
+    | '/admin/suporte'
     | '/app/admin'
     | '/app/certificados'
     | '/app/materiais'
@@ -418,6 +429,7 @@ export interface FileRouteTypes {
     | '/admin/financeiro'
     | '/admin/integracoes'
     | '/admin/receitas'
+    | '/admin/suporte'
     | '/app/admin'
     | '/app/certificados'
     | '/app/cursos'
@@ -586,6 +598,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
+    '/admin/suporte': {
+      id: '/admin/suporte'
+      path: '/suporte'
+      fullPath: '/admin/suporte'
+      preLoaderRoute: typeof AdminSuporteRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/receitas': {
       id: '/admin/receitas'
       path: '/receitas'
@@ -710,6 +729,7 @@ interface AdminRouteChildren {
   AdminFinanceiroRoute: typeof AdminFinanceiroRoute
   AdminIntegracoesRoute: typeof AdminIntegracoesRoute
   AdminReceitasRoute: typeof AdminReceitasRoute
+  AdminSuporteRoute: typeof AdminSuporteRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -722,6 +742,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFinanceiroRoute: AdminFinanceiroRoute,
   AdminIntegracoesRoute: AdminIntegracoesRoute,
   AdminReceitasRoute: AdminReceitasRoute,
+  AdminSuporteRoute: AdminSuporteRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
