@@ -43,6 +43,7 @@ import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.previe
 import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
 import { Route as AppEbooksPremiumEbookIdRouteImport } from './routes/app.ebooks.premium.$ebookId'
 import { Route as AppEbooksGeradoIdRouteImport } from './routes/app.ebooks.gerado.$id'
+import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
 
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   id: '/termos-de-uso',
@@ -214,6 +215,11 @@ const AppEbooksGeradoIdRoute = AppEbooksGeradoIdRouteImport.update({
   path: '/gerado/$id',
   getParentRoute: () => AppEbooksRoute,
 } as any)
+const ApiPublicWebhooksAsaasRoute = ApiPublicWebhooksAsaasRouteImport.update({
+  id: '/api/public/webhooks/asaas',
+  path: '/api/public/webhooks/asaas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -248,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/cursos/': typeof AppCursosIndexRoute
   '/app/ebooks/': typeof AppEbooksIndexRoute
+  '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/app/ebooks/gerado/$id': typeof AppEbooksGeradoIdRoute
   '/app/ebooks/premium/$ebookId': typeof AppEbooksPremiumEbookIdRoute
 }
@@ -280,6 +287,7 @@ export interface FileRoutesByTo {
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/cursos': typeof AppCursosIndexRoute
   '/app/ebooks': typeof AppEbooksIndexRoute
+  '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/app/ebooks/gerado/$id': typeof AppEbooksGeradoIdRoute
   '/app/ebooks/premium/$ebookId': typeof AppEbooksPremiumEbookIdRoute
 }
@@ -317,6 +325,7 @@ export interface FileRoutesById {
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/cursos/': typeof AppCursosIndexRoute
   '/app/ebooks/': typeof AppEbooksIndexRoute
+  '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/app/ebooks/gerado/$id': typeof AppEbooksGeradoIdRoute
   '/app/ebooks/premium/$ebookId': typeof AppEbooksPremiumEbookIdRoute
 }
@@ -355,6 +364,7 @@ export interface FileRouteTypes {
     | '/app/ebooks/$ebookId'
     | '/app/cursos/'
     | '/app/ebooks/'
+    | '/api/public/webhooks/asaas'
     | '/app/ebooks/gerado/$id'
     | '/app/ebooks/premium/$ebookId'
   fileRoutesByTo: FileRoutesByTo
@@ -387,6 +397,7 @@ export interface FileRouteTypes {
     | '/app/ebooks/$ebookId'
     | '/app/cursos'
     | '/app/ebooks'
+    | '/api/public/webhooks/asaas'
     | '/app/ebooks/gerado/$id'
     | '/app/ebooks/premium/$ebookId'
   id:
@@ -423,6 +434,7 @@ export interface FileRouteTypes {
     | '/app/ebooks/$ebookId'
     | '/app/cursos/'
     | '/app/ebooks/'
+    | '/api/public/webhooks/asaas'
     | '/app/ebooks/gerado/$id'
     | '/app/ebooks/premium/$ebookId'
   fileRoutesById: FileRoutesById
@@ -436,6 +448,7 @@ export interface RootRouteChildren {
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
+  ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -678,6 +691,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEbooksGeradoIdRouteImport
       parentRoute: typeof AppEbooksRoute
     }
+    '/api/public/webhooks/asaas': {
+      id: '/api/public/webhooks/asaas'
+      path: '/api/public/webhooks/asaas'
+      fullPath: '/api/public/webhooks/asaas'
+      preLoaderRoute: typeof ApiPublicWebhooksAsaasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -778,17 +798,8 @@ const rootRouteChildren: RootRouteChildren = {
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
+  ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
