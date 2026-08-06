@@ -87,26 +87,52 @@ function SupportPage() {
     }, 1200);
   };
 
-  const handleOpenTicket = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOpenTicket = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!user) return;
+
     const formData = new FormData(e.currentTarget);
     const subject = formData.get("subject") as string;
     const category = formData.get("category") as string;
+    const message = formData.get("message") as string;
     
-    const newTicket: TicketData = {
-      id: `TKT-2026-00${myTickets.length + 2}`,
-      subject,
-      category,
-      status: "Aberto",
-      date: new Date().toLocaleDateString('pt-BR'),
-      lastUpdate: "Agora mesmo"
-    };
+    try {
+      // 1. Criar o ticket
+      const { data: ticket, error: ticketError } = await supabase
+        .from("support_tickets")
+        .insert({
+          user_id: user.id,
+          subject,
+          category,
+          status: "Aberto",
+          priority: "normal"
+        })
+        .select()
+        .single();
 
-    setMyTickets([newTicket, ...myTickets]);
-    setIsOpeningTicket(false);
-    toast.success("Seu chamado foi enviado para a equipe do Ronnei!", {
-      description: `Protocolo: ${newTicket.id}`
-    });
+      if (ticketError) throw ticketError;
+
+      // 2. Criar a primeira mensagem
+      const { error: msgError } = await supabase
+        .from("support_messages")
+        .insert({
+          ticket_id: ticket.id,
+          message,
+          sender_id: user.id,
+          sender_type: "user"
+        });
+
+      if (msgError) throw msgError;
+
+      toast.success("Seu chamado foi enviado para a equipe do Ronnei!", {
+        description: `Protocolo: ${ticket.id.slice(0, 8)}`
+      });
+      
+      setIsOpeningTicket(false);
+      queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+    } catch (error: any) {
+      toast.error("Erro ao abrir chamado: " + error.message);
+    }
   };
 
   return (
