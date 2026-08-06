@@ -107,3 +107,73 @@ export const generateEbook = createServerFn({ method: "POST" })
     };
     return ebook;
   });
+
+export const generateChaptersForModules = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => {
+    const data = input as { ebookTitle: string; modules: { id: string; title: string }[] };
+    if (!data?.ebookTitle || !data?.modules?.length) {
+      throw new Error("Título do ebook ou módulos ausentes");
+    }
+    return data;
+  })
+  .handler(async ({ data }) => {
+    const key = process.env.LOVABLE_API_KEY;
+    if (!key) throw new Error("LOVABLE_API_KEY ausente");
+
+    const prompt = `Ebook: "${data.ebookTitle}"
+Módulos:
+${data.modules.map((m, i) => `${i + 1}. ${m.title} (ID: ${m.id})`).join("\n")}
+
+Com base no título do ebook e nos módulos acima, sugira entre 3 e 4 títulos de capítulos concisos, práticos e descritivos para CADA módulo.
+FOCO: Nicho de espetinhos, churrasco, gestão de pequenos negócios gastronômicos e lucratividade.
+
+Retorne APENAS um JSON no formato:
+{
+  "suggestions": [
+    {
+      "moduleId": "ID_DO_MODULO",
+      "moduleTitle": "TITULO_DO_MODULO",
+      "chapters": ["Título do Capítulo 1", "Título do Capítulo 2", ...]
+    },
+    ...
+  ]
+}`;
+
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Lovable-API-Key": key,
+        "X-Lovable-AIG-SDK": "fetch",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.0-flash-exp",
+        messages: [
+          { 
+            role: "system", 
+            content: "Você é um autor de ebooks especialista em gastronomia e negócios. Você retorna apenas JSON válido." 
+          },
+          { role: "user", content: prompt },
+        ],
+        response_format: { type: "json_object" },
+      }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Falha ao gerar capítulos (${res.status}): ${text.slice(0, 200)}`);
+    }
+
+    const json = await res.json();
+    const content = json?.choices?.[0]?.message?.content ?? "";
+    
+    try {
+      return JSON.parse(content) as { 
+        suggestions: { moduleId: string; moduleTitle: string; chapters: string[] }[] 
+      };
+    } catch (e) {
+      const match = content.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error("A IA não retornou JSON válido.");
+      return JSON.parse(match[0]);
+    }
+  });
