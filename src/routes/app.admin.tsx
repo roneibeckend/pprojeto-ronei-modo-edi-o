@@ -2,10 +2,12 @@ import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-r
 import { 
   LayoutDashboard, 
   DollarSign, 
-  Users, 
+  Users,
   ArrowLeft,
   Settings,
-  ShieldCheck
+  ShieldCheck,
+  Library,
+  Clapperboard
 } from "lucide-react";
 
 export const Route = createFileRoute("/app/admin")({
