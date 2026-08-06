@@ -108,7 +108,10 @@ function AdminAlunosPage() {
         <input 
           placeholder="Buscar por nome ou e-mail..." 
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={e => {
+            setSearch(e.target.value);
+            setCurrentPage(1); // Reset to first page on search
+          }}
           className="w-full bg-white/5 border border-white/10 py-2.5 pl-10 pr-4 rounded-lg text-sm outline-none focus:border-[#ff6a00]" 
         />
       </div>
