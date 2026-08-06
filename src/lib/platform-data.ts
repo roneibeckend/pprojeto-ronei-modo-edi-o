@@ -154,14 +154,7 @@ export type Recipe = {
 
 export const recipeCategories = ["Todos", "Carne bovina", "Frango", "Linguiça", "Suíno", "Queijo", "Vegetarianos", "Molhos", "Acompanhamentos"];
 
-export const recipes: Recipe[] = [
-  { id: "r1", name: "Espetinho de Alcatra Premium", category: "Carne bovina", image: IMG.ribeye, ingredients: ["500g de alcatra", "Sal grosso", "Alho", "Azeite"], yield: "6 espetos", time: "35 min", difficulty: "Fácil", steps: ["Corte em cubos de 3cm", "Tempere e descanse 30 min", "Monte com espaçamento", "Asse na brasa forte"], cost: "R$ 3,20/un", sellPrice: "R$ 10,00", profit: "212% margem" },
-  { id: "r2", name: "Espetinho de Frango com Bacon", category: "Frango", image: IMG.platter1, ingredients: ["Peito de frango", "Bacon em tiras", "Páprica"], yield: "8 espetos", time: "40 min", difficulty: "Fácil", steps: ["Corte o frango em cubos", "Enrole o bacon", "Tempere", "Asse na brasa média"], cost: "R$ 2,40/un", sellPrice: "R$ 9,00", profit: "275% margem" },
-  { id: "r3", name: "Espetinho de Linguiça Toscana", category: "Linguiça", image: IMG.platter2, ingredients: ["Linguiça toscana", "Pimentão", "Cebola"], yield: "6 espetos", time: "25 min", difficulty: "Fácil", steps: ["Corte em rodelas", "Alterne com legumes", "Asse até dourar"], cost: "R$ 2,80/un", sellPrice: "R$ 8,00", profit: "185% margem" },
-  { id: "r4", name: "Espetinho de Queijo Coalho", category: "Queijo", image: IMG.chef, ingredients: ["Queijo coalho", "Orégano"], yield: "10 espetos", time: "15 min", difficulty: "Fácil", steps: ["Corte em cubos", "Espete", "Grelhe rapidamente"], cost: "R$ 2,10/un", sellPrice: "R$ 8,00", profit: "280% margem" },
-  { id: "r5", name: "Espeto de Legumes", category: "Vegetarianos", image: IMG.skewersFlat, ingredients: ["Abobrinha", "Pimentão", "Cebola", "Tomate cereja"], yield: "6 espetos", time: "20 min", difficulty: "Fácil", steps: ["Corte", "Tempere com azeite e ervas", "Grelhe"], cost: "R$ 1,80/un", sellPrice: "R$ 7,00", profit: "290% margem" },
-  { id: "r6", name: "Molho Chimichurri", category: "Molhos", image: IMG.platter2, ingredients: ["Salsinha", "Alho", "Vinagre", "Azeite"], yield: "300ml", time: "10 min", difficulty: "Fácil", steps: ["Pique tudo bem fino", "Misture", "Descanse 2h"], cost: "R$ 4,00/lote", sellPrice: "R$ 5,00/porção", profit: "400% margem" },
-];
+export const recipes: Recipe[] = [];
 
 export const materials = [
   { id: "m1", title: "Planilha de custos", description: "Controle detalhado de matéria-prima e insumos.", type: "XLSX" },

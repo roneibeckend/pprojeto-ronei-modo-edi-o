@@ -396,6 +396,7 @@ export type Database = {
           id: string
           image_url: string | null
           ingredients: string[] | null
+          is_published: boolean | null
           name: string
           prep_time: string | null
           profit_margin: string | null
@@ -411,6 +412,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           ingredients?: string[] | null
+          is_published?: boolean | null
           name: string
           prep_time?: string | null
           profit_margin?: string | null
@@ -426,6 +428,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           ingredients?: string[] | null
+          is_published?: boolean | null
           name?: string
           prep_time?: string | null
           profit_margin?: string | null

@@ -89,7 +89,8 @@ function AdminReceitasPage() {
             category: "Carne bovina", 
             difficulty: "Fácil",
             ingredients: [],
-            steps: []
+            steps: [],
+            is_published: true
           }); setIsModalOpen(true); }}
           className="flex items-center gap-2 bg-[#ff6a00] px-4 py-2 rounded-lg text-sm font-bold text-black"
         >
@@ -116,7 +117,12 @@ function AdminReceitasPage() {
               </div>
               <div className="p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00]">{recipe.category}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00]">{recipe.category}</span>
+                    {!recipe.is_published && (
+                      <span className="text-[10px] font-bold uppercase tracking-widest bg-white/10 px-2 py-0.5 rounded text-white/40">Oculto</span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-1">
                     <button onClick={() => { setEditingItem(recipe); setIsModalOpen(true); }} className="p-1.5 text-white/40 hover:text-white transition"><Edit3 className="h-4 w-4" /></button>
                     <button onClick={() => handleDelete(recipe.id)} className="p-1.5 text-white/40 hover:text-red-500 transition"><Trash2 className="h-4 w-4" /></button>
@@ -204,6 +210,18 @@ function AdminReceitasPage() {
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL da Imagem</label>
                   <input value={editingItem?.image_url || ""} onChange={e => setEditingItem({...editingItem, image_url: e.target.value})} placeholder="https://..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
                 </div>
+              </div>
+
+              <div className="flex items-center gap-3 py-2">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <div 
+                    onClick={() => setEditingItem({...editingItem, is_published: !editingItem.is_published})}
+                    className={`w-12 h-6 rounded-full transition-colors flex items-center px-1 ${editingItem.is_published ? 'bg-[#ff6a00]' : 'bg-white/10'}`}
+                  >
+                    <div className={`w-4 h-4 rounded-full bg-black transition-transform ${editingItem.is_published ? 'translate-x-6' : 'translate-x-0'}`} />
+                  </div>
+                  <span className="text-sm font-bold text-white/60 group-hover:text-white transition">Publicar receita (visível para alunos)</span>
+                </label>
               </div>
 
               <div className="space-y-1.5">
