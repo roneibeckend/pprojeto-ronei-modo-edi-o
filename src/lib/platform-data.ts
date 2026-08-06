@@ -175,10 +175,10 @@ export const materials = [
 ];
 
 export const certificates = [
-  { id: "c1", course: "Espetinho Lucrativo", hours: 12, completedAt: "—", unlocked: false },
-  { id: "c2", course: "Molhos e Acompanhamentos", hours: 6, completedAt: "12/06/2026", unlocked: true, code: "EVNA-2026-M1A9" },
-  { id: "c3", course: "Como Vender Mais", hours: 8, completedAt: "—", unlocked: false },
-  { id: "c4", course: "Gestão do Negócio", hours: 10, completedAt: "—", unlocked: false },
+  { id: "c1", courseId: "do-zero-aos-10k", course: "Do Zero aos 10k: O Guia Completo do Espetinho", hours: 15, completedAt: "—", unlocked: false },
+  { id: "c2", courseId: "espetinho-lucrativo-advanced", course: "Espetinho Lucrativo: Técnicas Avançadas", hours: 20, completedAt: "12/06/2026", unlocked: true, code: "EVNA-2026-M1A9" },
+  { id: "c3", courseId: "molhos-acompanhamentos-v2", course: "Mestres dos Molhos e Acompanhamentos", hours: 12, completedAt: "—", unlocked: false },
+  { id: "c4", courseId: "vendas-e-marketing-espeto", course: "Máquina de Vendas: Do Zero ao Sucesso no Digital", hours: 10, completedAt: "—", unlocked: false },
 ];
 
 export const achievements = [
