@@ -26,7 +26,7 @@ const ORANGE = "#ff6a00";
 
 function AdminRootLayout() {
   const navigate = useNavigate();
-  const { isAdmin, isLoading } = useAuth();
+  const { isAdmin, role, isLoading } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
