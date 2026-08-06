@@ -276,7 +276,7 @@ function CornerOrnament({ className = "" }: { className?: string }) {
 
 /* -------------------- FULL MODAL -------------------- */
 
-function CertificateModal({ cert, onClose, autoDownload }: { cert: typeof certificates[number]; onClose: () => void; autoDownload?: boolean }) {
+function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose: () => void; autoDownload?: boolean }) {
   const certRef = useRef<HTMLDivElement | null>(null);
   const [downloading, setDownloading] = useState(false);
 
