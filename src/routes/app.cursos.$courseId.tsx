@@ -73,13 +73,13 @@ function CoursePage() {
   }
 
   // Lógica normal do curso
-  const flat = course.modules?.flatMap((m) => m.lessons) || [];
-  const [activeId, setActiveId] = useState(flat[0]?.id);
+  const flat = course.modules?.flatMap((m: any) => m.lessons || []) || [];
+  const [activeId, setActiveId] = useState<string | undefined>(flat[0]?.id);
   const [tab, setTab] = useState<"materiais" | "anotacoes">("materiais");
   const [note, setNote] = useState("");
 
-  const active = flat.find((l) => l.id === activeId) ?? flat[0];
-  const idx = flat.findIndex((l) => l.id === active?.id);
+  const active = flat.find((l: any) => l.id === activeId) ?? flat[0];
+  const idx = flat.findIndex((l: any) => l.id === active?.id);
   const prev = idx > 0 ? flat[idx - 1] : null;
   const next = idx < flat.length - 1 ? flat[idx + 1] : null;
 
