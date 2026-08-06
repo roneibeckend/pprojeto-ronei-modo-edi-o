@@ -29,6 +29,7 @@ import { Route as AppCursosRouteImport } from './routes/app.cursos'
 import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AdminReceitasRouteImport } from './routes/admin.receitas'
+import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
 import { Route as AdminEbooksRouteImport } from './routes/admin.ebooks'
 import { Route as AdminCursosRouteImport } from './routes/admin.cursos'
 import { Route as AdminAlunosRouteImport } from './routes/admin.alunos'
@@ -38,7 +39,6 @@ import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppEbooksEbookIdRouteImport } from './routes/app.ebooks.$ebookId'
 import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.preview'
 import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
-import { Route as AppAdminIntegracoesRouteImport } from './routes/app.admin.integracoes'
 import { Route as AppAdminFinanceiroRouteImport } from './routes/app.admin.financeiro'
 import { Route as AppAdminEbookAiRouteImport } from './routes/app.admin.ebook-ai'
 import { Route as AppAdminConteudoRouteImport } from './routes/app.admin.conteudo'
@@ -147,6 +147,11 @@ const AdminReceitasRoute = AdminReceitasRouteImport.update({
   path: '/receitas',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminIntegracoesRoute = AdminIntegracoesRouteImport.update({
+  id: '/integracoes',
+  path: '/integracoes',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEbooksRoute = AdminEbooksRouteImport.update({
   id: '/ebooks',
   path: '/ebooks',
@@ -191,11 +196,6 @@ const AppCursosCourseIdRoute = AppCursosCourseIdRouteImport.update({
   id: '/$courseId',
   path: '/$courseId',
   getParentRoute: () => AppCursosRoute,
-} as any)
-const AppAdminIntegracoesRoute = AppAdminIntegracoesRouteImport.update({
-  id: '/integracoes',
-  path: '/integracoes',
-  getParentRoute: () => AppAdminRoute,
 } as any)
 const AppAdminFinanceiroRoute = AppAdminFinanceiroRouteImport.update({
   id: '/financeiro',
@@ -245,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/cursos': typeof AdminCursosRoute
   '/admin/ebooks': typeof AdminEbooksRoute
+  '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/app/admin': typeof AppAdminRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
@@ -262,7 +263,6 @@ export interface FileRoutesByFullPath {
   '/app/admin/conteudo': typeof AppAdminConteudoRoute
   '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
-  '/app/admin/integracoes': typeof AppAdminIntegracoesRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
@@ -282,6 +282,7 @@ export interface FileRoutesByTo {
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/cursos': typeof AdminCursosRoute
   '/admin/ebooks': typeof AdminEbooksRoute
+  '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/app/certificados': typeof AppCertificadosRoute
   '/app/materiais': typeof AppMateriaisRoute
@@ -296,7 +297,6 @@ export interface FileRoutesByTo {
   '/app/admin/conteudo': typeof AppAdminConteudoRoute
   '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
-  '/app/admin/integracoes': typeof AppAdminIntegracoesRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
@@ -319,6 +319,7 @@ export interface FileRoutesById {
   '/admin/alunos': typeof AdminAlunosRoute
   '/admin/cursos': typeof AdminCursosRoute
   '/admin/ebooks': typeof AdminEbooksRoute
+  '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/app/admin': typeof AppAdminRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
@@ -336,7 +337,6 @@ export interface FileRoutesById {
   '/app/admin/conteudo': typeof AppAdminConteudoRoute
   '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
-  '/app/admin/integracoes': typeof AppAdminIntegracoesRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
@@ -360,6 +360,7 @@ export interface FileRouteTypes {
     | '/admin/alunos'
     | '/admin/cursos'
     | '/admin/ebooks'
+    | '/admin/integracoes'
     | '/admin/receitas'
     | '/app/admin'
     | '/app/certificados'
@@ -377,7 +378,6 @@ export interface FileRouteTypes {
     | '/app/admin/conteudo'
     | '/app/admin/ebook-ai'
     | '/app/admin/financeiro'
-    | '/app/admin/integracoes'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
@@ -397,6 +397,7 @@ export interface FileRouteTypes {
     | '/admin/alunos'
     | '/admin/cursos'
     | '/admin/ebooks'
+    | '/admin/integracoes'
     | '/admin/receitas'
     | '/app/certificados'
     | '/app/materiais'
@@ -411,7 +412,6 @@ export interface FileRouteTypes {
     | '/app/admin/conteudo'
     | '/app/admin/ebook-ai'
     | '/app/admin/financeiro'
-    | '/app/admin/integracoes'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
@@ -433,6 +433,7 @@ export interface FileRouteTypes {
     | '/admin/alunos'
     | '/admin/cursos'
     | '/admin/ebooks'
+    | '/admin/integracoes'
     | '/admin/receitas'
     | '/app/admin'
     | '/app/certificados'
@@ -450,7 +451,6 @@ export interface FileRouteTypes {
     | '/app/admin/conteudo'
     | '/app/admin/ebook-ai'
     | '/app/admin/financeiro'
-    | '/app/admin/integracoes'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
@@ -614,6 +614,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminReceitasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/integracoes': {
+      id: '/admin/integracoes'
+      path: '/integracoes'
+      fullPath: '/admin/integracoes'
+      preLoaderRoute: typeof AdminIntegracoesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/ebooks': {
       id: '/admin/ebooks'
       path: '/ebooks'
@@ -677,13 +684,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCursosCourseIdRouteImport
       parentRoute: typeof AppCursosRoute
     }
-    '/app/admin/integracoes': {
-      id: '/app/admin/integracoes'
-      path: '/integracoes'
-      fullPath: '/app/admin/integracoes'
-      preLoaderRoute: typeof AppAdminIntegracoesRouteImport
-      parentRoute: typeof AppAdminRoute
-    }
     '/app/admin/financeiro': {
       id: '/app/admin/financeiro'
       path: '/financeiro'
@@ -740,6 +740,7 @@ interface AdminRouteChildren {
   AdminAlunosRoute: typeof AdminAlunosRoute
   AdminCursosRoute: typeof AdminCursosRoute
   AdminEbooksRoute: typeof AdminEbooksRoute
+  AdminIntegracoesRoute: typeof AdminIntegracoesRoute
   AdminReceitasRoute: typeof AdminReceitasRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -748,6 +749,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAlunosRoute: AdminAlunosRoute,
   AdminCursosRoute: AdminCursosRoute,
   AdminEbooksRoute: AdminEbooksRoute,
+  AdminIntegracoesRoute: AdminIntegracoesRoute,
   AdminReceitasRoute: AdminReceitasRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -760,7 +762,6 @@ interface AppAdminRouteChildren {
   AppAdminConteudoRoute: typeof AppAdminConteudoRoute
   AppAdminEbookAiRoute: typeof AppAdminEbookAiRoute
   AppAdminFinanceiroRoute: typeof AppAdminFinanceiroRoute
-  AppAdminIntegracoesRoute: typeof AppAdminIntegracoesRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
 }
 
@@ -770,7 +771,6 @@ const AppAdminRouteChildren: AppAdminRouteChildren = {
   AppAdminConteudoRoute: AppAdminConteudoRoute,
   AppAdminEbookAiRoute: AppAdminEbookAiRoute,
   AppAdminFinanceiroRoute: AppAdminFinanceiroRoute,
-  AppAdminIntegracoesRoute: AppAdminIntegracoesRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
 }
 
