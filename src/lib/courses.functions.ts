@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 // Tipos para validação Zod
 const CourseSchema = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().optional(),
   title: z.string().min(3),
   slug: z.string(),
   description: z.string().optional().nullable(),
@@ -17,7 +17,7 @@ const CourseSchema = z.object({
 
 const ModuleSchema = z.object({
   id: z.string().uuid().optional(),
-  course_id: z.string().uuid(),
+  course_id: z.string(),
   title: z.string().min(2),
   description: z.string().optional().nullable(),
   order_index: z.number().int().default(0),
@@ -42,7 +42,7 @@ export const upsertCourse = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { data: result, error } = await supabase
       .from('courses')
-      .upsert(data)
+      .upsert(data as any)
       .select()
       .single();
 
@@ -54,7 +54,7 @@ export const upsertModule = createServerFn({ method: "POST" })
   .validator((data: any) => ModuleSchema.parse(data))
   .handler(async ({ data }) => {
     const { data: result, error } = await supabase
-      .from('course_modules')
+      .from('course_modules' as any)
       .upsert(data)
       .select()
       .single();
@@ -67,7 +67,7 @@ export const upsertLesson = createServerFn({ method: "POST" })
   .validator((data: any) => LessonSchema.parse(data))
   .handler(async ({ data }) => {
     const { data: result, error } = await supabase
-      .from('course_lessons')
+      .from('course_lessons' as any)
       .upsert(data)
       .select()
       .single();
@@ -86,7 +86,7 @@ export const updateOrders = createServerFn({ method: "POST" })
   }).parse(data))
   .handler(async ({ data }) => {
     const { error } = await supabase
-      .from(data.table)
+      .from(data.table as any)
       .upsert(data.items);
 
     if (error) throw new Error(error.message);
@@ -96,11 +96,11 @@ export const updateOrders = createServerFn({ method: "POST" })
 export const deleteItem = createServerFn({ method: "POST" })
   .validator((data: any) => z.object({
     table: z.enum(['courses', 'course_modules', 'course_lessons']),
-    id: z.string().uuid()
+    id: z.string()
   }).parse(data))
   .handler(async ({ data }) => {
     const { error } = await supabase
-      .from(data.table)
+      .from(data.table as any)
       .delete()
       .eq('id', data.id);
 
