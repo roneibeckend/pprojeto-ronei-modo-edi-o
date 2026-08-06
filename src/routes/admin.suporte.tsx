@@ -58,7 +58,8 @@ function AdminSupportPage() {
 
   async function handleSendReply(e: React.FormEvent) {
     e.preventDefault();
-    if (!reply.trim() || !selectedTicket) return;
+    const replyMessage = reply.trim();
+    if (!replyMessage || !selectedTicket) return;
 
     try {
       setIsSending(true);
