@@ -123,7 +123,7 @@ export function Shell({ children }: { children: ReactNode }) {
           WebkitMaskImage: 'linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%)'
         }}
       >
-        {navGroups.map((group) => (
+        {navGroups.filter(g => g.title !== "Gestão" || isAdmin).map((group) => (
           <div key={group.title} className="mb-4 last:mb-0">
             <div className="mb-1 px-3 text-[11px] font-bold uppercase tracking-wider text-sidebar-foreground/35">
               {group.title}
