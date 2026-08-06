@@ -204,7 +204,17 @@ function EbookPage() {
             transition={{ delay: 0.2, duration: 0.25 }}
             className="font-display text-5xl md:text-7xl font-black uppercase tracking-tight leading-[0.9] mb-6 max-w-4xl"
           >
-            Do zero aos 10k
+            {chapters.length > 0 ? (
+              <Link 
+                to="/app/ebooks/$ebookId/capitulo/$chapterSlug"
+                params={{ ebookId: ebook.id, chapterSlug: chapters[0].slug || chapters[0].id }}
+                className="hover:text-[#ff6a00] transition-colors"
+              >
+                {ebook.title}
+              </Link>
+            ) : (
+              ebook.title
+            )}
           </motion.h1>
 
           <motion.p 
