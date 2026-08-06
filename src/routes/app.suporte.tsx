@@ -503,27 +503,6 @@ function SupportPage() {
                   )}
                 </div>
               </div>
-                              t.status === "resolved" ? "text-emerald-500" : "text-[#ff6a00]"
-                            }`}>
-                              {t.status === "open" ? "Aberto" : t.status === "in_progress" ? "Em análise" : t.status === "resolved" ? "Resolvido" : "Fechado"}
-                            </div>
-                            <div className="mt-1 text-[10px] font-medium text-white/20 uppercase tracking-widest">
-                              Atualizado {t.updated_at ? new Date(t.updated_at).toLocaleDateString('pt-BR') : '—'}
-                            </div>
-                          </div>
-                          <ChevronRight className="h-5 w-5 text-white/10 group-hover:text-white/40 transition" />
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-10 text-center text-sm text-white/20">
-                      Nenhum chamado encontrado.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </section>
-          )}
         </div>
 
         {/* Sidebar Context */}
