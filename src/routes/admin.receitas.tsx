@@ -187,9 +187,23 @@ function AdminReceitasPage() {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL da Imagem</label>
-                <input value={editingItem?.image_url || ""} onChange={e => setEditingItem({...editingItem, image_url: e.target.value})} placeholder="https://..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nível de Dificuldade</label>
+                  <select 
+                    value={editingItem?.difficulty || "Fácil"} 
+                    onChange={e => setEditingItem({...editingItem, difficulty: e.target.value})} 
+                    className="w-full bg-[#0e0e0e] border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                  >
+                    <option value="Fácil">Fácil</option>
+                    <option value="Médio">Médio</option>
+                    <option value="Difícil">Difícil</option>
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL da Imagem</label>
+                  <input value={editingItem?.image_url || ""} onChange={e => setEditingItem({...editingItem, image_url: e.target.value})} placeholder="https://..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+                </div>
               </div>
 
               <div className="space-y-1.5">
