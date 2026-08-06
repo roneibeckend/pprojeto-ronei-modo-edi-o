@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Play, Sparkles } from "lucide-react";
+import { Play, Sparkles, Lock, ShoppingCart } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { courses, student } from "@/lib/platform-data";
 import { ProgressSummary } from "@/components/platform/ProgressSummary";
@@ -10,14 +10,14 @@ export const Route = createFileRoute("/app/cursos/")({
 });
 
 function CoursesPage() {
-  // Exibir apenas cursos adquiridos (locked: false)
+  // Separar cursos adquiridos e disponíveis para compra
   const owned = courses.filter((c) => !c.locked);
+  const others = courses.filter((c) => c.locked);
 
-  // Cálculos para a barra de progresso
+  // Cálculos para a barra de progresso (apenas para cursos adquiridos)
   const startedCount = owned.filter(c => c.progress > 0 && c.progress < 100).length;
   const finishedCount = owned.filter(c => c.progress === 100).length;
   
-  // Média de progresso dos cursos adquiridos
   const totalProgress = owned.length > 0 
     ? Math.round(owned.reduce((acc, curr) => acc + curr.progress, 0) / owned.length)
     : 0;
@@ -26,7 +26,7 @@ function CoursesPage() {
     <div className="pb-10">
       <PageHeader
         title="Meus cursos"
-        subtitle="Sua biblioteca pessoal de treinamentos adquiridos."
+        subtitle="Gerencie seus treinamentos e descubra novos conteúdos."
         action={
           <Link to="/app/cursos/preview" className="btn-ghost-fire text-sm">
             <Sparkles className="h-4 w-4" /> Ver previews interativas
@@ -41,9 +41,10 @@ function CoursesPage() {
         streak={student.streak}
       />
 
-      <section>
+      {/* Seção de Cursos Adquiridos */}
+      <section className="mb-12">
         <h2 className="mb-6 font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
-          Cursos em andamento e concluídos
+          Seus Treinamentos
         </h2>
         
         {owned.length > 0 ? (
@@ -112,20 +113,73 @@ function CoursesPage() {
             ))}
           </div>
         ) : (
-          <div className="glass flex flex-col items-center justify-center rounded-2xl py-20 text-center">
-            <div className="mb-4 rounded-full bg-white/5 p-6">
-              <Sparkles className="h-10 w-10 text-gold/30" />
-            </div>
-            <h3 className="font-display text-xl font-bold">Nenhum curso adquirido ainda</h3>
-            <p className="mt-2 max-w-xs text-muted-foreground">
-              Visite a vitrine para descobrir treinamentos exclusivos e começar sua jornada.
-            </p>
-            <Link to="/app" className="btn-fire mt-8 px-8">
-              Ir para Vitrine
-            </Link>
+          <div className="glass flex flex-col items-center justify-center rounded-2xl py-20 text-center text-muted-foreground">
+            Você ainda não possui nenhum curso liberado.
           </div>
         )}
       </section>
+
+      {/* Seção de Cursos Disponíveis para Compra */}
+      {others.length > 0 && (
+        <section>
+          <div className="mb-6 flex items-center gap-3">
+            <h2 className="font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
+              Disponíveis para Compra
+            </h2>
+            <div className="h-px flex-1 bg-white/5" />
+          </div>
+          
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {others.map((c) => (
+              <article key={c.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100">
+                <div className="relative aspect-video grayscale-[0.3]">
+                  <img src={c.cover} alt={c.title} className="h-full w-full object-cover" loading="lazy" />
+                  <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    {!c.isComingSoon ? (
+                      <div className="rounded-full bg-black/60 p-3 text-gold backdrop-blur-md">
+                        <Lock className="h-6 w-6" />
+                      </div>
+                    ) : (
+                      <div className="rounded-full bg-gold/90 px-4 py-1 text-xs font-black uppercase tracking-widest text-black shadow-xl shadow-gold/20">
+                        Em breve
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="p-5">
+                  <h3 className="font-display text-lg font-bold leading-tight">{c.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{c.description}</p>
+                  
+                  {!c.isComingSoon ? (
+                    <>
+                      <div className="mt-6 flex items-end justify-between">
+                        <div>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Investimento</span>
+                          <div className="font-display text-2xl font-bold text-gold">
+                            R$ {c.price?.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                          {c.totalLessons} aulas
+                        </div>
+                      </div>
+                      <button className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10">
+                        <ShoppingCart className="h-4 w-4" /> Comprar e Liberar
+                      </button>
+                    </>
+                  ) : (
+                    <div className="mt-6 rounded-xl bg-white/5 py-4 text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      Lançamento futuro
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
