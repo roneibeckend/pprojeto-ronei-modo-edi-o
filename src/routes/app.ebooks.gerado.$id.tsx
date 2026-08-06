@@ -148,7 +148,7 @@ function renderSlide(s: EbookSlide, ebook: Ebook, i: number, total: number) {
 }
 
 function GeneratedEbookReader() {
-  const { id } = Route.useParams();
+  const { id } = Route.useParams() as { id: string };
   const navigate = useNavigate();
   const [ebook, setEbook] = useState<Ebook | null>(null);
   const [i, setI] = useState(0);
