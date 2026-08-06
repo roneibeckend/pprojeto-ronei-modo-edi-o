@@ -191,11 +191,11 @@ function CoursePage() {
             Conteúdo do curso
           </div>
           <div className="space-y-4">
-            {course.modules?.map((m) => (
+            {course.modules?.map((m: any) => (
               <div key={m.id}>
                 <div className="px-2 pb-2 text-sm font-semibold">{m.title}</div>
                 <ul className="space-y-1">
-                  {m.lessons?.map((l) => {
+                  {m.lessons?.map((l: any) => {
                     const isActive = l.id === active?.id;
                     return (
                       <li key={l.id}>
