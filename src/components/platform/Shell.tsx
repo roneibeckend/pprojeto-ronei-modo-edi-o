@@ -98,7 +98,7 @@ export function Shell({ children }: { children: ReactNode }) {
             Espetinho <span className="text-black/80">na Veia</span>
 
           </div>
-          <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-sidebar-foreground/40">
+          <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-black/50">
             Área de membros
           </div>
         </div>
@@ -131,7 +131,7 @@ export function Shell({ children }: { children: ReactNode }) {
           return ["admin", "manager", "agent"].includes(role || "");
         }).map((group) => (
           <div key={group.title} className="mb-4 last:mb-0">
-            <div className="mb-1 px-3 text-[11px] font-bold uppercase tracking-wider text-sidebar-foreground/35">
+            <div className="mb-1 px-3 text-[11px] font-bold uppercase tracking-wider text-black/40">
               {group.title}
             </div>
             <div className="space-y-0.5">

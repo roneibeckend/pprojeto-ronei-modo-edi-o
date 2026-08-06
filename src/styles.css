@@ -78,13 +78,13 @@
   --shadow-fire: 0 20px 60px -20px oklch(0.63 0.24 27 / 0.55), 0 8px 24px -12px oklch(0.72 0.20 50 / 0.45);
   --shadow-glass: 0 10px 40px -12px oklch(0 0 0 / 0.5);
 
-  --sidebar-background: oklch(0.14 0.015 30);
-  --sidebar-foreground: oklch(0.98 0.01 80);
+  --sidebar-background: #ff6a00;
+  --sidebar-foreground: oklch(0.10 0.01 30);
   --sidebar-primary: oklch(0.63 0.24 27);
   --sidebar-primary-foreground: oklch(0.99 0 0);
   --sidebar-accent: oklch(1 0 0 / 0.05);
   --sidebar-accent-foreground: oklch(0.98 0.01 80);
-  --sidebar-border: oklch(1 0 0 / 0.08);
+  --sidebar-border: oklch(0.10 0.01 30 / 0.1);
   --sidebar-ring: oklch(0.7 0.2 45);
 }
 
