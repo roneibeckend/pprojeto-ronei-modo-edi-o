@@ -23,15 +23,15 @@ function AdminDashboard() {
     queryKey: ['admin-stats'],
     queryFn: async () => {
       const [
-        { count: students },
-        { data: courses },
-        { data: ebooks },
-        { data: enrollments }
+        studentsRes,
+        coursesRes,
+        ebooksRes,
+        enrollmentsRes
       ] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('courses').select('id'),
         supabase.from('ebooks').select('id'),
-        supabase.from('course_enrollments').select('id')
+        supabase.from('course_enrollments' as any).select('id')
       ]);
 
       return {
