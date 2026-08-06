@@ -80,31 +80,31 @@ export function Shell({ children }: { children: ReactNode }) {
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
 
   const SidebarInner = (
-    <div className="flex h-dvh flex-col overflow-hidden bg-[#0e0e0e]">
+    <div className="flex h-dvh flex-col overflow-hidden bg-sidebar text-sidebar-foreground">
       {/* Brand */}
-      <div className="flex shrink-0 items-center gap-3 border-b border-white/5 px-5 py-4">
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#ff6a00]">
-          <Flame className="h-5 w-5 text-black" strokeWidth={2.5} />
+      <div className="flex shrink-0 items-center gap-3 border-b border-sidebar-border px-5 py-4">
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary">
+          <Flame className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} />
         </div>
         <div className="min-w-0">
-          <div className="truncate font-display text-base font-extrabold uppercase leading-none tracking-wide text-white">
-            Espetinho <span className="text-[#ff6a00]">na Veia</span>
+          <div className="truncate font-display text-base font-extrabold uppercase leading-none tracking-wide text-sidebar-foreground">
+            Espetinho <span className="text-primary">na Veia</span>
           </div>
-          <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
+          <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-sidebar-foreground/40">
             Área de membros
           </div>
         </div>
       </div>
 
       {/* Student mini card */}
-      <div className="mx-3 mt-3 flex shrink-0 items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2.5">
+      <div className="mx-3 mt-3 flex shrink-0 items-center gap-3 rounded-lg border border-sidebar-border bg-sidebar-accent px-3 py-2.5">
         <div className="relative">
           <img src={student.avatar} alt={student.name} className="h-9 w-9 rounded-md object-cover" />
-          <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#0e0e0e] bg-emerald-500" />
+          <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-sidebar bg-emerald-500" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-semibold text-white">{student.name}</div>
-          <div className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00]">Aluno ativo</div>
+          <div className="truncate text-sm font-semibold text-sidebar-foreground">{student.name}</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-primary">Aluno ativo</div>
         </div>
       </div>
 
@@ -118,8 +118,8 @@ export function Shell({ children }: { children: ReactNode }) {
         }}
       >
         {navGroups.map((group) => (
-          <div key={group.title} className="mb-4">
-            <div className="mb-1 px-3 text-[11px] font-bold uppercase tracking-wider text-white/35">
+          <div key={group.title} className="mb-4 last:mb-0">
+            <div className="mb-1 px-3 text-[11px] font-bold uppercase tracking-wider text-sidebar-foreground/35">
               {group.title}
             </div>
             <div className="space-y-0.5">
@@ -132,10 +132,10 @@ export function Shell({ children }: { children: ReactNode }) {
                     to={item.to}
                     aria-current={active ? "page" : undefined}
                     onClick={() => setOpen(false)}
-                    className={`group relative flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none ${
+                    className={`group relative flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none ${
                       active
-                        ? "bg-[#ff6a00] text-black"
-                        : "text-white/70 hover:bg-white/5 hover:text-white"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                     }`}
                   >
                     <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={active ? 2.5 : 2} />
@@ -143,7 +143,7 @@ export function Shell({ children }: { children: ReactNode }) {
                     {item.badge && (
                       <span
                         className={`ml-auto rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
-                          active ? "bg-black/20 text-black" : "bg-[#ff6a00]/15 text-[#ff6a00]"
+                          active ? "bg-black/20 text-primary-foreground" : "bg-primary/15 text-primary"
                         }`}
                       >
                         {item.badge}
@@ -158,14 +158,14 @@ export function Shell({ children }: { children: ReactNode }) {
       </nav>
 
       {/* Footer */}
-      <div className="shrink-0 border-t border-white/5 p-3">
+      <div className="shrink-0 border-t border-sidebar-border p-3">
         <button
           onClick={async () => {
             await supabase.auth.signOut();
             toast.success("Você saiu da plataforma.");
             navigate({ to: "/login" });
           }}
-          className="flex h-10 w-full items-center gap-3 rounded-md border border-white/5 px-3 text-sm font-medium text-white/70 transition-colors duration-200 hover:border-[#ff6a00]/50 hover:bg-[#ff6a00]/10 hover:text-[#ff6a00] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          className="flex h-10 w-full items-center gap-3 rounded-md border border-sidebar-border px-3 text-sm font-medium text-sidebar-foreground/70 transition-colors duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none"
         >
           <LogOut className="h-4 w-4" />
           Sair da plataforma
