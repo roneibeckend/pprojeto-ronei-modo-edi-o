@@ -122,15 +122,40 @@ function AdminEbooksPage() {
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título</label>
                 <input required value={editingItem?.title || ""} onChange={e => setEditingItem({...editingItem, title: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
               </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Categoria</label>
+                <input value={editingItem?.category || ""} onChange={e => setEditingItem({...editingItem, category: e.target.value})} placeholder="Ex: Receitas, Gestão..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Preço</label>
                   <input type="number" step="0.01" value={editingItem?.price || ""} onChange={e => setEditingItem({...editingItem, price: parseFloat(e.target.value)})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
                 </div>
                 <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Preço Original (De)</label>
+                  <input type="number" step="0.01" value={editingItem?.original_price || ""} onChange={e => setEditingItem({...editingItem, original_price: parseFloat(e.target.value)})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Páginas</label>
                   <input type="number" value={editingItem?.pages_count || ""} onChange={e => setEditingItem({...editingItem, pages_count: parseInt(e.target.value)})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
                 </div>
+                <div className="flex items-end pb-3">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={editingItem?.is_locked || false} 
+                      onChange={e => setEditingItem({...editingItem, is_locked: e.target.checked})}
+                      className="accent-[#ff6a00]"
+                    />
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Bloqueado para Venda</span>
+                  </label>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL da Capa</label>
+                <input value={editingItem?.cover_url || ""} onChange={e => setEditingItem({...editingItem, cover_url: e.target.value})} placeholder="https://..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição</label>
