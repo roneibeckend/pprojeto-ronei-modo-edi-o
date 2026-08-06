@@ -32,14 +32,20 @@ function AdminCursosPage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentPage]);
 
   async function fetchData() {
     try {
       setLoading(true);
-      const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: false });
+      const { data, error, count } = await supabase
+        .from('courses')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE - 1);
+        
       if (error) throw error;
       setCourses(data || []);
+      setTotalCount(count || 0);
     } catch (error: any) {
       toast.error("Erro ao carregar cursos: " + error.message);
     } finally {
