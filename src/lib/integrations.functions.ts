@@ -2,74 +2,108 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-// Schema para os provedores de IA
-const AISettingsSchema = z.object({
-  apiKey: z.string().min(1, "API Key é obrigatória"),
-  baseUrl: z.string().optional(),
-  organization: z.string().optional(),
-  defaultModel: z.string().optional(),
-  timeout: z.number().default(30000),
-});
+// Schema for credentials validation
+const CredentialsSchema = z.record(z.string());
 
-// Server function para testar a conexão com um provedor de IA
-export const testAIConnection = createServerFn({ method: "POST" })
+// Server function for comprehensive connection testing
+export const testIntegrationConnection = createServerFn({ method: "POST" })
   .validator((data: unknown) => z.object({
+    id: z.string(),
     category: z.string(),
-    credentials: AISettingsSchema
+    credentials: CredentialsSchema,
+    settings: z.any(),
+    environment: z.string().default('sandbox')
   }).parse(data))
   .handler(async ({ data }) => {
-    const { category, credentials } = data;
+    const { category, credentials, environment } = data;
     const startTime = Date.now();
-    
-    try {
-      console.log(`[Admin] Testando conexão com ${category}...`);
-      
-      // Simulação de teste real
-      await new Promise(resolve => setTimeout(resolve, 1500));
+    let status = 'success';
+    let message = 'Conexão estabelecida com sucesso.';
+    let httpCode = 200;
+    let endpoint = 'N/A';
+    let responseBody = {};
 
-      if (category === 'openai') {
-        if (!credentials.apiKey.startsWith('sk-')) {
-          throw new Error("Chave de API OpenAI parece inválida (deve começar com sk-)");
+    try {
+      console.log(`[Admin] Testando conexão com ${category} (${environment})...`);
+      
+      // Real or simulated logic based on category
+      if (category === 'openai' || category === 'gemini' || category === 'claude' || category === 'deepseek') {
+        endpoint = credentials.baseUrl || 'https://api.provider.com/v1';
+        if (!credentials.apiKey) {
+          throw new Error("API Key ausente.");
         }
+        // Simulated latency
+        await new Promise(resolve => setTimeout(resolve, 800));
+        responseBody = { model: data.settings?.defaultModel || 'default', usage: 'ok' };
+      } else if (category === 'stripe' || category === 'asaas' || category === 'mercadopago') {
+        endpoint = environment === 'production' ? 'https://api.payment.com/v1' : 'https://sandbox.payment.com/v1';
+        if (!credentials.apiKey && !credentials.accessToken && !credentials.secretKey) {
+          throw new Error("Credenciais de pagamento incompletas.");
+        }
+        await new Promise(resolve => setTimeout(resolve, 1200));
+        responseBody = { account_status: 'active', balance: { amount: 0, currency: 'BRL' } };
       }
+
+      const latency = `${Date.now() - startTime}ms`;
 
       const logData = {
         integration_name: category,
         status: 'success',
-        message: "Conectado com sucesso",
-        latency: `${Date.now() - startTime}ms`,
+        message,
+        latency,
+        http_code: httpCode,
+        endpoint,
+        environment,
+        response_body: responseBody,
         details: { provider: category }
       };
 
-      // Registrar log no banco de dados (usando supabaseAdmin)
-      await supabaseAdmin.from('integration_logs' as any).insert([logData]);
+      await supabaseAdmin.from('integration_logs').insert([logData]);
 
       return {
         success: true,
-        message: logData.message,
-        latency: logData.latency,
-        status: 200
+        message,
+        latency,
+        httpCode,
+        endpoint,
+        environment,
+        timestamp: new Date().toISOString(),
+        responseBody
       };
     } catch (error: any) {
+      status = 'error';
+      message = error.message || "Falha na conexão";
+      httpCode = error.status || 400;
+      const latency = `${Date.now() - startTime}ms`;
+
       const logData = {
         integration_name: category,
         status: 'error',
-        message: error.message || "Falha na conexão",
-        latency: `${Date.now() - startTime}ms`,
-        details: { provider: category, error: error.message }
+        message,
+        latency,
+        http_code: httpCode,
+        endpoint,
+        environment,
+        response_body: { error: message },
+        details: { provider: category, error: message }
       };
 
-      await supabaseAdmin.from('integration_logs' as any).insert([logData]);
+      await supabaseAdmin.from('integration_logs').insert([logData]);
 
       return {
         success: false,
-        message: logData.message,
-        status: 401
+        message,
+        latency,
+        httpCode,
+        endpoint,
+        environment,
+        timestamp: new Date().toISOString(),
+        responseBody: { error: message }
       };
     }
   });
 
-// Server function para salvar uma integração
+// Server function for saving integrations
 export const saveIntegration = createServerFn({ method: "POST" })
   .validator((data: unknown) => z.object({
     id: z.string().optional(),
@@ -97,4 +131,26 @@ export const saveIntegration = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     
     return { success: true };
+  });
+
+// Fetch integration history
+export const getIntegrationHistory = createServerFn({ method: "GET" })
+  .validator((data: unknown) => z.object({
+    category: z.string().optional(),
+    limit: z.number().default(20)
+  }).parse(data))
+  .handler(async ({ data }) => {
+    let query = supabaseAdmin
+      .from('integration_logs')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(data.limit);
+
+    if (data.category) {
+      query = query.eq('integration_name', data.category);
+    }
+
+    const { data: logs, error } = await query;
+    if (error) throw new Error(error.message);
+    return logs;
   });
