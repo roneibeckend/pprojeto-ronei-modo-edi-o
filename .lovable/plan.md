@@ -1,25 +1,27 @@
 # Plano de Restauração de Imagens da Área de Membros
 
-Este plano visa corrigir a exibição de capas de cursos e e-books que estão ausentes na área de membros, garantindo que as imagens originais vinculadas aos dados estáticos e ao banco de dados sejam exibidas corretamente.
+Este plano visa corrigir a exibição de capas de cursos e e-books que estão falhando devido a vínculos incorretos no banco de dados (URLs apontando para arquivos JSON em vez das imagens reais).
 
-## 1. Diagnóstico da Causa Raiz
-- **Cursos:** As rotas `/app/index` e `/app/cursos/index` estão buscando dados do banco de dados (`supabase.from("courses")`). O campo esperado é `cover_url`, mas os dados estáticos em `src/lib/platform-data.ts` usam o campo `cover`.
-- **E-books:** A rota `/app/ebooks/index` usa dados estáticos de `src/lib/platform-data.ts` onde as imagens estão vinculadas via `IMG` object (assets locais).
-- **Inconsistência:** É provável que as linhas no banco de dados para `courses` tenham o campo `cover_url` vazio ou apontando para caminhos inexistentes, enquanto o código prioriza esses dados dinâmicos sobre os estáticos que possuem as URLs corretas dos assets.
+## 1. Causa Raiz Identificada
+- **Diagnóstico:** As colunas `cover_url` nas tabelas `courses` e `ebooks` contêm URLs de metadados (ex: `.../hero-chef.asset.json`) em vez de URLs de imagem renderizáveis (ex: `/__l5e/assets-v1/...`). Tags `<img>` não conseguem exibir arquivos JSON.
 
 ## 2. Ações de Correção
 
-### A. Sincronização de Dados (Banco de Dados)
-- Executar uma migração SQL para atualizar a tabela `public.courses`, garantindo que o campo `cover_url` aponte para as URLs válidas dos assets locais (ex: `/__l5e/assets-v1/...`) que já estão mapeadas no `platform-data.ts`.
+### A. Migração de Dados (Supabase)
+- **Atualização da Tabela `courses`:** Substituir as URLs de arquivos JSON pelas URLs reais dos assets de imagem.
+  - Exemplo: `do-zero-aos-10k` -> `/__l5e/assets-v1/986a70cf-bc72-4276-8e9e-1aa0ac3e108a/hero-chef.jpeg`
+- **Atualização da Tabela `ebooks`:** Realizar o mesmo procedimento para todos os e-books.
 
-### B. Ajuste nos Componentes de UI
-- **CourseShowcaseCard:** Adicionar uma lógica de fallback no componente de exibição. Se `course.cover_url` estiver ausente, tentar usar uma imagem padrão baseada no `course.id` mapeado no arquivo de dados estáticos.
-- **E-books:** Verificar se o mapeamento `ebooks` em `src/lib/platform-data.ts` está sendo consumido corretamente e se as URLs dos assets `.asset.json` estão resolvidas.
+### B. Robustez no Frontend
+- **Fallback Automático:** Atualizar os componentes `CourseShowcaseCard` (em `app.index.tsx`) e os cards em `app.cursos.index.tsx` e `app.ebooks.index.tsx` para:
+  1. Detectar se a URL termina em `.json` e, se possível, buscar a URL real (embora a correção no banco seja a solução definitiva).
+  2. Fornecer uma imagem de "placeholder" caso a URL falhe ou seja nula, evitando o ícone de imagem quebrada.
 
-### C. Otimização de Carregamento
-- Manter o uso de `loading="lazy"` em todas as imagens.
-- Adicionar uma cor de fundo ou placeholder enquanto a imagem carrega para evitar layout shift.
+### C. Sincronização de Tipos
+- Garantir que `src/lib/platform-data.ts` reflita os mesmos assets usados no banco de dados para manter a consistência entre o modo offline/mock e o modo banco de dados.
 
 ## 3. Validação
-- Abrir a área de membros e verificar se as capas de todos os cursos (Showcase e Lista) e E-books estão visíveis.
-- Testar o comportamento quando o banco de dados retorna uma imagem nula (o fallback deve funcionar).
+- Verificar a "Vitrine de Cursos" na home da área de membros.
+- Verificar a lista de cursos em "Meus Cursos".
+- Verificar a "Biblioteca de e-books".
+- Confirmar que as imagens carregam rapidamente usando URLs de CDN nativas.
