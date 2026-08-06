@@ -30,7 +30,7 @@ function AdminRootLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
-    if (!isLoading && !isAdmin) {
+    if (!isLoading && !isAdmin && !["manager", "agent"].includes(role || "")) {
       navigate({ to: "/app", replace: true });
     }
   }, [isAdmin, isLoading, navigate]);
@@ -43,7 +43,7 @@ function AdminRootLayout() {
     );
   }
 
-  if (!isAdmin) return null;
+  if (!isAdmin && !["manager", "agent"].includes(role || "")) return null;
 
   const navItems = [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },

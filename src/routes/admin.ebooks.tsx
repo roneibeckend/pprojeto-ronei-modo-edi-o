@@ -116,7 +116,7 @@ function AdminEbooksPage() {
           <div className="w-full max-w-xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold">{editingItem?.id ? "Editar E-book" : "Novo E-book"}</h3>
-              <button onClick={() => setIsModalOpen(false)}><X className="h-5 w-5" /></button>
+              <button type="button" onClick={() => { setIsModalOpen(false); setEditingItem(null); }} className="text-white/40 hover:text-white transition-colors"><X className="h-5 w-5" /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
@@ -170,7 +170,7 @@ function AdminEbooksPage() {
                 <p className="text-[10px] text-white/20">Este conteúdo será exibido na área de leitura do aluno.</p>
               </div>
               <div className="pt-4 flex gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 rounded-lg bg-white/5 font-bold hover:bg-white/10">Cancelar</button>
+                <button type="button" onClick={() => { setIsModalOpen(false); setEditingItem(null); }} className="flex-1 py-3 rounded-lg bg-white/5 font-bold hover:bg-white/10 transition-colors">Cancelar</button>
                 <button type="submit" disabled={isSaving} className="flex-1 py-3 rounded-lg bg-[#ff6a00] text-black font-bold disabled:opacity-50">{isSaving ? "Salvando..." : "Salvar"}</button>
               </div>
             </form>
