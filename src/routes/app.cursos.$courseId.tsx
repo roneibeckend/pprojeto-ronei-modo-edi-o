@@ -34,12 +34,11 @@ export const Route = createFileRoute("/app/cursos/$courseId")({
 });
 
 function CoursePage() {
-  const loaderData = Route.useLoaderData();
+  const { course } = Route.useLoaderData();
   const navigate = useNavigate();
   const { isEnrolledInCourse, isLoading: isLoadingEnrollments } = useEnrollments();
 
-  if (!loaderData?.course) return null;
-  const course = loaderData.course;
+  if (!course) return null;
 
   const isFree = (course.price || 0) === 0;
   const isEnrolled = isEnrolledInCourse(course.id);

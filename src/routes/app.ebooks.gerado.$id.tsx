@@ -192,7 +192,7 @@ function GeneratedEbookReader() {
         <div className="max-w-md">
           <h1 className="font-display text-2xl font-bold">Ebook não encontrado</h1>
           <p className="mt-2 text-sm text-muted-foreground">O ebook foi removido ou está em outro navegador (salvamos localmente enquanto a API oficial não é integrada).</p>
-          <button onClick={() => navigate({ to: "/app/admin/ebook-ai" })} className="btn-fire mt-6 text-sm">
+          <button onClick={() => navigate({ to: "/admin/ebook-ai" })} className="btn-fire mt-6 text-sm">
             <ArrowLeft className="h-4 w-4" /> Voltar ao gerador
           </button>
         </div>
@@ -208,7 +208,7 @@ function GeneratedEbookReader() {
     <div className="fixed inset-0 z-40 flex flex-col bg-charcoal">
       {/* top bar */}
       <div className="flex items-center gap-3 border-b border-white/10 bg-black/60 p-3 backdrop-blur">
-        <button onClick={() => navigate({ to: "/app/admin/ebook-ai" })} className="rounded-full bg-white/5 p-2 hover:bg-white/10" aria-label="Voltar">
+        <button onClick={() => navigate({ to: "/admin/ebook-ai" })} className="rounded-full bg-white/5 p-2 hover:bg-white/10" aria-label="Voltar">
           <ArrowLeft className="h-4 w-4" />
         </button>
         <div className="min-w-0 flex-1">
