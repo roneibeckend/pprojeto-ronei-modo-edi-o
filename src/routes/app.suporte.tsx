@@ -501,8 +501,9 @@ function SupportPage() {
                       <p className="mt-2 text-xs text-white/20">Seus chamados e respostas aparecerão aqui.</p>
                     </div>
                   )}
-                </div>
               </div>
+            </section>
+          )}
         </div>
 
         {/* Sidebar Context */}
