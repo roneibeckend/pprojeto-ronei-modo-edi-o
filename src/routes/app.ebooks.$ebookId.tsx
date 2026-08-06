@@ -32,7 +32,7 @@ const demoPages = [
 ];
 
 function EbookReader() {
-  const { book } = Route.useLoaderData();
+  const { book } = Route.useLoaderData() as { book: typeof ebooks[0] };
   const [page, setPage] = useState(0);
   const current = demoPages[page];
 

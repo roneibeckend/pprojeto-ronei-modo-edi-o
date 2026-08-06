@@ -34,6 +34,14 @@
   --color-flame: var(--flame);
   --color-gold: var(--gold);
   --color-charcoal: var(--charcoal);
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
   --font-display: "Oswald", "Inter", system-ui, sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
 }
@@ -69,6 +77,15 @@
   --grad-fire-soft: linear-gradient(135deg, oklch(0.63 0.24 27 / 0.15) 0%, oklch(0.82 0.15 85 / 0.10) 100%);
   --shadow-fire: 0 20px 60px -20px oklch(0.63 0.24 27 / 0.55), 0 8px 24px -12px oklch(0.72 0.20 50 / 0.45);
   --shadow-glass: 0 10px 40px -12px oklch(0 0 0 / 0.5);
+
+  --sidebar-background: oklch(0.14 0.015 30);
+  --sidebar-foreground: oklch(0.98 0.01 80);
+  --sidebar-primary: oklch(0.63 0.24 27);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(1 0 0 / 0.05);
+  --sidebar-accent-foreground: oklch(0.98 0.01 80);
+  --sidebar-border: oklch(1 0 0 / 0.08);
+  --sidebar-ring: oklch(0.7 0.2 45);
 }
 
 .dark {
@@ -93,6 +110,18 @@
 
   #lovable-badge { 
     display: none !important; 
+  }
+}
+
+@layer utilities {
+  .scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hidden::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
   }
 }
 

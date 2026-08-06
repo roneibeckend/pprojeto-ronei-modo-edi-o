@@ -21,6 +21,13 @@ import {
 } from "lucide-react";
 import { student } from "@/lib/platform-data";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 type NavItem = {
   to: string;
@@ -73,39 +80,46 @@ export function Shell({ children }: { children: ReactNode }) {
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
 
   const SidebarInner = (
-    <div className="flex h-full flex-col bg-[#0e0e0e]">
+    <div className="flex h-dvh flex-col overflow-hidden bg-sidebar text-sidebar-foreground">
       {/* Brand */}
-      <div className="flex items-center gap-3 border-b border-white/5 px-5 py-5">
-        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#ff6a00]">
-          <Flame className="h-5 w-5 text-black" strokeWidth={2.5} />
+      <div className="flex shrink-0 items-center gap-3 border-b border-sidebar-border px-5 py-4">
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary">
+          <Flame className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} />
         </div>
         <div className="min-w-0">
-          <div className="truncate font-display text-[17px] font-extrabold uppercase leading-none tracking-wide text-white">
-            Espetinho <span className="text-[#ff6a00]">na Veia</span>
+          <div className="truncate font-display text-base font-extrabold uppercase leading-none tracking-wide text-sidebar-foreground">
+            Espetinho <span className="text-primary">na Veia</span>
           </div>
-          <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
+          <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-sidebar-foreground/40">
             Área de membros
           </div>
         </div>
       </div>
 
       {/* Student mini card */}
-      <div className="mx-3 mt-3 flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5">
+      <div className="mx-3 mt-3 flex shrink-0 items-center gap-3 rounded-lg border border-sidebar-border bg-sidebar-accent px-3 py-2.5">
         <div className="relative">
           <img src={student.avatar} alt={student.name} className="h-9 w-9 rounded-md object-cover" />
-          <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#0e0e0e] bg-emerald-500" />
+          <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-sidebar bg-emerald-500" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-semibold text-white">{student.name}</div>
-          <div className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00]">Aluno ativo</div>
+          <div className="truncate text-sm font-semibold text-sidebar-foreground">{student.name}</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-primary">Aluno ativo</div>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
+      <nav 
+        aria-label="Menu principal"
+        className="scrollbar-hidden flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 py-4"
+        style={{
+          maskImage: 'linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%)'
+        }}
+      >
         {navGroups.map((group) => (
-          <div key={group.title} className="mb-5">
-            <div className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.22em] text-white/35">
+          <div key={group.title} className="mb-4 last:mb-0">
+            <div className="mb-1 px-3 text-[11px] font-bold uppercase tracking-wider text-sidebar-foreground/35">
               {group.title}
             </div>
             <div className="space-y-0.5">
@@ -116,33 +130,24 @@ export function Shell({ children }: { children: ReactNode }) {
                   <Link
                     key={item.to}
                     to={item.to}
+                    aria-current={active ? "page" : undefined}
                     onClick={() => setOpen(false)}
-                    className={`group relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition ${
+                    className={`group relative flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none ${
                       active
-                        ? "bg-[#ff6a00] text-black"
-                        : "text-white/70 hover:bg-white/5 hover:text-white"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                     }`}
                   >
-                    {active && (
-                      <span className="absolute -left-3 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r bg-[#ff6a00]" />
-                    )}
                     <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={active ? 2.5 : 2} />
                     <span className="truncate">{item.label}</span>
                     {item.badge && (
                       <span
-                        className={`ml-auto rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest ${
-                          active ? "bg-black/20 text-black" : "bg-[#ff6a00]/15 text-[#ff6a00]"
+                        className={`ml-auto rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
+                          active ? "bg-black/20 text-primary-foreground" : "bg-primary/15 text-primary"
                         }`}
                       >
                         {item.badge}
                       </span>
-                    )}
-                    {!item.badge && (
-                      <ChevronRight
-                        className={`ml-auto h-3.5 w-3.5 transition ${
-                          active ? "opacity-100" : "opacity-0 group-hover:opacity-60"
-                        }`}
-                      />
                     )}
                   </Link>
                 );
@@ -153,14 +158,14 @@ export function Shell({ children }: { children: ReactNode }) {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-white/5 p-3">
+      <div className="shrink-0 border-t border-sidebar-border p-3">
         <button
           onClick={async () => {
             await supabase.auth.signOut();
             toast.success("Você saiu da plataforma.");
             navigate({ to: "/login" });
           }}
-          className="flex w-full items-center gap-3 rounded-md border border-white/5 px-3 py-2.5 text-sm font-medium text-white/70 transition hover:border-[#ff6a00]/50 hover:bg-[#ff6a00]/10 hover:text-[#ff6a00]"
+          className="flex h-10 w-full items-center gap-3 rounded-md border border-sidebar-border px-3 text-sm font-medium text-sidebar-foreground/70 transition-colors duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none"
         >
           <LogOut className="h-4 w-4" />
           Sair da plataforma
@@ -170,51 +175,46 @@ export function Shell({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div className="flex min-h-screen w-full bg-[#0a0a0a] text-foreground">
+    <div className="flex h-dvh w-full overflow-hidden bg-[#0a0a0a] text-foreground">
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-72 shrink-0 border-r border-white/5 lg:block">
+      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-white/5 lg:block">
         {SidebarInner}
       </aside>
 
-      {/* Mobile drawer */}
-      {open && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/80" onClick={() => setOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-72 border-r border-white/10">
-            {SidebarInner}
-          </aside>
-        </div>
-      )}
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-3 border-b border-white/5 bg-[#0a0a0a]/90 px-4 backdrop-blur lg:px-8">
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <button
+                className="grid h-10 w-10 place-items-center rounded-md border border-white/10 lg:hidden"
+                aria-label="Abrir menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-72 p-0 border-r border-white/10 bg-[#0e0e0e]">
+              <SheetHeader className="sr-only">
+                <SheetTitle>Menu de Navegação</SheetTitle>
+              </SheetHeader>
+              {SidebarInner}
+            </SheetContent>
+          </Sheet>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-40 flex items-center gap-3 border-b border-white/5 bg-[#0a0a0a]/90 px-4 py-3 backdrop-blur lg:px-8">
-          <button
-            className="grid h-10 w-10 place-items-center rounded-md border border-white/10 lg:hidden"
-            onClick={() => setOpen(true)}
-            aria-label="Abrir menu"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
           <div className="min-w-0 flex-1">
-            <div className="truncate font-display text-lg font-extrabold uppercase tracking-wide sm:text-xl">
-              Espetinho <span className="text-[#ff6a00]">na Veia</span>
+            <div className="truncate font-display text-lg font-extrabold uppercase tracking-wide sm:text-xl text-foreground">
+              Espetinho <span className="text-primary">na Veia</span>
             </div>
           </div>
           <Link
             to="/app/perfil"
-            className="flex items-center gap-2 rounded-md border border-white/10 py-1 pl-1 pr-3 transition hover:border-[#ff6a00]/50"
+            className="flex items-center gap-2 rounded-md border border-white/10 py-1 pl-1 pr-3 transition-colors hover:border-primary/50"
           >
             <img src={student.avatar} alt={student.name} className="h-8 w-8 rounded" />
             <span className="hidden text-sm font-medium sm:inline">{student.name.split(" ")[0]}</span>
           </Link>
-          {open && (
-            <button className="lg:hidden" onClick={() => setOpen(false)} aria-label="Fechar">
-              <X className="h-5 w-5" />
-            </button>
-          )}
         </header>
 
-        <main className="min-w-0 flex-1 px-4 py-6 lg:px-8 lg:py-8">{children}</main>
+        <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 lg:px-8 lg:py-8">{children}</main>
       </div>
     </div>
   );
@@ -224,7 +224,7 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
   return (
     <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 sm:flex sm:flex-wrap sm:justify-between">
       <div className="min-w-0">
-        <h1 className="truncate font-display text-2xl font-bold sm:text-3xl">{title}</h1>
+        <h1 className="truncate font-display text-2xl font-bold sm:text-3xl text-foreground">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       {action}
