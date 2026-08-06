@@ -32,6 +32,7 @@ function SupportPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"chat" | "tickets">("chat");
+  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Msg[]>([
     { 
       role: "ai", 
@@ -42,6 +43,8 @@ function SupportPage() {
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [isOpeningTicket, setIsOpeningTicket] = useState(false);
+  const [replyText, setReplyText] = useState("");
+  const [isSendingReply, setIsSendingReply] = useState(false);
 
   // Buscar tickets do banco
   const { data: myTickets = [], isLoading: isLoadingTickets } = useQuery({
@@ -58,6 +61,23 @@ function SupportPage() {
       return data;
     },
     enabled: !!user,
+  });
+
+  // Buscar mensagens do ticket selecionado
+  const { data: ticketMessages = [], isLoading: isLoadingMessages } = useQuery({
+    queryKey: ["support-messages", selectedTicketId],
+    queryFn: async () => {
+      if (!selectedTicketId) return [];
+      const { data, error } = await supabase
+        .from("support_messages")
+        .select("*")
+        .eq("ticket_id", selectedTicketId)
+        .order("created_at", { ascending: true });
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!selectedTicketId,
   });
 
   const endRef = useRef<HTMLDivElement>(null);
@@ -132,6 +152,33 @@ function SupportPage() {
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
     } catch (error: any) {
       toast.error("Erro ao abrir chamado: " + error.message);
+    }
+  };
+
+  const handleSendReply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !selectedTicketId || !replyText.trim()) return;
+
+    try {
+      setIsSendingReply(true);
+      const { error } = await supabase
+        .from("support_messages")
+        .insert({
+          ticket_id: selectedTicketId,
+          message: replyText.trim(),
+          sender_id: user.id,
+          sender_type: "student"
+        });
+
+      if (error) throw error;
+
+      setReplyText("");
+      queryClient.invalidateQueries({ queryKey: ["support-messages", selectedTicketId] });
+      toast.success("Mensagem enviada!");
+    } catch (error: any) {
+      toast.error("Erro ao enviar mensagem: " + error.message);
+    } finally {
+      setIsSendingReply(false);
     }
   };
 
@@ -341,19 +388,80 @@ function SupportPage() {
                 </div>
               )}
 
-              {/* Tickets List */}
+              {/* Tickets List and Messages View */}
               <div className="glass overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02]">
-                <div className="bg-white/5 px-6 py-4 border-b border-white/5">
-                  <h4 className="font-display text-sm font-bold uppercase tracking-widest text-white/60">Histórico de Chamados</h4>
+                <div className="bg-white/5 px-6 py-4 border-b border-white/5 flex items-center justify-between">
+                  <h4 className="font-display text-sm font-bold uppercase tracking-widest text-white/60">
+                    {selectedTicketId ? "Conversa do Chamado" : "Histórico de Chamados"}
+                  </h4>
+                  {selectedTicketId && (
+                    <button 
+                      onClick={() => setSelectedTicketId(null)}
+                      className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00] hover:underline"
+                    >
+                      Voltar para lista
+                    </button>
+                  )}
                 </div>
+
                 <div className="divide-y divide-white/5">
                   {isLoadingTickets ? (
                     <div className="flex h-32 items-center justify-center">
                       <Loader2 className="h-6 w-6 animate-spin text-[#ff6a00]" />
                     </div>
+                  ) : selectedTicketId ? (
+                    <div className="flex flex-col h-[500px]">
+                      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                        {isLoadingMessages ? (
+                          <div className="flex h-full items-center justify-center">
+                            <Loader2 className="h-6 w-6 animate-spin text-[#ff6a00]" />
+                          </div>
+                        ) : ticketMessages.length > 0 ? (
+                          ticketMessages.map((m: any) => (
+                            <div key={m.id} className={`flex flex-col ${m.sender_type === 'student' ? 'items-end' : 'items-start'}`}>
+                              <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
+                                m.sender_type === 'student' 
+                                  ? 'bg-[#ff6a00] text-black font-medium rounded-tr-none' 
+                                  : 'bg-white/10 text-white rounded-tl-none'
+                              }`}>
+                                {m.message}
+                              </div>
+                              <span className="mt-1 text-[9px] text-white/20 uppercase font-bold">
+                                {new Date(m.created_at).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-10 text-white/20 uppercase text-[10px] font-bold tracking-widest">
+                            Nenhuma mensagem neste chamado.
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-4 bg-white/5 border-t border-white/5">
+                        <form onSubmit={handleSendReply} className="relative flex items-center">
+                          <input
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder="Responda aqui..."
+                            className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-4 pr-12 text-sm outline-none transition focus:border-[#ff6a00]/50"
+                          />
+                          <button 
+                            type="submit" 
+                            disabled={!replyText.trim() || isSendingReply}
+                            className="absolute right-1.5 grid h-8 w-8 place-items-center rounded-lg bg-[#ff6a00] text-black transition hover:scale-105 active:scale-95 disabled:opacity-50"
+                          >
+                            {isSendingReply ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                          </button>
+                        </form>
+                      </div>
+                    </div>
                   ) : myTickets.length > 0 ? (
                     myTickets.map((t) => (
-                      <div key={t.id} className="group flex flex-wrap items-center justify-between gap-4 p-6 transition-colors hover:bg-white/[0.03]">
+                      <div 
+                        key={t.id} 
+                        onClick={() => setSelectedTicketId(t.id)}
+                        className="group flex flex-wrap items-center justify-between gap-4 p-6 transition-colors hover:bg-white/[0.03] cursor-pointer"
+                      >
                         <div className="flex items-start gap-4">
                           <div className={`mt-1 grid h-10 w-10 place-items-center rounded-xl bg-white/5 transition group-hover:bg-white/10 ${
                             t.status === "resolved" ? "text-emerald-500" : "text-[#ff6a00]"
@@ -368,28 +476,29 @@ function SupportPage() {
                             <h5 className="mt-1 font-bold text-white group-hover:text-[#ff6a00] transition">{t.subject}</h5>
                             <div className="mt-2 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-white/30">
                               <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(t.created_at).toLocaleDateString('pt-BR')}</span>
-                              <span className="flex items-center gap-1"><User className="h-3 w-3" /> Suporte</span>
+                              <span className="flex items-center gap-1"><User className="h-3 w-3" /> {t.status === 'resolved' ? 'Finalizado' : 'Aguardando'}</span>
                             </div>
                           </div>
                         </div>
                         <div className="flex items-center gap-6">
                           <div className="text-right hidden sm:block">
                             <div className={`text-[10px] font-bold uppercase tracking-[0.2em] ${
-                              t.status === "resolved" ? "text-emerald-500" : "text-[#ff6a00]"
+                              t.status === 'resolved' ? 'text-emerald-500' : 'text-[#ff6a00]'
                             }`}>
-                              {t.status === "open" ? "Aberto" : t.status === "in_progress" ? "Em análise" : t.status === "resolved" ? "Resolvido" : "Fechado"}
-                            </div>
-                            <div className="mt-1 text-[10px] font-medium text-white/20 uppercase tracking-widest">
-                              Atualizado {t.updated_at ? new Date(t.updated_at).toLocaleDateString('pt-BR') : '—'}
+                              {t.status === 'resolved' ? 'Resolvido' : 'Em Aberto'}
                             </div>
                           </div>
-                          <ChevronRight className="h-5 w-5 text-white/10 group-hover:text-white/40 transition" />
+                          <ChevronRight className="h-5 w-5 text-white/10 transition group-hover:translate-x-1 group-hover:text-white/40" />
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="p-10 text-center text-sm text-white/20">
-                      Nenhum chamado encontrado.
+                    <div className="flex flex-col items-center justify-center p-12 text-center">
+                      <div className="mb-4 rounded-full bg-white/5 p-4">
+                        <TicketIcon className="h-8 w-8 text-white/20" />
+                      </div>
+                      <h5 className="text-sm font-bold text-white/40 uppercase tracking-widest">Nenhum chamado aberto</h5>
+                      <p className="mt-2 text-xs text-white/20">Seus chamados e respostas aparecerão aqui.</p>
                     </div>
                   )}
                 </div>

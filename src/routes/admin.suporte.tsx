@@ -24,8 +24,34 @@ function AdminSupportPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'open' | 'in_progress' | 'resolved'>('all');
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [ticketMessages, setTicketMessages] = useState<any[]>([]);
   const [reply, setReply] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+
+  useEffect(() => {
+    if (selectedTicket) {
+      fetchMessages(selectedTicket.id);
+    }
+  }, [selectedTicket]);
+
+  async function fetchMessages(ticketId: string) {
+    try {
+      setLoadingMessages(true);
+      const { data, error } = await supabase
+        .from('support_messages')
+        .select('*')
+        .eq('ticket_id', ticketId)
+        .order('created_at', { ascending: true });
+      
+      if (error) throw error;
+      setTicketMessages(data || []);
+    } catch (error: any) {
+      toast.error("Erro ao carregar mensagens: " + error.message);
+    } finally {
+      setLoadingMessages(false);
+    }
+  }
 
   useEffect(() => {
     fetchTickets();
@@ -91,6 +117,7 @@ function AdminSupportPage() {
       toast.success("Resposta enviada (Simulado)");
       setReply("");
       fetchTickets();
+      if (selectedTicket) fetchMessages(selectedTicket.id);
     } catch (error: any) {
       toast.error("Erro ao responder: " + error.message);
     } finally {
@@ -209,18 +236,31 @@ function AdminSupportPage() {
                 )}
               </div>
 
-              <div className="flex-1 p-6 overflow-y-auto space-y-6">
-                <div className="bg-white/5 p-4 rounded-lg border border-white/5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-[10px] font-bold uppercase text-[#ff6a00]">Mensagem do Aluno</span>
-                    <span className="text-[9px] text-white/20">{new Date(selectedTicket.created_at).toLocaleString('pt-BR')}</span>
+              <div className="flex-1 p-6 overflow-y-auto space-y-4">
+                {loadingMessages ? (
+                  <div className="flex h-full items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin text-[#ff6a00]" />
                   </div>
-                  <p className="text-sm text-white/80 whitespace-pre-wrap leading-relaxed">{selectedTicket.message}</p>
-                </div>
-
-                <div className="flex flex-col items-center justify-center py-8 text-white/10 italic">
-                  <p className="text-[10px] uppercase tracking-widest font-bold">Histórico de mensagens simulado</p>
-                </div>
+                ) : ticketMessages.length > 0 ? (
+                  ticketMessages.map((m) => (
+                    <div key={m.id} className={`flex flex-col ${m.sender_type === 'support_agent' ? 'items-end' : 'items-start'}`}>
+                      <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
+                        m.sender_type === 'support_agent' 
+                          ? 'bg-[#ff6a00] text-black font-medium rounded-tr-none' 
+                          : 'bg-white/10 text-white rounded-tl-none'
+                      }`}>
+                        {m.message}
+                      </div>
+                      <span className="mt-1 text-[9px] text-white/20 uppercase font-bold">
+                        {new Date(m.created_at).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-10 text-white/20 uppercase text-[10px] font-bold tracking-widest">
+                    Nenhuma mensagem neste chamado.
+                  </div>
+                )}
               </div>
 
               <div className="p-6 border-t border-white/5 bg-black/20">
