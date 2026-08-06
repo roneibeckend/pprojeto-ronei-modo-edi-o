@@ -7,6 +7,7 @@ import {
   Users, 
   Settings,
   ShieldCheck,
+  ChefHat,
   ArrowLeft,
   ChevronLeft,
   Loader2
