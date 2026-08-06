@@ -1,4 +1,5 @@
-import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { 
   LayoutDashboard, 
   DollarSign, 
@@ -7,8 +8,10 @@ import {
   Settings,
   ShieldCheck,
   Library,
-  Clapperboard
+  Clapperboard,
+  Loader2
 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/app/admin")({
   component: AdminLayout,
@@ -17,7 +20,25 @@ export const Route = createFileRoute("/app/admin")({
 const ORANGE = "#ff6a00";
 
 function AdminLayout() {
+  const navigate = useNavigate();
+  const { isAdmin, isLoading } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    if (!isLoading && !isAdmin) {
+      navigate({ to: "/app", replace: true });
+    }
+  }, [isAdmin, isLoading, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="grid h-64 place-items-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) return null;
   
   const navItems = [
     { to: "/app/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
