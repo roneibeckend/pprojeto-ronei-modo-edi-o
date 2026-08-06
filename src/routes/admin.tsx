@@ -44,11 +44,14 @@ function AdminRootLayout() {
 
   const navItems = [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+    { to: "/admin/financeiro", label: "Financeiro", icon: ChevronLeft }, // Usando ChevronLeft temporariamente se DollarSign não estiver no topo
     { to: "/admin/cursos", label: "Cursos", icon: Library },
     { to: "/admin/receitas", label: "Receitas", icon: ChefHat },
     { to: "/admin/ebooks", label: "E-books", icon: BookOpen },
+    { to: "/admin/ao-vivo", label: "Ao Vivo", icon: Clapperboard },
+    { to: "/admin/ebook-ai", label: "IA E-book", icon: BrainCircuit },
     { to: "/admin/alunos", label: "Alunos", icon: Users },
-    { to: "/admin/integracoes", label: "Integrações", icon: BrainCircuit },
+    { to: "/admin/integracoes", label: "Integrações", icon: Settings },
   ];
 
   return (
