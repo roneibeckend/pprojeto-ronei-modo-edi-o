@@ -19,10 +19,12 @@ export const testAIConnection = createServerFn({ method: "POST" })
   }).parse(data))
   .handler(async ({ data }) => {
     const { category, credentials } = data;
+    const startTime = Date.now();
     
     try {
       console.log(`[Admin] Testando conexão com ${category}...`);
       
+      // Simulação de teste real
       await new Promise(resolve => setTimeout(resolve, 1500));
 
       if (category === 'openai') {
@@ -31,16 +33,37 @@ export const testAIConnection = createServerFn({ method: "POST" })
         }
       }
 
+      const logData = {
+        integration_name: category,
+        status: 'success',
+        message: "Conectado com sucesso",
+        latency: `${Date.now() - startTime}ms`,
+        details: { provider: category }
+      };
+
+      // Registrar log no banco de dados (usando supabaseAdmin)
+      await supabaseAdmin.from('integration_logs' as any).insert([logData]);
+
       return {
         success: true,
-        message: "Conectado com sucesso",
-        latency: "142ms",
+        message: logData.message,
+        latency: logData.latency,
         status: 200
       };
     } catch (error: any) {
+      const logData = {
+        integration_name: category,
+        status: 'error',
+        message: error.message || "Falha na conexão",
+        latency: `${Date.now() - startTime}ms`,
+        details: { provider: category, error: error.message }
+      };
+
+      await supabaseAdmin.from('integration_logs' as any).insert([logData]);
+
       return {
         success: false,
-        message: error.message || "Falha na conexão",
+        message: logData.message,
         status: 401
       };
     }
