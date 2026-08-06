@@ -38,7 +38,7 @@ const LessonSchema = z.object({
 
 // Funções de Servidor
 export const upsertCourse = createServerFn({ method: "POST" })
-  .validator((data: z.infer<typeof CourseSchema>) => CourseSchema.parse(data))
+  .validator((data: any) => CourseSchema.parse(data))
   .handler(async ({ data }) => {
     const { data: result, error } = await supabase
       .from('courses')
@@ -51,7 +51,7 @@ export const upsertCourse = createServerFn({ method: "POST" })
   });
 
 export const upsertModule = createServerFn({ method: "POST" })
-  .validator((data: z.infer<typeof ModuleSchema>) => ModuleSchema.parse(data))
+  .validator((data: any) => ModuleSchema.parse(data))
   .handler(async ({ data }) => {
     const { data: result, error } = await supabase
       .from('course_modules')
@@ -64,7 +64,7 @@ export const upsertModule = createServerFn({ method: "POST" })
   });
 
 export const upsertLesson = createServerFn({ method: "POST" })
-  .validator((data: z.infer<typeof LessonSchema>) => LessonSchema.parse(data))
+  .validator((data: any) => LessonSchema.parse(data))
   .handler(async ({ data }) => {
     const { data: result, error } = await supabase
       .from('course_lessons')
@@ -77,10 +77,7 @@ export const upsertLesson = createServerFn({ method: "POST" })
   });
 
 export const updateOrders = createServerFn({ method: "POST" })
-  .validator((data: {
-    table: 'course_modules' | 'course_lessons',
-    items: { id: string, order_index: number }[]
-  }) => z.object({
+  .validator((data: any) => z.object({
     table: z.enum(['course_modules', 'course_lessons']),
     items: z.array(z.object({
       id: z.string().uuid(),
@@ -89,7 +86,7 @@ export const updateOrders = createServerFn({ method: "POST" })
   }).parse(data))
   .handler(async ({ data }) => {
     const { error } = await supabase
-      .from(data.table as any)
+      .from(data.table)
       .upsert(data.items);
 
     if (error) throw new Error(error.message);
@@ -97,16 +94,13 @@ export const updateOrders = createServerFn({ method: "POST" })
   });
 
 export const deleteItem = createServerFn({ method: "POST" })
-  .validator((data: {
-    table: 'courses' | 'course_modules' | 'course_lessons',
-    id: string
-  }) => z.object({
+  .validator((data: any) => z.object({
     table: z.enum(['courses', 'course_modules', 'course_lessons']),
     id: z.string().uuid()
   }).parse(data))
   .handler(async ({ data }) => {
     const { error } = await supabase
-      .from(data.table as any)
+      .from(data.table)
       .delete()
       .eq('id', data.id);
 
