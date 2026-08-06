@@ -41,6 +41,32 @@ function CoursePage() {
   const course = data?.course;
   const navigate = useNavigate();
   const { isEnrolledInCourse, isLoading: isLoadingEnrollments } = useEnrollments();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const createPaymentLink = useServerFn(createAsaasPaymentLink);
+
+  const handlePurchase = async () => {
+    try {
+      setIsProcessing(true);
+      const result = await createPaymentLink({
+        data: {
+          productId: course.id,
+          productType: 'course',
+          title: course.title,
+          description: course.description,
+          value: course.price || 0,
+        }
+      });
+      
+      if (result.url) {
+        window.location.href = result.url;
+      }
+    } catch (error: any) {
+      console.error("Erro ao processar compra:", error);
+      toast.error(error.message || "Erro ao gerar link de pagamento.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   if (!course) return null;
 
@@ -70,15 +96,18 @@ function CoursePage() {
           <Link to="/app/cursos" className="btn-ghost-fire px-8 py-3 font-bold">
             Voltar aos cursos
           </Link>
-          <a 
-            href="https://wa.me/5511999999999" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center gap-2"
+          <button 
+            onClick={handlePurchase}
+            disabled={isProcessing}
+            className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <ShoppingCart className="h-5 w-5" />
-            Comprar por R$ {course.price?.toString().replace(".", ",")}
-          </a>
+            {isProcessing ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <ShoppingCart className="h-5 w-5" />
+            )}
+            {isProcessing ? "Processando..." : `Comprar por R$ ${course.price?.toString().replace(".", ",")}`}
+          </button>
         </div>
       </div>
     );
