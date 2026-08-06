@@ -34,6 +34,7 @@ import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.previe
 import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
 import { Route as AppAdminFinanceiroRouteImport } from './routes/app.admin.financeiro'
 import { Route as AppAdminEbookAiRouteImport } from './routes/app.admin.ebook-ai'
+import { Route as AppAdminAlunosRouteImport } from './routes/app.admin.alunos'
 import { Route as AppEbooksPremiumEbookIdRouteImport } from './routes/app.ebooks.premium.$ebookId'
 import { Route as AppEbooksGeradoIdRouteImport } from './routes/app.ebooks.gerado.$id'
 
@@ -162,6 +163,11 @@ const AppAdminEbookAiRoute = AppAdminEbookAiRouteImport.update({
   path: '/ebook-ai',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const AppAdminAlunosRoute = AppAdminAlunosRouteImport.update({
+  id: '/alunos',
+  path: '/alunos',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 const AppEbooksPremiumEbookIdRoute = AppEbooksPremiumEbookIdRouteImport.update({
   id: '/premium/$ebookId',
   path: '/premium/$ebookId',
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
   '/app/': typeof AppIndexRoute
+  '/app/admin/alunos': typeof AppAdminAlunosRoute
   '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
@@ -216,6 +223,7 @@ export interface FileRoutesByTo {
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
   '/app': typeof AppIndexRoute
+  '/app/admin/alunos': typeof AppAdminAlunosRoute
   '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
@@ -246,6 +254,7 @@ export interface FileRoutesById {
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
   '/app/': typeof AppIndexRoute
+  '/app/admin/alunos': typeof AppAdminAlunosRoute
   '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
@@ -277,6 +286,7 @@ export interface FileRouteTypes {
     | '/app/receitas'
     | '/app/suporte'
     | '/app/'
+    | '/app/admin/alunos'
     | '/app/admin/ebook-ai'
     | '/app/admin/financeiro'
     | '/app/cursos/$courseId'
@@ -302,6 +312,7 @@ export interface FileRouteTypes {
     | '/app/receitas'
     | '/app/suporte'
     | '/app'
+    | '/app/admin/alunos'
     | '/app/admin/ebook-ai'
     | '/app/admin/financeiro'
     | '/app/cursos/$courseId'
@@ -331,6 +342,7 @@ export interface FileRouteTypes {
     | '/app/receitas'
     | '/app/suporte'
     | '/app/'
+    | '/app/admin/alunos'
     | '/app/admin/ebook-ai'
     | '/app/admin/financeiro'
     | '/app/cursos/$courseId'
@@ -530,6 +542,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminEbookAiRouteImport
       parentRoute: typeof AppAdminRoute
     }
+    '/app/admin/alunos': {
+      id: '/app/admin/alunos'
+      path: '/alunos'
+      fullPath: '/app/admin/alunos'
+      preLoaderRoute: typeof AppAdminAlunosRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
     '/app/ebooks/premium/$ebookId': {
       id: '/app/ebooks/premium/$ebookId'
       path: '/premium/$ebookId'
@@ -548,12 +567,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppAdminRouteChildren {
+  AppAdminAlunosRoute: typeof AppAdminAlunosRoute
   AppAdminEbookAiRoute: typeof AppAdminEbookAiRoute
   AppAdminFinanceiroRoute: typeof AppAdminFinanceiroRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
 }
 
 const AppAdminRouteChildren: AppAdminRouteChildren = {
+  AppAdminAlunosRoute: AppAdminAlunosRoute,
   AppAdminEbookAiRoute: AppAdminEbookAiRoute,
   AppAdminFinanceiroRoute: AppAdminFinanceiroRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
