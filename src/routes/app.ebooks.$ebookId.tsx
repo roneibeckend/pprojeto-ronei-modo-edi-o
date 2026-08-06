@@ -236,7 +236,7 @@ function EbookPage() {
             </p>
             <div className="flex flex-wrap justify-center items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-white/40">
               <div className="flex items-center gap-2">
-                <LayoutTemplate className="h-3 w-3" />
+                <LayoutPanelLeft className="h-3 w-3" />
                 <span>{modules.length} Módulos</span>
               </div>
               <div className="flex items-center gap-2">
