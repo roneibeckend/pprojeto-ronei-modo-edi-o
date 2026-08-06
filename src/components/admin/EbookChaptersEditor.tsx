@@ -18,11 +18,19 @@ import { cn } from "@/lib/utils";
 interface Chapter {
   id?: string;
   ebook_id: string;
+  module_id: string | null;
   title: string;
+  slug: string | null;
   content: string | null;
   video_url: string | null;
   order_index: number;
   reading_minutes: number | null;
+}
+
+interface Module {
+  id: string;
+  title: string;
+  order_index: number;
 }
 
 interface EbookChaptersEditorProps {
@@ -31,13 +39,32 @@ interface EbookChaptersEditorProps {
 
 export function EbookChaptersEditor({ ebookId }: EbookChaptersEditorProps) {
   const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingChapter, setEditingChapter] = useState<Chapter | null>(null);
+  const [editingModule, setEditingModule] = useState<Module | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (ebookId) fetchChapters();
+    if (ebookId) {
+      fetchModules();
+      fetchChapters();
+    }
   }, [ebookId]);
+
+  async function fetchModules() {
+    try {
+      const { data, error } = await supabase
+        .from("ebook_modules")
+        .select("*")
+        .eq("ebook_id", ebookId)
+        .order("order_index", { ascending: true });
+      if (error) throw error;
+      setModules(data || []);
+    } catch (error: any) {
+      toast.error("Erro ao carregar módulos: " + error.message);
+    }
+  }
 
   async function fetchChapters() {
     try {
@@ -62,15 +89,23 @@ export function EbookChaptersEditor({ ebookId }: EbookChaptersEditorProps) {
 
     try {
       setIsSaving(true);
-      const { data, error } = await supabase
+      
+      // Generate slug from title if missing
+      const slug = editingChapter.slug || editingChapter.title
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)+/g, "");
+
+      const { error } = await supabase
         .from("ebook_chapters")
         .upsert({
           ...editingChapter,
           ebook_id: ebookId,
+          slug,
           order_index: editingChapter.id ? editingChapter.order_index : chapters.length
-        })
-        .select()
-        .single();
+        });
 
       if (error) throw error;
       
@@ -81,6 +116,45 @@ export function EbookChaptersEditor({ ebookId }: EbookChaptersEditorProps) {
       toast.error("Erro ao salvar capítulo: " + error.message);
     } finally {
       setIsSaving(false);
+    }
+  }
+
+  async function handleSaveModule(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editingModule) return;
+
+    try {
+      setIsSaving(true);
+      const { error } = await supabase
+        .from("ebook_modules")
+        .upsert({
+          ...editingModule,
+          ebook_id: ebookId,
+          order_index: editingModule.id ? editingModule.order_index : modules.length
+        });
+
+      if (error) throw error;
+      
+      toast.success("Módulo salvo com sucesso!");
+      setEditingModule(null);
+      fetchModules();
+    } catch (error: any) {
+      toast.error("Erro ao salvar módulo: " + error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function handleDeleteModule(id: string) {
+    if (!confirm("Tem certeza que deseja excluir este módulo? Todos os capítulos associados ficarão sem módulo.")) return;
+    try {
+      const { error } = await supabase.from("ebook_modules").delete().eq("id", id);
+      if (error) throw error;
+      toast.success("Módulo excluído");
+      fetchModules();
+      fetchChapters();
+    } catch (error: any) {
+      toast.error("Erro ao excluir módulo: " + error.message);
     }
   }
 
@@ -124,148 +198,221 @@ export function EbookChaptersEditor({ ebookId }: EbookChaptersEditorProps) {
   if (loading) return <div className="p-8 text-center"><span className="animate-pulse text-white/40">Carregando capítulos...</span></div>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between border-b border-white/5 pb-4">
-        <h4 className="font-bold text-sm uppercase tracking-widest text-[#ff6a00]">Estrutura do E-book</h4>
-        {!editingChapter && (
-          <button 
-            type="button"
-            onClick={() => setEditingChapter({ ebook_id: ebookId, title: "", content: "", video_url: "", order_index: chapters.length, reading_minutes: 5 })}
-            className="flex items-center gap-2 text-xs font-bold bg-[#ff6a00]/10 text-[#ff6a00] px-3 py-1.5 rounded-lg hover:bg-[#ff6a00]/20 transition"
-          >
-            <Plus className="h-4 w-4" /> Adicionar Capítulo
-          </button>
-        )}
-      </div>
+    <div className="space-y-8">
+      {/* Gestão de Módulos */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between border-b border-white/5 pb-4">
+          <h4 className="font-bold text-sm uppercase tracking-widest text-[#ff6a00]">Módulos</h4>
+          {!editingModule && (
+            <button 
+              type="button"
+              onClick={() => setEditingModule({ id: "", title: "", order_index: modules.length })}
+              className="flex items-center gap-2 text-xs font-bold bg-[#ff6a00]/10 text-[#ff6a00] px-3 py-1.5 rounded-lg hover:bg-[#ff6a00]/20 transition"
+            >
+              <Plus className="h-4 w-4" /> Novo Módulo
+            </button>
+          )}
+        </div>
 
-      {editingChapter ? (
-        <form onSubmit={handleSaveChapter} className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4 animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-center justify-between mb-2">
-            <h5 className="font-bold text-white">{editingChapter.id ? "Editar Capítulo" : "Novo Capítulo"}</h5>
-            <button type="button" onClick={() => setEditingChapter(null)} className="text-white/40 hover:text-white"><X className="h-4 w-4" /></button>
-          </div>
-
-          <div className="space-y-4">
+        {editingModule ? (
+          <form onSubmit={handleSaveModule} className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
+            <div className="flex items-center justify-between mb-2">
+              <h5 className="font-bold text-white">{editingModule.id ? "Editar Módulo" : "Novo Módulo"}</h5>
+              <button type="button" onClick={() => setEditingModule(null)} className="text-white/40 hover:text-white"><X className="h-4 w-4" /></button>
+            </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do Capítulo</label>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do Módulo</label>
               <input 
                 required 
-                value={editingChapter.title} 
-                onChange={e => setEditingChapter({...editingChapter, title: e.target.value})}
+                value={editingModule.title} 
+                onChange={e => setEditingModule({...editingModule, title: e.target.value})}
                 className="w-full bg-[#0a0a0a] border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
               />
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
-                  <PlayCircle className="h-3 w-3" /> URL do Vídeo (Opcional)
-                </label>
-                <input 
-                  value={editingChapter.video_url || ""} 
-                  onChange={e => setEditingChapter({...editingChapter, video_url: e.target.value})}
-                  placeholder="https://youtube.com/embed/..."
-                  className="w-full bg-[#0a0a0a] border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
-                  <Clock className="h-3 w-3" /> Tempo de Leitura (min)
-                </label>
-                <input 
-                  type="number"
-                  value={editingChapter.reading_minutes || ""} 
-                  onChange={e => setEditingChapter({...editingChapter, reading_minutes: parseInt(e.target.value)})}
-                  className="w-full bg-[#0a0a0a] border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
-                />
-              </div>
+            <div className="flex gap-2">
+              <button type="submit" disabled={isSaving} className="flex-1 bg-[#ff6a00] text-black font-bold py-2 rounded-lg disabled:opacity-50">
+                {isSaving ? "Salvando..." : "Salvar Módulo"}
+              </button>
+              <button type="button" onClick={() => setEditingModule(null)} className="px-4 rounded-lg bg-white/5 font-bold">Cancelar</button>
             </div>
-
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do Capítulo</label>
-              <textarea 
-                rows={8}
-                value={editingChapter.content || ""} 
-                onChange={e => setEditingChapter({...editingChapter, content: e.target.value})}
-                className="w-full bg-[#0a0a0a] border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none font-serif"
-              />
-            </div>
+          </form>
+        ) : (
+          <div className="grid gap-2">
+            {modules.map((module) => (
+              <div key={module.id} className="flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/5">
+                <span className="font-bold text-sm">{module.title}</span>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => setEditingModule(module)} className="p-2 text-white/40 hover:text-white"><Edit3 className="h-4 w-4" /></button>
+                  <button onClick={() => handleDeleteModule(module.id)} className="p-2 text-white/40 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
+                </div>
+              </div>
+            ))}
           </div>
+        )}
+      </section>
 
-          <div className="flex gap-2 pt-2">
+      {/* Gestão de Capítulos */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between border-b border-white/5 pb-4">
+          <h4 className="font-bold text-sm uppercase tracking-widest text-[#ff6a00]">Capítulos</h4>
+          {!editingChapter && (
             <button 
-              type="submit" 
-              disabled={isSaving}
-              className="flex-1 bg-[#ff6a00] text-black font-bold py-3 rounded-lg flex items-center justify-center gap-2 disabled:opacity-50"
+              type="button"
+              onClick={() => setEditingChapter({ ebook_id: ebookId, module_id: modules[0]?.id || null, title: "", slug: "", content: "", video_url: "", order_index: chapters.length, reading_minutes: 5 })}
+              className="flex items-center gap-2 text-xs font-bold bg-[#ff6a00]/10 text-[#ff6a00] px-3 py-1.5 rounded-lg hover:bg-[#ff6a00]/20 transition"
             >
-              {isSaving ? <span className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full" /> : <Save className="h-4 w-4" />}
-              Salvar Capítulo
+              <Plus className="h-4 w-4" /> Novo Capítulo
             </button>
-            <button 
-              type="button" 
-              onClick={() => setEditingChapter(null)}
-              className="px-6 rounded-lg bg-white/5 font-bold hover:bg-white/10 transition"
-            >
-              Cancelar
-            </button>
-          </div>
-        </form>
-      ) : (
-        <div className="space-y-2">
-          {chapters.length === 0 ? (
-            <div className="text-center py-12 border-2 border-dashed border-white/5 rounded-2xl">
-              <p className="text-white/20 text-sm">Nenhum capítulo cadastrado ainda.</p>
-            </div>
-          ) : (
-            chapters.map((chapter, idx) => (
-              <div 
-                key={chapter.id} 
-                className="group flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/5 hover:border-white/10 transition-all"
-              >
-                <div className="flex flex-col gap-1">
-                  <button 
-                    disabled={idx === 0} 
-                    onClick={() => moveChapter(idx, 'up')}
-                    className="p-1 rounded hover:bg-white/10 disabled:opacity-0 transition text-white/40 hover:text-white"
-                  >
-                    <ChevronUp className="h-3 w-3" />
-                  </button>
-                  <button 
-                    disabled={idx === chapters.length - 1} 
-                    onClick={() => moveChapter(idx, 'down')}
-                    className="p-1 rounded hover:bg-white/10 disabled:opacity-0 transition text-white/40 hover:text-white"
-                  >
-                    <ChevronDown className="h-3 w-3" />
-                  </button>
-                </div>
-
-                <div className="flex-1">
-                  <h6 className="font-bold text-sm text-white">{chapter.title}</h6>
-                  <div className="flex items-center gap-3 mt-1">
-                    {chapter.video_url && <span className="text-[9px] font-black uppercase text-[#ff6a00] bg-[#ff6a00]/10 px-1.5 py-0.5 rounded">Vídeo</span>}
-                    {chapter.reading_minutes && <span className="text-[9px] font-black uppercase text-white/40">{chapter.reading_minutes} min leitura</span>}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button 
-                    onClick={() => setEditingChapter(chapter)} 
-                    className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition"
-                  >
-                    <Edit3 className="h-4 w-4" />
-                  </button>
-                  <button 
-                    onClick={() => chapter.id && handleDeleteChapter(chapter.id)} 
-                    className="p-2 rounded-lg text-white/40 hover:text-red-500 hover:bg-red-500/10 transition"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            ))
           )}
         </div>
-      )}
+
+        {editingChapter ? (
+          <form onSubmit={handleSaveChapter} className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4 animate-in fade-in slide-in-from-top-2">
+            <div className="flex items-center justify-between mb-2">
+              <h5 className="font-bold text-white">{editingChapter.id ? "Editar Capítulo" : "Novo Capítulo"}</h5>
+              <button type="button" onClick={() => setEditingChapter(null)} className="text-white/40 hover:text-white"><X className="h-4 w-4" /></button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do Capítulo</label>
+                  <input 
+                    required 
+                    value={editingChapter.title} 
+                    onChange={e => setEditingChapter({...editingChapter, title: e.target.value})}
+                    className="w-full bg-[#0a0a0a] border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Módulo</label>
+                  <select 
+                    value={editingChapter.module_id || ""} 
+                    onChange={e => setEditingChapter({...editingChapter, module_id: e.target.value || null})}
+                    className="w-full bg-[#0a0a0a] border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] appearance-none"
+                  >
+                    <option value="">Sem Módulo</option>
+                    {modules.map(m => (
+                      <option key={m.id} value={m.id}>{m.title}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
+                    <PlayCircle className="h-3 w-3" /> URL do Vídeo (Opcional)
+                  </label>
+                  <input 
+                    value={editingChapter.video_url || ""} 
+                    onChange={e => setEditingChapter({...editingChapter, video_url: e.target.value})}
+                    placeholder="https://youtube.com/embed/..."
+                    className="w-full bg-[#0a0a0a] border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
+                    <Clock className="h-3 w-3" /> Tempo de Leitura (min)
+                  </label>
+                  <input 
+                    type="number"
+                    value={editingChapter.reading_minutes || ""} 
+                    onChange={e => setEditingChapter({...editingChapter, reading_minutes: parseInt(e.target.value)})}
+                    className="w-full bg-[#0a0a0a] border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do Capítulo (Markdown)</label>
+                <textarea 
+                  rows={8}
+                  value={editingChapter.content || ""} 
+                  onChange={e => setEditingChapter({...editingChapter, content: e.target.value})}
+                  className="w-full bg-[#0a0a0a] border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none font-sans"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button 
+                type="submit" 
+                disabled={isSaving}
+                className="flex-1 bg-[#ff6a00] text-black font-bold py-3 rounded-lg flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isSaving ? <span className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full" /> : <Save className="h-4 w-4" />}
+                Salvar Capítulo
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setEditingChapter(null)}
+                className="px-6 rounded-lg bg-white/5 font-bold hover:bg-white/10 transition"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="space-y-2">
+            {chapters.length === 0 ? (
+              <div className="text-center py-12 border-2 border-dashed border-white/5 rounded-2xl">
+                <p className="text-white/20 text-sm">Nenhum capítulo cadastrado ainda.</p>
+              </div>
+            ) : (
+              chapters.map((chapter, idx) => (
+                <div 
+                  key={chapter.id} 
+                  className="group flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/5 hover:border-white/10 transition-all"
+                >
+                  <div className="flex flex-col gap-1">
+                    <button 
+                      disabled={idx === 0} 
+                      onClick={() => moveChapter(idx, 'up')}
+                      className="p-1 rounded hover:bg-white/10 disabled:opacity-0 transition text-white/40 hover:text-white"
+                    >
+                      <ChevronUp className="h-3 w-3" />
+                    </button>
+                    <button 
+                      disabled={idx === chapters.length - 1} 
+                      onClick={() => moveChapter(idx, 'down')}
+                      className="p-1 rounded hover:bg-white/10 disabled:opacity-0 transition text-white/40 hover:text-white"
+                    >
+                      <ChevronDown className="h-3 w-3" />
+                    </button>
+                  </div>
+
+                  <div className="flex-1">
+                    <h6 className="font-bold text-sm text-white">{chapter.title}</h6>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="text-[9px] font-black uppercase text-white/40">
+                        {modules.find(m => m.id === chapter.module_id)?.title || "Sem Módulo"}
+                      </span>
+                      {chapter.video_url && <span className="text-[9px] font-black uppercase text-[#ff6a00] bg-[#ff6a00]/10 px-1.5 py-0.5 rounded">Vídeo</span>}
+                      {chapter.reading_minutes && <span className="text-[9px] font-black uppercase text-white/40">{chapter.reading_minutes} min leitura</span>}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => setEditingChapter(chapter)} 
+                      className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition"
+                    >
+                      <Edit3 className="h-4 w-4" />
+                    </button>
+                    <button 
+                      onClick={() => chapter.id && handleDeleteChapter(chapter.id)} 
+                      className="p-2 rounded-lg text-white/40 hover:text-red-500 hover:bg-red-500/10 transition"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
