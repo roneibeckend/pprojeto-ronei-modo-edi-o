@@ -66,6 +66,18 @@ function AdminSupportPage() {
       // In a real system, we'd have a support_messages table. 
       // For now, we update the ticket status and log the reply in internal notes or similar
       // Or we just update the status to show movement.
+      // Adicionar a mensagem de resposta
+      const { error: msgError } = await supabase
+        .from('support_messages')
+        .insert({
+          ticket_id: selectedTicket.id,
+          message: replyMessage,
+          sender_id: (await supabase.auth.getUser()).data.user?.id,
+          sender_type: 'admin'
+        });
+
+      if (msgError) throw msgError;
+
       const { error } = await supabase
         .from('support_tickets')
         .update({ 

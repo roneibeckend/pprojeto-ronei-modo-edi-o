@@ -325,6 +325,7 @@ function SupportPage() {
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Sua Mensagem</label>
                       <textarea 
+                        name="message"
                         required
                         rows={4}
                         placeholder="Descreva detalhadamente como podemos te ajudar..."
