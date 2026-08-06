@@ -115,7 +115,7 @@ function AdminUsuariosPage() {
     if (data) {
         data.forEach(p => {
             const index = initialPermissions.findIndex(ip => ip.module === p.module);
-            if (index !== -1) initialPermissions[index].can_access = p.can_access;
+            if (index !== -1) initialPermissions[index].can_access = !!p.can_access;
         });
     }
 
