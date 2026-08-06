@@ -34,7 +34,8 @@ export const Route = createFileRoute("/app/cursos/$courseId")({
 });
 
 function CoursePage() {
-  const { course } = Route.useLoaderData();
+  const loaderData = Route.useLoaderData();
+  const course = loaderData?.course;
   const navigate = useNavigate();
   const { isEnrolledInCourse, isLoading: isLoadingEnrollments } = useEnrollments();
 
