@@ -447,6 +447,7 @@ export type Database = {
           profit_margin: string | null
           sell_price: string | null
           steps: string[] | null
+          video_url: string | null
           yield: string | null
         }
         Insert: {
@@ -463,6 +464,7 @@ export type Database = {
           profit_margin?: string | null
           sell_price?: string | null
           steps?: string[] | null
+          video_url?: string | null
           yield?: string | null
         }
         Update: {
@@ -479,6 +481,7 @@ export type Database = {
           profit_margin?: string | null
           sell_price?: string | null
           steps?: string[] | null
+          video_url?: string | null
           yield?: string | null
         }
         Relationships: []
