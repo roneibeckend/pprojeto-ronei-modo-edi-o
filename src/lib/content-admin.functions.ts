@@ -15,10 +15,7 @@ export const saveLiveClass = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { error } = await supabaseAdmin
       .from('live_classes')
-      .upsert({
-        ...data,
-        updated_at: new Date().toISOString()
-      });
+      .upsert(data as any);
     if (error) throw new Error(error.message);
     return { success: true };
   });
