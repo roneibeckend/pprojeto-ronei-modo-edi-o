@@ -35,11 +35,11 @@ function AdminDashboard() {
       ]);
 
       return {
-        students: students || 0,
-        courses: courses?.length || 0,
-        ebooks: ebooks?.length || 0,
-        sales: (enrollments?.length || 0),
-        revenue: (enrollments?.length || 0) * 197.00
+        students: studentsRes.count || 0,
+        courses: coursesRes.data?.length || 0,
+        ebooks: ebooksRes.data?.length || 0,
+        sales: (enrollmentsRes.data?.length || 0),
+        revenue: (enrollmentsRes.data?.length || 0) * 197.00
       };
     }
   });
