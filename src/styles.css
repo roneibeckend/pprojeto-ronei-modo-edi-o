@@ -123,6 +123,19 @@
     height: 0;
     display: none;
   }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: oklch(1 0 0 / 0.1);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: oklch(1 0 0 / 0.2);
+  }
 }
 
 @utility text-gradient-fire {

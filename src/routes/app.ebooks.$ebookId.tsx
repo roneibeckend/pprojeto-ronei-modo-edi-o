@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Lock, ShoppingCart, Loader2, Sparkles, LayoutPanelLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lock, ShoppingCart, Loader2, Sparkles, LayoutPanelLeft, ArrowLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
@@ -102,8 +102,8 @@ function EbookViewer() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-white/5 pb-4">
         <div>
-          <Link to="/app/ebooks" className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-fire transition">
-            ← Voltar à biblioteca
+          <Link to="/app/ebooks" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-fire transition">
+            <ArrowLeft className="h-3 w-3" /> Voltar à biblioteca
           </Link>
           <h1 className="mt-1 font-display text-xl font-bold">{ebook.title}</h1>
         </div>
