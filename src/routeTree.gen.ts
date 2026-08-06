@@ -15,8 +15,10 @@ import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-freq
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InicioRouteImport } from './routes/inicio'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AppSuporteRouteImport } from './routes/app.suporte'
 import { Route as AppReceitasRouteImport } from './routes/app.receitas'
 import { Route as AppProgressoRouteImport } from './routes/app.progresso'
@@ -71,6 +73,11 @@ const AppRoute = AppRouteImport.update({
   path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -80,6 +87,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AppSuporteRoute = AppSuporteRouteImport.update({
   id: '/suporte',
@@ -199,6 +211,7 @@ const AppEbooksGeradoIdRoute = AppEbooksGeradoIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/inicio': typeof InicioRoute
   '/login': typeof LoginRoute
@@ -214,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
+  '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/alunos': typeof AppAdminAlunosRoute
   '/app/admin/ao-vivo': typeof AppAdminAoVivoRoute
@@ -243,6 +257,7 @@ export interface FileRoutesByTo {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
+  '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
   '/app/admin/alunos': typeof AppAdminAlunosRoute
   '/app/admin/ao-vivo': typeof AppAdminAoVivoRoute
@@ -262,6 +277,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/inicio': typeof InicioRoute
   '/login': typeof LoginRoute
@@ -277,6 +293,7 @@ export interface FileRoutesById {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
+  '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/alunos': typeof AppAdminAlunosRoute
   '/app/admin/ao-vivo': typeof AppAdminAoVivoRoute
@@ -297,6 +314,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/app'
     | '/inicio'
     | '/login'
@@ -312,6 +330,7 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
+    | '/admin/'
     | '/app/'
     | '/app/admin/alunos'
     | '/app/admin/ao-vivo'
@@ -341,6 +360,7 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
+    | '/admin'
     | '/app'
     | '/app/admin/alunos'
     | '/app/admin/ao-vivo'
@@ -359,6 +379,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/app'
     | '/inicio'
     | '/login'
@@ -374,6 +395,7 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
+    | '/admin/'
     | '/app/'
     | '/app/admin/alunos'
     | '/app/admin/ao-vivo'
@@ -393,6 +415,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
   InicioRoute: typeof InicioRoute
   LoginRoute: typeof LoginRoute
@@ -445,6 +468,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -458,6 +488,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/app/suporte': {
       id: '/app/suporte'
@@ -623,6 +660,16 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface AppAdminRouteChildren {
   AppAdminAlunosRoute: typeof AppAdminAlunosRoute
   AppAdminAoVivoRoute: typeof AppAdminAoVivoRoute
@@ -711,6 +758,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRouteWithChildren,
   InicioRoute: InicioRoute,
   LoginRoute: LoginRoute,
