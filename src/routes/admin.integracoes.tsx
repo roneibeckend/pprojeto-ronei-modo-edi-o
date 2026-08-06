@@ -48,6 +48,8 @@ function IntegrationsPage() {
   const [activeTab, setActiveTab] = useState<'ia' | 'payment'>('ia');
   const [editingItem, setEditingItem] = useState<Integration | null>(null);
   const [isTesting, setIsTesting] = useState(false);
+  const [logs, setLogs] = useState<any[]>([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
 
   const testConnectionFn = useServerFn(testAIConnection);
   const saveIntegrationFn = useServerFn(saveIntegration);
