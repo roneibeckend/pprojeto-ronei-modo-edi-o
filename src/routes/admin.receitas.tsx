@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export const Route = createFileRoute("/admin/receitas")({
   head: () => ({ meta: [{ title: "Gestão de Receitas · Admin" }] }),
@@ -206,10 +207,12 @@ function AdminReceitasPage() {
                     <option value="Difícil">Difícil</option>
                   </select>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL da Imagem</label>
-                  <input value={editingItem?.image_url || ""} onChange={e => setEditingItem({...editingItem, image_url: e.target.value})} placeholder="https://..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
-                </div>
+                <ImageUpload 
+                  value={editingItem?.image_url || ""} 
+                  onChange={url => setEditingItem({...editingItem, image_url: url})}
+                  label="URL da Imagem"
+                  description="Formatos aceitos: JPG, PNG. Tamanho máx: 5MB."
+                />
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL do Vídeo (Stories)</label>
                   <div className="flex gap-2">
