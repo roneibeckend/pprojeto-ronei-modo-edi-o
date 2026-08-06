@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Play, Sparkles, Lock, ShoppingCart, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { ProgressSummary } from "@/components/platform/ProgressSummary";
+import { IMG } from "@/lib/platform-data";
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
@@ -75,8 +77,17 @@ function CoursesPage() {
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {owned.map((c) => (
               <article key={c.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30">
-                <div className="relative aspect-video">
-                  <img src={c.cover_url || ""} alt={c.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                <div className="relative aspect-video bg-muted/20">
+                  <img 
+                    src={c.cover_url || IMG.hero} 
+                    alt={c.title} 
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                    loading="lazy" 
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = IMG.hero;
+                    }}
+                  />
+
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" />
                   
                   {c.badge && (
@@ -122,8 +133,17 @@ function CoursesPage() {
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {others.map((c) => (
               <article key={c.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100">
-                <div className="relative aspect-video grayscale-[0.3]">
-                  <img src={c.cover_url || ""} alt={c.title} className="h-full w-full object-cover" loading="lazy" />
+                <div className="relative aspect-video bg-muted/20 grayscale-[0.3]">
+                  <img 
+                    src={c.cover_url || IMG.hero} 
+                    alt={c.title} 
+                    className="h-full w-full object-cover" 
+                    loading="lazy" 
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = IMG.hero;
+                    }}
+                  />
+
                   <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="rounded-full bg-black/60 p-3 text-gold backdrop-blur-md">

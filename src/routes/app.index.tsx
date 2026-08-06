@@ -101,14 +101,18 @@ function CourseShowcaseCard({ course, isEnrolled }: { course: any; isEnrolled: b
   
   return (
     <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"}`}>
-      <div className="relative aspect-video">
+      <div className="relative aspect-video bg-muted/20">
         <img 
-          src={course.cover_url || ""} 
+          src={course.cover_url || IMG.hero} 
           alt={course.title} 
           className={`h-full w-full object-cover ${isLocked ? "blur-[1px] brightness-75" : ""}`} 
-          loading="lazy" 
+          loading="lazy"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = IMG.hero;
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
         
         {course.badge && !isLocked && (
           <div className="absolute left-3 top-3 rounded-full bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-black">

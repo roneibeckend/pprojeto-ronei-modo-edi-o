@@ -4,6 +4,8 @@ import { PageHeader } from "@/components/platform/Shell";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
+import { IMG } from "@/lib/platform-data";
+
 
 export const Route = createFileRoute("/app/ebooks/")({
   head: () => ({ meta: [{ title: "Biblioteca de e-books — Espetinho na Veia" }] }),
@@ -46,7 +48,16 @@ function EbooksPage() {
         >
           <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-fire/30 blur-3xl transition group-hover:bg-fire/50" />
           <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-gold/20 blur-3xl" />
-          <img src={owned[0].cover_url || ""} alt={owned[0].title} className="relative h-40 w-full rounded-2xl object-cover shadow-2xl sm:h-48 sm:w-40 sm:shrink-0" loading="lazy" />
+          <img 
+            src={owned[0].cover_url || IMG.hero} 
+            alt={owned[0].title} 
+            className="relative h-40 w-full rounded-2xl object-cover shadow-2xl sm:h-48 sm:w-40 sm:shrink-0" 
+            loading="lazy" 
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = IMG.hero;
+            }}
+          />
+
           <div className="relative mt-4 flex-1 sm:ml-6 sm:mt-0">
             <div className="inline-flex items-center gap-1.5 rounded-full border border-fire/40 bg-fire/20 px-3 py-1 text-xs font-bold uppercase tracking-widest text-fire">
               <Sparkles className="h-3 w-3" /> Sua Leitura Atual
@@ -64,8 +75,17 @@ function EbooksPage() {
         {/* Ebooks Possuídos */}
         {owned.map((b) => (
           <article key={b.id} className="glass card-tilt flex flex-col overflow-hidden rounded-2xl">
-            <div className="relative aspect-[3/4]">
-              <img src={b.cover_url || ""} alt={b.title} className="h-full w-full object-cover" loading="lazy" />
+            <div className="relative aspect-[3/4] bg-muted/20">
+              <img 
+                src={b.cover_url || IMG.hero} 
+                alt={b.title} 
+                className="h-full w-full object-cover" 
+                loading="lazy" 
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = IMG.hero;
+                }}
+              />
+
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent" />
               <div className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-xs backdrop-blur">
                 {b.category}
@@ -92,8 +112,17 @@ function EbooksPage() {
         {/* Ebooks Disponíveis para Compra */}
         {others.map((b) => (
           <article key={b.id} className="glass card-tilt flex flex-col overflow-hidden rounded-2xl ring-1 ring-fire/30">
-            <div className="relative aspect-[3/4]">
-              <img src={b.cover_url || ""} alt={b.title} className="h-full w-full object-cover opacity-60 blur-[1px]" loading="lazy" />
+            <div className="relative aspect-[3/4] bg-muted/20">
+              <img 
+                src={b.cover_url || IMG.hero} 
+                alt={b.title} 
+                className="h-full w-full object-cover opacity-60 blur-[1px]" 
+                loading="lazy" 
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = IMG.hero;
+                }}
+              />
+
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent" />
               <div className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-xs backdrop-blur">
                 {b.category}
