@@ -121,6 +121,42 @@ export type Database = {
         }
         Relationships: []
       }
+      integrations: {
+        Row: {
+          category: string
+          created_at: string | null
+          credentials: Json
+          id: string
+          name: string
+          settings: Json
+          status: boolean | null
+          type: Database["public"]["Enums"]["integration_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          credentials?: Json
+          id?: string
+          name: string
+          settings?: Json
+          status?: boolean | null
+          type: Database["public"]["Enums"]["integration_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          credentials?: Json
+          id?: string
+          name?: string
+          settings?: Json
+          status?: boolean | null
+          type?: Database["public"]["Enums"]["integration_type"]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
@@ -449,6 +485,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "student"
       difficulty_level: "Fácil" | "Médio" | "Avançado"
+      integration_type: "ia" | "payment"
       support_sender_type: "student" | "assistant" | "support_agent" | "system"
       support_ticket_status: "open" | "in_progress" | "resolved" | "closed"
     }
@@ -580,6 +617,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "student"],
       difficulty_level: ["Fácil", "Médio", "Avançado"],
+      integration_type: ["ia", "payment"],
       support_sender_type: ["student", "assistant", "support_agent", "system"],
       support_ticket_status: ["open", "in_progress", "resolved", "closed"],
     },

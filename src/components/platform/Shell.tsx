@@ -56,7 +56,10 @@ const navGroups: { title: string; items: NavItem[] }[] = [
   },
   {
     title: "Gestão",
-    items: [{ to: "/app/admin", label: "Painel Admin", icon: Shield, badge: "Admin" }],
+    items: [
+      { to: "/app/admin", label: "Painel Admin", icon: Shield, badge: "Admin" },
+      { to: "/app/admin/integracoes", label: "Integrações", icon: Settings },
+    ],
   },
 ];
 
