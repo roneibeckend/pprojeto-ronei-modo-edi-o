@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Clock, Users, TrendingUp } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Clock, Users, TrendingUp, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { recipes, recipeCategories, type Recipe } from "@/lib/platform-data";
+import { recipeCategories } from "@/lib/platform-data";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/receitas")({
   head: () => ({ meta: [{ title: "Receitas — Espetinho na Veia" }] }),
