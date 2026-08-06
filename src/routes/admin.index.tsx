@@ -1,10 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { adminStats } from "@/lib/platform-data";
-
-export const Route = createFileRoute("/admin/")({
-  component: AdminDashboard,
-});
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { 
@@ -14,9 +8,15 @@ import {
   BookOpen,
   Loader2,
   TrendingUp,
-  ChevronRight
+  ChevronRight,
+  AlertCircle,
+  MessageSquare
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/admin/")({
+  component: AdminDashboard,
+});
 
 function AdminDashboard() {
   const { data: stats, isLoading } = useQuery({
@@ -26,22 +26,23 @@ function AdminDashboard() {
         studentsRes,
         coursesRes,
         ebooksRes,
-        enrollmentsRes
+        enrollmentsRes,
+        ticketsRes
       ] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('courses').select('id'),
         supabase.from('ebooks').select('id'),
-        supabase.from('course_enrollments' as any).select('id', { count: 'exact' })
+        supabase.from('course_enrollments' as any).select('id', { count: 'exact' }),
+        supabase.from('support_tickets').select('id', { count: 'exact', head: true }).eq('status', 'open')
       ]);
-
-      const salesCount = enrollmentsRes.count || 0;
 
       return {
         students: studentsRes.count || 0,
         courses: coursesRes.data?.length || 0,
         ebooks: ebooksRes.data?.length || 0,
-        sales: (enrollmentsRes.data?.length || 0),
-        revenue: (enrollmentsRes.data?.length || 0) * 197.00
+        sales: enrollmentsRes.count || 0,
+        revenue: (enrollmentsRes.count || 0) * 197.00,
+        pendingTickets: ticketsRes.count || 0
       };
     }
   });
@@ -58,7 +59,7 @@ function AdminDashboard() {
     { label: "Total Alunos", value: stats?.students, icon: UsersIcon, color: "text-blue-400" },
     { label: "Vendas Realizadas", value: stats?.sales, icon: TrendingUp, color: "text-emerald-400" },
     { label: "Cursos Ativos", value: stats?.courses, icon: Library, color: "text-[#ff6a00]" },
-    { label: "E-books", value: stats?.ebooks, icon: BookOpen, color: "text-purple-400" },
+    { label: "Suporte Pendente", value: stats?.pendingTickets, icon: AlertCircle, color: "text-red-400" },
   ];
 
   return (
@@ -88,6 +89,7 @@ function AdminDashboard() {
               { to: "/admin/cursos", label: "Gerenciar Catálogo de Cursos" },
               { to: "/admin/ebooks", label: "Biblioteca de E-books" },
               { to: "/admin/alunos", label: "Base de Alunos e Matrículas" },
+              { to: "/admin/suporte", label: "Central de Suporte (Tickets)", highlight: (stats?.pendingTickets || 0) > 0 },
               { to: "/admin/receitas", label: "Central de Receitas" },
             ].map((link, i) => (
               <Link 
@@ -95,7 +97,12 @@ function AdminDashboard() {
                 to={link.to}
                 className="flex items-center justify-between p-4 rounded-lg bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition group text-left"
               >
-                <span className="text-sm font-medium">{link.label}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium">{link.label}</span>
+                  {link.highlight && (
+                    <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                  )}
+                </div>
                 <ChevronRight className="h-4 w-4 text-white/20 group-hover:text-[#ff6a00] transition" />
               </Link>
             ))}

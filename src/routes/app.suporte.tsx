@@ -4,18 +4,22 @@ import {
   Flame, 
   Send, 
   MessageCircle, 
-  Ticket, 
+  Ticket as TicketIcon, 
   ChevronRight, 
   User, 
   HelpCircle,
   PlusCircle,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { supportQuestions } from "@/lib/platform-data";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/app/suporte")({
   head: () => ({ meta: [{ title: "Suporte e Central de Ajuda — Espetinho na Veia" }] }),
@@ -23,16 +27,10 @@ export const Route = createFileRoute("/app/suporte")({
 });
 
 type Msg = { role: "user" | "ai"; text: string; time: string };
-type TicketData = {
-  id: string;
-  subject: string;
-  category: string;
-  status: "Aberto" | "Em análise" | "Respondido" | "Fechado";
-  date: string;
-  lastUpdate: string;
-};
 
 function SupportPage() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"chat" | "tickets">("chat");
   const [messages, setMessages] = useState<Msg[]>([
     { 
@@ -44,16 +42,23 @@ function SupportPage() {
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [isOpeningTicket, setIsOpeningTicket] = useState(false);
-  const [myTickets, setMyTickets] = useState<TicketData[]>([
-    {
-      id: "TKT-2026-001",
-      subject: "Dúvida sobre o módulo de molhos",
-      category: "Curso",
-      status: "Respondido",
-      date: "04/08/2026",
-      lastUpdate: "Ontem"
-    }
-  ]);
+
+  // Buscar tickets do banco
+  const { data: myTickets = [], isLoading: isLoadingTickets } = useQuery({
+    queryKey: ["support-tickets", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from("support_tickets")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
 
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -82,26 +87,52 @@ function SupportPage() {
     }, 1200);
   };
 
-  const handleOpenTicket = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOpenTicket = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!user) return;
+
     const formData = new FormData(e.currentTarget);
     const subject = formData.get("subject") as string;
     const category = formData.get("category") as string;
+    const message = formData.get("message") as string;
     
-    const newTicket: TicketData = {
-      id: `TKT-2026-00${myTickets.length + 2}`,
-      subject,
-      category,
-      status: "Aberto",
-      date: new Date().toLocaleDateString('pt-BR'),
-      lastUpdate: "Agora mesmo"
-    };
+    try {
+      // 1. Criar o ticket
+      const { data: ticket, error: ticketError } = await supabase
+        .from("support_tickets")
+        .insert({
+          user_id: user.id,
+          subject,
+          category,
+          status: "Aberto",
+          priority: "normal"
+        })
+        .select()
+        .single();
 
-    setMyTickets([newTicket, ...myTickets]);
-    setIsOpeningTicket(false);
-    toast.success("Seu chamado foi enviado para a equipe do Ronnei!", {
-      description: `Protocolo: ${newTicket.id}`
-    });
+      if (ticketError) throw ticketError;
+
+      // 2. Criar a primeira mensagem
+      const { error: msgError } = await supabase
+        .from("support_messages")
+        .insert({
+          ticket_id: ticket.id,
+          message,
+          sender_id: user.id,
+          sender_type: "student"
+        });
+
+      if (msgError) throw msgError;
+
+      toast.success("Seu chamado foi enviado para a equipe do Ronnei!", {
+        description: `Protocolo: ${ticket.id.slice(0, 8)}`
+      });
+      
+      setIsOpeningTicket(false);
+      queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+    } catch (error: any) {
+      toast.error("Erro ao abrir chamado: " + error.message);
+    }
   };
 
   return (
@@ -132,7 +163,7 @@ function SupportPage() {
               : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white"
           }`}
         >
-          <Ticket className="h-4 w-4" />
+          <TicketIcon className="h-4 w-4" />
           Meus Chamados
         </button>
       </div>
@@ -315,41 +346,51 @@ function SupportPage() {
                   <h4 className="font-display text-sm font-bold uppercase tracking-widest text-white/60">Histórico de Chamados</h4>
                 </div>
                 <div className="divide-y divide-white/5">
-                  {myTickets.map((t) => (
-                    <div key={t.id} className="group flex flex-wrap items-center justify-between gap-4 p-6 transition-colors hover:bg-white/[0.03]">
-                      <div className="flex items-start gap-4">
-                        <div className={`mt-1 grid h-10 w-10 place-items-center rounded-xl bg-white/5 transition group-hover:bg-white/10 ${
-                          t.status === "Respondido" ? "text-emerald-500" : "text-[#ff6a00]"
-                        }`}>
-                          {t.status === "Respondido" ? <CheckCircle2 className="h-5 w-5" /> : <Clock className="h-5 w-5" />}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-3">
-                            <span className="font-mono text-[10px] font-bold text-[#ff6a00] uppercase tracking-widest">{t.id}</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-white/20">{t.category}</span>
-                          </div>
-                          <h5 className="mt-1 font-bold text-white group-hover:text-[#ff6a00] transition">{t.subject}</h5>
-                          <div className="mt-2 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-white/30">
-                            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {t.date}</span>
-                            <span className="flex items-center gap-1"><User className="h-3 w-3" /> Equipe do Ronnei</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-6">
-                        <div className="text-right hidden sm:block">
-                          <div className={`text-[10px] font-bold uppercase tracking-[0.2em] ${
-                            t.status === "Respondido" ? "text-emerald-500" : "text-[#ff6a00]"
-                          }`}>
-                            {t.status}
-                          </div>
-                          <div className="mt-1 text-[10px] font-medium text-white/20 uppercase tracking-widest">
-                            Atualizado {t.lastUpdate}
-                          </div>
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-white/10 group-hover:text-white/40 transition" />
-                      </div>
+                  {isLoadingTickets ? (
+                    <div className="flex h-32 items-center justify-center">
+                      <Loader2 className="h-6 w-6 animate-spin text-[#ff6a00]" />
                     </div>
-                  ))}
+                  ) : myTickets.length > 0 ? (
+                    myTickets.map((t) => (
+                      <div key={t.id} className="group flex flex-wrap items-center justify-between gap-4 p-6 transition-colors hover:bg-white/[0.03]">
+                        <div className="flex items-start gap-4">
+                          <div className={`mt-1 grid h-10 w-10 place-items-center rounded-xl bg-white/5 transition group-hover:bg-white/10 ${
+                            t.status === "resolved" ? "text-emerald-500" : "text-[#ff6a00]"
+                          }`}>
+                            {t.status === "resolved" ? <CheckCircle2 className="h-5 w-5" /> : <Clock className="h-5 w-5" />}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-3">
+                              <span className="font-mono text-[10px] font-bold text-[#ff6a00] uppercase tracking-widest">{t.id.slice(0, 8)}</span>
+                              <span className="text-[10px] font-bold uppercase tracking-widest text-white/20">{t.category}</span>
+                            </div>
+                            <h5 className="mt-1 font-bold text-white group-hover:text-[#ff6a00] transition">{t.subject}</h5>
+                            <div className="mt-2 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-white/30">
+                              <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(t.created_at).toLocaleDateString('pt-BR')}</span>
+                              <span className="flex items-center gap-1"><User className="h-3 w-3" /> Suporte</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-6">
+                          <div className="text-right hidden sm:block">
+                            <div className={`text-[10px] font-bold uppercase tracking-[0.2em] ${
+                              t.status === "resolved" ? "text-emerald-500" : "text-[#ff6a00]"
+                            }`}>
+                              {t.status === "open" ? "Aberto" : t.status === "in_progress" ? "Em análise" : t.status === "resolved" ? "Resolvido" : "Fechado"}
+                            </div>
+                            <div className="mt-1 text-[10px] font-medium text-white/20 uppercase tracking-widest">
+                              Atualizado {t.updated_at ? new Date(t.updated_at).toLocaleDateString('pt-BR') : '—'}
+                            </div>
+                          </div>
+                          <ChevronRight className="h-5 w-5 text-white/10 group-hover:text-white/40 transition" />
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-10 text-center text-sm text-white/20">
+                      Nenhum chamado encontrado.
+                    </div>
+                  )}
                 </div>
               </div>
             </section>
