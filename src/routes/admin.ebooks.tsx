@@ -12,6 +12,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { saveContent } from "@/lib/content-admin.functions";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { EbookChaptersEditor } from "@/components/admin/EbookChaptersEditor";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 
 export const Route = createFileRoute("/admin/ebooks")({
   head: () => ({ meta: [{ title: "Gestão de E-books · Admin" }] }),
@@ -119,60 +122,75 @@ function AdminEbooksPage() {
               <button type="button" onClick={() => { setIsModalOpen(false); setEditingItem(null); }} className="text-white/40 hover:text-white transition-colors"><X className="h-5 w-5" /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título</label>
-                <input required value={editingItem?.title || ""} onChange={e => setEditingItem({...editingItem, title: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Categoria</label>
-                <input value={editingItem?.category || ""} onChange={e => setEditingItem({...editingItem, category: e.target.value})} placeholder="Ex: Receitas, Gestão..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Preço</label>
-                  <input type="number" step="0.01" value={editingItem?.price || ""} onChange={e => setEditingItem({...editingItem, price: parseFloat(e.target.value)})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Preço Original (De)</label>
-                  <input type="number" step="0.01" value={editingItem?.original_price || ""} onChange={e => setEditingItem({...editingItem, original_price: parseFloat(e.target.value)})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Páginas</label>
-                  <input type="number" value={editingItem?.pages_count || ""} onChange={e => setEditingItem({...editingItem, pages_count: parseInt(e.target.value)})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
-                </div>
-                <div className="flex items-end pb-3">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      checked={editingItem?.is_locked || false} 
-                      onChange={e => setEditingItem({...editingItem, is_locked: e.target.checked})}
-                      className="accent-[#ff6a00]"
-                    />
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Bloqueado para Venda</span>
-                  </label>
-                </div>
-              </div>
-              <ImageUpload 
-                value={editingItem?.cover_url || ""} 
-                onChange={url => setEditingItem({...editingItem, cover_url: url})}
-                label="URL da Imagem de Capa"
-                description="Recomendado: Capa em formato vertical (2:3 ou 3:4). Formatos aceitos: JPG, PNG."
-              />
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição curta (Vitrine)</label>
-                <textarea rows={2} value={editingItem?.description || ""} onChange={e => setEditingItem({...editingItem, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none" />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do E-book (Texto Completo)</label>
-                <textarea rows={6} value={editingItem?.content || ""} onChange={e => setEditingItem({...editingItem, content: e.target.value})} placeholder="Escreva ou cole o conteúdo do e-book aqui..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none font-serif" />
-                <p className="text-[10px] text-white/20">Este conteúdo será exibido na área de leitura do aluno.</p>
-              </div>
-              <div className="pt-4 flex gap-3">
-                <button type="button" onClick={() => { setIsModalOpen(false); setEditingItem(null); }} className="flex-1 py-3 rounded-lg bg-white/5 font-bold hover:bg-white/10 transition-colors">Cancelar</button>
-                <button type="submit" disabled={isSaving} className="flex-1 py-3 rounded-lg bg-[#ff6a00] text-black font-bold disabled:opacity-50">{isSaving ? "Salvando..." : "Salvar"}</button>
-              </div>
+            <Tabs defaultValue="geral" className="space-y-6">
+              <TabsList className="bg-white/5 p-1 rounded-lg border border-white/10 w-full lg:w-auto">
+                <TabsTrigger value="geral" className="px-6 py-2 rounded-md data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black font-bold transition-all text-sm">Dados Gerais</TabsTrigger>
+                {editingItem?.id && (
+                  <TabsTrigger value="capitulos" className="px-6 py-2 rounded-md data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black font-bold transition-all text-sm">Capítulos</TabsTrigger>
+                )}
+              </TabsList>
+
+              <TabsContent value="geral">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título</label>
+                    <input required value={editingItem?.title || ""} onChange={e => setEditingItem({...editingItem, title: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Categoria</label>
+                    <input value={editingItem?.category || ""} onChange={e => setEditingItem({...editingItem, category: e.target.value})} placeholder="Ex: Receitas, Gestão..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Preço</label>
+                      <input type="number" step="0.01" value={editingItem?.price || ""} onChange={e => setEditingItem({...editingItem, price: parseFloat(e.target.value)})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Preço Original (De)</label>
+                      <input type="number" step="0.01" value={editingItem?.original_price || ""} onChange={e => setEditingItem({...editingItem, original_price: parseFloat(e.target.value)})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Páginas</label>
+                      <input type="number" value={editingItem?.pages_count || ""} onChange={e => setEditingItem({...editingItem, pages_count: parseInt(e.target.value)})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+                    </div>
+                    <div className="flex items-end pb-3">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={editingItem?.is_locked || false} 
+                          onChange={e => setEditingItem({...editingItem, is_locked: e.target.checked})}
+                          className="accent-[#ff6a00]"
+                        />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Bloqueado para Venda</span>
+                      </label>
+                    </div>
+                  </div>
+                  <ImageUpload 
+                    value={editingItem?.cover_url || ""} 
+                    onChange={url => setEditingItem({...editingItem, cover_url: url})}
+                    label="URL da Imagem de Capa"
+                    description="Recomendado: Capa em formato vertical (2:3 ou 3:4). Formatos aceitos: JPG, PNG."
+                  />
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição curta (Vitrine)</label>
+                    <textarea rows={2} value={editingItem?.description || ""} onChange={e => setEditingItem({...editingItem, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none" />
+                  </div>
+                  <div className="pt-4 flex gap-3">
+                    <button type="button" onClick={() => { setIsModalOpen(false); setEditingItem(null); }} className="flex-1 py-3 rounded-lg bg-white/5 font-bold hover:bg-white/10 transition-colors">Cancelar</button>
+                    <button type="submit" disabled={isSaving} className="flex-1 py-3 rounded-lg bg-[#ff6a00] text-black font-bold disabled:opacity-50">{isSaving ? "Salvando..." : "Salvar"}</button>
+                  </div>
+                </form>
+              </TabsContent>
+
+              {editingItem?.id && (
+                <TabsContent value="capitulos">
+                  <EbookChaptersEditor ebookId={editingItem.id} />
+                </TabsContent>
+              )}
+            </Tabs>
+
             </form>
           </div>
         </div>
