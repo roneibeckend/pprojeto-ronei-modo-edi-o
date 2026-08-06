@@ -111,9 +111,10 @@ function AdminPage() {
             </div>
           </div>
           <div className="flex-1 grid gap-3">
-            <AdminAction index={1} icon={Library} title="Gerenciar Cursos" desc="Upload de cursos manuais ou trilhas IA." shortcut="C" delay={0} to="/app/admin/conteudo" highlight />
-            <AdminAction index={2} icon={Clapperboard} title="Aulas ao Vivo" desc="Agende e gerencie transmissões em tempo real." shortcut="V" delay={40} to="/app/admin/ao-vivo" />
-            <AdminAction index={3} icon={Sparkles} title="IA · Gerador de Ebook" desc="Crie conteúdo interativo premium com um prompt." meta="Lovable AI" shortcut="I" delay={80} to="/app/admin/ebook-ai" />
+            <AdminAction index={1} icon={Sparkles} title="Painel Central Administrativo" desc="ACESSO AO NOVO PAINEL DE GESTÃO (/admin)." to="/admin" highlight accentColor="#ff6a00" />
+            <AdminAction index={2} icon={Library} title="Gerenciar Cursos" desc="Upload de cursos manuais ou trilhas IA." shortcut="C" delay={0} to="/app/admin/conteudo" />
+            <AdminAction index={3} icon={Clapperboard} title="Aulas ao Vivo" desc="Agende e gerencie transmissões em tempo real." shortcut="V" delay={40} to="/app/admin/ao-vivo" />
+            <AdminAction index={4} icon={Sparkles} title="IA · Gerador de Ebook" desc="Crie conteúdo interativo premium com um prompt." meta="Lovable AI" shortcut="I" delay={80} to="/app/admin/ebook-ai" />
           </div>
         </section>
       </div>

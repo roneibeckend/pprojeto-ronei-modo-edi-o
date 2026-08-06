@@ -28,6 +28,9 @@ import { Route as AppEbooksRouteImport } from './routes/app.ebooks'
 import { Route as AppCursosRouteImport } from './routes/app.cursos'
 import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
+import { Route as AdminEbooksRouteImport } from './routes/admin.ebooks'
+import { Route as AdminCursosRouteImport } from './routes/admin.cursos'
+import { Route as AdminAlunosRouteImport } from './routes/admin.alunos'
 import { Route as AppEbooksIndexRouteImport } from './routes/app.ebooks.index'
 import { Route as AppCursosIndexRouteImport } from './routes/app.cursos.index'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
@@ -138,6 +141,21 @@ const AppAdminRoute = AppAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
+const AdminEbooksRoute = AdminEbooksRouteImport.update({
+  id: '/ebooks',
+  path: '/ebooks',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCursosRoute = AdminCursosRouteImport.update({
+  id: '/cursos',
+  path: '/cursos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAlunosRoute = AdminAlunosRouteImport.update({
+  id: '/alunos',
+  path: '/alunos',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AppEbooksIndexRoute = AppEbooksIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -218,6 +236,9 @@ export interface FileRoutesByFullPath {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/cursos': typeof AdminCursosRoute
+  '/admin/ebooks': typeof AdminEbooksRoute
   '/app/admin': typeof AppAdminRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
@@ -251,6 +272,9 @@ export interface FileRoutesByTo {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/cursos': typeof AdminCursosRoute
+  '/admin/ebooks': typeof AdminEbooksRoute
   '/app/certificados': typeof AppCertificadosRoute
   '/app/materiais': typeof AppMateriaisRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -284,6 +308,9 @@ export interface FileRoutesById {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/cursos': typeof AdminCursosRoute
+  '/admin/ebooks': typeof AdminEbooksRoute
   '/app/admin': typeof AppAdminRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
@@ -321,6 +348,9 @@ export interface FileRouteTypes {
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/admin/alunos'
+    | '/admin/cursos'
+    | '/admin/ebooks'
     | '/app/admin'
     | '/app/certificados'
     | '/app/cursos'
@@ -354,6 +384,9 @@ export interface FileRouteTypes {
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/admin/alunos'
+    | '/admin/cursos'
+    | '/admin/ebooks'
     | '/app/certificados'
     | '/app/materiais'
     | '/app/perfil'
@@ -386,6 +419,9 @@ export interface FileRouteTypes {
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/admin/alunos'
+    | '/admin/cursos'
+    | '/admin/ebooks'
     | '/app/admin'
     | '/app/certificados'
     | '/app/cursos'
@@ -559,6 +595,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
+    '/admin/ebooks': {
+      id: '/admin/ebooks'
+      path: '/ebooks'
+      fullPath: '/admin/ebooks'
+      preLoaderRoute: typeof AdminEbooksRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/cursos': {
+      id: '/admin/cursos'
+      path: '/cursos'
+      fullPath: '/admin/cursos'
+      preLoaderRoute: typeof AdminCursosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/alunos': {
+      id: '/admin/alunos'
+      path: '/alunos'
+      fullPath: '/admin/alunos'
+      preLoaderRoute: typeof AdminAlunosRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/app/ebooks/': {
       id: '/app/ebooks/'
       path: '/'
@@ -661,10 +718,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAlunosRoute: typeof AdminAlunosRoute
+  AdminCursosRoute: typeof AdminCursosRoute
+  AdminEbooksRoute: typeof AdminEbooksRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAlunosRoute: AdminAlunosRoute,
+  AdminCursosRoute: AdminCursosRoute,
+  AdminEbooksRoute: AdminEbooksRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
@@ -769,13 +832,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
