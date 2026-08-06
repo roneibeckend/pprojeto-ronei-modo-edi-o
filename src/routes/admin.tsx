@@ -1,4 +1,5 @@
-import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { 
   LayoutDashboard, 
   Library, 
@@ -7,8 +8,10 @@ import {
   Settings,
   ShieldCheck,
   ArrowLeft,
-  ChevronLeft
+  ChevronLeft,
+  Loader2
 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/admin")({
   component: AdminRootLayout,
@@ -17,7 +20,25 @@ export const Route = createFileRoute("/admin")({
 const ORANGE = "#ff6a00";
 
 function AdminRootLayout() {
+  const navigate = useNavigate();
+  const { isAdmin, isLoading } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    if (!isLoading && !isAdmin) {
+      navigate({ to: "/app", replace: true });
+    }
+  }, [isAdmin, isLoading, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-[#0a0a0a]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) return null;
 
   const navItems = [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },

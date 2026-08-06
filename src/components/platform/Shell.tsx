@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { student } from "@/lib/platform-data";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 import {
   Sheet,
   SheetContent,
@@ -78,6 +79,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
 export function Shell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const isActive = (to: string, exact?: boolean) =>
@@ -121,7 +123,7 @@ export function Shell({ children }: { children: ReactNode }) {
           WebkitMaskImage: 'linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%)'
         }}
       >
-        {navGroups.map((group) => (
+        {navGroups.filter(g => g.title !== "Gestão" || isAdmin).map((group) => (
           <div key={group.title} className="mb-4 last:mb-0">
             <div className="mb-1 px-3 text-[11px] font-bold uppercase tracking-wider text-sidebar-foreground/35">
               {group.title}
