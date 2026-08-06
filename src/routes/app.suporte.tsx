@@ -379,7 +379,7 @@ function SupportPage() {
                               {t.status === "open" ? "Aberto" : t.status === "in_progress" ? "Em análise" : t.status === "resolved" ? "Resolvido" : "Fechado"}
                             </div>
                             <div className="mt-1 text-[10px] font-medium text-white/20 uppercase tracking-widest">
-                              Atualizado {new Date(t.updated_at).toLocaleDateString('pt-BR')}
+                              Atualizado {t.updated_at ? new Date(t.updated_at).toLocaleDateString('pt-BR') : '—'}
                             </div>
                           </div>
                           <ChevronRight className="h-5 w-5 text-white/10 group-hover:text-white/40 transition" />
