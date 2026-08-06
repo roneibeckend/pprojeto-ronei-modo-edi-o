@@ -79,6 +79,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
 export function Shell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const isActive = (to: string, exact?: boolean) =>
