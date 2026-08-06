@@ -212,6 +212,18 @@ function AdminReceitasPage() {
                 </div>
               </div>
 
+              <div className="flex items-center gap-3 py-2">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <div 
+                    onClick={() => setEditingItem({...editingItem, is_published: !editingItem.is_published})}
+                    className={`w-12 h-6 rounded-full transition-colors flex items-center px-1 ${editingItem.is_published ? 'bg-[#ff6a00]' : 'bg-white/10'}`}
+                  >
+                    <div className={`w-4 h-4 rounded-full bg-black transition-transform ${editingItem.is_published ? 'translate-x-6' : 'translate-x-0'}`} />
+                  </div>
+                  <span className="text-sm font-bold text-white/60 group-hover:text-white transition">Publicar receita (visível para alunos)</span>
+                </label>
+              </div>
+
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Ingredientes (Um por linha)</label>
                 <textarea 
