@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { student } from "@/lib/platform-data";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 import {
   Sheet,
   SheetContent,
