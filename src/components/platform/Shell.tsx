@@ -38,6 +38,7 @@ type NavItem = {
   icon: React.ElementType;
   exact?: boolean;
   badge?: string;
+  module?: string; // Módulo necessário para acesso
 };
 
 const navGroups: { title: string; items: NavItem[] }[] = [
@@ -69,6 +70,9 @@ const navGroups: { title: string; items: NavItem[] }[] = [
     title: "Gestão",
     items: [
       { to: "/admin", label: "Painel Central", icon: Shield, badge: "Admin" },
+      { to: "/admin/usuarios", label: "Equipe", icon: User, module: "admin_only" }, // Apenas Admin Root
+      { to: "/admin/alunos", label: "Alunos", icon: GraduationCap, module: "alunos" },
+      { to: "/admin/suporte", label: "Suporte", icon: LifeBuoy, module: "suporte" },
     ],
   },
 ];
@@ -76,7 +80,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
 export function Shell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const { isAdmin } = useAuth();
+  const { isAdmin, role, hasModule } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const isActive = (to: string, exact?: boolean) =>
@@ -120,13 +124,21 @@ export function Shell({ children }: { children: ReactNode }) {
           WebkitMaskImage: 'linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%)'
         }}
       >
-        {navGroups.filter(g => g.title !== "Gestão" || isAdmin).map((group) => (
+        {navGroups.filter(g => {
+          if (g.title !== "Gestão") return true;
+          // Se for grupo Gestão, verifica se é admin, gerente ou agente
+          return ["admin", "manager", "agent"].includes(role || "");
+        }).map((group) => (
           <div key={group.title} className="mb-4 last:mb-0">
             <div className="mb-1 px-3 text-[11px] font-bold uppercase tracking-wider text-sidebar-foreground/35">
               {group.title}
             </div>
             <div className="space-y-0.5">
-              {group.items.map((item) => {
+              {group.items.filter(item => {
+                if (!item.module) return true;
+                if (item.module === "admin_only") return isAdmin;
+                return hasModule(item.module);
+              }).map((item) => {
                 const active = isActive(item.to, item.exact);
                 const Icon = item.icon;
                 return (

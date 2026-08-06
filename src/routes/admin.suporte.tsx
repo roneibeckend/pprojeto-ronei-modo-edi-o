@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/use-auth";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +34,15 @@ export const Route = createFileRoute("/admin/suporte")({
 });
 
 function AdminSupportPage() {
+  const { hasModule, isLoading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!authLoading && !hasModule("suporte")) {
+      toast.error("Acesso negado: você não tem permissão para acessar o suporte.");
+      navigate({ to: "/admin" });
+    }
+  }, [authLoading, hasModule, navigate]);
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'open' | 'in_progress' | 'resolved'>('all');

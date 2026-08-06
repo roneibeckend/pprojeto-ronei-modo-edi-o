@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
+import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin/alunos")({
   head: () => ({ meta: [{ title: "Gestão de Alunos · Admin" }] }),
@@ -25,6 +27,15 @@ export const Route = createFileRoute("/admin/alunos")({
 });
 
 function AdminAlunosPage() {
+  const { hasModule, isLoading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!authLoading && !hasModule("alunos")) {
+      toast.error("Acesso negado: você não tem permissão para gerenciar alunos.");
+      navigate({ to: "/admin" });
+    }
+  }, [authLoading, hasModule, navigate]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
