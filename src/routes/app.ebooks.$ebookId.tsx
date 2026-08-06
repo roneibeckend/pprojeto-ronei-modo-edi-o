@@ -295,6 +295,13 @@ function EbookPage() {
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="pb-6">
+                        {module.description && (
+                          <div className="px-4 py-3 mb-4 bg-white/[0.03] border-l-2 border-[#ff6a00] rounded-r-lg">
+                            <p className="text-xs text-white/70 leading-relaxed italic">
+                              {module.description}
+                            </p>
+                          </div>
+                        )}
                         <div className="space-y-1">
                           {moduleChapters.map((chapter, cIdx) => {
                             const p = progress.find(pg => pg.chapter_id === chapter.id);
