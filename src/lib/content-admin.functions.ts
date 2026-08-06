@@ -27,15 +27,37 @@ export const saveContent = createServerFn({ method: "POST" })
     title: z.string(),
     subtitle: z.string().optional(),
     description: z.string().optional(),
-    price: z.number().optional(),
+    price: z.number().nullable().optional(),
     is_ai_generated: z.boolean().default(false),
-    content_url: z.string().optional(),
+    content_url: z.string().nullable().optional(),
+    cover_url: z.string().nullable().optional(),
+    teacher_name: z.string().nullable().optional(),
+    badge: z.string().nullable().optional(),
+    pages_count: z.number().nullable().optional(),
+    category: z.string().nullable().optional(),
+    original_price: z.number().nullable().optional(),
+    is_locked: z.boolean().default(false),
   }).parse(data))
   .handler(async ({ data }) => {
     const { type, ...payload } = data;
+    const table = type === 'course' ? 'courses' : 'ebooks';
+    
+    // Remove fields that don't belong to the specific table
+    const cleanPayload = { ...payload } as any;
+    if (type === 'course') {
+      delete cleanPayload.pages_count;
+      delete cleanPayload.category;
+      delete cleanPayload.original_price;
+    } else {
+      delete cleanPayload.teacher_name;
+      delete cleanPayload.badge;
+      delete cleanPayload.subtitle;
+    }
+
     const { error } = await supabaseAdmin
-      .from(type === 'course' ? 'courses' : 'ebooks')
-      .upsert(payload as any);
+      .from(table)
+      .upsert(cleanPayload);
+      
     if (error) throw new Error(error.message);
     return { success: true };
   });
