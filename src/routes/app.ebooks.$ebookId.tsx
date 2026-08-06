@@ -4,6 +4,9 @@ import { ChevronLeft, ChevronRight, Lock, ShoppingCart, Loader2, Sparkles, Layou
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
+import { createAsaasPaymentLink } from "@/lib/asaas.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
   head: () => ({ meta: [{ title: "Leitura — Espetinho na Veia" }] }),
@@ -24,6 +27,32 @@ function EbookViewer() {
   const { ebook } = Route.useLoaderData();
   const { isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
   const [page, setPage] = useState(1);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const createPaymentLink = useServerFn(createAsaasPaymentLink);
+
+  const handlePurchase = async () => {
+    try {
+      setIsProcessing(true);
+      const result = await createPaymentLink({
+        data: {
+          productId: ebook.id,
+          productType: 'ebook',
+          title: ebook.title,
+          description: ebook.description,
+          value: ebook.price || 0,
+        }
+      });
+      
+      if (result.url) {
+        window.location.href = result.url;
+      }
+    } catch (error: any) {
+      console.error("Erro ao processar compra:", error);
+      toast.error(error.message || "Erro ao gerar link de pagamento.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const isFree = (ebook.price || 0) === 0;
   const isEnrolled = isEnrolledInEbook(ebook.id);
@@ -51,15 +80,18 @@ function EbookViewer() {
           <Link to="/app/ebooks" className="btn-ghost-fire px-8 py-3 font-bold">
             Voltar à biblioteca
           </Link>
-          <a 
-            href="https://wa.me/5511999999999" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center gap-2"
+          <button 
+            onClick={handlePurchase}
+            disabled={isProcessing}
+            className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <ShoppingCart className="h-5 w-5" />
-            Comprar por R$ {ebook.price?.toString().replace(".", ",")}
-          </a>
+            {isProcessing ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <ShoppingCart className="h-5 w-5" />
+            )}
+            {isProcessing ? "Processando..." : `Comprar por R$ ${ebook.price?.toString().replace(".", ",")}`}
+          </button>
         </div>
       </div>
     );
