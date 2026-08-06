@@ -9,10 +9,22 @@ import {
   AlertCircle,
   Loader2,
   ChevronRight,
-  Send
+  Send,
+  Trash2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/admin/suporte")({
   head: () => ({ meta: [{ title: "Gestão de Suporte · Admin" }] }),
@@ -141,6 +153,32 @@ function AdminSupportPage() {
     }
   }
 
+  async function handleDeleteTicket(id: string) {
+    try {
+      setLoading(true);
+      
+      await supabase
+        .from('support_messages')
+        .delete()
+        .eq('ticket_id', id);
+
+      const { error } = await supabase
+        .from('support_tickets')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      toast.success("Chamado excluído permanentemente");
+      if (selectedTicket?.id === id) setSelectedTicket(null);
+      fetchTickets();
+    } catch (error: any) {
+      toast.error("Erro ao excluir chamado: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="h-[calc(100vh-160px)] flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -226,14 +264,43 @@ function AdminSupportPage() {
                     <span className="text-xs text-white/40 font-bold uppercase tracking-widest text-[10px]">{selectedTicket.category}</span>
                   </div>
                 </div>
-                {selectedTicket.status !== 'resolved' && (
-                  <button 
-                    onClick={() => handleResolve(selectedTicket.id)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-500/20 transition"
-                  >
-                    <CheckCircle2 className="h-3.5 w-3.5" /> Resolver
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button 
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/20 transition"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" /> Excluir
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="bg-[#111] border-white/10 text-white">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-white/60">
+                          Esta ação é irreversível. O chamado e todo o histórico de mensagens serão removidos permanentemente.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">Cancelar</AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={() => handleDeleteTicket(selectedTicket.id)}
+                          className="bg-red-500 text-white hover:bg-red-600 border-none"
+                        >
+                          Confirmar Exclusão
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
+                  {selectedTicket.status !== 'resolved' && (
+                    <button 
+                      onClick={() => handleResolve(selectedTicket.id)}
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-500/20 transition"
+                    >
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Resolver
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="flex-1 p-6 overflow-y-auto space-y-4">
