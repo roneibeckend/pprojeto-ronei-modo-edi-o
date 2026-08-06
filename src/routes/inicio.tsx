@@ -9,10 +9,7 @@ function InicioPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Como o objetivo é ser o destino pós-login, 
-    // se por algum motivo /inicio for apenas um alias, podemos redirecionar para /app
-    // ou manter como uma página real se o usuário preferir.
-    // Por enquanto, vamos apenas garantir que ela exista.
+    // Redireciona para o dashboard principal dentro de /app
     navigate({ to: "/app", replace: true });
   }, [navigate]);
 
