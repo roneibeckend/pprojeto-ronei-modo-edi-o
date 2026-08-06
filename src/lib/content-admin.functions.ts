@@ -30,6 +30,7 @@ export const saveContent = createServerFn({ method: "POST" })
     price: z.number().nullable().optional(),
     is_ai_generated: z.boolean().default(false),
     content_url: z.string().nullable().optional(),
+    content: z.string().nullable().optional(),
     cover_url: z.string().nullable().optional(),
     teacher_name: z.string().nullable().optional(),
     badge: z.string().nullable().optional(),
