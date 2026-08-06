@@ -154,8 +154,9 @@ function AdminEbooksPage() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL da Capa</label>
-                <input value={editingItem?.cover_url || ""} onChange={e => setEditingItem({...editingItem, cover_url: e.target.value})} placeholder="https://..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL da Imagem de Capa</label>
+                <input value={editingItem?.cover_url || ""} onChange={e => setEditingItem({...editingItem, cover_url: e.target.value})} placeholder="https://images.unsplash.com/..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+                <p className="text-[9px] text-white/30 italic">Recomendado: Capa em formato vertical (2:3 ou 3:4).</p>
               </div>
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição</label>
