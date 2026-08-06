@@ -4,7 +4,7 @@ import { Sparkles, Wand2, BookOpen, Loader2, Trash2, ArrowRight, AlertTriangle, 
 import { PageHeader } from "@/components/platform/Shell";
 import { generateEbook, type Ebook } from "@/lib/ebook-ai.functions";
 
-export const Route = createFileRoute("/app/admin/ebook-ai")({
+export const Route = createFileRoute("/admin/ebook-ai")({
   head: () => ({ meta: [{ title: "IA — Gerador de Ebooks · Admin" }] }),
   component: EbookAIPage,
 });

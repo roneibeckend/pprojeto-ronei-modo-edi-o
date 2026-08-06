@@ -30,8 +30,11 @@ import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AdminReceitasRouteImport } from './routes/admin.receitas'
 import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
+import { Route as AdminFinanceiroRouteImport } from './routes/admin.financeiro'
 import { Route as AdminEbooksRouteImport } from './routes/admin.ebooks'
+import { Route as AdminEbookAiRouteImport } from './routes/admin.ebook-ai'
 import { Route as AdminCursosRouteImport } from './routes/admin.cursos'
+import { Route as AdminAoVivoRouteImport } from './routes/admin.ao-vivo'
 import { Route as AdminAlunosRouteImport } from './routes/admin.alunos'
 import { Route as AppEbooksIndexRouteImport } from './routes/app.ebooks.index'
 import { Route as AppCursosIndexRouteImport } from './routes/app.cursos.index'
@@ -152,14 +155,29 @@ const AdminIntegracoesRoute = AdminIntegracoesRouteImport.update({
   path: '/integracoes',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminFinanceiroRoute = AdminFinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEbooksRoute = AdminEbooksRouteImport.update({
   id: '/ebooks',
   path: '/ebooks',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEbookAiRoute = AdminEbookAiRouteImport.update({
+  id: '/ebook-ai',
+  path: '/ebook-ai',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCursosRoute = AdminCursosRouteImport.update({
   id: '/cursos',
   path: '/cursos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAoVivoRoute = AdminAoVivoRouteImport.update({
+  id: '/ao-vivo',
+  path: '/ao-vivo',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAlunosRoute = AdminAlunosRouteImport.update({
@@ -243,8 +261,11 @@ export interface FileRoutesByFullPath {
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/cursos': typeof AdminCursosRoute
+  '/admin/ebook-ai': typeof AdminEbookAiRoute
   '/admin/ebooks': typeof AdminEbooksRoute
+  '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/app/admin': typeof AppAdminRouteWithChildren
@@ -280,8 +301,11 @@ export interface FileRoutesByTo {
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/cursos': typeof AdminCursosRoute
+  '/admin/ebook-ai': typeof AdminEbookAiRoute
   '/admin/ebooks': typeof AdminEbooksRoute
+  '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/app/certificados': typeof AppCertificadosRoute
@@ -317,8 +341,11 @@ export interface FileRoutesById {
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/cursos': typeof AdminCursosRoute
+  '/admin/ebook-ai': typeof AdminEbookAiRoute
   '/admin/ebooks': typeof AdminEbooksRoute
+  '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/app/admin': typeof AppAdminRouteWithChildren
@@ -358,8 +385,11 @@ export interface FileRouteTypes {
     | '/politica-de-privacidade'
     | '/termos-de-uso'
     | '/admin/alunos'
+    | '/admin/ao-vivo'
     | '/admin/cursos'
+    | '/admin/ebook-ai'
     | '/admin/ebooks'
+    | '/admin/financeiro'
     | '/admin/integracoes'
     | '/admin/receitas'
     | '/app/admin'
@@ -395,8 +425,11 @@ export interface FileRouteTypes {
     | '/politica-de-privacidade'
     | '/termos-de-uso'
     | '/admin/alunos'
+    | '/admin/ao-vivo'
     | '/admin/cursos'
+    | '/admin/ebook-ai'
     | '/admin/ebooks'
+    | '/admin/financeiro'
     | '/admin/integracoes'
     | '/admin/receitas'
     | '/app/certificados'
@@ -431,8 +464,11 @@ export interface FileRouteTypes {
     | '/politica-de-privacidade'
     | '/termos-de-uso'
     | '/admin/alunos'
+    | '/admin/ao-vivo'
     | '/admin/cursos'
+    | '/admin/ebook-ai'
     | '/admin/ebooks'
+    | '/admin/financeiro'
     | '/admin/integracoes'
     | '/admin/receitas'
     | '/app/admin'
@@ -621,6 +657,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIntegracoesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/financeiro': {
+      id: '/admin/financeiro'
+      path: '/financeiro'
+      fullPath: '/admin/financeiro'
+      preLoaderRoute: typeof AdminFinanceiroRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/ebooks': {
       id: '/admin/ebooks'
       path: '/ebooks'
@@ -628,11 +671,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEbooksRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ebook-ai': {
+      id: '/admin/ebook-ai'
+      path: '/ebook-ai'
+      fullPath: '/admin/ebook-ai'
+      preLoaderRoute: typeof AdminEbookAiRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/cursos': {
       id: '/admin/cursos'
       path: '/cursos'
       fullPath: '/admin/cursos'
       preLoaderRoute: typeof AdminCursosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/ao-vivo': {
+      id: '/admin/ao-vivo'
+      path: '/ao-vivo'
+      fullPath: '/admin/ao-vivo'
+      preLoaderRoute: typeof AdminAoVivoRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/alunos': {
@@ -738,8 +795,11 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAlunosRoute: typeof AdminAlunosRoute
+  AdminAoVivoRoute: typeof AdminAoVivoRoute
   AdminCursosRoute: typeof AdminCursosRoute
+  AdminEbookAiRoute: typeof AdminEbookAiRoute
   AdminEbooksRoute: typeof AdminEbooksRoute
+  AdminFinanceiroRoute: typeof AdminFinanceiroRoute
   AdminIntegracoesRoute: typeof AdminIntegracoesRoute
   AdminReceitasRoute: typeof AdminReceitasRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -747,8 +807,11 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAlunosRoute: AdminAlunosRoute,
+  AdminAoVivoRoute: AdminAoVivoRoute,
   AdminCursosRoute: AdminCursosRoute,
+  AdminEbookAiRoute: AdminEbookAiRoute,
   AdminEbooksRoute: AdminEbooksRoute,
+  AdminFinanceiroRoute: AdminFinanceiroRoute,
   AdminIntegracoesRoute: AdminIntegracoesRoute,
   AdminReceitasRoute: AdminReceitasRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -853,3 +916,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

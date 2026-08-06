@@ -20,7 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { saveLiveClass } from "@/lib/content-admin.functions";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/app/admin/ao-vivo")({
+export const Route = createFileRoute("/admin/ao-vivo")({
   head: () => ({ meta: [{ title: "Aulas ao Vivo · Admin" }] }),
   component: LiveClassesPage,
 });
