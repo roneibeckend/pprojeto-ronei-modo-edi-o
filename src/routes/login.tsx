@@ -28,10 +28,10 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Se já estiver logado, manda direto pra área de membros
+  // Se já estiver logado, manda direto para a página inicial
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/app" });
+      if (data.session) navigate({ to: "/inicio" });
     });
   }, [navigate]);
 
@@ -48,7 +48,7 @@ function LoginPage() {
       }
       if (result.redirected) return;
       // Tokens já setados; segue pra plataforma
-      navigate({ to: "/app" });
+      navigate({ to: "/inicio" });
     } catch (err) {
       toast.error("Erro ao conectar com Google");
       console.error(err);
@@ -67,17 +67,17 @@ function LoginPage() {
           password,
           options: {
             data: { name },
-            emailRedirectTo: `${window.location.origin}/app`,
+            emailRedirectTo: \`\${window.location.origin}/inicio\`,
           },
         });
         if (error) throw error;
         toast.success("Conta criada!", { description: "Você já pode acessar sua área de membros." });
-        navigate({ to: "/app" });
+        navigate({ to: "/inicio" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Bem-vindo de volta!");
-        navigate({ to: "/app" });
+        navigate({ to: "/inicio" });
       }
     } catch (err: any) {
       const msg = err?.message ?? "Falha ao autenticar";
