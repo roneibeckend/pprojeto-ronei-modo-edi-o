@@ -345,19 +345,6 @@ function IntegrationsPage() {
         </div>
       )}
 
-      {/* Security Info Card */}
-      <div className="mt-12 flex items-center gap-4 border border-white/5 bg-white/[0.02] p-6 rounded-sm">
-        <div className="h-12 w-12 shrink-0 flex items-center justify-center rounded-sm bg-[#ff6a00]/10 text-[#ff6a00]">
-          <ShieldCheck className="h-6 w-6" />
-        </div>
-        <div className="text-left">
-          <h4 className="font-display text-sm font-bold uppercase tracking-wide text-white">Segurança de Dados</h4>
-          <p className="text-xs text-white/40 mt-1 leading-relaxed">
-            Todas as API Keys e credenciais são criptografadas em nível de banco de dados. 
-            Apenas usuários com privilégios administrativos podem gerenciar estas configurações.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
