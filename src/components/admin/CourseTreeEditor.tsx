@@ -69,16 +69,41 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
   async function fetchData() {
     try {
       setLoading(true);
-      const [modRes, lesRes] = await Promise.all([
-        supabase.from("course_modules").select("*").eq("course_id", courseId).order("order_index"),
-        supabase.from("course_lessons").select("*, module:course_modules!inner(course_id)").eq("module.course_id", courseId).order("order_index")
-      ]);
+      const { data: mods, error: modError } = await supabase
+        .from("course_modules" as any)
+        .select("*")
+        .eq("course_id", courseId)
+        .order("order_index");
 
-      if (modRes.error) throw modRes.error;
-      if (lesRes.error) throw lesRes.error;
+      if (modError) throw modError;
 
-      setModules(modRes.data || []);
-      setLessons(lesRes.data || []);
+      const { data: less, error: lesError } = await supabase
+        .from("course_lessons" as any)
+        .select("*")
+        .in("module_id", mods?.map(m => m.id) || [])
+        .order("order_index");
+
+      if (lesError && mods?.length) throw lesError;
+
+      setModules(mods?.map(m => ({
+        id: m.id,
+        title: m.title,
+        description: m.description,
+        order_index: m.order_index || 0
+      })) || []);
+
+      setLessons(less?.map(l => ({
+        id: l.id,
+        module_id: l.module_id,
+        title: l.title,
+        slug: l.slug,
+        description: l.description,
+        video_url: l.video_url,
+        duration_minutes: l.duration_minutes || 0,
+        order_index: l.order_index || 0,
+        is_free: l.is_free || false,
+        content: l.content
+      })) || []);
     } catch (error: any) {
       toast.error("Erro ao carregar conteúdo: " + error.message);
     } finally {
@@ -92,7 +117,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
     try {
       setIsSaving(true);
       const { error } = await supabase
-        .from("course_modules")
+        .from("course_modules" as any)
         .upsert({ ...editingModule, course_id: courseId });
       if (error) throw error;
       toast.success("Módulo salvo!");
@@ -112,7 +137,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
       setIsSaving(true);
       const slug = editingLesson.slug || editingLesson.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-");
       const { error } = await supabase
-        .from("course_lessons")
+        .from("course_lessons" as any)
         .upsert({ ...editingLesson, slug });
       if (error) throw error;
       toast.success("Aula salva!");
@@ -125,10 +150,10 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
     }
   }
 
-  async function handleDelete(table: 'course_modules' | 'course_lessons', id: string, name: string) {
+  async function handleDelete(table: string, id: string, name: string) {
     if (!confirm(`Excluir "${name}"? Esta ação não pode ser desfeita.`)) return;
     try {
-      const { error } = await supabase.from(table).delete().eq("id", id);
+      const { error } = await supabase.from(table as any).delete().eq("id", id);
       if (error) throw error;
       toast.success("Excluído com sucesso");
       fetchData();
@@ -145,15 +170,15 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
         <h3 className="text-lg font-bold">Conteúdo do Curso</h3>
         <button 
           onClick={() => setEditingModule({ id: crypto.randomUUID(), title: "", description: "", order_index: modules.length })}
-          className="btn-fire px-4 py-2 text-xs"
+          className="flex items-center gap-2 bg-[#ff6a00] px-4 py-2 rounded-lg text-xs font-bold text-black hover:bg-[#ff8c33] transition-colors"
         >
-          <Plus className="mr-2 h-4 w-4" /> Adicionar Módulo
+          <Plus className="h-4 w-4" /> Adicionar Módulo
         </button>
       </div>
 
       <div className="space-y-4">
         {modules.map((module) => (
-          <div key={module.id} className="glass rounded-xl overflow-hidden border border-white/5">
+          <div key={module.id} className="bg-white/[0.02] rounded-xl overflow-hidden border border-white/5">
             <div className="p-4 bg-white/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <GripVertical className="h-4 w-4 text-white/20 cursor-move" />
@@ -190,7 +215,6 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
         ))}
       </div>
 
-      {/* Modais de Edição seriam implementados aqui usando Dialog do shadcn */}
       {editingModule && (
         <Dialog open={!!editingModule} onOpenChange={() => setEditingModule(null)}>
           <DialogContent className="bg-[#0e0e0e] border-white/10 text-white">
@@ -210,7 +234,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
                 className="w-full bg-white/5 border border-white/10 p-3 rounded-lg outline-none focus:border-[#ff6a00] h-24" 
               />
               <DialogFooter>
-                <button type="submit" disabled={isSaving} className="btn-fire w-full py-3">{isSaving ? "Salvando..." : "Salvar"}</button>
+                <button type="submit" disabled={isSaving} className="w-full py-3 rounded-lg bg-[#ff6a00] text-black font-bold disabled:opacity-50">{isSaving ? "Salvando..." : "Salvar"}</button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -223,20 +247,20 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
             <DialogHeader><DialogTitle>Aula</DialogTitle></DialogHeader>
             <form onSubmit={handleSaveLesson} className="space-y-4 pt-4">
               <div className="grid grid-cols-2 gap-4">
-                <input required placeholder="Título" value={editingLesson.title} onChange={e => setEditingLesson({...editingLesson, title: e.target.value})} className="bg-white/5 border border-white/10 p-3 rounded-lg" />
-                <input placeholder="URL do Vídeo" value={editingLesson.video_url || ""} onChange={e => setEditingLesson({...editingLesson, video_url: e.target.value})} className="bg-white/5 border border-white/10 p-3 rounded-lg" />
+                <input required placeholder="Título" value={editingLesson.title} onChange={e => setEditingLesson({...editingLesson, title: e.target.value})} className="bg-white/5 border border-white/10 p-3 rounded-lg outline-none" />
+                <input placeholder="URL do Vídeo" value={editingLesson.video_url || ""} onChange={e => setEditingLesson({...editingLesson, video_url: e.target.value})} className="bg-white/5 border border-white/10 p-3 rounded-lg outline-none" />
               </div>
-              <textarea placeholder="Descrição" value={editingLesson.description || ""} onChange={e => setEditingLesson({...editingLesson, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg h-24" />
-              <textarea placeholder="Conteúdo (Markdown/Rich Text)" value={editingLesson.content || ""} onChange={e => setEditingLesson({...editingLesson, content: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg h-40" />
+              <textarea placeholder="Descrição" value={editingLesson.description || ""} onChange={e => setEditingLesson({...editingLesson, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg h-24 outline-none" />
+              <textarea placeholder="Conteúdo (Markdown/Rich Text)" value={editingLesson.content || ""} onChange={e => setEditingLesson({...editingLesson, content: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg h-40 outline-none" />
               <div className="flex items-center gap-4">
-                <input type="number" placeholder="Duração (min)" value={editingLesson.duration_minutes} onChange={e => setEditingLesson({...editingLesson, duration_minutes: parseInt(e.target.value)})} className="bg-white/5 border border-white/10 p-3 rounded-lg w-32" />
+                <input type="number" placeholder="Duração (min)" value={editingLesson.duration_minutes} onChange={e => setEditingLesson({...editingLesson, duration_minutes: parseInt(e.target.value)})} className="bg-white/5 border border-white/10 p-3 rounded-lg w-32 outline-none" />
                 <label className="flex items-center gap-2 cursor-pointer">
                   <Checkbox checked={editingLesson.is_free} onCheckedChange={(val) => setEditingLesson({...editingLesson, is_free: !!val})} />
                   <span className="text-sm">Aula Grátis (Preview)</span>
                 </label>
               </div>
               <DialogFooter>
-                <button type="submit" disabled={isSaving} className="btn-fire w-full py-3">{isSaving ? "Salvando..." : "Salvar"}</button>
+                <button type="submit" disabled={isSaving} className="w-full py-3 rounded-lg bg-[#ff6a00] text-black font-bold disabled:opacity-50">{isSaving ? "Salvando..." : "Salvar"}</button>
               </DialogFooter>
             </form>
           </DialogContent>
