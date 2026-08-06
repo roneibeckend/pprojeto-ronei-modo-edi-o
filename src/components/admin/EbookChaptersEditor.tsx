@@ -10,10 +10,25 @@ import {
   PlayCircle,
   Clock,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Sparkles,
+  Loader2,
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { generateChaptersForModules } from "@/lib/ebook-ai.functions";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 
 interface Chapter {
   id?: string;
@@ -44,13 +59,24 @@ export function EbookChaptersEditor({ ebookId }: EbookChaptersEditorProps) {
   const [editingChapter, setEditingChapter] = useState<Chapter | null>(null);
   const [editingModule, setEditingModule] = useState<Module | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [suggestions, setSuggestions] = useState<{ moduleId: string; moduleTitle: string; chapters: string[] }[]>([]);
+  const [selectedChapters, setSelectedChapters] = useState<Record<string, string[]>>({});
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [ebookTitle, setEbookTitle] = useState("");
 
   useEffect(() => {
     if (ebookId) {
+      fetchEbookData();
       fetchModules();
       fetchChapters();
     }
   }, [ebookId]);
+
+  async function fetchEbookData() {
+    const { data } = await supabase.from("ebooks").select("title").eq("id", ebookId).single();
+    if (data) setEbookTitle(data.title);
+  }
 
   async function fetchModules() {
     try {
@@ -195,6 +221,93 @@ export function EbookChaptersEditor({ ebookId }: EbookChaptersEditorProps) {
     }
   }
 
+  async function handleAIGenerate() {
+    if (modules.length === 0) {
+      toast.error("Crie pelo menos um módulo antes de gerar capítulos.");
+      return;
+    }
+
+    try {
+      setIsGenerating(true);
+      const res = await generateChaptersForModules({ 
+        data: { 
+          ebookTitle: ebookTitle || "Ebook de Gastronomia", 
+          modules: modules.map(m => ({ id: m.id, title: m.title })) 
+        } 
+      });
+
+      if (res && res.suggestions) {
+        setSuggestions(res.suggestions);
+        const initialSelected: Record<string, string[]> = {};
+        res.suggestions.forEach((s: { moduleId: string; chapters: string[] }) => {
+          initialSelected[s.moduleId] = [...s.chapters];
+        });
+        setSelectedChapters(initialSelected);
+        setShowAIModal(true);
+      }
+    } catch (error: any) {
+      toast.error("Erro na IA: " + error.message);
+    } finally {
+      setIsGenerating(false);
+    }
+  }
+
+  async function handleImportChapters() {
+    try {
+      setIsSaving(true);
+      const chaptersToInsert = [];
+      let baseOrder = chapters.length;
+
+      for (const moduleId in selectedChapters) {
+        const titles = selectedChapters[moduleId];
+        for (const title of titles) {
+          const slug = title
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)+/g, "");
+
+          chaptersToInsert.push({
+            ebook_id: ebookId,
+            module_id: moduleId,
+            title,
+            slug,
+            content: `## ${title}\n\nConteúdo sugerido para este capítulo em breve...`,
+            order_index: baseOrder++,
+            reading_minutes: 5
+          });
+        }
+      }
+
+      if (chaptersToInsert.length === 0) {
+        toast.error("Selecione pelo menos um capítulo.");
+        return;
+      }
+
+      const { error } = await supabase.from("ebook_chapters").insert(chaptersToInsert);
+      if (error) throw error;
+
+      toast.success(`${chaptersToInsert.length} capítulos importados com sucesso!`);
+      setShowAIModal(false);
+      fetchChapters();
+    } catch (error: any) {
+      toast.error("Erro ao importar: " + error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  const toggleChapterSelection = (moduleId: string, chapter: string) => {
+    setSelectedChapters(prev => {
+      const current = prev[moduleId] || [];
+      const updated = current.includes(chapter)
+        ? current.filter(c => c !== chapter)
+        : [...current, chapter];
+      return { ...prev, [moduleId]: updated };
+    });
+  };
+
   if (loading) return <div className="p-8 text-center"><span className="animate-pulse text-white/40">Carregando capítulos...</span></div>;
 
   return (
@@ -255,15 +368,32 @@ export function EbookChaptersEditor({ ebookId }: EbookChaptersEditorProps) {
       <section className="space-y-4">
         <div className="flex items-center justify-between border-b border-white/5 pb-4">
           <h4 className="font-bold text-sm uppercase tracking-widest text-[#ff6a00]">Capítulos</h4>
-          {!editingChapter && (
-            <button 
-              type="button"
-              onClick={() => setEditingChapter({ ebook_id: ebookId, module_id: modules[0]?.id || null, title: "", slug: "", content: "", video_url: "", order_index: chapters.length, reading_minutes: 5 })}
-              className="flex items-center gap-2 text-xs font-bold bg-[#ff6a00]/10 text-[#ff6a00] px-3 py-1.5 rounded-lg hover:bg-[#ff6a00]/20 transition"
-            >
-              <Plus className="h-4 w-4" /> Novo Capítulo
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {!editingChapter && (
+              <>
+                <button 
+                  type="button"
+                  onClick={handleAIGenerate}
+                  disabled={isGenerating || modules.length === 0}
+                  className="flex items-center gap-2 text-xs font-bold bg-fire/10 text-fire px-3 py-1.5 rounded-lg hover:bg-fire/20 transition disabled:opacity-50"
+                >
+                  {isGenerating ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4" />
+                  )}
+                  IA: Sugerir Capítulos
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setEditingChapter({ ebook_id: ebookId, module_id: modules[0]?.id || null, title: "", slug: "", content: "", video_url: "", order_index: chapters.length, reading_minutes: 5 })}
+                  className="flex items-center gap-2 text-xs font-bold bg-[#ff6a00]/10 text-[#ff6a00] px-3 py-1.5 rounded-lg hover:bg-[#ff6a00]/20 transition"
+                >
+                  <Plus className="h-4 w-4" /> Novo Capítulo
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
         {editingChapter ? (
@@ -413,6 +543,85 @@ export function EbookChaptersEditor({ ebookId }: EbookChaptersEditorProps) {
           </div>
         )}
       </section>
+
+      {/* Modal de Sugestões da IA */}
+      <Dialog open={showAIModal} onOpenChange={setShowAIModal}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden flex flex-col bg-[#0a0a0a] border-white/10 text-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-fire">
+              <Sparkles className="h-5 w-5" /> Sugestões de Capítulos com IA
+            </DialogTitle>
+            <DialogDescription className="text-white/60">
+              A IA sugeriu capítulos baseados nos módulos do ebook <strong>{ebookTitle}</strong>. Selecione os que deseja importar.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-y-auto pr-2 space-y-6 py-4">
+            {suggestions.map((suggestion) => (
+              <div key={suggestion.moduleId} className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="bg-fire/10 text-fire border-fire/20 font-bold uppercase tracking-widest text-[10px]">
+                    Módulo
+                  </Badge>
+                  <h5 className="font-bold text-sm text-white/90">{suggestion.moduleTitle}</h5>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pl-4">
+                  {suggestion.chapters.map((chapterTitle, cIdx) => (
+                    <div 
+                      key={cIdx} 
+                      className={cn(
+                        "flex items-start gap-3 p-3 rounded-xl border transition-all cursor-pointer",
+                        selectedChapters[suggestion.moduleId]?.includes(chapterTitle)
+                          ? "bg-fire/5 border-fire/30"
+                          : "bg-white/5 border-white/5 hover:border-white/20"
+                      )}
+                      onClick={() => toggleChapterSelection(suggestion.moduleId, chapterTitle)}
+                    >
+                      <Checkbox 
+                        id={`ch-${suggestion.moduleId}-${cIdx}`}
+                        checked={selectedChapters[suggestion.moduleId]?.includes(chapterTitle)}
+                        onCheckedChange={() => toggleChapterSelection(suggestion.moduleId, chapterTitle)}
+                        className="mt-0.5 border-fire/50 data-[state=checked]:bg-fire data-[state=checked]:text-black"
+                      />
+                      <label 
+                        htmlFor={`ch-${suggestion.moduleId}-${cIdx}`}
+                        className="text-sm font-medium leading-tight cursor-pointer"
+                      >
+                        {chapterTitle}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <DialogFooter className="pt-4 border-t border-white/10">
+            <button
+              onClick={() => setShowAIModal(false)}
+              className="px-4 py-2 text-sm font-bold text-white/60 hover:text-white transition"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleImportChapters}
+              disabled={isSaving}
+              className="btn-fire flex items-center gap-2 min-w-[160px] justify-center"
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Importando...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-4 w-4" /> Importar Selecionados
+                </>
+              )}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
