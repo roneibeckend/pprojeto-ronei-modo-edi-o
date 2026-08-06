@@ -2206,7 +2206,7 @@ function LandingPage() {
         <Offer />
         <FAQ />
 
-        <span className="hidden">⁣</span>
+        
       </main>
       <Footer />
       <StickyMobileCTA />
