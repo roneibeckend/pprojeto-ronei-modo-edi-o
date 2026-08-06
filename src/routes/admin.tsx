@@ -10,7 +10,8 @@ import {
   ChefHat,
   ArrowLeft,
   ChevronLeft,
-  Loader2
+  Loader2,
+  BrainCircuit
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
