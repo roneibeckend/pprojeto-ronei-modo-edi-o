@@ -27,13 +27,15 @@ function AdminDashboard() {
         coursesRes,
         ebooksRes,
         enrollmentsRes,
-        ticketsRes
+        ticketsRes,
+        recentLogsRes
       ] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('courses').select('id'),
         supabase.from('ebooks').select('id'),
         supabase.from('course_enrollments' as any).select('id', { count: 'exact' }),
-        supabase.from('support_tickets').select('id', { count: 'exact', head: true }).eq('status', 'open')
+        supabase.from('support_tickets').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+        supabase.from('integration_logs' as any).select('*').order('created_at', { ascending: false }).limit(3)
       ]);
 
       return {
@@ -42,7 +44,8 @@ function AdminDashboard() {
         ebooks: ebooksRes.data?.length || 0,
         sales: enrollmentsRes.count || 0,
         revenue: (enrollmentsRes.count || 0) * 197.00,
-        pendingTickets: ticketsRes.count || 0
+        pendingTickets: ticketsRes.count || 0,
+        recentLogs: recentLogsRes.data || []
       };
     }
   });
