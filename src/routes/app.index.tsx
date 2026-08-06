@@ -140,9 +140,13 @@ function CourseShowcaseCard({ course, isEnrolled }: { course: any; isEnrolled: b
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Acesso imediato</span>
                 <div className="font-display text-xl font-bold text-gold">R$ {course.price?.toString().replace(".", ",")}</div>
               </div>
-              <button className="btn-fire px-4 py-2 text-xs">
+              <Link 
+                to="/app/cursos/$courseId" 
+                params={{ courseId: course.id }}
+                className="btn-fire px-4 py-2 text-xs"
+              >
                 <ShoppingCart className="mr-1.5 h-3.5 w-3.5" /> Comprar
-              </button>
+              </Link>
             </div>
           </div>
         ) : (
