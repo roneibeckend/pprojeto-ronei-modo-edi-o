@@ -149,9 +149,13 @@ function EbooksPage() {
                 )}
               </div>
               <div className="mt-auto flex gap-2 pt-4">
-                <button className="btn-fire flex-1 text-xs" type="button">
+                <Link 
+                  to="/app/ebooks/$ebookId" 
+                  params={{ ebookId: b.id }}
+                  className="btn-fire flex-1 text-xs pointer-events-auto cursor-pointer"
+                >
                   <ShoppingCart className="h-3.5 w-3.5" /> Comprar
-                </button>
+                </Link>
               </div>
             </div>
           </article>
