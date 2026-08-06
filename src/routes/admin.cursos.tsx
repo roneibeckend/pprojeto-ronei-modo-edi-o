@@ -147,6 +147,17 @@ function AdminCursosPage() {
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Badge (Ex: Mais Vendido)</label>
                 <input value={editingItem?.badge || ""} onChange={e => setEditingItem({...editingItem, badge: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
               </div>
+              <div className="flex items-center gap-2 pb-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={editingItem?.is_locked || false} 
+                    onChange={e => setEditingItem({...editingItem, is_locked: e.target.checked})}
+                    className="accent-[#ff6a00]"
+                  />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Bloqueado para Venda</span>
+                </label>
+              </div>
               <div className="pt-4 flex gap-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 rounded-lg bg-white/5 font-bold hover:bg-white/10">Cancelar</button>
                 <button type="submit" disabled={isSaving} className="flex-1 py-3 rounded-lg bg-[#ff6a00] text-black font-bold disabled:opacity-50">{isSaving ? "Salvando..." : "Salvar"}</button>
