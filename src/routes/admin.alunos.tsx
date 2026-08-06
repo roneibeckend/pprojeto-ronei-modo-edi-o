@@ -132,7 +132,7 @@ function AdminAlunosPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {filtered.map((p) => (
+              {profiles.map((p) => (
                 <tr key={p.id} className="hover:bg-white/[0.01] transition">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -143,7 +143,7 @@ function AdminAlunosPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-white/40">{p.email || "—"}</td>
-                  <td className="px-6 py-4 text-white/40">{new Date(p.created_at).toLocaleDateString('pt-BR')}</td>
+                  <td className="px-6 py-4 text-white/40">{p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR') : "—"}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button 
@@ -162,8 +162,67 @@ function AdminAlunosPage() {
                   </td>
                 </tr>
               ))}
+              {profiles.length === 0 && !loading && (
+                <tr>
+                  <td colSpan={4} className="px-6 py-12 text-center text-white/20 uppercase tracking-widest text-[10px] font-bold">
+                    Nenhum aluno encontrado
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
+          
+          {/* Pagination */}
+          {totalCount > ITEMS_PER_PAGE && (
+            <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between bg-white/[0.01]">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-white/20">
+                Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1} a {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} de {totalCount} alunos
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-white/5 transition"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.ceil(totalCount / ITEMS_PER_PAGE) }).map((_, i) => {
+                    const pageNum = i + 1;
+                    // Limit visible pages if there are many
+                    if (
+                      pageNum === 1 || 
+                      pageNum === Math.ceil(totalCount / ITEMS_PER_PAGE) || 
+                      (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+                    ) {
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`w-8 h-8 rounded-lg text-[10px] font-bold transition ${
+                            currentPage === pageNum ? 'bg-[#ff6a00] text-black' : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white'
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    }
+                    if (pageNum === currentPage - 2 || pageNum === currentPage + 2) {
+                      return <span key={pageNum} className="text-white/20 text-xs px-1">...</span>;
+                    }
+                    return null;
+                  })}
+                </div>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(Math.ceil(totalCount / ITEMS_PER_PAGE), p + 1))}
+                  disabled={currentPage === Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                  className="p-2 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-white/5 transition"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
