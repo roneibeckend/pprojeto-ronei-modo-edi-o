@@ -1990,7 +1990,6 @@ function LeadPopup() {
     if (localStorage.getItem("espetinho_lead_sent") === "1") return;
 
     const trigger = () => setOpen(true);
-    const t = setTimeout(trigger, 300_000);
 
     // Exit-intent (desktop): cursor sobe além do topo da viewport
     const onMouseLeave = (e: MouseEvent) => {
@@ -2012,7 +2011,7 @@ function LeadPopup() {
     document.addEventListener("mouseleave", onMouseLeave);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      clearTimeout(t);
+      
       document.removeEventListener("mouseleave", onMouseLeave);
       window.removeEventListener("scroll", onScroll);
     };
@@ -2207,7 +2206,7 @@ function LandingPage() {
         <Offer />
         <FAQ />
 
-        <span className="hidden">⁣</span>
+        
       </main>
       <Footer />
       <StickyMobileCTA />
