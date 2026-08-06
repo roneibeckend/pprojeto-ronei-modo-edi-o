@@ -73,7 +73,7 @@ function AdminSupportPage() {
           ticket_id: selectedTicket.id,
           message: replyMessage,
           sender_id: (await supabase.auth.getUser()).data.user?.id,
-          sender_type: 'admin'
+          sender_type: 'support_agent'
         });
 
       if (msgError) throw msgError;
