@@ -315,7 +315,7 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose:
               <div className="font-display text-lg font-bold text-white">{cert.course}</div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 no-print">
             <button
               onClick={handleDownload}
               disabled={downloading}
