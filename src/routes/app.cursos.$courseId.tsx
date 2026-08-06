@@ -5,6 +5,9 @@ import { PageHeader } from "@/components/platform/Shell";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
+import { createAsaasPaymentLink } from "@/lib/asaas.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/cursos/$courseId")({
   head: ({ params }) => {
