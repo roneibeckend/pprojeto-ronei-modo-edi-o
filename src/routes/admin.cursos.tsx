@@ -7,7 +7,9 @@ import {
   Edit3, 
   Loader2,
   X,
-  Sparkles
+  Sparkles,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { saveContent } from "@/lib/content-admin.functions";
