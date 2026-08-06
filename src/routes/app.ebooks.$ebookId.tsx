@@ -385,9 +385,24 @@ function EbookPage() {
                       </div>
                       
                       {/* Título do Módulo */}
-                      <h3 className="font-display text-xl md:text-2xl font-black text-white mb-4 group-hover:text-white transition-colors">
-                        {module.title}
-                      </h3>
+                      {moduleChapters.length > 0 ? (
+                        <Link 
+                          to="/app/ebooks/$ebookId/capitulo/$chapterSlug"
+                          params={{ 
+                            ebookId: ebook.id, 
+                            chapterSlug: moduleChapters[0].slug || moduleChapters[0].id 
+                          }}
+                          className="inline-block"
+                        >
+                          <h3 className="font-display text-xl md:text-2xl font-black text-white mb-4 group-hover:text-[#ff6a00] transition-colors">
+                            {module.title}
+                          </h3>
+                        </Link>
+                      ) : (
+                        <h3 className="font-display text-xl md:text-2xl font-black text-white mb-4 group-hover:text-white transition-colors">
+                          {module.title}
+                        </h3>
+                      )}
 
                       {/* Lista de Capítulos Clicáveis */}
                       <div className="flex flex-col gap-2">
