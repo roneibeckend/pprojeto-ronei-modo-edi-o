@@ -10,6 +10,8 @@ import {
   TrendingUp,
   Award,
   LifeBuoy,
+  Library,
+  Clapperboard,
   User,
   LogOut,
   Menu,
