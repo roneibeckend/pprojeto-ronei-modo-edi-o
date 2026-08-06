@@ -16,12 +16,20 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             externalReference: body.payment?.externalReference
           });
 
-          // Buscar integração para validar token (opcional dependendo de como o Asaas está configurado)
+          // Buscar integração para validar token
           const { data: integration } = await supabaseAdmin
             .from('integrations')
-            .select('*')
+            .select('credentials')
             .eq('category', 'asaas')
             .single();
+
+          const credentials = integration?.credentials as Record<string, any>;
+          const expectedToken = credentials?.webhookToken || credentials?.apiKey;
+          
+          if (!expectedToken || token !== expectedToken) {
+            console.error('[Webhook Asaas] Token de acesso inválido ou ausente');
+            return new Response('Unauthorized', { status: 401 });
+          }
 
           // Se for pagamento confirmado ou recebido
           if (['PAYMENT_RECEIVED', 'PAYMENT_CONFIRMED'].includes(body.event)) {
