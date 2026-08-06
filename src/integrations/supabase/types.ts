@@ -78,6 +78,41 @@ export type Database = {
           },
         ]
       }
+      course_modules: {
+        Row: {
+          course_id: string
+          created_at: string | null
+          description: string | null
+          id: string
+          order_index: number | null
+          title: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          order_index?: number | null
+          title: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          order_index?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_modules_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           badge: string | null
@@ -86,9 +121,14 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          intro_video_url: string | null
           is_ai_generated: boolean | null
           is_locked: boolean | null
+          level: string | null
+          order_index: number | null
           price: number | null
+          slug: string | null
+          status: string | null
           teacher_name: string | null
           title: string
           updated_at: string
@@ -100,9 +140,14 @@ export type Database = {
           created_at?: string
           description?: string | null
           id: string
+          intro_video_url?: string | null
           is_ai_generated?: boolean | null
           is_locked?: boolean | null
+          level?: string | null
+          order_index?: number | null
           price?: number | null
+          slug?: string | null
+          status?: string | null
           teacher_name?: string | null
           title: string
           updated_at?: string
@@ -114,9 +159,14 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          intro_video_url?: string | null
           is_ai_generated?: boolean | null
           is_locked?: boolean | null
+          level?: string | null
+          order_index?: number | null
           price?: number | null
+          slug?: string | null
+          status?: string | null
           teacher_name?: string | null
           title?: string
           updated_at?: string

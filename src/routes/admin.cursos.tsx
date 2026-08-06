@@ -7,14 +7,30 @@ import {
   Edit3, 
   Loader2,
   X,
-  Sparkles,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Search,
+  Filter,
+  Eye,
+  Archive,
+  Copy,
+  Info,
+  Layout,
+  Users
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { saveContent } from "@/lib/content-admin.functions";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { CourseTreeEditor } from "@/components/admin/CourseTreeEditor";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/admin/cursos")({
   head: () => ({ meta: [{ title: "Gestão de Cursos · Admin" }] }),
@@ -29,19 +45,34 @@ function AdminCursosPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  
   const ITEMS_PER_PAGE = 8;
 
   useEffect(() => {
     fetchData();
-  }, [currentPage]);
+  }, [currentPage, statusFilter]);
 
   async function fetchData() {
     try {
       setLoading(true);
-      const { data, error, count } = await supabase
+      let query = supabase
         .from('courses')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
+        .select('*, modules:course_modules(id, lessons:course_lessons(id))', { count: 'exact' });
+
+      if (searchTerm) {
+        query = query.ilike('title', `%${searchTerm}%`);
+      }
+
+      if (statusFilter !== "all") {
+        query = query.eq('status', statusFilter);
+      } else {
+        query = query.neq('status', 'archived');
+      }
+
+      const { data, error, count } = await query
+        .order('updated_at', { ascending: false })
         .range((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE - 1);
         
       if (error) throw error;
@@ -58,7 +89,17 @@ function AdminCursosPage() {
     e.preventDefault();
     try {
       setIsSaving(true);
-      await saveContent({ data: { ...editingItem, type: 'course' } });
+      const { data, error } = await supabase
+        .from('courses')
+        .upsert({
+          ...editingItem,
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      
       toast.success("Curso salvo com sucesso!");
       setIsModalOpen(false);
       setEditingItem(null);
@@ -70,61 +111,204 @@ function AdminCursosPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Tem certeza que deseja excluir?")) return;
+  async function handleStatusChange(id: string, newStatus: string) {
     try {
-      const { error } = await supabase.from('courses').delete().eq('id', id);
+      const { error } = await supabase
+        .from('courses')
+        .update({ status: newStatus })
+        .eq('id', id);
       if (error) throw error;
-      toast.success("Curso excluído");
+      toast.success(`Curso ${newStatus === 'published' ? 'publicado' : 'desatualizado'}`);
       fetchData();
     } catch (error: any) {
-      toast.error("Erro ao excluir: " + error.message);
+      toast.error("Erro ao alterar status: " + error.message);
+    }
+  }
+
+  async function handleDuplicate(course: any) {
+    try {
+      const { id, created_at, updated_at, modules, ...rest } = course;
+      const { data, error } = await supabase
+        .from('courses')
+        .insert({
+          ...rest,
+          title: `${rest.title} (Cópia)`,
+          slug: `${rest.slug}-copia-${Date.now()}`,
+          status: 'draft'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      toast.success("Curso duplicado!");
+      fetchData();
+    } catch (error: any) {
+      toast.error("Erro ao duplicar: " + error.message);
+    }
+  }
+
+  async function handleDelete(course: any) {
+    if (!confirm(`Tem certeza que deseja arquivar o curso "${course.title}"?`)) return;
+    try {
+      const { error } = await supabase.from('courses').update({ status: 'archived' }).eq('id', course.id);
+      if (error) throw error;
+      toast.success("Curso arquivado");
+      fetchData();
+    } catch (error: any) {
+      toast.error("Erro ao arquivar: " + error.message);
     }
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold">Gestão de Cursos</h2>
-          <p className="text-sm text-white/40 text-left">Gerencie o catálogo de cursos da plataforma.</p>
+          <p className="text-sm text-white/40 text-left">Gerencie o catálogo de treinamentos e videoaulas.</p>
         </div>
         <button 
-          onClick={() => { setEditingItem({ is_ai_generated: false }); setIsModalOpen(true); }}
-          className="flex items-center gap-2 bg-[#ff6a00] px-4 py-2 rounded-lg text-sm font-bold text-black"
+          onClick={() => { 
+            setEditingItem({ 
+              title: "", 
+              slug: "", 
+              status: "draft", 
+              level: "beginner",
+              order_index: totalCount 
+            }); 
+            setIsModalOpen(true); 
+          }}
+          className="flex items-center justify-center gap-2 bg-[#ff6a00] px-4 py-2.5 rounded-lg text-sm font-bold text-black hover:bg-[#ff8c33] transition-colors"
         >
-          <Plus className="h-4 w-4" /> Novo Curso
+          <Plus className="h-4 w-4" /> Criar primeiro curso
         </button>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-4 items-center bg-[#111] p-4 rounded-xl border border-white/5">
+        <div className="relative flex-1 w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20" />
+          <input 
+            type="text"
+            placeholder="Buscar por título..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && fetchData()}
+            className="w-full bg-white/5 border border-white/10 pl-10 pr-4 py-2 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors"
+          />
+        </div>
+        <div className="flex gap-2 w-full md:w-auto">
+          <select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="bg-white/5 border border-white/10 px-4 py-2 rounded-lg text-sm outline-none focus:border-[#ff6a00] appearance-none cursor-pointer"
+          >
+            <option value="all">Todos (menos arquivados)</option>
+            <option value="published">Publicados</option>
+            <option value="draft">Rascunhos</option>
+          </select>
+        </div>
       </div>
 
       {loading ? (
         <div className="flex h-64 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
         </div>
+      ) : courses.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-64 border border-dashed border-white/10 rounded-2xl bg-white/[0.02]">
+          <Library className="h-12 w-12 text-white/10 mb-4" />
+          <p className="text-white/40 text-sm">Nenhum curso encontrado.</p>
+          <button 
+            onClick={() => { setEditingItem({ title: "", slug: "", status: "draft", level: "beginner" }); setIsModalOpen(true); }}
+            className="mt-4 text-[#ff6a00] text-sm font-bold hover:underline"
+          >
+            Criar meu primeiro curso
+          </button>
+        </div>
       ) : (
-        <div className="grid gap-4">
-          {courses.map((course) => (
-            <div key={course.id} className="p-4 rounded-xl border border-white/5 bg-[#111] flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-lg bg-[#ff6a00]/10 flex items-center justify-center text-[#ff6a00]">
-                  <Library className="h-6 w-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold">{course.title}</h3>
-                  <p className="text-xs text-white/40 text-left">{course.price ? `R$ ${course.price.toFixed(2)}` : "Grátis"}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button onClick={() => { setEditingItem(course); setIsModalOpen(true); }} className="p-2 text-white/40 hover:text-white"><Edit3 className="h-4 w-4" /></button>
-                <button onClick={() => handleDelete(course.id)} className="p-2 text-white/40 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
-              </div>
-            </div>
-          ))}
-          {/* Pagination */}
+        <div className="overflow-x-auto rounded-xl border border-white/5 bg-[#111]">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-white/5 text-[10px] font-bold uppercase tracking-widest text-white/40">
+              <tr>
+                <th className="px-6 py-4">Capa / Título</th>
+                <th className="px-6 py-4">Módulos/Aulas</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {courses.map((course) => (
+                <tr key={course.id} className="hover:bg-white/[0.02] transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-4">
+                      {course.cover_url ? (
+                        <img src={course.cover_url} alt={course.title} className="h-10 w-16 object-cover rounded bg-white/5" />
+                      ) : (
+                        <div className="h-10 w-16 rounded bg-white/5 flex items-center justify-center text-white/20">
+                          <Library className="h-5 w-5" />
+                        </div>
+                      )}
+                      <div>
+                        <div className="font-bold">{course.title}</div>
+                        <div className="text-[10px] text-white/20 uppercase tracking-tighter">
+                          Atu. {format(new Date(course.updated_at), "dd/MM/yy HH:mm", { locale: ptBR })}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col">
+                      <span className="font-medium">{course.modules?.length || 0} Módulos</span>
+                      <span className="text-[10px] text-white/40">
+                        {course.modules?.reduce((acc: number, m: any) => acc + (m.lessons?.length || 0), 0) || 0} Aulas
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={cn(
+                      "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider",
+                      course.status === 'published' ? "bg-green-500/10 text-green-500" : "bg-yellow-500/10 text-yellow-500"
+                    )}>
+                      {course.status === 'published' ? 'Publicado' : 'Rascunho'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <button 
+                        onClick={() => handleStatusChange(course.id, course.status === 'published' ? 'draft' : 'published')}
+                        title={course.status === 'published' ? 'Despublicar' : 'Publicar'}
+                        className="p-2 text-white/40 hover:text-white transition-colors"
+                      >
+                        {course.status === 'published' ? <Eye className="h-4 w-4" /> : <Archive className="h-4 w-4" />}
+                      </button>
+                      <button 
+                        onClick={() => handleDuplicate(course)}
+                        title="Duplicar"
+                        className="p-2 text-white/40 hover:text-white transition-colors"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </button>
+                      <button 
+                        onClick={() => { setEditingItem(course); setIsModalOpen(true); }}
+                        className="p-2 text-white/40 hover:text-white transition-colors"
+                      >
+                        <Edit3 className="h-4 w-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(course)}
+                        className="p-2 text-white/40 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
           {totalCount > ITEMS_PER_PAGE && (
-            <div className="mt-6 flex items-center justify-between p-4 rounded-xl border border-white/5 bg-[#111]">
+            <div className="flex items-center justify-between p-4 border-t border-white/5">
               <div className="text-[10px] font-bold uppercase tracking-widest text-white/20">
-                Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1} a {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} de {totalCount} cursos
+                Página {currentPage} de {Math.ceil(totalCount / ITEMS_PER_PAGE)}
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -148,63 +332,152 @@ function AdminCursosPage() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left">
-          <div className="w-full max-w-xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left overflow-y-auto">
+          <div className="w-full max-w-4xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-8 min-h-[600px] flex flex-col">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold">{editingItem?.id ? "Editar Curso" : "Novo Curso"}</h3>
-              <button onClick={() => setIsModalOpen(false)}><X className="h-5 w-5" /></button>
+              <h3 className="text-xl font-bold">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo Curso"}</h3>
+              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors"><X className="h-5 w-5" /></button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título</label>
-                  <input required value={editingItem?.title || ""} onChange={e => setEditingItem({...editingItem, title: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Professor</label>
-                  <input value={editingItem?.teacher_name || ""} onChange={e => setEditingItem({...editingItem, teacher_name: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
-                </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Preço (R$)</label>
-                  <input type="number" step="0.01" value={editingItem?.price || ""} onChange={e => setEditingItem({...editingItem, price: parseFloat(e.target.value)})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+            <Tabs defaultValue="info" className="flex-1 flex flex-col">
+              <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start">
+                <TabsTrigger value="info" className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
+                  <Info className="h-4 w-4" /> Informações
+                </TabsTrigger>
+                <TabsTrigger value="content" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
+                  <Layout className="h-4 w-4" /> Conteúdo
+                </TabsTrigger>
+                <TabsTrigger value="students" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
+                  <Users className="h-4 w-4" /> Alunos
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="info" className="flex-1 mt-0">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do Curso</label>
+                        <input 
+                          required 
+                          value={editingItem?.title || ""} 
+                          onChange={e => {
+                            const title = e.target.value;
+                            const slug = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+                            setEditingItem({...editingItem, title, slug});
+                          }} 
+                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
+                        />
+                      </div>
+                      
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Slug (URL amigável)</label>
+                        <input 
+                          required 
+                          value={editingItem?.slug || ""} 
+                          onChange={e => setEditingItem({...editingItem, slug: e.target.value})} 
+                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nível</label>
+                        <select 
+                          value={editingItem?.level || "beginner"} 
+                          onChange={e => setEditingItem({...editingItem, level: e.target.value})}
+                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] appearance-none cursor-pointer"
+                        >
+                          <option value="beginner">Iniciante</option>
+                          <option value="intermediate">Intermediário</option>
+                          <option value="advanced">Avançado</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <ImageUpload 
+                        value={editingItem?.cover_url || ""} 
+                        onChange={url => setEditingItem({...editingItem, cover_url: url})}
+                        bucket="course-assets"
+                        label="Imagem de Capa"
+                        description="Proporção 16:9 recomendada (ex: 1280x720px)."
+                      />
+                      
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL do Vídeo de Intro (Opcional)</label>
+                        <input 
+                          value={editingItem?.intro_video_url || ""} 
+                          onChange={e => setEditingItem({...editingItem, intro_video_url: e.target.value})} 
+                          placeholder="YouTube, Vimeo ou Panda"
+                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição Curta</label>
+                    <textarea 
+                      rows={3} 
+                      value={editingItem?.description || ""} 
+                      onChange={e => setEditingItem({...editingItem, description: e.target.value})} 
+                      className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors resize-none" 
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                    <div className="space-y-0.5">
+                      <div className="text-sm font-bold">Status da Publicação</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-widest">Defina se o curso estará visível para alunos</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button 
+                        type="button"
+                        onClick={() => setEditingItem({...editingItem, status: 'draft'})}
+                        className={cn(
+                          "px-4 py-2 rounded-lg text-xs font-bold transition-all",
+                          editingItem?.status === 'draft' ? "bg-yellow-500/20 text-yellow-500 border border-yellow-500/50" : "bg-white/5 text-white/40 border border-transparent"
+                        )}
+                      >
+                        Rascunho
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => setEditingItem({...editingItem, status: 'published'})}
+                        className={cn(
+                          "px-4 py-2 rounded-lg text-xs font-bold transition-all",
+                          editingItem?.status === 'published' ? "bg-green-500/20 text-green-500 border border-green-500/50" : "bg-white/5 text-white/40 border border-transparent"
+                        )}
+                      >
+                        Publicado
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 flex gap-3">
+                    <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 rounded-lg bg-white/5 font-bold hover:bg-white/10 transition-colors">Cancelar</button>
+                    <button type="submit" disabled={isSaving} className="flex-1 py-3 rounded-lg bg-[#ff6a00] text-black font-bold disabled:opacity-50 hover:bg-[#ff8c33] transition-colors">
+                      {isSaving ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" /> Salvando...
+                        </div>
+                      ) : "Salvar Informações"}
+                    </button>
+                  </div>
+                </form>
+              </TabsContent>
+
+              <TabsContent value="content" className="flex-1 mt-0">
+                {editingItem?.id && <CourseTreeEditor courseId={editingItem.id} />}
+              </TabsContent>
+
+              <TabsContent value="students" className="flex-1 mt-0">
+                <div className="flex flex-col items-center justify-center py-20 text-white/20">
+                  <Users className="h-12 w-12 mb-4" />
+                  <p className="text-sm">Funcionalidade de listagem de alunos em desenvolvimento.</p>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Badge (Ex: Mais Vendido)</label>
-                  <input value={editingItem?.badge || ""} onChange={e => setEditingItem({...editingItem, badge: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição</label>
-                <textarea rows={2} value={editingItem?.description || ""} onChange={e => setEditingItem({...editingItem, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none" />
-              </div>
-
-              <ImageUpload 
-                value={editingItem?.cover_url || ""} 
-                onChange={url => setEditingItem({...editingItem, cover_url: url})}
-                label="URL da Imagem de Capa"
-                description="Recomendado: 1280x720px ou proporção 16:9. Formatos aceitos: JPG, PNG."
-              />
-
-              <div className="flex items-center gap-2 pb-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    checked={editingItem?.is_locked || false} 
-                    onChange={e => setEditingItem({...editingItem, is_locked: e.target.checked})}
-                    className="accent-[#ff6a00]"
-                  />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Bloqueado para Venda</span>
-                </label>
-              </div>
-              <div className="pt-4 flex gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 rounded-lg bg-white/5 font-bold hover:bg-white/10">Cancelar</button>
-                <button type="submit" disabled={isSaving} className="flex-1 py-3 rounded-lg bg-[#ff6a00] text-black font-bold disabled:opacity-50">{isSaving ? "Salvando..." : "Salvar"}</button>
-              </div>
-            </form>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       )}
