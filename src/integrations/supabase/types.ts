@@ -160,6 +160,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          is_ai_generated: boolean | null
           is_locked: boolean | null
           original_price: number | null
           pages_count: number | null
@@ -173,6 +174,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id: string
+          is_ai_generated?: boolean | null
           is_locked?: boolean | null
           original_price?: number | null
           pages_count?: number | null
@@ -186,6 +188,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          is_ai_generated?: boolean | null
           is_locked?: boolean | null
           original_price?: number | null
           pages_count?: number | null
