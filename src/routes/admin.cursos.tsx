@@ -13,14 +13,24 @@ import {
   Filter,
   Eye,
   Archive,
-  Copy
+  Copy,
+  Info,
+  Layout,
+  Users
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { CourseTreeEditor } from "@/components/admin/CourseTreeEditor";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/admin/cursos")({
   head: () => ({ meta: [{ title: "Gestão de Cursos · Admin" }] }),
