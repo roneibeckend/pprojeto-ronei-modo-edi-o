@@ -11,8 +11,10 @@ import {
   ChevronRight,
   AlertCircle,
   MessageSquare,
-  Activity
+  Activity,
+  UserCheck
 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin/")({
@@ -20,6 +22,7 @@ export const Route = createFileRoute("/admin/")({
 });
 
 function AdminDashboard() {
+  const { isAdmin, hasModule } = useAuth();
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
@@ -90,12 +93,13 @@ function AdminDashboard() {
           </div>
           <div className="grid gap-3">
             {[
-              { to: "/admin/cursos", label: "Gerenciar Catálogo de Cursos" },
-              { to: "/admin/ebooks", label: "Biblioteca de E-books" },
-              { to: "/admin/alunos", label: "Base de Alunos e Matrículas" },
-              { to: "/admin/suporte", label: "Central de Suporte (Tickets)", highlight: (stats?.pendingTickets || 0) > 0 },
-              { to: "/admin/receitas", label: "Central de Receitas" },
-            ].map((link, i) => (
+              { to: "/admin/cursos", label: "Gerenciar Catálogo de Cursos", visible: isAdmin },
+              { to: "/admin/ebooks", label: "Biblioteca de E-books", visible: isAdmin },
+              { to: "/admin/alunos", label: "Base de Alunos e Matrículas", visible: hasModule("alunos") },
+              { to: "/admin/suporte", label: "Central de Suporte (Tickets)", highlight: (stats?.pendingTickets || 0) > 0, visible: hasModule("suporte") },
+              { to: "/admin/receitas", label: "Central de Receitas", visible: isAdmin },
+              { to: "/admin/usuarios", label: "Gestão de Equipe", visible: isAdmin, icon: UserCheck },
+            ].filter(link => link.visible).map((link, i) => (
               <Link 
                 key={i} 
                 to={link.to}
