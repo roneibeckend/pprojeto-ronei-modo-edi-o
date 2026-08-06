@@ -123,6 +123,47 @@ export type Database = {
         }
         Relationships: []
       }
+      ebook_chapters: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          ebook_id: string
+          id: string
+          order_index: number
+          reading_minutes: number | null
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          ebook_id: string
+          id?: string
+          order_index?: number
+          reading_minutes?: number | null
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          ebook_id?: string
+          id?: string
+          order_index?: number
+          reading_minutes?: number | null
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ebook_chapters_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ebook_enrollments: {
         Row: {
           created_at: string
@@ -148,6 +189,38 @@ export type Database = {
             columns: ["ebook_id"]
             isOneToOne: false
             referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ebook_progress: {
+        Row: {
+          chapter_id: string
+          completed_at: string | null
+          id: string
+          last_read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          completed_at?: string | null
+          id?: string
+          last_read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          completed_at?: string | null
+          id?: string
+          last_read_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ebook_progress_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "ebook_chapters"
             referencedColumns: ["id"]
           },
         ]
