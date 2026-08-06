@@ -7,6 +7,7 @@ import {
   Users, 
   Settings,
   ShieldCheck,
+  ChefHat,
   ArrowLeft,
   ChevronLeft,
   Loader2
@@ -42,8 +43,9 @@ function AdminRootLayout() {
 
   const navItems = [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-    { to: "/admin/cursos", label: "Gestão de Cursos", icon: Library },
-    { to: "/admin/ebooks", label: "Gestão de E-books", icon: BookOpen },
+    { to: "/admin/cursos", label: "Cursos", icon: Library },
+    { to: "/admin/receitas", label: "Receitas", icon: ChefHat },
+    { to: "/admin/ebooks", label: "E-books", icon: BookOpen },
     { to: "/admin/alunos", label: "Alunos", icon: Users },
   ];
 

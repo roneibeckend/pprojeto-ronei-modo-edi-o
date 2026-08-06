@@ -119,13 +119,25 @@ function AdminCursosPage() {
               <button onClick={() => setIsModalOpen(false)}><X className="h-5 w-5" /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título</label>
-                <input required value={editingItem?.title || ""} onChange={e => setEditingItem({...editingItem, title: e.target.value})} className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+                <input required value={editingItem?.title || ""} onChange={e => setEditingItem({...editingItem, title: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Subtítulo (Opcional)</label>
+                <input value={editingItem?.subtitle || ""} onChange={e => setEditingItem({...editingItem, subtitle: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+              </div>
+              <div className="space-y-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Preço</label>
-                <input type="number" step="0.01" value={editingItem?.price || ""} onChange={e => setEditingItem({...editingItem, price: parseFloat(e.target.value)})} className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+                <input type="number" step="0.01" value={editingItem?.price || ""} onChange={e => setEditingItem({...editingItem, price: parseFloat(e.target.value)})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição</label>
+                <textarea rows={3} value={editingItem?.description || ""} onChange={e => setEditingItem({...editingItem, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Professor</label>
+                <input value={editingItem?.teacher_name || ""} onChange={e => setEditingItem({...editingItem, teacher_name: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
               </div>
               <div className="pt-4 flex gap-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 rounded-lg bg-white/5 font-bold hover:bg-white/10">Cancelar</button>
