@@ -23,7 +23,8 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             .eq('category', 'asaas')
             .single();
 
-          const expectedToken = integration?.credentials?.webhookToken || integration?.credentials?.apiKey;
+          const credentials = integration?.credentials as Record<string, any>;
+          const expectedToken = credentials?.webhookToken || credentials?.apiKey;
           
           if (!expectedToken || token !== expectedToken) {
             console.error('[Webhook Asaas] Token de acesso inválido ou ausente');
