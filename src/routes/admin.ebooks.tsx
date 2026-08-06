@@ -11,6 +11,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { saveContent } from "@/lib/content-admin.functions";
 import { toast } from "sonner";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export const Route = createFileRoute("/admin/ebooks")({
   head: () => ({ meta: [{ title: "Gestão de E-books · Admin" }] }),
@@ -153,11 +154,12 @@ function AdminEbooksPage() {
                   </label>
                 </div>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL da Imagem de Capa</label>
-                <input value={editingItem?.cover_url || ""} onChange={e => setEditingItem({...editingItem, cover_url: e.target.value})} placeholder="https://images.unsplash.com/..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
-                <p className="text-[9px] text-white/30 italic">Recomendado: Capa em formato vertical (2:3 ou 3:4).</p>
-              </div>
+              <ImageUpload 
+                value={editingItem?.cover_url || ""} 
+                onChange={url => setEditingItem({...editingItem, cover_url: url})}
+                label="URL da Imagem de Capa"
+                description="Recomendado: Capa em formato vertical (2:3 ou 3:4). Formatos aceitos: JPG, PNG."
+              />
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição</label>
                 <textarea rows={3} value={editingItem?.description || ""} onChange={e => setEditingItem({...editingItem, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none" />
