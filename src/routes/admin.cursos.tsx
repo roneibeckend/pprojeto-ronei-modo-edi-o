@@ -404,6 +404,18 @@ function AdminCursosPage() {
                       />
                       
                       <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Preço do Curso (R$)</label>
+                        <input 
+                          type="number"
+                          step="0.01"
+                          placeholder="0,00"
+                          value={editingItem?.price || ""} 
+                          onChange={e => setEditingItem({...editingItem, price: parseFloat(e.target.value)})} 
+                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL do Vídeo de Intro (Opcional)</label>
                         <input 
                           value={editingItem?.intro_video_url || ""} 
