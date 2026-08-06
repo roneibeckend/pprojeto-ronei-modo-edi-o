@@ -210,6 +210,53 @@ function AdminReceitasPage() {
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL da Imagem</label>
                   <input value={editingItem?.image_url || ""} onChange={e => setEditingItem({...editingItem, image_url: e.target.value})} placeholder="https://..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" />
                 </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL do Vídeo (Stories)</label>
+                  <div className="flex gap-2">
+                    <input 
+                      value={editingItem?.video_url || ""} 
+                      onChange={e => setEditingItem({...editingItem, video_url: e.target.value})} 
+                      placeholder="https://... (ou upload)" 
+                      className="flex-1 bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" 
+                    />
+                    <label className="flex items-center justify-center px-4 rounded-lg bg-white/5 border border-white/10 cursor-pointer hover:bg-white/10 transition">
+                      <Plus className="h-4 w-4" />
+                      <input 
+                        type="file" 
+                        accept="video/*" 
+                        className="hidden" 
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          
+                          try {
+                            const fileExt = file.name.split('.').pop();
+                            const fileName = `${Math.random()}.${fileExt}`;
+                            const filePath = `${fileName}`;
+
+                            toast.loading("Fazendo upload do vídeo...");
+                            const { error: uploadError, data } = await supabase.storage
+                              .from('recipe-videos')
+                              .upload(filePath, file);
+
+                            if (uploadError) throw uploadError;
+
+                            const { data: { publicUrl } } = supabase.storage
+                              .from('recipe-videos')
+                              .getPublicUrl(filePath);
+
+                            setEditingItem({...editingItem, video_url: publicUrl});
+                            toast.dismiss();
+                            toast.success("Vídeo enviado com sucesso!");
+                          } catch (error: any) {
+                            toast.dismiss();
+                            toast.error("Erro no upload: " + error.message);
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
               </div>
 
               <div className="flex items-center gap-3 py-2">

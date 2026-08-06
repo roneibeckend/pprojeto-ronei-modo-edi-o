@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { Clock, Users, TrendingUp, Loader2 } from "lucide-react";
+import { Clock, Users, TrendingUp, Loader2, Play } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
+import { StoryPlayer } from "@/components/platform/StoryPlayer";
 import { recipeCategories } from "@/lib/platform-data";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -16,6 +17,7 @@ function RecipesPage() {
   const [loading, setLoading] = useState(true);
   const [cat, setCat] = useState("Todos");
   const [open, setOpen] = useState<any | null>(null);
+  const [activeStory, setActiveStory] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -69,6 +71,19 @@ function RecipesPage() {
             <article key={r.id} className="glass card-tilt overflow-hidden rounded-2xl">
               <div className="aspect-video overflow-hidden">
                 <img src={r.image_url || "/placeholder.svg"} alt={r.name} className="h-full w-full object-cover" loading="lazy" />
+                {r.video_url && (
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveStory(r);
+                    }}
+                    className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors"
+                  >
+                    <div className="grid h-12 w-12 place-items-center rounded-full bg-fire text-white shadow-lg shadow-fire/20 scale-90 group-hover:scale-100 transition-transform">
+                      <Play className="h-6 w-6 fill-white" />
+                    </div>
+                  </button>
+                )}
               </div>
               <div className="p-5">
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">{r.category}</div>
@@ -128,6 +143,13 @@ function RecipesPage() {
             </div>
           </div>
         </div>
+      )}
+      {activeStory && (
+        <StoryPlayer 
+          url={activeStory.video_url} 
+          title={activeStory.name} 
+          onClose={() => setActiveStory(null)} 
+        />
       )}
     </div>
   );
