@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Play, Sparkles, Lock, ShoppingCart, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { ProgressSummary } from "@/components/platform/ProgressSummary";
+import { IMG } from "@/lib/platform-data";
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
