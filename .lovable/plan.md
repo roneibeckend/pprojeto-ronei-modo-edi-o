@@ -36,4 +36,3 @@ Criar migração SQL para as tabelas solicitadas:
 - Validação com `zod` e `react-hook-form` em todos os formulários.
 - Garantir que as rotas `/admin/*` e `/app.admin/*` respeitem o papel `admin`.
 - Invalidação de cache via TanStack Query após mutações.
-
