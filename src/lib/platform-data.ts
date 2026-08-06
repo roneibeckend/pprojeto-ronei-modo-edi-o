@@ -199,6 +199,23 @@ export const supportQuestions = [
   { q: "Como emitir meu certificado?", a: "Conclua 100% de um curso e o certificado é liberado automaticamente na aba \"Certificados\"." },
 ];
 
+export const orders = [
+  {
+    id: "#ORD-8291",
+    date: "03/03/2026",
+    product: "Do Zero aos 10k: O Guia Completo do Espetinho",
+    status: "Pago",
+    value: "R$ 97,00",
+  },
+  {
+    id: "#ORD-9102",
+    date: "12/06/2026",
+    product: "Espetinho Lucrativo: Técnicas Avançadas",
+    status: "Pago",
+    value: "R$ 47,00",
+  },
+];
+
 export const student = {
   name: "André Silva",
   email: "andre@exemplo.com",
