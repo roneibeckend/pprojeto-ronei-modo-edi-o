@@ -4,18 +4,22 @@ import {
   Flame, 
   Send, 
   MessageCircle, 
-  Ticket, 
+  Ticket as TicketIcon, 
   ChevronRight, 
   User, 
   HelpCircle,
   PlusCircle,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { supportQuestions } from "@/lib/platform-data";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/app/suporte")({
   head: () => ({ meta: [{ title: "Suporte e Central de Ajuda — Espetinho na Veia" }] }),
@@ -23,16 +27,10 @@ export const Route = createFileRoute("/app/suporte")({
 });
 
 type Msg = { role: "user" | "ai"; text: string; time: string };
-type TicketData = {
-  id: string;
-  subject: string;
-  category: string;
-  status: "Aberto" | "Em análise" | "Respondido" | "Fechado";
-  date: string;
-  lastUpdate: string;
-};
 
 function SupportPage() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"chat" | "tickets">("chat");
   const [messages, setMessages] = useState<Msg[]>([
     { 
@@ -44,16 +42,23 @@ function SupportPage() {
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [isOpeningTicket, setIsOpeningTicket] = useState(false);
-  const [myTickets, setMyTickets] = useState<TicketData[]>([
-    {
-      id: "TKT-2026-001",
-      subject: "Dúvida sobre o módulo de molhos",
-      category: "Curso",
-      status: "Respondido",
-      date: "04/08/2026",
-      lastUpdate: "Ontem"
-    }
-  ]);
+
+  // Buscar tickets do banco
+  const { data: myTickets = [], isLoading: isLoadingTickets } = useQuery({
+    queryKey: ["support-tickets", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from("support_tickets")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
 
   const endRef = useRef<HTMLDivElement>(null);
 
