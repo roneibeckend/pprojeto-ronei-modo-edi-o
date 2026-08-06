@@ -38,155 +38,78 @@ export type Course = {
   locked?: boolean;
   price?: number;
   badge?: string;
+  isComingSoon?: boolean;
 };
 
 export const courses: Course[] = [
   {
-    id: "curso-demo-teste",
-    title: "Curso Demo — Ambiente de Testes",
-    description:
-      "Curso fictício liberado para validação da plataforma. Use para testar player, progresso, materiais e certificados.",
-    cover: IMG.skewersHeld,
-    teacher: "Equipe Espetinho na Veia",
-    progress: 20,
-    totalLessons: 4,
-    badge: "DEMO",
+    id: "do-zero-aos-10k",
+    title: "Do Zero aos 10k: O Guia Completo do Espetinho",
+    description: "O treinamento definitivo para transformar espetinhos em uma fonte de renda de R$ 10.000 por mês.",
+    cover: IMG.hero,
+    teacher: "Ronnei — Espetos Grill",
+    progress: 0,
+    totalLessons: 15,
+    locked: false, // Inicialmente liberado para quem comprou (simulado aqui como desbloqueado)
+    badge: "O MAIS VENDIDO",
     modules: [
       {
         id: "m1",
-        title: "Módulo Demo — Fluxo de validação",
+        title: "Módulo 1 — Mentalidade e Planejamento",
         lessons: [
-          { id: "l1", title: "Tour da plataforma", duration: "3:20", completed: true },
-          { id: "l2", title: "Testando o player de vídeo", duration: "2:45" },
-          { id: "l3", title: "Testando materiais e anotações", duration: "4:10" },
-          { id: "l4", title: "Encerramento e certificado de teste", duration: "1:50" },
+          { id: "l1", title: "Introdução ao método", duration: "5:30" },
+          { id: "l2", title: "Quanto investir para começar", duration: "10:15" },
         ],
       },
     ],
   },
   {
-    id: "espetinho-lucrativo",
-    title: "Espetinho Lucrativo",
-    description:
-      "Aprenda desde a escolha das carnes até a venda dos primeiros espetinhos.",
+    id: "espetinho-lucrativo-advanced",
+    title: "Espetinho Lucrativo: Técnicas Avançadas",
+    description: "Domine cortes nobres, temperos secretos e a arte da brasa perfeita para cobrar mais caro.",
     cover: IMG.platter1,
     teacher: "Ronnei — Espetos Grill",
-    progress: 42,
+    progress: 0,
     totalLessons: 20,
-    modules: [
-      {
-        id: "m1",
-        title: "Módulo 1 — Começando do jeito certo",
-        lessons: [
-          { id: "l1", title: "Boas-vindas", duration: "4:12", completed: true },
-          { id: "l2", title: "Como funciona o mercado de espetinhos", duration: "9:30", completed: true },
-          { id: "l3", title: "Equipamentos necessários", duration: "12:05", completed: true },
-          { id: "l4", title: "Quanto investir para começar", duration: "8:44" },
-        ],
-      },
-      {
-        id: "m2",
-        title: "Módulo 2 — Escolha e preparação das carnes",
-        lessons: [
-          { id: "l5", title: "Melhores carnes para espetinho", duration: "11:20", completed: true },
-          { id: "l6", title: "Como cortar corretamente", duration: "14:02", completed: true },
-          { id: "l7", title: "Como temperar", duration: "10:15" },
-          { id: "l8", title: "Como armazenar com segurança", duration: "7:48" },
-        ],
-      },
-      {
-        id: "m3",
-        title: "Módulo 3 — Montagem e produção",
-        lessons: [
-          { id: "l9", title: "Padronização dos espetinhos", duration: "9:12" },
-          { id: "l10", title: "Quantidade ideal de carne", duration: "6:50" },
-          { id: "l11", title: "Organização da produção", duration: "11:33", locked: true },
-          { id: "l12", title: "Como evitar desperdícios", duration: "8:22", locked: true },
-        ],
-      },
-      {
-        id: "m4",
-        title: "Módulo 4 — Preço e lucro",
-        lessons: [
-          { id: "l13", title: "Como calcular o custo", duration: "13:10", locked: true },
-          { id: "l14", title: "Como definir o preço", duration: "10:44", locked: true },
-          { id: "l15", title: "Margem de lucro", duration: "9:05", locked: true },
-          { id: "l16", title: "Combos e promoções", duration: "8:18", locked: true },
-        ],
-      },
-      {
-        id: "m5",
-        title: "Módulo 5 — Divulgação e vendas",
-        lessons: [
-          { id: "l17", title: "Como divulgar no Instagram", duration: "12:40", locked: true },
-          { id: "l18", title: "Como vender pelo WhatsApp", duration: "10:12", locked: true },
-          { id: "l19", title: "Fotos que despertam vontade", duration: "9:33", locked: true },
-          { id: "l20", title: "Atendimento e fidelização", duration: "11:05", locked: true },
-        ],
-      },
-    ],
+    locked: true,
+    price: 97.0,
+    modules: [],
   },
   {
-    id: "molhos-acompanhamentos",
-    title: "Molhos e Acompanhamentos",
-    description:
-      "Receitas para aumentar o valor do pedido e melhorar a experiência do cliente.",
+    id: "molhos-acompanhamentos-v2",
+    title: "Mestres dos Molhos e Acompanhamentos",
+    description: "As receitas que fazem o cliente voltar toda semana e aumentam seu lucro em 40%.",
     cover: IMG.platter2,
-    teacher: "Ronnei — Espetos Grill",
+    teacher: "Equipe Espetinho na Veia",
     progress: 0,
     totalLessons: 12,
     locked: true,
     price: 47.9,
-    modules: [
-      { id: "m1", title: "Molhos clássicos", lessons: [
-        { id: "l1", title: "Vinagrete artesanal", duration: "6:20", completed: true },
-        { id: "l2", title: "Molho da casa", duration: "7:40" },
-        { id: "l3", title: "Chimichurri", duration: "5:55" },
-      ]},
-      { id: "m2", title: "Acompanhamentos", lessons: [
-        { id: "l4", title: "Farofa crocante", duration: "8:10" },
-        { id: "l5", title: "Pão de alho", duration: "6:00" },
-        { id: "l6", title: "Arroz especial", duration: "9:22", locked: true },
-      ]},
-    ],
+    modules: [],
   },
   {
-    id: "vender-mais",
-    title: "Como Vender Mais",
-    description: "Estratégias de preço, divulgação, atendimento e fidelização de clientes.",
+    id: "vendas-e-marketing-espeto",
+    title: "Máquina de Vendas: Do Zero ao Sucesso no Digital",
+    description: "Como usar o Instagram e WhatsApp para lotar seu ponto de venda todos os dias.",
     cover: IMG.chef,
-    teacher: "Ronnei — Espetos Grill",
+    teacher: "Equipe Espetinho na Veia",
     progress: 0,
     totalLessons: 10,
     locked: true,
     price: 67.0,
-    modules: [
-      { id: "m1", title: "Precificação inteligente", lessons: [
-        { id: "l1", title: "Preço percebido x preço real", duration: "10:15" },
-        { id: "l2", title: "Combos que vendem", duration: "8:40" },
-      ]},
-      { id: "m2", title: "Divulgação prática", lessons: [
-        { id: "l3", title: "Instagram do zero", duration: "12:00", locked: true },
-        { id: "l4", title: "WhatsApp como caixa", duration: "9:30", locked: true },
-      ]},
-    ],
+    modules: [],
   },
   {
-    id: "gestao-negocio",
-    title: "Gestão do Negócio",
-    description: "Organização de estoque, custos, lucros e planejamento de compras.",
+    id: "novo-curso-em-breve",
+    title: "Nova Mentoria de Negócios (Em breve)",
+    description: "Um passo além para quem deseja escalar e abrir sua própria rede de espetinhos.",
     cover: IMG.ribeye,
     teacher: "Ronnei — Espetos Grill",
     progress: 0,
-    totalLessons: 14,
+    totalLessons: 0,
     locked: true,
-    price: 97.0,
-    modules: [
-      { id: "m1", title: "Controle financeiro", lessons: [
-        { id: "l1", title: "Separar PF e PJ", duration: "9:00", completed: true },
-        { id: "l2", title: "Planilha de custos", duration: "11:20" },
-      ]},
-    ],
+    isComingSoon: true,
+    modules: [],
   },
 ];
 
@@ -287,8 +210,8 @@ export const student = {
   materials: 8,
   streak: 7,
   lastLesson: {
-    courseId: "espetinho-lucrativo",
-    lessonTitle: "Como temperar",
+    courseId: "do-zero-aos-10k",
+    lessonTitle: "Introdução ao método",
     percent: 64,
   },
 };
