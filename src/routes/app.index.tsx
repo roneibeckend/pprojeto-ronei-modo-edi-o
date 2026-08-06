@@ -21,7 +21,7 @@ function Dashboard() {
   const { data: dbCourses, isLoading: isLoadingCourses } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("courses").select("*");
+      const { data, error } = await supabase.from("courses").select("*").eq("is_published", true);
       if (error) throw error;
       return data;
     },
