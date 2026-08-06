@@ -101,8 +101,10 @@ function IntegrationsPage() {
       setIsTesting(true);
       const result = await testConnectionFn({
         data: {
+          id: editingItem.id,
           category: editingItem.category,
-          credentials: editingItem.credentials
+          credentials: editingItem.credentials,
+          settings: editingItem.settings
         }
       });
       if (result.success) {
