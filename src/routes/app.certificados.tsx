@@ -1,10 +1,40 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2 } from "lucide-react";
+import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2, Printer } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { certificates, student } from "@/lib/platform-data";
+import { certificates as baseCertificates, courses, student } from "@/lib/platform-data";
 import { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+
+// Estilos específicos para impressão
+const printStyles = `
+  @media print {
+    @page {
+      size: landscape;
+      margin: 0;
+    }
+    body * {
+      visibility: hidden;
+    }
+    #printable-certificate, #printable-certificate * {
+      visibility: visible;
+    }
+    #printable-certificate {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: #f5efe4 ! from-inherit;
+    }
+    /* Ocultar elementos de UI no certificado durante a impressão */
+    .no-print {
+      display: none !important;
+    }
+  }
+`;
 
 async function downloadCertificatePDF(node: HTMLElement, cert: { id: string; course: string }) {
   const canvas = await html2canvas(node, {
@@ -39,6 +69,17 @@ export const Route = createFileRoute("/app/certificados")({
 const BRAND = "#ff6a00";
 
 function CertificatesPage() {
+  // Sincronizar dinamicamente com o progresso dos cursos
+  const certificates = baseCertificates.map(cert => {
+    const course = courses.find(c => c.id === cert.courseId);
+    const isUnlocked = course ? course.progress === 100 : cert.unlocked;
+    return {
+      ...cert,
+      unlocked: isUnlocked,
+      completedAt: isUnlocked ? (cert.completedAt === "—" ? "06/08/2026" : cert.completedAt) : "—"
+    };
+  });
+
   const [preview, setPreview] = useState<{ cert: typeof certificates[number]; autoDownload?: boolean } | null>(null);
   const unlockedCount = certificates.filter((c) => c.unlocked).length;
   const totalHours = certificates.filter((c) => c.unlocked).reduce((s, c) => s + c.hours, 0);
@@ -46,6 +87,7 @@ function CertificatesPage() {
 
   return (
     <div>
+      <style>{printStyles}</style>
       <PageHeader title="Certificados" subtitle="Sua vitrine oficial de conquistas — assinada por Ronnei e verificável por código único." />
 
       {/* Hero stats */}
@@ -99,7 +141,7 @@ function StatCard({ icon, label, value, accent, small }: { icon: React.ReactNode
 
 /* -------------------- CARD -------------------- */
 
-function CertCard({ cert, onPreview, onDownload }: { cert: typeof certificates[number]; onPreview: () => void; onDownload: () => void }) {
+function CertCard({ cert, onPreview, onDownload }: { cert: any; onPreview: () => void; onDownload: () => void }) {
   const locked = !cert.unlocked;
   return (
     <article
@@ -177,7 +219,7 @@ function CertCard({ cert, onPreview, onDownload }: { cert: typeof certificates[n
 
 /* -------------------- MINI THUMBNAIL -------------------- */
 
-function MiniCertificate({ cert, locked }: { cert: typeof certificates[number]; locked: boolean }) {
+function MiniCertificate({ cert, locked }: { cert: any; locked: boolean }) {
   return (
     <div className="relative h-full w-full bg-[#f5efe4]">
       {/* Guilloché pattern */}
@@ -234,7 +276,7 @@ function CornerOrnament({ className = "" }: { className?: string }) {
 
 /* -------------------- FULL MODAL -------------------- */
 
-function CertificateModal({ cert, onClose, autoDownload }: { cert: typeof certificates[number]; onClose: () => void; autoDownload?: boolean }) {
+function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose: () => void; autoDownload?: boolean }) {
   const certRef = useRef<HTMLDivElement | null>(null);
   const [downloading, setDownloading] = useState(false);
 
@@ -273,7 +315,7 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: typeof certif
               <div className="font-display text-lg font-bold text-white">{cert.course}</div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 no-print">
             <button
               onClick={handleDownload}
               disabled={downloading}
@@ -281,6 +323,12 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: typeof certif
             >
               {downloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" strokeWidth={2.5} />}
               {downloading ? "Gerando..." : "Baixar PDF"}
+            </button>
+            <button 
+              onClick={() => window.print()}
+              className="flex items-center gap-1.5 rounded-md border border-white/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:border-[#ff6a00]/50"
+            >
+              <Printer className="h-4 w-4" /> Imprimir
             </button>
             <button className="flex items-center gap-1.5 rounded-md border border-white/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:border-[#ff6a00]/50">
               <Share2 className="h-4 w-4" /> Compartilhar
@@ -292,7 +340,7 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: typeof certif
         </div>
 
         {/* Certificate */}
-        <div ref={certRef}>
+        <div ref={certRef} id="printable-certificate">
           <FullCertificate cert={cert} />
         </div>
       </div>
@@ -300,7 +348,7 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: typeof certif
   );
 }
 
-function FullCertificate({ cert }: { cert: typeof certificates[number] }) {
+function FullCertificate({ cert }: { cert: any }) {
   const verifyUrl = `verifica.espetinhonaveia.com/${cert.code ?? "—"}`;
   return (
     <div className="relative overflow-hidden bg-[#f5efe4] text-[#1a1207] shadow-2xl">
