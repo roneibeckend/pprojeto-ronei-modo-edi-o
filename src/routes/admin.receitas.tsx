@@ -117,7 +117,12 @@ function AdminReceitasPage() {
               </div>
               <div className="p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00]">{recipe.category}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00]">{recipe.category}</span>
+                    {!recipe.is_published && (
+                      <span className="text-[10px] font-bold uppercase tracking-widest bg-white/10 px-2 py-0.5 rounded text-white/40">Oculto</span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-1">
                     <button onClick={() => { setEditingItem(recipe); setIsModalOpen(true); }} className="p-1.5 text-white/40 hover:text-white transition"><Edit3 className="h-4 w-4" /></button>
                     <button onClick={() => handleDelete(recipe.id)} className="p-1.5 text-white/40 hover:text-red-500 transition"><Trash2 className="h-4 w-4" /></button>
