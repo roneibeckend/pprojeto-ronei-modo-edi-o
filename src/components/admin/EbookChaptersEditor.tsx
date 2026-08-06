@@ -29,7 +29,6 @@ import {
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 
 interface Chapter {
   id?: string;
@@ -240,7 +239,7 @@ export function EbookChaptersEditor({ ebookId }: EbookChaptersEditorProps) {
       if (res && res.suggestions) {
         setSuggestions(res.suggestions);
         const initialSelected: Record<string, string[]> = {};
-        res.suggestions.forEach(s => {
+        res.suggestions.forEach((s: { moduleId: string; chapters: string[] }) => {
           initialSelected[s.moduleId] = [...s.chapters];
         });
         setSelectedChapters(initialSelected);
