@@ -17,6 +17,7 @@ import {
   Flame,
   Shield,
   ChevronRight,
+  Settings,
 } from "lucide-react";
 import { student } from "@/lib/platform-data";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,7 +57,10 @@ const navGroups: { title: string; items: NavItem[] }[] = [
   },
   {
     title: "Gestão",
-    items: [{ to: "/app/admin", label: "Painel Admin", icon: Shield, badge: "Admin" }],
+    items: [
+      { to: "/app/admin", label: "Painel Admin", icon: Shield, badge: "Admin" },
+      { to: "/app/admin/integracoes", label: "Integrações", icon: Settings },
+    ],
   },
 ];
 

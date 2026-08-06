@@ -21,6 +21,7 @@ function AdminLayout() {
     { to: "/app/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/app/admin/financeiro", label: "Financeiro", icon: DollarSign },
     { to: "/app/admin/alunos", label: "Alunos", icon: Users },
+    { to: "/app/admin/integracoes", label: "Integrações", icon: Settings },
   ];
 
   const isActive = (to: string, exact?: boolean) => 
