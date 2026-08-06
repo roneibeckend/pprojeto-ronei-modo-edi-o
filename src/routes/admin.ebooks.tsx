@@ -113,7 +113,7 @@ function AdminEbooksPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left">
-          <div className="w-full max-w-xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6">
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 custom-scrollbar">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold">{editingItem?.id ? "Editar E-book" : "Novo E-book"}</h3>
               <button type="button" onClick={() => { setIsModalOpen(false); setEditingItem(null); }} className="text-white/40 hover:text-white transition-colors"><X className="h-5 w-5" /></button>
