@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   Users as UsersIcon, 
@@ -15,20 +17,13 @@ import {
   UserCheck
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { Link } from "@tanstack/react-router";
-
-import { useAuth } from "@/hooks/use-auth";
-import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin/")({
-  beforeLoad: async ({ context }) => {
-    // Verificação extra de segurança para a rota raiz do admin
-  },
   component: AdminDashboard,
 });
 
 function AdminDashboard() {
-  const { role, isLoading: authLoading } = useAuth();
+  const { role, isLoading: authLoading, isAdmin, hasModule } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,7 +33,6 @@ function AdminDashboard() {
     }
   }, [authLoading, role, navigate]);
 
-  const { isAdmin, hasModule } = useAuth();
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
@@ -70,7 +64,7 @@ function AdminDashboard() {
     }
   });
 
-  if (isLoading) {
+  if (isLoading || authLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
