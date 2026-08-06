@@ -129,6 +129,7 @@ export type Database = {
           created_at: string | null
           ebook_id: string
           id: string
+          module_id: string | null
           order_index: number
           reading_minutes: number | null
           title: string
@@ -139,6 +140,7 @@ export type Database = {
           created_at?: string | null
           ebook_id: string
           id?: string
+          module_id?: string | null
           order_index?: number
           reading_minutes?: number | null
           title: string
@@ -149,6 +151,7 @@ export type Database = {
           created_at?: string | null
           ebook_id?: string
           id?: string
+          module_id?: string | null
           order_index?: number
           reading_minutes?: number | null
           title?: string
@@ -160,6 +163,13 @@ export type Database = {
             columns: ["ebook_id"]
             isOneToOne: false
             referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ebook_chapters_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "ebook_modules"
             referencedColumns: ["id"]
           },
         ]
@@ -186,6 +196,41 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "ebook_enrollments_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ebook_modules: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          ebook_id: string
+          id: string
+          order_index: number
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          ebook_id: string
+          id?: string
+          order_index?: number
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          ebook_id?: string
+          id?: string
+          order_index?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ebook_modules_ebook_id_fkey"
             columns: ["ebook_id"]
             isOneToOne: false
             referencedRelation: "ebooks"
@@ -239,6 +284,7 @@ export type Database = {
           pages_count: number | null
           price: number | null
           title: string
+          video_url: string | null
         }
         Insert: {
           category?: string | null
@@ -253,6 +299,7 @@ export type Database = {
           pages_count?: number | null
           price?: number | null
           title: string
+          video_url?: string | null
         }
         Update: {
           category?: string | null
@@ -267,6 +314,7 @@ export type Database = {
           pages_count?: number | null
           price?: number | null
           title?: string
+          video_url?: string | null
         }
         Relationships: []
       }
