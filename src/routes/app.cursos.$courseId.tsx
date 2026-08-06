@@ -67,9 +67,15 @@ function CoursePage() {
           <Link to="/app/cursos" className="btn-ghost-fire px-8 py-3 font-bold">
             Voltar aos cursos
           </Link>
-          <button className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20">
+          <a 
+            href="https://wa.me/5511999999999" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center gap-2"
+          >
+            <ShoppingCart className="h-5 w-5" />
             Comprar por R$ {course.price?.toString().replace(".", ",")}
-          </button>
+          </a>
         </div>
       </div>
     );
