@@ -124,11 +124,21 @@ function EbookViewer() {
             <div className="mb-10 flex justify-center">
               <Sparkles className="h-12 w-12 text-gold/30" />
             </div>
-            <h2 className="font-display text-2xl font-black uppercase tracking-tighter">Capítulo {page}</h2>
-            <div className="mt-10 space-y-4 text-left leading-relaxed text-white/60">
-              <p>Este é um exemplo de conteúdo do e-book <strong>{ebook.title}</strong>.</p>
-              <p>Aqui o aluno encontrará o material didático completo, formatado para uma leitura agradável tanto no computador quanto no celular.</p>
-              <p>O conteúdo real será carregado conforme o progresso da página.</p>
+            <h2 className="font-display text-2xl font-black uppercase tracking-tighter">
+              {ebook.content ? `Material Completo` : `Capítulo ${page}`}
+            </h2>
+            <div className="mt-10 space-y-4 text-left leading-relaxed text-white/80 overflow-y-auto max-h-[60vh] custom-scrollbar">
+              {ebook.content ? (
+                <div className="whitespace-pre-wrap font-serif text-lg">
+                  {ebook.content}
+                </div>
+              ) : (
+                <>
+                  <p>Este é um exemplo de conteúdo do e-book <strong>{ebook.title}</strong>.</p>
+                  <p>Aqui o aluno encontrará o material didático completo, formatado para uma leitura agradável tanto no computador quanto no celular.</p>
+                  <p>O conteúdo real será carregado conforme o progresso da página.</p>
+                </>
+              )}
             </div>
             <div className="mt-auto pt-10 text-[10px] font-bold uppercase tracking-[0.3em] text-white/20">
               Espetinho na Veia · Material Exclusivo

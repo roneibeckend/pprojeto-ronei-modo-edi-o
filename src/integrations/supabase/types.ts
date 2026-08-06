@@ -155,6 +155,7 @@ export type Database = {
       ebooks: {
         Row: {
           category: string | null
+          content: string | null
           cover_url: string | null
           created_at: string
           description: string | null
@@ -167,6 +168,7 @@ export type Database = {
         }
         Insert: {
           category?: string | null
+          content?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -179,6 +181,7 @@ export type Database = {
         }
         Update: {
           category?: string | null
+          content?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null

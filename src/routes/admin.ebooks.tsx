@@ -161,8 +161,13 @@ function AdminEbooksPage() {
                 description="Recomendado: Capa em formato vertical (2:3 ou 3:4). Formatos aceitos: JPG, PNG."
               />
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição</label>
-                <textarea rows={3} value={editingItem?.description || ""} onChange={e => setEditingItem({...editingItem, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none" />
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição curta (Vitrine)</label>
+                <textarea rows={2} value={editingItem?.description || ""} onChange={e => setEditingItem({...editingItem, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do E-book (Texto Completo)</label>
+                <textarea rows={6} value={editingItem?.content || ""} onChange={e => setEditingItem({...editingItem, content: e.target.value})} placeholder="Escreva ou cole o conteúdo do e-book aqui..." className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none font-serif" />
+                <p className="text-[10px] text-white/20">Este conteúdo será exibido na área de leitura do aluno.</p>
               </div>
               <div className="pt-4 flex gap-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 rounded-lg bg-white/5 font-bold hover:bg-white/10">Cancelar</button>
