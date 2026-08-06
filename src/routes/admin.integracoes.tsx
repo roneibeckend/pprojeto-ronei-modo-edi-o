@@ -110,6 +110,7 @@ function IntegrationsPage() {
       } else {
         toast.error(result.message);
       }
+      fetchLogs(); // Atualizar logs após teste
     } catch (err: any) {
       toast.error(err.message || "Erro no teste");
     } finally {
