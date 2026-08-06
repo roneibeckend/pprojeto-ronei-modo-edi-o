@@ -67,7 +67,7 @@ function LoginPage() {
           password,
           options: {
             data: { name },
-            emailRedirectTo: \`\${window.location.origin}/inicio\`,
+            emailRedirectTo: `${window.location.origin}/inicio`,
           },
         });
         if (error) throw error;
