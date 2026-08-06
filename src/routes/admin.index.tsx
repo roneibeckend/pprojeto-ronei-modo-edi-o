@@ -31,8 +31,10 @@ function AdminDashboard() {
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('courses').select('id'),
         supabase.from('ebooks').select('id'),
-        supabase.from('course_enrollments' as any).select('id')
+        supabase.from('course_enrollments' as any).select('id', { count: 'exact' })
       ]);
+
+      const salesCount = enrollmentsRes.count || 0;
 
       return {
         students: studentsRes.count || 0,
