@@ -14,6 +14,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { saveContent } from "@/lib/content-admin.functions";
 import { toast } from "sonner";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export const Route = createFileRoute("/admin/cursos")({
   head: () => ({ meta: [{ title: "Gestão de Cursos · Admin" }] }),
@@ -181,18 +182,12 @@ function AdminCursosPage() {
                 <textarea rows={2} value={editingItem?.description || ""} onChange={e => setEditingItem({...editingItem, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none" />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL da Imagem de Capa</label>
-                <div className="flex gap-2">
-                  <input 
-                    value={editingItem?.cover_url || ""} 
-                    onChange={e => setEditingItem({...editingItem, cover_url: e.target.value})} 
-                    placeholder="https://images.unsplash.com/..." 
-                    className="flex-1 bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" 
-                  />
-                </div>
-                <p className="text-[9px] text-white/30 italic">Recomendado: 1280x720px ou proporção 16:9.</p>
-              </div>
+              <ImageUpload 
+                value={editingItem?.cover_url || ""} 
+                onChange={url => setEditingItem({...editingItem, cover_url: url})}
+                label="URL da Imagem de Capa"
+                description="Recomendado: 1280x720px ou proporção 16:9. Formatos aceitos: JPG, PNG."
+              />
 
               <div className="flex items-center gap-2 pb-2">
                 <label className="flex items-center gap-2 cursor-pointer">
