@@ -163,7 +163,7 @@ function SupportPage() {
               : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white"
           }`}
         >
-          <Ticket className="h-4 w-4" />
+          <TicketIcon className="h-4 w-4" />
           Meus Chamados
         </button>
       </div>
