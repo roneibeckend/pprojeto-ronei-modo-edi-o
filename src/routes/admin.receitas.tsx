@@ -89,7 +89,8 @@ function AdminReceitasPage() {
             category: "Carne bovina", 
             difficulty: "Fácil",
             ingredients: [],
-            steps: []
+            steps: [],
+            is_published: true
           }); setIsModalOpen(true); }}
           className="flex items-center gap-2 bg-[#ff6a00] px-4 py-2 rounded-lg text-sm font-bold text-black"
         >
