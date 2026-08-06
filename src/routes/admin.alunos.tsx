@@ -35,14 +35,25 @@ function AdminAlunosPage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentPage, search]);
 
   async function fetchData() {
     try {
       setLoading(true);
-      const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+      
+      let query = supabase.from('profiles').select('*', { count: 'exact' });
+      
+      if (search) {
+        query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
+      }
+      
+      const { data, error, count } = await query
+        .order('created_at', { ascending: false })
+        .range((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE - 1);
+        
       if (error) throw error;
       setProfiles(data || []);
+      setTotalCount(count || 0);
     } catch (error: any) {
       toast.error("Erro ao carregar alunos: " + error.message);
     } finally {
