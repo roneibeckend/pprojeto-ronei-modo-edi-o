@@ -324,6 +324,12 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose:
               {downloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" strokeWidth={2.5} />}
               {downloading ? "Gerando..." : "Baixar PDF"}
             </button>
+            <button 
+              onClick={() => window.print()}
+              className="flex items-center gap-1.5 rounded-md border border-white/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:border-[#ff6a00]/50"
+            >
+              <Printer className="h-4 w-4" /> Imprimir
+            </button>
             <button className="flex items-center gap-1.5 rounded-md border border-white/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:border-[#ff6a00]/50">
               <Share2 className="h-4 w-4" /> Compartilhar
             </button>
@@ -334,7 +340,7 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose:
         </div>
 
         {/* Certificate */}
-        <div ref={certRef}>
+        <div ref={certRef} id="printable-certificate">
           <FullCertificate cert={cert} />
         </div>
       </div>
