@@ -1,10 +1,40 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2 } from "lucide-react";
+import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2, Printer } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { certificates, student } from "@/lib/platform-data";
+import { certificates as baseCertificates, courses, student } from "@/lib/platform-data";
 import { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+
+// Estilos específicos para impressão
+const printStyles = `
+  @media print {
+    @page {
+      size: landscape;
+      margin: 0;
+    }
+    body * {
+      visibility: hidden;
+    }
+    #printable-certificate, #printable-certificate * {
+      visibility: visible;
+    }
+    #printable-certificate {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: #f5efe4 ! from-inherit;
+    }
+    /* Ocultar elementos de UI no certificado durante a impressão */
+    .no-print {
+      display: none !important;
+    }
+  }
+`;
 
 async function downloadCertificatePDF(node: HTMLElement, cert: { id: string; course: string }) {
   const canvas = await html2canvas(node, {
