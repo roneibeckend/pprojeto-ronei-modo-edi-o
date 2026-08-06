@@ -31,15 +31,15 @@ function AdminDashboard() {
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('courses').select('id'),
         supabase.from('ebooks').select('id'),
-        supabase.from('enrollments').select('id')
+        supabase.from('course_enrollments').select('id')
       ]);
 
       return {
         students: students || 0,
         courses: courses?.length || 0,
         ebooks: ebooks?.length || 0,
-        sales: enrollments?.length || 0,
-        revenue: (enrollments?.length || 0) * 197.00 // Mock revenue based on avg price
+        sales: (enrollments?.length || 0),
+        revenue: (enrollments?.length || 0) * 197.00
       };
     }
   });
