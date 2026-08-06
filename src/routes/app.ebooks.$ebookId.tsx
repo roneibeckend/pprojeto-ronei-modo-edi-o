@@ -13,7 +13,8 @@ import {
   Trophy,
   BarChart3,
   Flame,
-  ChevronDown
+  ChevronDown,
+  ArrowUpRight
 } from "lucide-react";
 
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
@@ -203,7 +204,17 @@ function EbookPage() {
             transition={{ delay: 0.2, duration: 0.25 }}
             className="font-display text-5xl md:text-7xl font-black uppercase tracking-tight leading-[0.9] mb-6 max-w-4xl"
           >
-            Do zero aos 10k
+            {chapters.length > 0 ? (
+              <Link 
+                to="/app/ebooks/$ebookId/capitulo/$chapterSlug"
+                params={{ ebookId: ebook.id, chapterSlug: chapters[0].slug || chapters[0].id }}
+                className="hover:text-[#ff6a00] transition-colors"
+              >
+                {ebook.title}
+              </Link>
+            ) : (
+              ebook.title
+            )}
           </motion.h1>
 
           <motion.p 
@@ -346,9 +357,7 @@ function EbookPage() {
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ delay: index * 0.06, duration: 0.25 }}
                 >
-                  <Link
-                    to="/app/ebooks/$ebookId"
-                    params={{ ebookId: ebook.id }}
+                  <div
                     className={cn(
                       "group relative flex items-center gap-6 p-6 md:p-8 rounded-[2rem] border transition-all duration-200",
                       isCompleted 
@@ -374,12 +383,53 @@ function EbookPage() {
                           </span>
                         )}
                       </div>
-                      <h3 className="font-display text-xl md:text-2xl font-black text-white mb-2 truncate group-hover:text-white transition-colors">
+                      
+                      {/* Título do Módulo */}
+                      <h3 className="font-display text-xl md:text-2xl font-black text-white mb-4 group-hover:text-white transition-colors">
                         {module.title}
                       </h3>
-                      <p className="text-white/40 text-sm font-medium line-clamp-1">
-                        {module.description || "Clique para ver os capítulos deste módulo."}
-                      </p>
+
+                      {/* Lista de Capítulos Clicáveis */}
+                      <div className="flex flex-col gap-2">
+                        {moduleChapters.map((chapter) => {
+                          const chapterProgress = progress.find(p => p.chapter_id === chapter.id);
+                          const isChapterCompleted = !!chapterProgress?.completed_at;
+
+                          return (
+                            <Link
+                              key={chapter.id}
+                              to="/app/ebooks/$ebookId/capitulo/$chapterSlug"
+                              params={{ 
+                                ebookId: ebook.id, 
+                                chapterSlug: chapter.slug || chapter.id 
+                              }}
+                              className={cn(
+                                "flex items-center justify-between p-3 rounded-xl border transition-all duration-200 group/chapter",
+                                isChapterCompleted 
+                                  ? "bg-[#ff6a00]/5 border-[#ff6a00]/20 opacity-70 hover:opacity-100" 
+                                  : "bg-white/[0.03] border-white/5 hover:border-[#ff6a00]/30 hover:bg-[#ff6a00]/5"
+                              )}
+                            >
+                              <div className="flex items-center gap-3 truncate">
+                                <div className={cn(
+                                  "h-2 w-2 rounded-full",
+                                  isChapterCompleted ? "bg-[#ff6a00]" : "bg-white/20"
+                                )} />
+                                <span className={cn(
+                                  "text-sm font-bold truncate transition-colors",
+                                  isChapterCompleted ? "text-[#ff6a00]" : "text-white/60 group-hover/chapter:text-white"
+                                )}>
+                                  {chapter.title}
+                                </span>
+                              </div>
+                              <ArrowUpRight className={cn(
+                                "h-4 w-4 flex-shrink-0 transition-all duration-200",
+                                isChapterCompleted ? "text-[#ff6a00]" : "text-white/20 group-hover/chapter:text-[#ff6a00] group-hover/chapter:translate-x-0.5 group-hover/chapter:-translate-y-0.5"
+                              )} />
+                            </Link>
+                          );
+                        })}
+                      </div>
                     </div>
 
                     {/* Status Icon */}
@@ -392,7 +442,7 @@ function EbookPage() {
                         <div className="h-2 w-2 rounded-full bg-white/20" />
                       )}
                     </div>
-                  </Link>
+                  </div>
                 </motion.div>
               );
             })
