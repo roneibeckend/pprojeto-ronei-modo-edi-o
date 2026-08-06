@@ -46,10 +46,12 @@ export type Database = {
       courses: {
         Row: {
           badge: string | null
+          content_url: string | null
           cover_url: string | null
           created_at: string
           description: string | null
           id: string
+          is_ai_generated: boolean | null
           is_locked: boolean | null
           price: number | null
           teacher_name: string | null
@@ -58,10 +60,12 @@ export type Database = {
         }
         Insert: {
           badge?: string | null
+          content_url?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
           id: string
+          is_ai_generated?: boolean | null
           is_locked?: boolean | null
           price?: number | null
           teacher_name?: string | null
@@ -70,10 +74,12 @@ export type Database = {
         }
         Update: {
           badge?: string | null
+          content_url?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          is_ai_generated?: boolean | null
           is_locked?: boolean | null
           price?: number | null
           teacher_name?: string | null
@@ -259,6 +265,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      live_classes: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          link: string | null
+          materials_url: string | null
+          scheduled_at: string
+          status: Database["public"]["Enums"]["live_class_status"] | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          link?: string | null
+          materials_url?: string | null
+          scheduled_at: string
+          status?: Database["public"]["Enums"]["live_class_status"] | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          link?: string | null
+          materials_url?: string | null
+          scheduled_at?: string
+          status?: Database["public"]["Enums"]["live_class_status"] | null
+          title?: string
+        }
+        Relationships: []
       }
       modules: {
         Row: {
@@ -486,6 +525,7 @@ export type Database = {
       app_role: "admin" | "student"
       difficulty_level: "Fácil" | "Médio" | "Avançado"
       integration_type: "ia" | "payment"
+      live_class_status: "scheduled" | "live" | "completed"
       support_sender_type: "student" | "assistant" | "support_agent" | "system"
       support_ticket_status: "open" | "in_progress" | "resolved" | "closed"
     }
@@ -618,6 +658,7 @@ export const Constants = {
       app_role: ["admin", "student"],
       difficulty_level: ["Fácil", "Médio", "Avançado"],
       integration_type: ["ia", "payment"],
+      live_class_status: ["scheduled", "live", "completed"],
       support_sender_type: ["student", "assistant", "support_agent", "system"],
       support_ticket_status: ["open", "in_progress", "resolved", "closed"],
     },

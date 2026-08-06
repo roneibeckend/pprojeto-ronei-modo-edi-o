@@ -35,6 +35,8 @@ import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$cour
 import { Route as AppAdminIntegracoesRouteImport } from './routes/app.admin.integracoes'
 import { Route as AppAdminFinanceiroRouteImport } from './routes/app.admin.financeiro'
 import { Route as AppAdminEbookAiRouteImport } from './routes/app.admin.ebook-ai'
+import { Route as AppAdminConteudoRouteImport } from './routes/app.admin.conteudo'
+import { Route as AppAdminAoVivoRouteImport } from './routes/app.admin.ao-vivo'
 import { Route as AppAdminAlunosRouteImport } from './routes/app.admin.alunos'
 import { Route as AppEbooksPremiumEbookIdRouteImport } from './routes/app.ebooks.premium.$ebookId'
 import { Route as AppEbooksGeradoIdRouteImport } from './routes/app.ebooks.gerado.$id'
@@ -169,6 +171,16 @@ const AppAdminEbookAiRoute = AppAdminEbookAiRouteImport.update({
   path: '/ebook-ai',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const AppAdminConteudoRoute = AppAdminConteudoRouteImport.update({
+  id: '/conteudo',
+  path: '/conteudo',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminAoVivoRoute = AppAdminAoVivoRouteImport.update({
+  id: '/ao-vivo',
+  path: '/ao-vivo',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 const AppAdminAlunosRoute = AppAdminAlunosRouteImport.update({
   id: '/alunos',
   path: '/alunos',
@@ -204,6 +216,8 @@ export interface FileRoutesByFullPath {
   '/app/suporte': typeof AppSuporteRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/alunos': typeof AppAdminAlunosRoute
+  '/app/admin/ao-vivo': typeof AppAdminAoVivoRoute
+  '/app/admin/conteudo': typeof AppAdminConteudoRoute
   '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
   '/app/admin/integracoes': typeof AppAdminIntegracoesRoute
@@ -231,6 +245,8 @@ export interface FileRoutesByTo {
   '/app/suporte': typeof AppSuporteRoute
   '/app': typeof AppIndexRoute
   '/app/admin/alunos': typeof AppAdminAlunosRoute
+  '/app/admin/ao-vivo': typeof AppAdminAoVivoRoute
+  '/app/admin/conteudo': typeof AppAdminConteudoRoute
   '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
   '/app/admin/integracoes': typeof AppAdminIntegracoesRoute
@@ -263,6 +279,8 @@ export interface FileRoutesById {
   '/app/suporte': typeof AppSuporteRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/alunos': typeof AppAdminAlunosRoute
+  '/app/admin/ao-vivo': typeof AppAdminAoVivoRoute
+  '/app/admin/conteudo': typeof AppAdminConteudoRoute
   '/app/admin/ebook-ai': typeof AppAdminEbookAiRoute
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
   '/app/admin/integracoes': typeof AppAdminIntegracoesRoute
@@ -296,6 +314,8 @@ export interface FileRouteTypes {
     | '/app/suporte'
     | '/app/'
     | '/app/admin/alunos'
+    | '/app/admin/ao-vivo'
+    | '/app/admin/conteudo'
     | '/app/admin/ebook-ai'
     | '/app/admin/financeiro'
     | '/app/admin/integracoes'
@@ -323,6 +343,8 @@ export interface FileRouteTypes {
     | '/app/suporte'
     | '/app'
     | '/app/admin/alunos'
+    | '/app/admin/ao-vivo'
+    | '/app/admin/conteudo'
     | '/app/admin/ebook-ai'
     | '/app/admin/financeiro'
     | '/app/admin/integracoes'
@@ -354,6 +376,8 @@ export interface FileRouteTypes {
     | '/app/suporte'
     | '/app/'
     | '/app/admin/alunos'
+    | '/app/admin/ao-vivo'
+    | '/app/admin/conteudo'
     | '/app/admin/ebook-ai'
     | '/app/admin/financeiro'
     | '/app/admin/integracoes'
@@ -561,6 +585,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminEbookAiRouteImport
       parentRoute: typeof AppAdminRoute
     }
+    '/app/admin/conteudo': {
+      id: '/app/admin/conteudo'
+      path: '/conteudo'
+      fullPath: '/app/admin/conteudo'
+      preLoaderRoute: typeof AppAdminConteudoRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/ao-vivo': {
+      id: '/app/admin/ao-vivo'
+      path: '/ao-vivo'
+      fullPath: '/app/admin/ao-vivo'
+      preLoaderRoute: typeof AppAdminAoVivoRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
     '/app/admin/alunos': {
       id: '/app/admin/alunos'
       path: '/alunos'
@@ -587,6 +625,8 @@ declare module '@tanstack/react-router' {
 
 interface AppAdminRouteChildren {
   AppAdminAlunosRoute: typeof AppAdminAlunosRoute
+  AppAdminAoVivoRoute: typeof AppAdminAoVivoRoute
+  AppAdminConteudoRoute: typeof AppAdminConteudoRoute
   AppAdminEbookAiRoute: typeof AppAdminEbookAiRoute
   AppAdminFinanceiroRoute: typeof AppAdminFinanceiroRoute
   AppAdminIntegracoesRoute: typeof AppAdminIntegracoesRoute
@@ -595,6 +635,8 @@ interface AppAdminRouteChildren {
 
 const AppAdminRouteChildren: AppAdminRouteChildren = {
   AppAdminAlunosRoute: AppAdminAlunosRoute,
+  AppAdminAoVivoRoute: AppAdminAoVivoRoute,
+  AppAdminConteudoRoute: AppAdminConteudoRoute,
   AppAdminEbookAiRoute: AppAdminEbookAiRoute,
   AppAdminFinanceiroRoute: AppAdminFinanceiroRoute,
   AppAdminIntegracoesRoute: AppAdminIntegracoesRoute,
@@ -679,13 +721,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

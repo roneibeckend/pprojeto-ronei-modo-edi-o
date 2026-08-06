@@ -2,10 +2,12 @@ import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-r
 import { 
   LayoutDashboard, 
   DollarSign, 
-  Users, 
+  Users,
   ArrowLeft,
   Settings,
-  ShieldCheck
+  ShieldCheck,
+  Library,
+  Clapperboard
 } from "lucide-react";
 
 export const Route = createFileRoute("/app/admin")({
@@ -21,6 +23,8 @@ function AdminLayout() {
     { to: "/app/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/app/admin/financeiro", label: "Financeiro", icon: DollarSign },
     { to: "/app/admin/alunos", label: "Alunos", icon: Users },
+    { to: "/app/admin/conteudo", label: "Conteúdo", icon: Library },
+    { to: "/app/admin/ao-vivo", label: "Ao Vivo", icon: Clapperboard },
     { to: "/app/admin/integracoes", label: "Integrações", icon: Settings },
   ];
 
