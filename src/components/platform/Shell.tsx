@@ -68,10 +68,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
   {
     title: "Gestão",
     items: [
-      { to: "/app/admin", label: "Painel Admin", icon: Shield, badge: "Admin" },
-      { to: "/app/admin/conteudo", label: "Conteúdo", icon: Library },
-      { to: "/app/admin/ao-vivo", label: "Ao Vivo", icon: Clapperboard },
-      { to: "/app/admin/integracoes", label: "Integrações", icon: Settings },
+      { to: "/admin", label: "Painel Central", icon: Shield, badge: "Admin" },
     ],
   },
 ];

@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
-export const Route = createFileRoute("/app/admin/financeiro")({
+export const Route = createFileRoute("/admin/financeiro")({
   head: () => ({ meta: [{ title: "Financeiro — Painel Admin" }] }),
   component: FinancePage,
 });
