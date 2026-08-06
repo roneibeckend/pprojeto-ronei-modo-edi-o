@@ -11,8 +11,10 @@ import {
   BookOpen,
   ChevronRight,
   MonitorPlay,
-  Play
+  Play,
+  LayoutPanelLeft
 } from "lucide-react";
+
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
