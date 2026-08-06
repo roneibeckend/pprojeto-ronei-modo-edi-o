@@ -55,7 +55,7 @@ function LiveClassesPage() {
         .order('scheduled_at', { ascending: false });
 
       if (error) throw error;
-      setClasses(data || []);
+      setClasses((data as LiveClass[]) || []);
     } catch (error: any) {
       toast.error("Erro ao carregar aulas: " + error.message);
     } finally {
