@@ -58,8 +58,8 @@ function ContentHubPage() {
         supabase.from('ebooks').select('*').order('created_at', { ascending: false })
       ]);
 
-      setCourses((coursesRes.data || []).map(i => ({ ...i, type: 'course' })) as ContentItem[]);
-      setEbooks((ebooksRes.data || []).map(i => ({ ...i, type: 'ebook' })) as ContentItem[]);
+      setCourses((coursesRes.data || []).map(i => ({ is_ai_generated: false, ...i, type: 'course' })) as ContentItem[]);
+      setEbooks((ebooksRes.data || []).map(i => ({ is_ai_generated: false, ...i, type: 'ebook' })) as ContentItem[]);
     } catch (error: any) {
       toast.error("Erro ao carregar dados: " + error.message);
     } finally {
