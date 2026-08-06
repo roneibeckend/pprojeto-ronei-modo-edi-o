@@ -5,14 +5,15 @@ import {
   Loader2, 
   ArrowLeft,
   CheckCircle2,
-  Circle,
+  ChevronRight,
+  Play,
   PlayCircle,
   Clock,
-  BookOpen,
-  ChevronRight,
-  MonitorPlay,
-  Play,
-  LayoutPanelLeft
+  Layout,
+  Trophy,
+  BarChart3,
+  Flame,
+  ChevronDown
 } from "lucide-react";
 
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
@@ -22,14 +23,7 @@ import { useEnrollments } from "@/hooks/use-enrollments";
 import { createAsaasPaymentLink } from "@/lib/asaas.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
-import { Progress } from "@/components/ui/progress";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -37,7 +31,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
   head: () => ({ 
     meta: [
-      { title: "E-book — Espetinho na Veia" },
+      { title: "E-book Interativo — Espetinho na Veia" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" }
     ] 
   }),
@@ -128,8 +122,15 @@ function EbookPage() {
 
   const hasAccess = (ebook.price || 0) === 0 || isEnrolledInEbook(ebook.id);
   const completedCount = progress.filter(p => p.completed_at).length;
-  const overallProgress = chapters.length > 0 ? (completedCount / chapters.length) * 100 : 0;
-  const totalMinutes = chapters.reduce((acc, curr) => acc + (curr.reading_minutes || 0), 0);
+  const totalChapters = chapters.length;
+  const overallProgress = totalChapters > 0 ? (completedCount / totalChapters) * 100 : 0;
+
+  // Find next module
+  const nextModule = modules.find(m => {
+    const moduleChapters = chapters.filter(c => c.module_id === m.id);
+    const completedModuleChapters = moduleChapters.filter(c => progress.some(p => p.chapter_id === c.id && p.completed_at));
+    return completedModuleChapters.length < moduleChapters.length;
+  }) || modules[modules.length - 1];
 
   if (isLoadingEnrollments) {
     return (
@@ -146,7 +147,7 @@ function EbookPage() {
           <Lock className="h-16 w-16" />
         </div>
         <h2 className="font-display text-3xl font-black text-white">{ebook.title}</h2>
-        <p className="mt-4 max-w-md text-white/60">
+        <p className="mt-4 max-w-md text-white/60 font-sans">
           Este e-book é exclusivo para alunos. Libere seu acesso e comece a ler agora mesmo.
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -167,193 +168,244 @@ function EbookPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0a0a0a] text-white">
-      {/* Sticky Header Compacto */}
-      <header className="sticky top-0 z-50 w-full h-16 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-md">
-        <div className="flex h-full items-center justify-between px-4 lg:px-8 max-w-5xl mx-auto w-full">
-          <div className="flex items-center gap-4 min-w-0">
-            <Link to="/app/ebooks" className="p-2 hover:bg-white/5 rounded-full transition text-white/60 hover:text-white flex-shrink-0">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-            <h1 className="text-sm font-bold truncate text-white/90">{ebook.title}</h1>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="flex flex-col items-end gap-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
-                {Math.round(overallProgress)}% concluído
-              </span>
-              <div className="w-24 lg:w-32 h-1 bg-white/5 rounded-full overflow-hidden">
-                <motion.div 
-                  className="h-full bg-[#ff6a00]" 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${overallProgress}%` }}
-                  transition={{ duration: 1 }}
-                />
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-[#ff6a00]/30 overflow-x-hidden pb-20">
+      {/* 1. SEÇÃO HERO */}
+      <section className="relative pt-12 pb-20 overflow-hidden">
+        {/* Abstract Background Flourish */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none opacity-20">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#ff6a00] blur-[120px] rounded-full" />
+          <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-gold blur-[100px] rounded-full" />
         </div>
-      </header>
 
-      <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-10 lg:py-16">
-        {/* Hero de Vídeo */}
-        <section className="flex flex-col items-center mb-16 lg:mb-24">
-          <div className="text-center mb-8">
-            <span className="inline-block px-3 py-1 rounded-full bg-[#ff6a00]/10 text-[#ff6a00] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
-              Aula Introdutória
-            </span>
-            <h2 className="font-display text-3xl lg:text-5xl font-black uppercase tracking-tight leading-none mb-6">
-              {ebook.title}
-            </h2>
-          </div>
+        <div className="container max-w-5xl mx-auto px-6 relative z-10 flex flex-col items-center text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+            className="flex items-center gap-2 mb-12"
+          >
+            <span className="font-display text-2xl font-black tracking-tighter text-white uppercase">Espetinho</span>
+            <span className="font-display text-2xl font-black tracking-tighter text-[#ff6a00] uppercase">Na Veia</span>
+          </motion.div>
 
-          <div className="relative w-full max-w-3xl group">
-            {/* Glow Effect */}
-            <div className="absolute -inset-4 bg-[#ff6a00]/10 blur-2xl rounded-[2.5rem] opacity-50 group-hover:opacity-75 transition-opacity" />
+          <motion.span 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.25 }}
+            className="inline-block text-[11px] font-black uppercase tracking-[0.3em] text-[#ff6a00] mb-4"
+          >
+            E-book Interativo
+          </motion.span>
+
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.25 }}
+            className="font-display text-5xl md:text-7xl font-black uppercase tracking-tight leading-[0.9] mb-6 max-w-4xl"
+          >
+            Do zero aos 10k
+          </motion.h1>
+
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.25 }}
+            className="text-white/60 text-lg md:text-xl max-w-2xl mb-12 font-medium"
+          >
+            O primeiro passo para transformar sua ideia de vender espetinhos em um negócio.
+          </motion.p>
+
+          {/* Player de Vídeo CENTRALIZADO */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4, duration: 0.25 }}
+            className="w-full max-w-3xl aspect-video rounded-3xl overflow-hidden border border-white/10 bg-black/40 shadow-2xl relative group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
             
-            <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-[#111] shadow-2xl">
-              {ebook.video_url ? (
-                <iframe
-                  src={ebook.video_url}
-                  className="absolute inset-0 h-full w-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  loading="lazy"
-                />
-              ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-white/20">
-                  <Play className="h-16 w-16 mb-4 opacity-20" />
-                  <span className="text-sm font-bold uppercase tracking-widest">Vídeo em breve</span>
-                </div>
-              )}
-            </div>
-          </div>
+            {ebook.video_url ? (
+              <iframe
+                src={ebook.video_url}
+                className="absolute inset-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                loading="lazy"
+              />
+            ) : (
+              <video 
+                controls 
+                playsInline 
+                poster={ebook.cover_url || ""}
+                className="absolute inset-0 w-full h-full object-cover"
+              >
+                <source src="/welcome-ronnei.mp4" type="video/mp4" />
+                Seu navegador não suporta vídeo.
+              </video>
+            )}
+          </motion.div>
 
-          <div className="mt-8 text-center max-w-2xl">
-            <p className="text-white/60 leading-relaxed line-clamp-2 mb-6">
-              {ebook.description || "Inicie sua jornada agora mesmo com este material exclusivo."}
-            </p>
-            <div className="flex flex-wrap justify-center items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-white/40">
-              <div className="flex items-center gap-2">
-                <LayoutPanelLeft className="h-3 w-3" />
-                <span>{modules.length} Módulos</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-3 w-3" />
-                <span>{chapters.length} Capítulos</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-3 w-3" />
-                <span>~{totalMinutes} min total</span>
-              </div>
-            </div>
-          </div>
-        </section>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="mt-6 flex items-center gap-2 text-white/40"
+          >
+            <span className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+              <Flame className="h-4 w-4 text-[#ff6a00]" />
+              Boas-vindas do Ronnei
+            </span>
+          </motion.div>
+        </div>
+      </section>
 
-        {/* Módulos e Capítulos */}
-        <section className="max-w-3xl mx-auto">
+      {/* 2. SEÇÃO BARRA DE ESTATÍSTICAS */}
+      <section className="bg-white/5 border-y border-white/5 py-12 mb-20">
+        <div className="container max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center"
+          >
+            <span className="font-display text-5xl font-black text-white mb-2">{totalChapters}</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Capítulos</span>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="flex flex-col items-center border-y md:border-y-0 md:border-x border-white/5 py-8 md:py-0"
+          >
+            <span className="font-display text-5xl font-black text-white mb-2">{completedCount}</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Concluídos</span>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-col items-center"
+          >
+            <span className="font-display text-5xl font-black text-[#ff6a00] mb-2">{Math.round(overallProgress)}%</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Progresso</span>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 3. SEÇÃO PROGRESSO DA JORNADA */}
+      <section className="container max-w-5xl mx-auto px-6 mb-24">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-display text-xl font-bold uppercase tracking-tight">Progresso da sua jornada</h2>
+          <span className="font-display text-2xl font-black text-[#ff6a00]">{Math.round(overallProgress)}%</span>
+        </div>
+        <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-[2px]">
+          <motion.div 
+            initial={{ width: 0 }}
+            whileInView={{ width: `${overallProgress}%` }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="h-full bg-gradient-to-r from-[#ff6a00] to-gold rounded-full"
+          />
+        </div>
+      </section>
+
+      {/* 4. SEÇÃO TRILHA DO MÉTODO */}
+      <nav className="container max-w-5xl mx-auto px-6 mb-32" aria-label="Trilha do método">
+        <div className="flex items-center justify-between mb-10 pb-4 border-b border-white/5">
+          <h2 className="font-display text-3xl font-black uppercase tracking-tight">Trilha do método</h2>
+          <span className="font-display text-xl font-black text-white/20">
+            {modules.filter(m => {
+              const moduleChapters = chapters.filter(c => c.module_id === m.id);
+              return moduleChapters.length > 0 && moduleChapters.every(c => progress.some(p => p.chapter_id === c.id && p.completed_at));
+            }).length}/{modules.length}
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-4">
           {isLoadingModules || isLoadingChapters ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map(i => (
-                <Skeleton key={i} className="h-20 w-full rounded-2xl bg-white/5" />
-              ))}
-            </div>
+            Array(5).fill(0).map((_, i) => (
+              <Skeleton key={i} className="h-28 w-full rounded-3xl bg-white/5" />
+            ))
           ) : (
-            <Accordion type="single" collapsible defaultValue={modules[0]?.id} className="space-y-4">
-              {modules.map((module, mIdx) => {
-                const moduleChapters = chapters.filter(c => c.module_id === module.id);
-                const moduleCompleted = moduleChapters.filter(c => progress.find(p => p.chapter_id === c.id)?.completed_at).length;
-                const moduleProgress = moduleChapters.length > 0 ? (moduleCompleted / moduleChapters.length) * 100 : 0;
-                const moduleMinutes = moduleChapters.reduce((acc, curr) => acc + (curr.reading_minutes || 0), 0);
+            modules.map((module, index) => {
+              const isNext = module.id === nextModule?.id;
+              const moduleChapters = chapters.filter(c => c.module_id === module.id);
+              const isCompleted = moduleChapters.length > 0 && moduleChapters.every(c => 
+                progress.some(p => p.chapter_id === c.id && p.completed_at)
+              );
+              
+              const formattedIndex = (index + 1).toString().padStart(2, '0');
 
-                return (
-                  <motion.div
-                    key={module.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: mIdx * 0.04, duration: 0.25 }}
+              return (
+                <motion.div
+                  key={module.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ delay: index * 0.06, duration: 0.25 }}
+                >
+                  <Link
+                    to="/app/ebooks/$ebookId"
+                    params={{ ebookId: ebook.id }}
+                    className={cn(
+                      "group relative flex items-center gap-6 p-6 md:p-8 rounded-[2rem] border transition-all duration-200",
+                      isCompleted 
+                        ? "bg-white/[0.02] border-white/5 opacity-60 hover:opacity-100" 
+                        : isNext 
+                          ? "bg-white/5 border-[#ff6a00]/30 hover:border-[#ff6a00]/60 ring-1 ring-[#ff6a00]/10 hover:translate-x-1" 
+                          : "bg-white/5 border-white/5 hover:border-white/20 hover:translate-x-1",
+                    )}
+                    aria-current={isNext ? "step" : undefined}
                   >
-                    <AccordionItem value={module.id} className="border-none bg-white/5 rounded-2xl overflow-hidden px-4 transition-colors hover:bg-white/[0.07]">
-                      <AccordionTrigger className="hover:no-underline py-6">
-                        <div className="flex items-center gap-4 text-left w-full mr-4">
-                          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-[#ff6a00]/10 border border-[#ff6a00]/20 flex items-center justify-center text-[#ff6a00] font-bold text-sm">
-                            {mIdx + 1}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-base font-bold text-white mb-1 truncate">{module.title}</h3>
-                            <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold">
-                              {moduleChapters.length} capítulos · {moduleMinutes} min
-                            </p>
-                          </div>
-                          <div className="hidden sm:flex flex-col items-end gap-1 flex-shrink-0 mr-2">
-                            <span className="text-[9px] font-black text-[#ff6a00] uppercase">{Math.round(moduleProgress)}%</span>
-                            <div className="w-16 h-1 bg-white/10 rounded-full overflow-hidden">
-                              <div className="h-full bg-[#ff6a00]" style={{ width: `${moduleProgress}%` }} />
-                            </div>
-                          </div>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-6">
-                        {module.description && (
-                          <div className="px-4 py-3 mb-4 bg-white/[0.03] border-l-2 border-[#ff6a00] rounded-r-lg">
-                            <p className="text-xs text-white/70 leading-relaxed italic">
-                              {module.description}
-                            </p>
-                          </div>
-                        )}
-                        <div className="space-y-1">
-                          {moduleChapters.map((chapter, cIdx) => {
-                            const p = progress.find(pg => pg.chapter_id === chapter.id);
-                            const isCompleted = !!p?.completed_at;
-                            const isStarted = !!p && !p.completed_at;
+                    {/* Número */}
+                    <div className="hidden md:flex flex-shrink-0 font-display text-5xl font-black text-white/10 group-hover:text-[#ff6a00]/20 transition-colors">
+                      {formattedIndex}
+                    </div>
 
-                            return (
-                              <Link
-                                key={chapter.id}
-                                to="/app/ebooks/$ebookId/capitulo/$chapterSlug"
-                                params={{ ebookId: ebook.id, chapterSlug: chapter.slug || chapter.id }}
-                                className={cn(
-                                  "flex items-center justify-between p-4 rounded-xl transition-all group",
-                                  isCompleted ? "opacity-60" : "hover:bg-white/5 hover:translate-x-1"
-                                )}
-                              >
-                                <div className="flex items-center gap-4 min-w-0">
-                                  <div className="flex-shrink-0">
-                                    {isCompleted ? (
-                                      <CheckCircle2 className="h-5 w-5 text-[#ff6a00]" />
-                                    ) : isStarted ? (
-                                      <div className="h-5 w-5 rounded-full border-2 border-[#ff6a00] border-t-transparent animate-spin" />
-                                    ) : (
-                                      <Circle className="h-5 w-5 text-white/20 group-hover:text-white/40" />
-                                    )}
-                                  </div>
-                                  <div className="min-w-0">
-                                    <h4 className="text-sm font-bold text-white group-hover:text-[#ff6a00] transition-colors truncate">
-                                      {chapter.title}
-                                    </h4>
-                                    <div className="flex items-center gap-2 mt-1">
-                                      <Clock className="h-3 w-3 text-white/20" />
-                                      <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
-                                        {chapter.reading_minutes || 5} min de leitura
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                                <ChevronRight className="h-4 w-4 text-white/10 group-hover:text-white/30 transition-colors flex-shrink-0" />
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </motion.div>
-                );
-              })}
-            </Accordion>
+                    {/* Conteúdo */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-1">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Módulo {index + 1}</span>
+                        {isNext && (
+                          <span className="px-2 py-0.5 rounded-full bg-[#ff6a00] text-black text-[9px] font-black uppercase tracking-widest animate-pulse">
+                            próximo
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="font-display text-xl md:text-2xl font-black text-white mb-2 truncate group-hover:text-white transition-colors">
+                        {module.title}
+                      </h3>
+                      <p className="text-white/40 text-sm font-medium line-clamp-1">
+                        {module.description || "Clique para ver os capítulos deste módulo."}
+                      </p>
+                    </div>
+
+                    {/* Status Icon */}
+                    <div className="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full border border-white/5 bg-white/[0.03] group-hover:border-[#ff6a00]/30 transition-colors">
+                      {isCompleted ? (
+                        <CheckCircle2 className="h-6 w-6 text-[#ff6a00]" />
+                      ) : isNext ? (
+                        <Play className="h-5 w-5 text-[#ff6a00] fill-[#ff6a00]" />
+                      ) : (
+                        <div className="h-2 w-2 rounded-full bg-white/20" />
+                      )}
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })
           )}
-        </section>
-      </main>
+        </div>
+      </nav>
+
+      {/* 5. RODAPÉ */}
+      <footer className="container max-w-5xl mx-auto px-6 py-12 border-t border-white/5 text-center">
+        <p className="text-white/20 text-xs font-bold uppercase tracking-widest">
+          Espetinho na Veia · do zero aos 10k
+        </p>
+      </footer>
     </div>
   );
 }
