@@ -119,7 +119,7 @@ function SupportPage() {
           ticket_id: ticket.id,
           message,
           sender_id: user.id,
-          sender_type: "user"
+          sender_type: "student"
         });
 
       if (msgError) throw msgError;
