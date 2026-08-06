@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Play, BookOpen, TrendingUp, Award, ArrowRight, Flame } from "lucide-react";
+import { Play, BookOpen, TrendingUp, Award, ArrowRight, Flame, Lock, ShoppingCart, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { student, courses, IMG } from "@/lib/platform-data";
+import { student, courses, IMG, Course } from "@/lib/platform-data";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({
@@ -11,7 +11,10 @@ export const Route = createFileRoute("/app/")({
 });
 
 function Dashboard() {
-  const last = courses.find((c) => c.id === student.lastLesson.courseId)!;
+  const last = courses.find((c) => c.id === student.lastLesson.courseId) || courses[0];
+  const owned = courses.filter((c) => !c.locked);
+  const others = courses.filter((c) => c.locked);
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -38,6 +41,20 @@ function Dashboard() {
         </div>
       </div>
 
+      {/* Showcase / Vitrine */}
+      <section>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="font-display text-2xl font-bold tracking-tight">Vitrine de Cursos</h2>
+          <Link to="/app/cursos" className="text-sm font-medium text-gold hover:underline">Ver todos</Link>
+        </div>
+        
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {courses.map((course) => (
+            <CourseShowcaseCard key={course.id} course={course} />
+          ))}
+        </div>
+      </section>
+
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard icon={TrendingUp} label="Progresso geral" value={`${student.totalProgress}%`} accent />
@@ -45,56 +62,94 @@ function Dashboard() {
         <StatCard icon={BookOpen} label="Materiais disponíveis" value={String(student.materials)} />
         <StatCard icon={Award} label="Sequência" value={`${student.streak} dias`} />
       </div>
-
-      {/* Continue where you left off */}
-      <section>
-        <h3 className="mb-4 font-display text-xl font-bold">Continue de onde parou</h3>
-        <div className="glass overflow-hidden rounded-2xl">
-          <div className="grid gap-0 sm:grid-cols-[220px_1fr]">
-            <div className="relative aspect-video sm:aspect-auto">
-              <img src={last.cover} alt={last.title} className="h-full w-full object-cover" loading="lazy" />
-              <div className="absolute inset-0 grid place-items-center bg-black/40">
-                <div className="grid h-12 w-12 place-items-center rounded-full bg-fire shadow-fire">
-                  <Play className="h-5 w-5 text-white" />
-                </div>
-              </div>
-            </div>
-            <div className="p-5">
-              <div className="text-xs uppercase tracking-widest text-muted-foreground">{last.title}</div>
-              <div className="mt-1 font-display text-lg font-bold">{student.lastLesson.lessonTitle}</div>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full bg-fire" style={{ width: `${student.lastLesson.percent}%` }} />
-              </div>
-              <div className="mt-1 text-xs text-muted-foreground">{student.lastLesson.percent}% concluído</div>
-              <Link to="/app/cursos/$courseId" params={{ courseId: last.id }} className="btn-fire mt-4 inline-flex">
-                Retomar aula <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Next recommended */}
-      <section>
-        <h3 className="mb-4 font-display text-xl font-bold">Próximo passo recomendado</h3>
-        <div className="glass gradient-border rounded-2xl p-5">
-          <div className="flex items-start gap-4">
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-fire shadow-fire">
-              <Flame className="h-6 w-6 text-white" />
-            </div>
-            <div className="min-w-0">
-              <div className="font-display text-lg font-bold">Complete o Módulo 2 — Escolha e preparação das carnes</div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Faltam 2 aulas para você desbloquear o módulo de Montagem e Produção.
-              </p>
-              <Link to="/app/cursos/$courseId" params={{ courseId: "espetinho-lucrativo" }} className="btn-ghost-fire mt-4 inline-flex text-sm">
-                Ir para o módulo <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
+  );
+}
+
+function CourseShowcaseCard({ course }: { course: Course }) {
+  const isLocked = course.locked;
+  
+  return (
+    <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"}`}>
+      <div className="relative aspect-video">
+        <img 
+          src={course.cover} 
+          alt={course.title} 
+          className={`h-full w-full object-cover ${isLocked ? "blur-[1px] brightness-75" : ""}`} 
+          loading="lazy" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        
+        {course.badge && !isLocked && (
+          <div className="absolute left-3 top-3 rounded-full bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-black">
+            <Sparkles className="mr-1 inline h-3 w-3" /> {course.badge}
+          </div>
+        )}
+
+        {isLocked && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 backdrop-blur-[2px]">
+            {!course.isComingSoon && (
+              <div className="mb-2 grid h-12 w-12 place-items-center rounded-full bg-black/60 border border-white/20">
+                <Lock className="h-5 w-5 text-gold" />
+              </div>
+            )}
+            {course.isComingSoon && (
+              <div className="rounded-full bg-gold/90 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-black">
+                Em breve
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="absolute bottom-3 left-3 flex items-center gap-2">
+           <div className="rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium backdrop-blur">
+            {course.totalLessons > 0 ? `${course.totalLessons} aulas` : "Em breve"}
+          </div>
+        </div>
+      </div>
+
+      <div className="p-5">
+        <h3 className="font-display text-lg font-bold line-clamp-1">{course.title}</h3>
+        <p className="mt-1 line-clamp-2 text-sm text-muted-foreground min-h-[40px]">{course.description}</p>
+        
+        {isLocked ? (
+          <div className="mt-4">
+            {!course.isComingSoon ? (
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Acesso imediato</span>
+                  <div className="font-display text-xl font-bold text-gold">R$ {course.price?.toFixed(2).replace(".", ",")}</div>
+                </div>
+                <button className="btn-fire px-4 py-2 text-xs">
+                  <ShoppingCart className="mr-1.5 h-3.5 w-3.5" /> Comprar
+                </button>
+              </div>
+            ) : (
+              <button disabled className="w-full rounded-xl border border-white/5 bg-white/5 py-2.5 text-xs font-bold uppercase tracking-widest text-muted-foreground cursor-not-allowed">
+                Aguarde o lançamento
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="mt-4">
+            <div className="mb-2 flex items-center justify-between text-[10px] font-medium">
+              <span className="text-muted-foreground">Progresso</span>
+              <span className="text-gold">{course.progress}%</span>
+            </div>
+            <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div className="h-full bg-gold" style={{ width: `${course.progress}%` }} />
+            </div>
+            <Link
+              to="/app/cursos/$courseId"
+              params={{ courseId: course.id }}
+              className="btn-fire flex w-full items-center justify-center gap-2 py-2.5 text-xs font-bold uppercase tracking-widest"
+            >
+              <Play className="h-3.5 w-3.5" /> Continuar Aluno
+            </Link>
+          </div>
+        )}
+      </div>
+    </article>
   );
 }
 
