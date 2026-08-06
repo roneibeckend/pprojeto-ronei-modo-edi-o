@@ -67,7 +67,7 @@ export const generateEbook = createServerFn({ method: "POST" })
         "X-Lovable-AIG-SDK": "fetch",
       },
       body: JSON.stringify({
-        model: "google/gemini-3.6-flash",
+        model: "google/gemini-1.5-flash",
         messages: [
           { role: "system", content: SYSTEM },
           { role: "user", content: data.prompt },
@@ -147,7 +147,7 @@ Retorne APENAS um JSON no formato:
         "X-Lovable-AIG-SDK": "fetch",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.0-flash-exp",
+        model: "google/gemini-1.5-flash",
         messages: [
           { 
             role: "system", 
