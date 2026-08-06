@@ -219,7 +219,7 @@ function CertCard({ cert, onPreview, onDownload }: { cert: any; onPreview: () =>
 
 /* -------------------- MINI THUMBNAIL -------------------- */
 
-function MiniCertificate({ cert, locked }: { cert: typeof certificates[number]; locked: boolean }) {
+function MiniCertificate({ cert, locked }: { cert: any; locked: boolean }) {
   return (
     <div className="relative h-full w-full bg-[#f5efe4]">
       {/* Guilloché pattern */}
