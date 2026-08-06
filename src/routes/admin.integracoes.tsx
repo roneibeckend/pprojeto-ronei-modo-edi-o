@@ -54,6 +54,27 @@ function IntegrationsPage() {
   const testConnectionFn = useServerFn(testAIConnection);
   const saveIntegrationFn = useServerFn(saveIntegration);
 
+  useEffect(() => {
+    fetchLogs();
+  }, []);
+
+  async function fetchLogs() {
+    try {
+      setLoadingLogs(true);
+      const { data, error } = await supabase
+        .from('integration_logs' as any)
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      setLogs(data || []);
+    } catch (err) {
+      console.error("Erro ao carregar logs", err);
+    } finally {
+      setLoadingLogs(false);
+    }
+  }
+
   const { data: integrations, isLoading } = useQuery({
     queryKey: ['integrations'],
     queryFn: async () => {
