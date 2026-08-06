@@ -103,16 +103,17 @@ function AdminPage() {
           <div className="mb-4 flex items-end justify-between">
             <div>
               <div className="mb-1 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-white/40">
-                <Sparkles className="h-3 w-3" style={{ color: ORANGE }} /> Comando executivo
+                <Command className="h-3 w-3" style={{ color: ORANGE }} /> Painel de Controle
               </div>
               <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-white">
-                Ferramentas IA
+                Operações de Conteúdo
               </h2>
             </div>
           </div>
           <div className="flex-1 grid gap-3">
-            <AdminAction index={1} icon={Sparkles} title="Criar ebook com IA" desc="Gere ebook interativo a partir de um prompt." meta="Lovable AI · Gemini" shortcut="I" delay={0} to="/app/admin/ebook-ai" highlight />
-            <AdminAction index={2} icon={GraduationCap} title="Upload Inteligente" desc="Estruture módulos e trilhas usando IA." meta="Novo" shortcut="U" delay={40} />
+            <AdminAction index={1} icon={Library} title="Gerenciar Cursos" desc="Upload de cursos manuais ou trilhas IA." shortcut="C" delay={0} to="/app/admin/conteudo" highlight />
+            <AdminAction index={2} icon={Clapperboard} title="Aulas ao Vivo" desc="Agende e gerencie transmissões em tempo real." shortcut="V" delay={40} to="/app/admin/ao-vivo" />
+            <AdminAction index={3} icon={Sparkles} title="IA · Gerador de Ebook" desc="Crie conteúdo interativo premium com um prompt." meta="Lovable AI" shortcut="I" delay={80} to="/app/admin/ebook-ai" />
           </div>
         </section>
       </div>
