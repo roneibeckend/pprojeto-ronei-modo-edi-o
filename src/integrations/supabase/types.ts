@@ -88,6 +88,35 @@ export type Database = {
         }
         Relationships: []
       }
+      ebook_enrollments: {
+        Row: {
+          created_at: string
+          ebook_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ebook_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ebook_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ebook_enrollments_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ebooks: {
         Row: {
           category: string | null

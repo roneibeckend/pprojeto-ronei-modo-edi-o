@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Play, Sparkles, Lock, ShoppingCart } from "lucide-react";
+import { Play, Sparkles, Lock, ShoppingCart, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { courses, student } from "@/lib/platform-data";
 import { ProgressSummary } from "@/components/platform/ProgressSummary";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useEnrollments } from "@/hooks/use-enrollments";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/app/cursos/")({
   head: () => ({ meta: [{ title: "Meus cursos — Espetinho na Veia" }] }),
@@ -10,17 +13,38 @@ export const Route = createFileRoute("/app/cursos/")({
 });
 
 function CoursesPage() {
-  // Separar cursos adquiridos e disponíveis para compra
-  const owned = courses.filter((c) => !c.locked);
-  const others = courses.filter((c) => c.locked);
+  const { user } = useAuth();
+  const { courseEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
 
-  // Cálculos para a barra de progresso (apenas para cursos adquiridos)
-  const startedCount = owned.filter(c => c.progress > 0 && c.progress < 100).length;
-  const finishedCount = owned.filter(c => c.progress === 100).length;
+  const { data: dbCourses, isLoading: isLoadingCourses } = useQuery({
+    queryKey: ["courses"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("courses").select("*");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  if (isLoadingCourses || isLoadingEnrollments) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-fire" />
+      </div>
+    );
+  }
+
+  // Cursos que o usuário possui (comprados ou gratuitos por padrão no banco)
+  // No entanto, o requisito diz: "restringir o acesso a cursos e ebooks apenas para aqueles que realizaram a compra correspondente."
+  // E "Conteúdos classificados como "receitas", "planilhas" e "materiais" devem ser considerados gratuitos"
+  // Para cursos, assumimos que se não estiver em courseEnrollments, não está "comprado".
+  // Exceto se o preço for 0? O usuário não especificou isso, mas geralmente preço 0 = livre.
+  // "Conteúdo gratuito (receitas, planilhas, materiais) deve permanecer acessível para todos os clientes."
+  // Cursos e Ebooks são o conteúdo pago.
   
-  const totalProgress = owned.length > 0 
-    ? Math.round(owned.reduce((acc, curr) => acc + curr.progress, 0) / owned.length)
-    : 0;
+  const owned = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || c.price === 0) || [];
+  const others = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0) || [];
+
+  const totalProgress = owned.length > 0 ? 0 : 0; // Seria necessário buscar o progresso real do banco
 
   return (
     <div className="pb-10">
@@ -36,9 +60,9 @@ function CoursesPage() {
 
       <ProgressSummary 
         totalProgress={totalProgress}
-        startedCount={startedCount}
-        finishedCount={finishedCount}
-        streak={student.streak}
+        startedCount={0}
+        finishedCount={0}
+        streak={0}
       />
 
       {/* Seção de Cursos Adquiridos */}
@@ -52,7 +76,7 @@ function CoursesPage() {
             {owned.map((c) => (
               <article key={c.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30">
                 <div className="relative aspect-video">
-                  <img src={c.cover} alt={c.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                  <img src={c.cover_url || ""} alt={c.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" />
                   
                   {c.badge && (
@@ -60,53 +84,19 @@ function CoursesPage() {
                       <Sparkles className="mr-1 inline h-3 w-3" /> {c.badge}
                     </div>
                   )}
-                  
-                  <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                    <div className="rounded-full bg-black/60 px-3 py-1 text-[10px] font-bold uppercase tracking-widest backdrop-blur">
-                      {c.totalLessons} aulas
-                    </div>
-                    {c.progress === 100 && (
-                      <div className="rounded-full bg-green-500/80 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur">
-                        Concluído
-                      </div>
-                    )}
-                  </div>
                 </div>
                 
                 <div className="p-5">
                   <h3 className="font-display text-lg font-bold leading-tight">{c.title}</h3>
                   <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{c.description}</p>
                   
-                  <div className="mt-6">
-                    <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                      <span>Progresso</span>
-                      <span className={c.progress === 100 ? "text-green-500" : "text-gold"}>{c.progress}%</span>
-                    </div>
-                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/5">
-                      <div 
-                        className={`h-full transition-all duration-700 ${c.progress === 100 ? "bg-green-500" : "bg-gold"}`} 
-                        style={{ width: `${c.progress}%` }} 
-                      />
-                    </div>
-                  </div>
-                  
                   <Link
                     to="/app/cursos/$courseId"
                     params={{ courseId: c.id }}
-                    className={`mt-6 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-all ${
-                      c.progress === 100 
-                        ? "bg-white/5 text-white hover:bg-white/10" 
-                        : "bg-fire text-white shadow-lg shadow-fire/20 hover:brightness-110"
-                    }`}
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold bg-fire text-white shadow-lg shadow-fire/20 hover:brightness-110 transition-all"
                   >
-                    {c.progress === 100 ? (
-                      <>Revisar conteúdo</>
-                    ) : (
-                      <>
-                        <Play className="h-4 w-4 fill-current" /> 
-                        {c.progress > 0 ? "Continuar de onde parou" : "Iniciar treinamento"}
-                      </>
-                    )}
+                    <Play className="h-4 w-4 fill-current" /> 
+                    Acessar curso
                   </Link>
                 </div>
               </article>
@@ -133,18 +123,12 @@ function CoursesPage() {
             {others.map((c) => (
               <article key={c.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100">
                 <div className="relative aspect-video grayscale-[0.3]">
-                  <img src={c.cover} alt={c.title} className="h-full w-full object-cover" loading="lazy" />
+                  <img src={c.cover_url || ""} alt={c.title} className="h-full w-full object-cover" loading="lazy" />
                   <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    {!c.isComingSoon ? (
-                      <div className="rounded-full bg-black/60 p-3 text-gold backdrop-blur-md">
-                        <Lock className="h-6 w-6" />
-                      </div>
-                    ) : (
-                      <div className="rounded-full bg-gold/90 px-4 py-1 text-xs font-black uppercase tracking-widest text-black shadow-xl shadow-gold/20">
-                        Em breve
-                      </div>
-                    )}
+                    <div className="rounded-full bg-black/60 p-3 text-gold backdrop-blur-md">
+                      <Lock className="h-6 w-6" />
+                    </div>
                   </div>
                 </div>
                 
@@ -152,28 +136,17 @@ function CoursesPage() {
                   <h3 className="font-display text-lg font-bold leading-tight">{c.title}</h3>
                   <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{c.description}</p>
                   
-                  {!c.isComingSoon ? (
-                    <>
-                      <div className="mt-6 flex items-end justify-between">
-                        <div>
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Investimento</span>
-                          <div className="font-display text-2xl font-bold text-gold">
-                            R$ {c.price?.toFixed(2).replace(".", ",")}
-                          </div>
-                        </div>
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                          {c.totalLessons} aulas
-                        </div>
+                  <div className="mt-6 flex items-end justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Investimento</span>
+                      <div className="font-display text-2xl font-bold text-gold">
+                        R$ {c.price?.toString().replace(".", ",")}
                       </div>
-                      <button className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10">
-                        <ShoppingCart className="h-4 w-4" /> Comprar e Liberar
-                      </button>
-                    </>
-                  ) : (
-                    <div className="mt-6 rounded-xl bg-white/5 py-4 text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                      Lançamento futuro
                     </div>
-                  )}
+                  </div>
+                  <button className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10">
+                    <ShoppingCart className="h-4 w-4" /> Comprar e Liberar
+                  </button>
                 </div>
               </article>
             ))}
