@@ -38,7 +38,7 @@ const LessonSchema = z.object({
 
 // Funções de Servidor
 export const upsertCourse = createServerFn({ method: "POST" })
-  .input(CourseSchema)
+  .validator((data: z.infer<typeof CourseSchema>) => CourseSchema.parse(data))
   .handler(async ({ data }) => {
     const { data: result, error } = await supabase
       .from('courses')
@@ -51,7 +51,7 @@ export const upsertCourse = createServerFn({ method: "POST" })
   });
 
 export const upsertModule = createServerFn({ method: "POST" })
-  .input(ModuleSchema)
+  .validator((data: z.infer<typeof ModuleSchema>) => ModuleSchema.parse(data))
   .handler(async ({ data }) => {
     const { data: result, error } = await supabase
       .from('course_modules')
@@ -64,7 +64,7 @@ export const upsertModule = createServerFn({ method: "POST" })
   });
 
 export const upsertLesson = createServerFn({ method: "POST" })
-  .input(LessonSchema)
+  .validator((data: z.infer<typeof LessonSchema>) => LessonSchema.parse(data))
   .handler(async ({ data }) => {
     const { data: result, error } = await supabase
       .from('course_lessons')
@@ -77,16 +77,19 @@ export const upsertLesson = createServerFn({ method: "POST" })
   });
 
 export const updateOrders = createServerFn({ method: "POST" })
-  .input(z.object({
+  .validator((data: {
+    table: 'course_modules' | 'course_lessons',
+    items: { id: string, order_index: number }[]
+  }) => z.object({
     table: z.enum(['course_modules', 'course_lessons']),
     items: z.array(z.object({
       id: z.string().uuid(),
       order_index: z.number().int()
     }))
-  }))
+  }).parse(data))
   .handler(async ({ data }) => {
     const { error } = await supabase
-      .from(data.table)
+      .from(data.table as any)
       .upsert(data.items);
 
     if (error) throw new Error(error.message);
@@ -94,13 +97,16 @@ export const updateOrders = createServerFn({ method: "POST" })
   });
 
 export const deleteItem = createServerFn({ method: "POST" })
-  .input(z.object({
+  .validator((data: {
+    table: 'courses' | 'course_modules' | 'course_lessons',
+    id: string
+  }) => z.object({
     table: z.enum(['courses', 'course_modules', 'course_lessons']),
     id: z.string().uuid()
-  }))
+  }).parse(data))
   .handler(async ({ data }) => {
     const { error } = await supabase
-      .from(data.table)
+      .from(data.table as any)
       .delete()
       .eq('id', data.id);
 
