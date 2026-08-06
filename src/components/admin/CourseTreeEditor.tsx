@@ -17,6 +17,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { VideoUpload } from "./VideoUpload";
 import {
   Dialog,
   DialogContent,
@@ -257,8 +258,12 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
                   <input required placeholder="Título" value={editingLesson.title} onChange={e => setEditingLesson({...editingLesson, title: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg outline-none" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL do Vídeo</label>
-                  <input placeholder="URL do Vídeo" value={editingLesson.video_url || ""} onChange={e => setEditingLesson({...editingLesson, video_url: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg outline-none" />
+                  <VideoUpload 
+                    value={editingLesson.video_url || ""} 
+                    onChange={url => setEditingLesson({...editingLesson, video_url: url})}
+                    bucket="course-assets"
+                    label="Vídeo da Aula"
+                  />
                 </div>
               </div>
               <div className="space-y-1">
