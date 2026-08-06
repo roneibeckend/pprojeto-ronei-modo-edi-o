@@ -132,6 +132,7 @@ export type Database = {
           module_id: string | null
           order_index: number
           reading_minutes: number | null
+          slug: string | null
           title: string
           video_url: string | null
         }
@@ -143,6 +144,7 @@ export type Database = {
           module_id?: string | null
           order_index?: number
           reading_minutes?: number | null
+          slug?: string | null
           title: string
           video_url?: string | null
         }
@@ -154,6 +156,7 @@ export type Database = {
           module_id?: string | null
           order_index?: number
           reading_minutes?: number | null
+          slug?: string | null
           title?: string
           video_url?: string | null
         }
