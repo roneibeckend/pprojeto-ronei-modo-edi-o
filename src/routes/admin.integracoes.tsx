@@ -51,7 +51,7 @@ function IntegrationsPage() {
   const [logs, setLogs] = useState<any[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
 
-  const testConnectionFn = useServerFn(testAIConnection);
+  const testConnectionFn = useServerFn(testIntegrationConnection);
   const saveIntegrationFn = useServerFn(saveIntegration);
 
   useEffect(() => {
