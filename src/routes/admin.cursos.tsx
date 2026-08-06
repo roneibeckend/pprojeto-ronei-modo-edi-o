@@ -333,124 +333,151 @@ function AdminCursosPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left overflow-y-auto">
-          <div className="w-full max-w-2xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-8">
+          <div className="w-full max-w-4xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-8 min-h-[600px] flex flex-col">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold">{editingItem?.id ? "Editar Curso" : "Novo Curso"}</h3>
+              <h3 className="text-xl font-bold">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo Curso"}</h3>
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors"><X className="h-5 w-5" /></button>
             </div>
-            
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do Curso</label>
-                    <input 
-                      required 
-                      value={editingItem?.title || ""} 
-                      onChange={e => {
-                        const title = e.target.value;
-                        const slug = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
-                        setEditingItem({...editingItem, title, slug});
-                      }} 
-                      className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
-                    />
-                  </div>
-                  
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Slug (URL amigável)</label>
-                    <input 
-                      required 
-                      value={editingItem?.slug || ""} 
-                      onChange={e => setEditingItem({...editingItem, slug: e.target.value})} 
-                      className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
-                    />
-                  </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nível</label>
-                    <select 
-                      value={editingItem?.level || "beginner"} 
-                      onChange={e => setEditingItem({...editingItem, level: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] appearance-none cursor-pointer"
-                    >
-                      <option value="beginner">Iniciante</option>
-                      <option value="intermediate">Intermediário</option>
-                      <option value="advanced">Avançado</option>
-                    </select>
-                  </div>
-                </div>
+            <Tabs defaultValue="info" className="flex-1 flex flex-col">
+              <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start">
+                <TabsTrigger value="info" className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
+                  <Info className="h-4 w-4" /> Informações
+                </TabsTrigger>
+                <TabsTrigger value="content" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
+                  <Layout className="h-4 w-4" /> Conteúdo
+                </TabsTrigger>
+                <TabsTrigger value="students" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
+                  <Users className="h-4 w-4" /> Alunos
+                </TabsTrigger>
+              </TabsList>
 
-                <div className="space-y-4">
-                  <ImageUpload 
-                    value={editingItem?.cover_url || ""} 
-                    onChange={url => setEditingItem({...editingItem, cover_url: url})}
-                    bucket="course-assets"
-                    label="Imagem de Capa"
-                    description="Proporção 16:9 recomendada (ex: 1280x720px)."
-                  />
-                  
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL do Vídeo de Intro (Opcional)</label>
-                    <input 
-                      value={editingItem?.intro_video_url || ""} 
-                      onChange={e => setEditingItem({...editingItem, intro_video_url: e.target.value})} 
-                      placeholder="YouTube, Vimeo ou Panda"
-                      className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
-                    />
-                  </div>
-                </div>
-              </div>
+              <TabsContent value="info" className="flex-1 mt-0">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do Curso</label>
+                        <input 
+                          required 
+                          value={editingItem?.title || ""} 
+                          onChange={e => {
+                            const title = e.target.value;
+                            const slug = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+                            setEditingItem({...editingItem, title, slug});
+                          }} 
+                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
+                        />
+                      </div>
+                      
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Slug (URL amigável)</label>
+                        <input 
+                          required 
+                          value={editingItem?.slug || ""} 
+                          onChange={e => setEditingItem({...editingItem, slug: e.target.value})} 
+                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
+                        />
+                      </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição Curta</label>
-                <textarea 
-                  rows={3} 
-                  value={editingItem?.description || ""} 
-                  onChange={e => setEditingItem({...editingItem, description: e.target.value})} 
-                  className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors resize-none" 
-                />
-              </div>
-
-              <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                <div className="space-y-0.5">
-                  <div className="text-sm font-bold">Status da Publicação</div>
-                  <div className="text-[10px] text-white/40 uppercase tracking-widest">Defina se o curso estará visível para alunos</div>
-                </div>
-                <div className="flex gap-2">
-                  <button 
-                    type="button"
-                    onClick={() => setEditingItem({...editingItem, status: 'draft'})}
-                    className={cn(
-                      "px-4 py-2 rounded-lg text-xs font-bold transition-all",
-                      editingItem?.status === 'draft' ? "bg-yellow-500/20 text-yellow-500 border border-yellow-500/50" : "bg-white/5 text-white/40 border border-transparent"
-                    )}
-                  >
-                    Rascunho
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => setEditingItem({...editingItem, status: 'published'})}
-                    className={cn(
-                      "px-4 py-2 rounded-lg text-xs font-bold transition-all",
-                      editingItem?.status === 'published' ? "bg-green-500/20 text-green-500 border border-green-500/50" : "bg-white/5 text-white/40 border border-transparent"
-                    )}
-                  >
-                    Publicado
-                  </button>
-                </div>
-              </div>
-
-              <div className="pt-4 flex gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 rounded-lg bg-white/5 font-bold hover:bg-white/10 transition-colors">Cancelar</button>
-                <button type="submit" disabled={isSaving} className="flex-1 py-3 rounded-lg bg-[#ff6a00] text-black font-bold disabled:opacity-50 hover:bg-[#ff8c33] transition-colors">
-                  {isSaving ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <Loader2 className="h-4 w-4 animate-spin" /> Salvando...
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nível</label>
+                        <select 
+                          value={editingItem?.level || "beginner"} 
+                          onChange={e => setEditingItem({...editingItem, level: e.target.value})}
+                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] appearance-none cursor-pointer"
+                        >
+                          <option value="beginner">Iniciante</option>
+                          <option value="intermediate">Intermediário</option>
+                          <option value="advanced">Avançado</option>
+                        </select>
+                      </div>
                     </div>
-                  ) : "Salvar Curso"}
-                </button>
-              </div>
-            </form>
+
+                    <div className="space-y-4">
+                      <ImageUpload 
+                        value={editingItem?.cover_url || ""} 
+                        onChange={url => setEditingItem({...editingItem, cover_url: url})}
+                        bucket="course-assets"
+                        label="Imagem de Capa"
+                        description="Proporção 16:9 recomendada (ex: 1280x720px)."
+                      />
+                      
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL do Vídeo de Intro (Opcional)</label>
+                        <input 
+                          value={editingItem?.intro_video_url || ""} 
+                          onChange={e => setEditingItem({...editingItem, intro_video_url: e.target.value})} 
+                          placeholder="YouTube, Vimeo ou Panda"
+                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição Curta</label>
+                    <textarea 
+                      rows={3} 
+                      value={editingItem?.description || ""} 
+                      onChange={e => setEditingItem({...editingItem, description: e.target.value})} 
+                      className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors resize-none" 
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                    <div className="space-y-0.5">
+                      <div className="text-sm font-bold">Status da Publicação</div>
+                      <div className="text-[10px] text-white/40 uppercase tracking-widest">Defina se o curso estará visível para alunos</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button 
+                        type="button"
+                        onClick={() => setEditingItem({...editingItem, status: 'draft'})}
+                        className={cn(
+                          "px-4 py-2 rounded-lg text-xs font-bold transition-all",
+                          editingItem?.status === 'draft' ? "bg-yellow-500/20 text-yellow-500 border border-yellow-500/50" : "bg-white/5 text-white/40 border border-transparent"
+                        )}
+                      >
+                        Rascunho
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => setEditingItem({...editingItem, status: 'published'})}
+                        className={cn(
+                          "px-4 py-2 rounded-lg text-xs font-bold transition-all",
+                          editingItem?.status === 'published' ? "bg-green-500/20 text-green-500 border border-green-500/50" : "bg-white/5 text-white/40 border border-transparent"
+                        )}
+                      >
+                        Publicado
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 flex gap-3">
+                    <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 rounded-lg bg-white/5 font-bold hover:bg-white/10 transition-colors">Cancelar</button>
+                    <button type="submit" disabled={isSaving} className="flex-1 py-3 rounded-lg bg-[#ff6a00] text-black font-bold disabled:opacity-50 hover:bg-[#ff8c33] transition-colors">
+                      {isSaving ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" /> Salvando...
+                        </div>
+                      ) : "Salvar Informações"}
+                    </button>
+                  </div>
+                </form>
+              </TabsContent>
+
+              <TabsContent value="content" className="flex-1 mt-0">
+                {editingItem?.id && <CourseTreeEditor courseId={editingItem.id} />}
+              </TabsContent>
+
+              <TabsContent value="students" className="flex-1 mt-0">
+                <div className="flex flex-col items-center justify-center py-20 text-white/20">
+                  <Users className="h-12 w-12 mb-4" />
+                  <p className="text-sm">Funcionalidade de listagem de alunos em desenvolvimento.</p>
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       )}
