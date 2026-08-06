@@ -156,6 +156,51 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_logs: {
+        Row: {
+          created_at: string | null
+          details: Json | null
+          endpoint: string | null
+          environment: string | null
+          http_code: number | null
+          id: string
+          integration_name: string
+          latency: string | null
+          message: string | null
+          response_body: Json | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          details?: Json | null
+          endpoint?: string | null
+          environment?: string | null
+          http_code?: number | null
+          id?: string
+          integration_name: string
+          latency?: string | null
+          message?: string | null
+          response_body?: Json | null
+          status: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          details?: Json | null
+          endpoint?: string | null
+          environment?: string | null
+          http_code?: number | null
+          id?: string
+          integration_name?: string
+          latency?: string | null
+          message?: string | null
+          response_body?: Json | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       integrations: {
         Row: {
           category: string
