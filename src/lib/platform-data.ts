@@ -48,9 +48,9 @@ export const courses: Course[] = [
     description: "O treinamento definitivo para transformar espetinhos em uma fonte de renda de R$ 10.000 por mês.",
     cover: IMG.hero,
     teacher: "Ronnei — Espetos Grill",
-    progress: 0,
+    progress: 45, // Simulação de progresso iniciado
     totalLessons: 15,
-    locked: false, // Inicialmente liberado para quem comprou (simulado aqui como desbloqueado)
+    locked: false,
     badge: "O MAIS VENDIDO",
     modules: [
       {
@@ -69,9 +69,9 @@ export const courses: Course[] = [
     description: "Domine cortes nobres, temperos secretos e a arte da brasa perfeita para cobrar mais caro.",
     cover: IMG.platter1,
     teacher: "Ronnei — Espetos Grill",
-    progress: 0,
+    progress: 100, // Simulação de curso finalizado
     totalLessons: 20,
-    locked: true,
+    locked: false, // Marcado como adquirido para demonstração
     price: 97.0,
     modules: [],
   },
