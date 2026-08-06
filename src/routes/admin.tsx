@@ -53,6 +53,7 @@ function AdminRootLayout() {
     { to: "/admin/ao-vivo", label: "Ao Vivo", icon: Clapperboard },
     { to: "/admin/ebook-ai", label: "IA E-book", icon: BrainCircuit },
     { to: "/admin/alunos", label: "Alunos", icon: Users },
+    { to: "/admin/suporte", label: "Suporte", icon: HelpCircle },
     { to: "/admin/integracoes", label: "Integrações", icon: Settings },
   ];
 
