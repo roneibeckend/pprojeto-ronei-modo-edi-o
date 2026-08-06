@@ -234,7 +234,16 @@ function CoursePage() {
           <div className="space-y-4">
             {course.modules?.map((m: any) => (
               <div key={m.id}>
-                <div className="px-2 pb-2 text-sm font-semibold">{m.title}</div>
+                <button 
+                  onClick={() => {
+                    if (m.lessons && m.lessons.length > 0) {
+                      setActiveId(m.lessons[0].id);
+                    }
+                  }}
+                  className="w-full text-left px-2 pb-2 text-sm font-semibold hover:text-fire transition-colors"
+                >
+                  {m.title}
+                </button>
                 <ul className="space-y-1">
                   {m.lessons?.map((l: any) => {
                     const isActive = l.id === active?.id;
