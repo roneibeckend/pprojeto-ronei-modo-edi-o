@@ -442,7 +442,7 @@ function AdminRelatoriosPage() {
                 <FileText className="h-4 w-4" style={{ color: ORANGE }} /> Destinatários do Relatório
               </div>
               <button 
-                onClick={() => { setEditingRecipient({ name: "", phone_e164: "55", active: true, report_types: ['financial'] }); setIsRecipientModalOpen(true); }}
+                onClick={() => { setEditingRecipient({ name: "", email: "", active: true, report_types: ['financial'] }); setIsRecipientModalOpen(true); }}
                 className="flex items-center gap-2 bg-[#ff6a00] px-3 py-1.5 rounded text-[10px] font-bold text-black uppercase tracking-widest"
               >
                 <Plus className="h-3 w-3" /> Novo
