@@ -13,7 +13,7 @@ const weeks = [30, 50, 45, 70, 65, 80, 92, 78, 88, 95, 82, 100];
 function ProgressPage() {
   const started = courses.filter((c) => c.progress > 0).length;
   const finished = courses.filter((c) => c.progress === 100).length;
-  const read = ebooks.filter((e) => e.progress === 100).length;
+  const read = 0; // Removido biblioteca de ebooks
   const unlocked = certificates.filter((c) => c.unlocked).length;
 
   return (
@@ -42,7 +42,7 @@ function ProgressPage() {
             ))}
           </div>
           <div className="mt-4 grid grid-cols-3 gap-3 text-center text-sm">
-            <div><div className="text-muted-foreground text-xs">E-books lidos</div><div className="font-bold">{read}</div></div>
+            <div><div className="text-muted-foreground text-xs">Cursos concluídos</div><div className="font-bold">{finished}</div></div>
             <div><div className="text-muted-foreground text-xs">Aulas assistidas</div><div className="font-bold">{student.lessonsWatched}</div></div>
             <div><div className="text-muted-foreground text-xs">Certificados</div><div className="font-bold">{unlocked}</div></div>
           </div>

@@ -39,14 +39,12 @@ function AdminDashboard() {
       const [
         studentsRes,
         coursesRes,
-        ebooksRes,
         enrollmentsRes,
         ticketsRes,
         recentLogsRes
       ] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('courses').select('id'),
-        supabase.from('ebooks').select('id'),
         supabase.from('course_enrollments' as any).select('id', { count: 'exact' }),
         supabase.from('support_tickets').select('id', { count: 'exact', head: true }).eq('status', 'open'),
         supabase.from('integration_logs' as any).select('*').order('created_at', { ascending: false }).limit(3)
@@ -55,7 +53,6 @@ function AdminDashboard() {
       return {
         students: studentsRes.count || 0,
         courses: coursesRes.data?.length || 0,
-        ebooks: ebooksRes.data?.length || 0,
         sales: enrollmentsRes.count || 0,
         revenue: (enrollmentsRes.count || 0) * 197.00,
         pendingTickets: ticketsRes.count || 0,
@@ -104,7 +101,7 @@ function AdminDashboard() {
           <div className="grid gap-3">
             {[
               { to: "/admin/cursos", label: "Gerenciar Catálogo de Cursos", visible: isAdmin },
-              { to: "/admin/ebooks", label: "Biblioteca de E-books", visible: isAdmin },
+              
               { to: "/admin/alunos", label: "Base de Alunos e Matrículas", visible: hasModule("alunos") },
               { to: "/admin/suporte", label: "Central de Suporte (Tickets)", highlight: (stats?.pendingTickets || 0) > 0, visible: hasModule("suporte") },
               { to: "/admin/receitas", label: "Central de Receitas", visible: isAdmin },

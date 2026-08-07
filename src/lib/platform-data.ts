@@ -113,28 +113,8 @@ export const courses: Course[] = [
   },
 ];
 
-export type Ebook = {
-  id: string;
-  title: string;
-  description: string;
-  cover: string;
-  pages: number;
-  category: string;
-  progress: number;
-  locked?: boolean;
-  price?: number;
-  originalPrice?: number;
-};
 
-export const ebooks: Ebook[] = [
-  { id: "guia-completo", title: "Guia Completo do Espetinho Lucrativo", description: "O passo a passo do zero aos 10k por mês.", cover: IMG.hero, pages: 84, category: "Negócio", progress: 60 },
-  { id: "50-receitas", title: "50 Receitas de Espetinhos", description: "Variedade que fideliza clientes.", cover: IMG.platter1, pages: 62, category: "Receitas", progress: 30 },
-  { id: "molhos-vendem", title: "Molhos que Vendem", description: "Aumente o ticket médio com molhos irresistíveis.", cover: IMG.platter2, pages: 40, category: "Receitas", progress: 0, locked: true, price: 27.9, originalPrice: 47.9 },
-  { id: "manual-temperos", title: "Manual de Temperos", description: "Combinações profissionais e proporções ideais.", cover: IMG.ribeye, pages: 36, category: "Técnica", progress: 12 },
-  { id: "custos-lucros", title: "Como Calcular Custos e Lucros", description: "Fórmulas e planilhas prontas.", cover: IMG.chef, pages: 28, category: "Gestão", progress: 100 },
-  { id: "divulgacao", title: "Guia de Divulgação para Espetinhos", description: "Do Instagram ao boca a boca.", cover: IMG.skewersFlat, pages: 44, category: "Marketing", progress: 0, locked: true, price: 19.9, originalPrice: 37.0 },
-  { id: "checklist-abrir", title: "Checklist para Abrir seu Negócio", description: "Não esqueça de nada antes da primeira venda.", cover: IMG.skewersHeld, pages: 18, category: "Negócio", progress: 0, locked: true, price: 14.9, originalPrice: 27.0 },
-];
+export const ebooks: any[] = [];
 
 
 export type Recipe = {
@@ -188,7 +168,7 @@ export const supportQuestions = [
   { q: "Quanto preciso investir?", a: "Com R$ 800 a R$ 1.500 você monta uma operação inicial com churrasqueira, carnes, temperos, embalagens e divulgação básica." },
   { q: "Como conservar as carnes?", a: "Mantenha entre 0°C e 4°C, sempre em recipientes fechados. Temperos com sal só nas últimas 2 horas antes de assar." },
   { q: "Como divulgar meu negócio?", a: "Comece pelo WhatsApp com seus contatos + posts diários no Instagram mostrando o preparo. Boca a boca é seu maior aliado." },
-  { q: "Onde encontro meus e-books?", a: "Na aba \"Biblioteca de e-books\" no menu lateral. Você pode ler online ou baixar em PDF." },
+  { q: "Como emitir meu certificado?", a: "Conclua 100% de um curso e o certificado é liberado automaticamente na aba \"Certificados\"." },
   { q: "Como emitir meu certificado?", a: "Conclua 100% de um curso e o certificado é liberado automaticamente na aba \"Certificados\"." },
 ];
 
@@ -229,7 +209,6 @@ export const student = {
 export const adminStats = {
   students: 2847,
   activeCourses: 4,
-  ebooks: 7,
   lessonsWatched: 18420,
   avgCompletion: 62,
   activeRecent: 412,
