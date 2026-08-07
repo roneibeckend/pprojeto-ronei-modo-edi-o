@@ -197,7 +197,7 @@ function AffiliateFinancePage() {
                     return (
                       <tr key={p.id} className="hover:bg-white/[0.01] transition-colors">
                         <td className="px-6 py-4 text-white/60">
-                          {new Date(p.created_at).toLocaleDateString('pt-BR')}
+                          {p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR') : '-'}
                         </td>
                         <td className="px-6 py-4 font-bold text-white">
                           R$ {p.amount?.toFixed(2).replace(".", ",")}
