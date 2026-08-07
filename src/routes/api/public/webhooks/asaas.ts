@@ -38,7 +38,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
               const parts = externalRef.split(':');
               const productType = parts[0];
               const productId = parts[1];
-              const affiliatePart = parts.find(p => p.startsWith('ref_'));
+              const affiliatePart = parts.find((p: string) => p.startsWith('ref_'));
               const affiliateCode = affiliatePart ? affiliatePart.replace('ref_', '') : null;
               
               const customerEmail = body.payment?.customerEmail;
