@@ -20,10 +20,26 @@ export function useEnrollments() {
     enabled: !!user?.id,
   });
 
+  const { data: ebookEnrollments, isLoading: isLoadingEbooks } = useQuery({
+    queryKey: ["ebook-enrollments", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from("ebook_enrollments")
+        .select("ebook_id")
+        .eq("user_id", user.id);
+      
+      if (error) throw error;
+      return data.map((e) => e.ebook_id);
+    },
+    enabled: !!user?.id,
+  });
 
   return {
     courseEnrollments: courseEnrollments || [],
-    isLoading: isLoadingCourses,
+    ebookEnrollments: ebookEnrollments || [],
+    isLoading: isLoadingCourses || isLoadingEbooks,
     isEnrolledInCourse: (id: string) => courseEnrollments?.includes(id) || false,
+    isEnrolledInEbook: (id: string) => ebookEnrollments?.includes(id) || false,
   };
 }
