@@ -316,13 +316,29 @@ function AdminRelatoriosPage() {
                     <div className="text-white/80 font-bold">{log.recipient?.name || 'Sistema'}</div>
                     <div className="text-white/40">{new Date(log.created_at).toLocaleString('pt-BR')}</div>
                   </div>
-                  {log.status === 'sent' ? (
-                    <div className="flex items-center gap-1 text-emerald-400 font-bold"><CheckCircle2 className="h-3 w-3" /> Enviado</div>
-                  ) : log.status === 'skipped' ? (
-                    <div className="flex items-center gap-1 text-white/40 font-bold"><AlertCircle className="h-3 w-3" /> Pulado</div>
-                  ) : (
-                    <div className="flex items-center gap-1 text-red-400 font-bold" title={log.error}><XCircle className="h-3 w-3" /> Falha</div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      {log.status === 'sent' ? (
+                        <div className="flex items-center gap-1 text-emerald-400 font-bold"><CheckCircle2 className="h-3 w-3" /> Enviado</div>
+                      ) : log.status === 'skipped' ? (
+                        <div className="flex items-center gap-1 text-white/40 font-bold"><AlertCircle className="h-3 w-3" /> Pulado</div>
+                      ) : (
+                        <div className="flex flex-col items-end gap-0.5">
+                          <div className="flex items-center gap-1 text-red-400 font-bold"><XCircle className="h-3 w-3" /> Falha</div>
+                          {log.error && <div className="text-[8px] text-red-500/60 max-w-[80px] truncate" title={log.error}>{log.error}</div>}
+                        </div>
+                      )}
+                    </div>
+                    {log.recipient_id && (
+                      <button 
+                        onClick={() => handleTestSend(log.recipient_id, true)}
+                        className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition"
+                        title="Reenviar agora"
+                      >
+                        <RefreshCw className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
               {logs.length === 0 && (
