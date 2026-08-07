@@ -1,6 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
+
+type Tables = Database['public']['Tables'];
 
 const EbookSchema = z.object({
   id: z.string().optional(),
