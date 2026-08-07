@@ -299,10 +299,17 @@ function AdminRelatoriosPage() {
           </section>
 
           <section className="border border-white/5 bg-[#111] p-6 rounded-xl">
-             <div className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-              <Activity className="h-4 w-4" style={{ color: ORANGE }} /> Logs de Envio (Top 10)
+             <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+                <Activity className="h-4 w-4" style={{ color: ORANGE }} /> Logs de Envio (Top 20)
+              </div>
+              {logs.some(l => l.status === 'failed') && (
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-[9px] font-bold text-red-400 uppercase tracking-widest animate-pulse">
+                  <AlertCircle className="h-2.5 w-2.5" /> Falhas detectadas
+                </div>
+              )}
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               {logs.map(log => (
                 <div key={log.id} className="text-[10px] flex items-center justify-between p-2 rounded bg-white/[0.02] border border-white/5">
                   <div className="space-y-0.5">
