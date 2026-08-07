@@ -105,16 +105,24 @@ export function Onboarding() {
         skip: "Pular",
       }}
       styles={{
-        options: {
-          arrowColor: "#1a0d08",
+        tooltip: {
           backgroundColor: "#1a0d08",
-          overlayColor: "rgba(0, 0, 0, 0.75)",
-          primaryColor: "#f97316",
-          textColor: "#ffffff",
-          zIndex: 10000,
+          color: "#ffffff",
+          borderRadius: "16px",
+          padding: "20px",
         },
         tooltipContainer: {
           textAlign: "left" as const,
+        },
+        tooltipTitle: {
+          color: "#f97316",
+          fontSize: "18px",
+          fontWeight: "bold",
+          marginBottom: "10px",
+        },
+        tooltipContent: {
+          fontSize: "14px",
+          lineHeight: "1.5",
         },
         buttonPrimary: {
           backgroundColor: "#f97316",
@@ -122,6 +130,7 @@ export function Onboarding() {
           color: "#fff",
           fontSize: "14px",
           padding: "8px 16px",
+          fontWeight: "bold",
         },
         buttonBack: {
           marginRight: "8px",
@@ -131,6 +140,12 @@ export function Onboarding() {
         buttonSkip: {
           color: "#a3a3a3",
           fontSize: "14px",
+        },
+        overlay: {
+          backgroundColor: "rgba(0, 0, 0, 0.75)",
+        },
+        spotlight: {
+          borderRadius: "16px",
         }
       }}
     />
