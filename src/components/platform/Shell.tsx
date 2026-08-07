@@ -1,6 +1,8 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
+import { Bell } from "lucide-react";
+import { useNotifications } from "@/hooks/use-notifications";
 import {
   Home,
   GraduationCap,
@@ -81,6 +83,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { isAdmin, role, hasModule } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { unreadCount } = useNotifications();
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
@@ -219,13 +222,21 @@ export function Shell({ children }: { children: ReactNode }) {
               Espetinho <span className="text-primary">na Veia</span>
             </div>
           </div>
-          <Link
-            to="/app/perfil"
-            className="flex items-center gap-2 rounded-md border border-white/10 py-1 pl-1 pr-3 transition-colors hover:border-primary/50"
-          >
+          <div className="flex items-center gap-2">
+            <button className="relative grid h-10 w-10 place-items-center rounded-md border border-white/10 hover:border-primary/50 transition-colors">
+              <Bell className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary animate-pulse" />
+              )}
+            </button>
+            <Link
+              to="/app/perfil"
+              className="flex items-center gap-2 rounded-md border border-white/10 py-1 pl-1 pr-3 transition-colors hover:border-primary/50"
+            >
             <img src={student.avatar} alt={student.name} className="h-8 w-8 rounded" />
-            <span className="hidden text-sm font-medium sm:inline">{student.name.split(" ")[0]}</span>
-          </Link>
+              <span className="hidden text-sm font-medium sm:inline">{student.name.split(" ")[0]}</span>
+            </Link>
+          </div>
         </header>
 
         <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 lg:px-8 lg:py-8">{children}</main>
