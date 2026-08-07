@@ -1130,6 +1130,10 @@ export type Database = {
         Args: { aff_id: string; amount_to_add: number }
         Returns: undefined
       }
+      increment_partner_withdrawn: {
+        Args: { p_amount: number; p_user_id: string }
+        Returns: undefined
+      }
       save_assistant_response: {
         Args: { p_content: string; p_ticket_id: string }
         Returns: undefined

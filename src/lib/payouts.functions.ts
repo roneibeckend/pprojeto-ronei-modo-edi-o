@@ -96,10 +96,30 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
     status: z.enum(['analyzing', 'approved', 'paid', 'rejected']),
   }).parse(data))
   .handler(async ({ data, context }) => {
-    // Verificar permissão administrativa (através de middleware/RLS seria melhor, mas aqui validamos explicitamente)
-    // Assumimos que o requireSupabaseAuth garante que o user existe.
-    // Adicione a checagem de role se necessário via supabase.rpc('has_role', ...)
+    // 1. Verificar se o registro existe e qual o valor/tipo
+    const { data: payout, error: fetchError } = await supabaseAdmin
+      .from('payout_requests')
+      .select('*')
+      .eq('id', data.payoutId)
+      .single();
 
+    if (fetchError || !payout) throw new Error("Solicitação não encontrada.");
+    if (payout.status === 'paid') return { success: true }; // Já processado
+
+    // 2. Se o novo status for 'paid', atualizar o acumulado retirado do sócio
+    if (data.status === 'paid') {
+      const userType = (payout.metadata as any)?.user_type;
+      
+      if (userType === 'partner') {
+        const { error: balanceError } = await supabaseAdmin.rpc('increment_partner_withdrawn', {
+          p_user_id: payout.user_id,
+          p_amount: payout.amount
+        });
+        if (balanceError) throw new Error("Erro ao atualizar acumulado: " + balanceError.message);
+      }
+    }
+
+    // 3. Atualizar o status do saque
     const { error } = await supabaseAdmin
       .from('payout_requests')
       .update({ status: data.status })
