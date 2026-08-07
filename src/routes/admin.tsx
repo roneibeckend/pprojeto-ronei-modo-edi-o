@@ -50,9 +50,9 @@ function AdminRootLayout() {
     { to: "/admin/financeiro", label: "Financeiro", icon: DollarSign },
     { to: "/admin/cursos", label: "Cursos", icon: Library },
     { to: "/admin/receitas", label: "Receitas", icon: ChefHat },
-    { to: "/admin/ebooks", label: "E-books", icon: BookOpen },
+    
     { to: "/admin/ao-vivo", label: "Ao Vivo", icon: Clapperboard },
-    { to: "/admin/ebook-ai", label: "IA E-book", icon: BrainCircuit },
+    
     { to: "/admin/alunos", label: "Alunos", icon: Users },
     { to: "/admin/suporte", label: "Suporte", icon: HelpCircle },
     { to: "/admin/integracoes", label: "Integrações", icon: Settings },
