@@ -2188,7 +2188,7 @@ function LandingPage() {
     };
   }, []);
   return (
-    <div className="min-h-screen pb-24 md:pb-0">
+    <div className="min-h-dvh pb-24 md:pb-0">
       <ScrollProgress />
       <Nav />
       <main>
