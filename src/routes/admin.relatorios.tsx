@@ -17,12 +17,18 @@ import {
   Smartphone,
   Download,
   Eye,
-  RefreshCw
+  RefreshCw,
+  QrCode,
+  LogOut,
+  MessageSquare
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { getWhatsAppQRCode, confirmWhatsAppConnection, disconnectWhatsApp } from "@/lib/whatsapp.functions";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
