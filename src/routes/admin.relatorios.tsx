@@ -313,68 +313,23 @@ function AdminRelatoriosPage() {
         <div className="space-y-6 lg:col-span-1">
           <section className="border border-white/5 bg-[#111] p-6 rounded-xl">
             <div className="mb-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-              <MessageSquare className="h-4 w-4" style={{ color: ORANGE }} /> Conexão WhatsApp
+              <Plus className="h-4 w-4" style={{ color: ORANGE }} /> Destinatários de E-mail
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-black/40 border border-white/5">
-                <div>
-                  <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Status da Instância</div>
-                  <div className={cn(
-                    "text-xs font-bold mt-1",
-                    waInstance?.status === 'connected' ? "text-emerald-400" : 
-                    waInstance?.status === 'connecting' ? "text-yellow-400" : "text-red-400"
-                  )}>
-                    {waInstance?.status === 'connected' ? "CONECTADO" : 
-                     waInstance?.status === 'connecting' ? "AGUARDANDO QR CODE" : "DESCONECTADO"}
-                  </div>
-                </div>
-                {waInstance?.status === 'connected' && (
-                  <button 
-                    onClick={handleDisconnectWA}
-                    className="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition"
-                    title="Desconectar"
-                  >
-                    <LogOut className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-
-              {waInstance?.status === 'disconnected' && (
-                <button 
-                  onClick={handleConnectWhatsApp}
-                  disabled={isConnectingWA}
-                  className="w-full flex items-center justify-center gap-2 py-3 bg-[#ff6a00] text-black font-bold text-xs uppercase tracking-widest rounded-lg hover:opacity-90 transition disabled:opacity-50"
-                >
-                  {isConnectingWA ? <Loader2 className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
-                  Conectar Novo WhatsApp
-                </button>
-              )}
-
-              {waInstance?.status === 'connecting' && waInstance?.qr_code && (
-                <div className="space-y-4 animate-in fade-in duration-500">
-                  <div className="bg-white p-3 rounded-xl mx-auto w-fit border-4 border-[#ff6a00]">
-                    <img src={waInstance.qr_code} alt="WhatsApp QR Code" className="w-48 h-48" />
-                  </div>
-                  <p className="text-[10px] text-center text-white/40 px-4 leading-relaxed">
-                    Escaneie o QR Code acima com seu WhatsApp em Configurações &gt; Aparelhos Conectados.
-                  </p>
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={handleConfirmWA}
-                      className="flex-1 py-2 bg-emerald-500 text-black font-bold text-[10px] uppercase tracking-widest rounded-lg hover:opacity-90 transition"
-                    >
-                      Confirmar Leitura
-                    </button>
-                    <button 
-                      onClick={handleDisconnectWA}
-                      className="px-3 py-2 bg-white/5 text-white/40 hover:text-white rounded-lg transition"
-                    >
-                      Cancelar
-                    </button>
-                  </div>
-                </div>
-              )}
+              <p className="text-[10px] text-white/40 leading-relaxed">
+                Adicione os e-mails que devem receber o relatório financeiro diário.
+              </p>
+              <button 
+                onClick={() => {
+                  setEditingRecipient({ name: '', email: '', active: true });
+                  setIsRecipientModalOpen(true);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-[#ff6a00] text-black font-bold text-xs uppercase tracking-widest rounded-lg hover:opacity-90 transition"
+              >
+                <Plus className="h-4 w-4" />
+                Novo Destinatário
+              </button>
             </div>
           </section>
 
