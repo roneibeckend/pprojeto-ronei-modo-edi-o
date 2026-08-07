@@ -88,10 +88,13 @@ function AdminEbooksPage() {
     e.preventDefault();
     try {
       setIsSaving(true);
+      // Prepare data for upsert, ensuring no virtual 'modules' column is sent
+      const { modules, ...payload } = editingItem;
+      
       const { data, error } = await supabase
         .from('ebooks')
         .upsert({
-          ...editingItem,
+          ...payload,
           id: editingItem.id || undefined
         })
         .select()
