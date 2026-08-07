@@ -40,7 +40,7 @@ function AdminRootLayout() {
 
   if (isLoading) {
     return (
-      <div className="grid min-h-screen place-items-center bg-[#0a0a0a]">
+      <div className="grid min-h-dvh place-items-center bg-[#0a0a0a]">
         <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
       </div>
     );
@@ -65,7 +65,7 @@ function AdminRootLayout() {
   ];
 
   return (
-    <div className="flex h-screen bg-[#0a0a0a] text-white">
+    <div className="flex h-dvh bg-[#0a0a0a] text-white overflow-hidden">
       {/* Sidebar */}
       <aside className="w-64 border-r border-white/10 flex flex-col">
         <div className="p-6 border-b border-white/10 flex items-center gap-2">
