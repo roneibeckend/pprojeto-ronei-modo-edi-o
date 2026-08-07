@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Joyride, { CallBackProps, STATUS, Step } from "react-joyride";
+import Joyride, { type CallBackProps, STATUS, type Step } from "react-joyride";
 import { useLocation } from "@tanstack/react-router";
 
 export function Onboarding() {
