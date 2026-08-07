@@ -27,6 +27,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { VideoUpload } from "@/components/admin/VideoUpload";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
