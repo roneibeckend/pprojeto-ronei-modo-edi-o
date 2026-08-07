@@ -360,6 +360,72 @@ export type Database = {
         }
         Relationships: []
       }
+      financial_costs: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          updated_at?: string
+          value?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
+      financial_partners: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          percent: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          percent?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          percent?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      financial_settings: {
+        Row: {
+          id: string
+          manual_revenue: number | null
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          manual_revenue?: number | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          manual_revenue?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       integration_logs: {
         Row: {
           created_at: string | null
