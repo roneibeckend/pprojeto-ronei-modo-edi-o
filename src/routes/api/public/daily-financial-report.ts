@@ -62,7 +62,7 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
           const { data: recipients, error: recipientsError } = await query;
           if (recipientsError) throw recipientsError;
 
-          // 5. Send WhatsApp
+          // 5. Send Email
           const results = [];
           for (const recipient of recipients || []) {
             if (!test) {
@@ -83,15 +83,18 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
             const formattedDate = new Intl.DateTimeFormat('pt-BR').format(targetDate);
             const brl = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
-            const message = `📊 *Relatório do dia — ${formattedDate}*\n` +
+            const message = `📊 Relatório do dia — ${formattedDate}\n\n` +
               `💰 Faturamento: ${brl(totalRevenue)}\n` +
               `💸 Custos: ${brl(totalCosts)}\n` +
               `✅ Lucro: ${brl(netProfit)} (margem ${margin.toFixed(0)}%)\n` +
-              `🧾 Vendas: ${salesCount} · Ticket médio: ${brl(avgTicket)}\n` +
-              `📈 vs. ontem: (calculando...)`;
+              `🧾 Vendas: ${salesCount} · Ticket médio: ${brl(avgTicket)}`;
 
             try {
-              const sendStatus = await sendWhatsApp(recipient.phone_e164, message);
+              if (!recipient.email) {
+                throw new Error("E-mail não configurado para este destinatário.");
+              }
+
+              const sendStatus = await sendReportEmail(recipient.email, `Relatório Financeiro Diário - ${formattedDate}`, message);
               
               await supabase.from("report_logs").insert({
                 recipient_id: recipient.id,
