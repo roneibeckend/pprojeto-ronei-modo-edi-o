@@ -6,9 +6,14 @@ import {
   DollarSign, 
   PieChart, 
   LayoutTemplate,
-  Info
+  Info,
+  Save,
+  Loader2
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/financeiro")({
   head: () => ({ meta: [{ title: "Financeiro — Painel Admin" }] }),
@@ -24,19 +29,67 @@ type Cost = { id: string; label: string; value: number };
 type Partner = { id: string; name: string; percent: number };
 
 function FinancePage() {
-  const [revenue, setRevenue] = useState<number>(137240);
-  const [costs, setCosts] = useState<Cost[]>([
-    { id: "c1", label: "Plataforma / hospedagem", value: 1200 },
-    { id: "c2", label: "Tráfego pago (ads)", value: 28000 },
-    { id: "c3", label: "Taxas de gateway", value: 8200 },
-    { id: "c4", label: "Produção de conteúdo", value: 6500 },
-    { id: "c5", label: "Suporte e equipe", value: 9800 },
-  ]);
-  const [partners, setPartners] = useState<Partner[]>([
-    { id: "p1", name: "Ronnei (Sócio fundador)", percent: 50 },
-    { id: "p2", name: "Sócio operacional", percent: 30 },
-    { id: "p3", name: "Sócio investidor", percent: 20 },
-  ]);
+  const queryClient = useQueryClient();
+  const [revenue, setRevenue] = useState<number>(0);
+  const [costs, setCosts] = useState<Cost[]>([]);
+  const [partners, setPartners] = useState<Partner[]>([]);
+
+  // Fetch initial data
+  const { isLoading } = useQuery({
+    queryKey: ["financial-config"],
+    queryFn: async () => {
+      const [settingsRes, costsRes, partnersRes] = await Promise.all([
+        supabase.from("financial_settings").select("*").single(),
+        supabase.from("financial_costs").select("*").order("created_at"),
+        supabase.from("financial_partners").select("*").order("created_at")
+      ]);
+
+      if (settingsRes.data) setRevenue(Number(settingsRes.data.manual_revenue));
+      if (costsRes.data) setCosts(costsRes.data.map(c => ({ id: c.id, label: c.label, value: Number(c.value) })));
+      if (partnersRes.data) setPartners(partnersRes.data.map(p => ({ id: p.id, name: p.name, percent: Number(p.percent) })));
+
+      return {
+        revenue: settingsRes.data,
+        costs: costsRes.data,
+        partners: partnersRes.data
+      };
+    }
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      // 1. Save revenue
+      const { error: settingsError } = await supabase
+        .from("financial_settings")
+        .upsert({ 
+          id: '00000000-0000-0000-0000-000000000000', 
+          manual_revenue: revenue,
+          updated_at: new Date().toISOString()
+        });
+      if (settingsError) throw settingsError;
+
+      // 2. Save costs (Replace all)
+      await supabase.from("financial_costs").delete().neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all
+      const { error: costsError } = await supabase
+        .from("financial_costs")
+        .insert(costs.map(c => ({ label: c.label, value: c.value })));
+      if (costsError) throw costsError;
+
+      // 3. Save partners (Replace all)
+      await supabase.from("financial_partners").delete().neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all
+      const { error: partnersError } = await supabase
+        .from("financial_partners")
+        .insert(partners.map(p => ({ name: p.name, percent: p.percent })));
+      if (partnersError) throw partnersError;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["financial-config"] });
+      toast.success("Configurações financeiras salvas com sucesso!");
+    },
+    onError: (error: any) => {
+      toast.error("Erro ao salvar configurações: " + error.message);
+    }
+  });
 
   const totalCost = useMemo(() => costs.reduce((s, c) => s + (c.value || 0), 0), [costs]);
   const profit = revenue - totalCost;
@@ -55,24 +108,47 @@ function FinancePage() {
   const addPartner = () =>
     setPartners((ps) => [...ps, { id: `p${Date.now()}`, name: "Novo sócio", percent: 0 }]);
 
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-fire" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="grid h-10 w-10 place-items-center rounded-sm text-black" style={{ backgroundColor: ORANGE }}>
-          <DollarSign className="h-5 w-5" strokeWidth={2.5} />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="grid h-10 w-10 place-items-center rounded-sm text-black" style={{ backgroundColor: ORANGE }}>
+            <DollarSign className="h-5 w-5" strokeWidth={2.5} />
+          </div>
+          <div>
+            <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-white text-left">
+              Painel Financeiro
+            </h2>
+            <p className="text-xs text-white/40 text-left">Custos, lucro e divisão de sócios</p>
+          </div>
         </div>
-        <div>
-          <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-white">
-            Painel Financeiro
-          </h2>
-          <p className="text-xs text-white/40">Custos, lucro e divisão de sócios</p>
-        </div>
+
+        <button
+          onClick={() => saveMutation.mutate()}
+          disabled={saveMutation.isPending}
+          className="inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-black transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+        >
+          {saveMutation.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
+          Salvar Configurações
+        </button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Resumo */}
         <div className="lg:col-span-3">
-           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-left">
               <div className="border border-white/5 bg-white/[0.02] p-5">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Receita Bruta</div>
                 <div className="text-2xl font-display font-extrabold text-white">{brl(revenue)}</div>
@@ -93,7 +169,7 @@ function FinancePage() {
         </div>
 
         {/* Coluna 1: Receita e Profit Table */}
-        <div className="space-y-6">
+        <div className="space-y-6 text-left">
           <section className="border border-white/5 bg-black/40 p-6">
             <div className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <Calculator className="h-4 w-4" style={{ color: ORANGE }} /> Ajustar Receita
@@ -141,7 +217,7 @@ function FinancePage() {
         </div>
 
         {/* Coluna 2: Custos */}
-        <section className="border border-white/5 bg-black/40 p-6 flex flex-col">
+        <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <LayoutTemplate className="h-4 w-4" style={{ color: ORANGE }} /> Quadro de Custos
@@ -196,7 +272,7 @@ function FinancePage() {
         </section>
 
         {/* Coluna 3: Sócios */}
-        <section className="border border-white/5 bg-black/40 p-6 flex flex-col">
+        <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <PieChart className="h-4 w-4" style={{ color: ORANGE }} /> Divisão de Sócios
