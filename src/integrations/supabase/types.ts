@@ -408,6 +408,24 @@ export type Database = {
         }
         Relationships: []
       }
+      financial_settings: {
+        Row: {
+          id: string
+          manual_revenue: number | null
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          manual_revenue?: number | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          manual_revenue?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       integration_logs: {
         Row: {
           created_at: string | null
