@@ -16,8 +16,8 @@ export const Route = createFileRoute("/app/cursos/")({
 
 function CoursesPage() {
   const { user } = useAuth();
-  const { courseEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
-
+  const { courseEnrollments, ebookEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
+  
   const { data: dbCourses, isLoading: isLoadingCourses } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
@@ -27,7 +27,16 @@ function CoursesPage() {
     },
   });
 
-  if (isLoadingCourses || isLoadingEnrollments) {
+  const { data: dbEbooks, isLoading: isLoadingEbooks } = useQuery({
+    queryKey: ["ebooks"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("ebooks").select("*");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  if (isLoadingCourses || isLoadingEnrollments || isLoadingEbooks) {
     return (
       <div className="flex h-64 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-fire" />
@@ -35,16 +44,11 @@ function CoursesPage() {
     );
   }
 
-  // Cursos que o usuário possui (comprados ou gratuitos por padrão no banco)
-  // No entanto, o requisito diz: "restringir o acesso a cursos e ebooks apenas para aqueles que realizaram a compra correspondente."
-  // E "Conteúdos classificados como "receitas", "planilhas" e "materiais" devem ser considerados gratuitos"
-  // Para cursos, assumimos que se não estiver em courseEnrollments, não está "comprado".
-  // Exceto se o preço for 0? O usuário não especificou isso, mas geralmente preço 0 = livre.
-  // "Conteúdo gratuito (receitas, planilhas, materiais) deve permanecer acessível para todos os clientes."
-  // Cursos e Ebooks são o conteúdo pago.
+  const ownedCourses = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || c.price === 0) || [];
+  const otherCourses = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0) || [];
   
-  const owned = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || c.price === 0) || [];
-  const others = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0) || [];
+  const ownedEbooks = dbEbooks?.filter((e) => ebookEnrollments.includes(e.id) || (e.price || 0) === 0) || [];
+  const otherEbooks = dbEbooks?.filter((e) => !ebookEnrollments.includes(e.id) && (e.price || 0) > 0) || [];
 
   const totalProgress = owned.length > 0 ? 0 : 0; // Seria necessário buscar o progresso real do banco
 
