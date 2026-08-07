@@ -33,7 +33,7 @@ export function Onboarding() {
           title: "Boas-vindas",
         },
         {
-          target: 'button[type="button"]', // Seletor genérico para o botão Google
+          target: 'button[type="button"]',
           content: "Você pode entrar rapidamente usando sua conta Google.",
           title: "Login Rápido",
         },
