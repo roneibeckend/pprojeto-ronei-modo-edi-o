@@ -54,17 +54,26 @@ function AdminRelatoriosPage() {
   const [previewData, setPreviewData] = useState<any>(null);
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
 
+  const [waInstance, setWaInstance] = useState<any>(null);
+  const [isConnectingWA, setIsConnectingWA] = useState(false);
+
+  const getQR = useServerFn(getWhatsAppQRCode);
+  const confirmWA = useServerFn(confirmWhatsAppConnection);
+  const disconnectWA = useServerFn(disconnectWhatsApp);
+
   useEffect(() => {
     fetchData();
   }, []);
 
+
   async function fetchData() {
     try {
       setLoading(true);
-      const [recipientsRes, settingsRes, logsRes] = await Promise.all([
+      const [recipientsRes, settingsRes, logsRes, waRes] = await Promise.all([
         supabase.from('report_recipients').select('*').order('created_at', { ascending: false }),
         supabase.from('report_settings').select('*').single(),
-        supabase.from('report_logs').select('*, recipient:report_recipients(name)').order('created_at', { ascending: false }).limit(20)
+        supabase.from('report_logs').select('*, recipient:report_recipients(name)').order('created_at', { ascending: false }).limit(20),
+        supabase.from('whatsapp_instances').select('*').eq('id', '00000000-0000-0000-0000-000000000000').single()
       ]);
 
       if (recipientsRes.error) throw recipientsRes.error;
@@ -73,12 +82,60 @@ function AdminRelatoriosPage() {
       setRecipients(recipientsRes.data || []);
       setSettings(settingsRes.data);
       setLogs(logsRes.data || []);
+      setWaInstance(waRes.data);
     } catch (error: any) {
       toast.error("Erro ao carregar dados: " + error.message);
     } finally {
       setLoading(false);
     }
   }
+
+  async function handleConnectWhatsApp() {
+    try {
+      setIsConnectingWA(true);
+      const res = await getQR();
+      if (res.success) {
+        toast.success("QR Code gerado! Escaneie para conectar.");
+        fetchData();
+      }
+    } catch (error: any) {
+      toast.error("Erro ao conectar WhatsApp: " + error.message);
+    } finally {
+      setIsConnectingWA(false);
+    }
+  }
+
+  async function handleConfirmWA() {
+    try {
+      setIsConnectingWA(true);
+      const res = await confirmWA();
+      if (res.success) {
+        toast.success("WhatsApp conectado com sucesso!");
+        fetchData();
+      }
+    } catch (error: any) {
+      toast.error("Erro ao confirmar: " + error.message);
+    } finally {
+      setIsConnectingWA(false);
+    }
+  }
+
+  async function handleDisconnectWA() {
+    if (!confirm("Deseja realmente desconectar o WhatsApp?")) return;
+    try {
+      setIsConnectingWA(true);
+      const res = await disconnectWA();
+      if (res.success) {
+        toast.success("WhatsApp desconectado.");
+        fetchData();
+      }
+    } catch (error: any) {
+      toast.error("Erro ao desconectar: " + error.message);
+    } finally {
+      setIsConnectingWA(false);
+    }
+  }
+
 
   async function handleRecipientSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -256,6 +313,73 @@ function AdminRelatoriosPage() {
         <div className="space-y-6 lg:col-span-1">
           <section className="border border-white/5 bg-[#111] p-6 rounded-xl">
             <div className="mb-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+              <MessageSquare className="h-4 w-4" style={{ color: ORANGE }} /> Conexão WhatsApp
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-black/40 border border-white/5">
+                <div>
+                  <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Status da Instância</div>
+                  <div className={cn(
+                    "text-xs font-bold mt-1",
+                    waInstance?.status === 'connected' ? "text-emerald-400" : 
+                    waInstance?.status === 'connecting' ? "text-yellow-400" : "text-red-400"
+                  )}>
+                    {waInstance?.status === 'connected' ? "CONECTADO" : 
+                     waInstance?.status === 'connecting' ? "AGUARDANDO QR CODE" : "DESCONECTADO"}
+                  </div>
+                </div>
+                {waInstance?.status === 'connected' && (
+                  <button 
+                    onClick={handleDisconnectWA}
+                    className="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition"
+                    title="Desconectar"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+
+              {waInstance?.status === 'disconnected' && (
+                <button 
+                  onClick={handleConnectWhatsApp}
+                  disabled={isConnectingWA}
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-[#ff6a00] text-black font-bold text-xs uppercase tracking-widest rounded-lg hover:opacity-90 transition disabled:opacity-50"
+                >
+                  {isConnectingWA ? <Loader2 className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
+                  Conectar Novo WhatsApp
+                </button>
+              )}
+
+              {waInstance?.status === 'connecting' && waInstance?.qr_code && (
+                <div className="space-y-4 animate-in fade-in duration-500">
+                  <div className="bg-white p-3 rounded-xl mx-auto w-fit border-4 border-[#ff6a00]">
+                    <img src={waInstance.qr_code} alt="WhatsApp QR Code" className="w-48 h-48" />
+                  </div>
+                  <p className="text-[10px] text-center text-white/40 px-4 leading-relaxed">
+                    Escaneie o QR Code acima com seu WhatsApp em Configurações &gt; Aparelhos Conectados.
+                  </p>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={handleConfirmWA}
+                      className="flex-1 py-2 bg-emerald-500 text-black font-bold text-[10px] uppercase tracking-widest rounded-lg hover:opacity-90 transition"
+                    >
+                      Confirmar Leitura
+                    </button>
+                    <button 
+                      onClick={handleDisconnectWA}
+                      className="px-3 py-2 bg-white/5 text-white/40 hover:text-white rounded-lg transition"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section className="border border-white/5 bg-[#111] p-6 rounded-xl">
+            <div className="mb-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <Settings className="h-4 w-4" style={{ color: ORANGE }} /> Configurações de Envio
             </div>
             
@@ -266,7 +390,7 @@ function AdminRelatoriosPage() {
                 </label>
                 <input 
                   type="time" 
-                  value={settings.send_time} 
+                  value={settings?.send_time || ""} 
                   onChange={e => handleSettingsUpdate({ send_time: e.target.value })}
                   className="w-full bg-black border border-white/10 p-3 rounded-lg text-white outline-none focus:border-[#ff6a00]" 
                 />
@@ -277,7 +401,7 @@ function AdminRelatoriosPage() {
                   <Globe className="h-3 w-3" /> Fuso Horário
                 </label>
                 <select 
-                  value={settings.timezone}
+                  value={settings?.timezone || "America/Sao_Paulo"}
                   onChange={e => handleSettingsUpdate({ timezone: e.target.value })}
                   className="w-full bg-black border border-white/10 p-3 rounded-lg text-white outline-none focus:border-[#ff6a00]"
                 >
@@ -295,14 +419,15 @@ function AdminRelatoriosPage() {
                   </div>
                   <button 
                     onClick={() => handleSettingsUpdate({ send_when_no_activity: !settings.send_when_no_activity })}
-                    className={`w-10 h-5 rounded-full transition-colors flex items-center px-1 ${settings.send_when_no_activity ? 'bg-[#ff6a00]' : 'bg-white/10'}`}
+                    className={`w-10 h-5 rounded-full transition-colors flex items-center px-1 ${settings?.send_when_no_activity ? 'bg-[#ff6a00]' : 'bg-white/10'}`}
                   >
-                    <div className={`w-3 h-3 rounded-full bg-black transition-transform ${settings.send_when_no_activity ? 'translate-x-5' : 'translate-x-0'}`} />
+                    <div className={`w-3 h-3 rounded-full bg-black transition-transform ${settings?.send_when_no_activity ? 'translate-x-5' : 'translate-x-0'}`} />
                   </button>
                 </div>
               </div>
             </div>
           </section>
+
 
           <section className="border border-white/5 bg-[#111] p-6 rounded-xl">
              <div className="mb-4 flex items-center justify-between">
