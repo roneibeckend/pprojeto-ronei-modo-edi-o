@@ -40,6 +40,7 @@ import { Route as AdminAlunosRouteImport } from './routes/admin.alunos'
 import { Route as AppCursosIndexRouteImport } from './routes/app.cursos.index'
 import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.preview'
 import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
+import { Route as AdminAlunosStudentIdRouteImport } from './routes/admin.alunos.$studentId'
 import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
 
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
@@ -197,6 +198,11 @@ const AppCursosCourseIdRoute = AppCursosCourseIdRouteImport.update({
   path: '/$courseId',
   getParentRoute: () => AppCursosRoute,
 } as any)
+const AdminAlunosStudentIdRoute = AdminAlunosStudentIdRouteImport.update({
+  id: '/$studentId',
+  path: '/$studentId',
+  getParentRoute: () => AdminAlunosRoute,
+} as any)
 const ApiPublicWebhooksAsaasRoute = ApiPublicWebhooksAsaasRouteImport.update({
   id: '/api/public/webhooks/asaas',
   path: '/api/public/webhooks/asaas',
@@ -212,7 +218,7 @@ export interface FileRoutesByFullPath {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
-  '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/cursos': typeof AdminCursosRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
@@ -232,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/app/suporte': typeof AppSuporteRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
+  '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/cursos/': typeof AppCursosIndexRoute
@@ -244,7 +251,7 @@ export interface FileRoutesByTo {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
-  '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/cursos': typeof AdminCursosRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
@@ -263,6 +270,7 @@ export interface FileRoutesByTo {
   '/app/suporte': typeof AppSuporteRoute
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
+  '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/cursos': typeof AppCursosIndexRoute
@@ -278,7 +286,7 @@ export interface FileRoutesById {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
-  '/admin/alunos': typeof AdminAlunosRoute
+  '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/cursos': typeof AdminCursosRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
@@ -298,6 +306,7 @@ export interface FileRoutesById {
   '/app/suporte': typeof AppSuporteRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
+  '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/cursos/': typeof AppCursosIndexRoute
@@ -334,6 +343,7 @@ export interface FileRouteTypes {
     | '/app/suporte'
     | '/admin/'
     | '/app/'
+    | '/admin/alunos/$studentId'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/cursos/'
@@ -365,6 +375,7 @@ export interface FileRouteTypes {
     | '/app/suporte'
     | '/admin'
     | '/app'
+    | '/admin/alunos/$studentId'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/cursos'
@@ -399,6 +410,7 @@ export interface FileRouteTypes {
     | '/app/suporte'
     | '/admin/'
     | '/app/'
+    | '/admin/alunos/$studentId'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/cursos/'
@@ -636,6 +648,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCursosCourseIdRouteImport
       parentRoute: typeof AppCursosRoute
     }
+    '/admin/alunos/$studentId': {
+      id: '/admin/alunos/$studentId'
+      path: '/$studentId'
+      fullPath: '/admin/alunos/$studentId'
+      preLoaderRoute: typeof AdminAlunosStudentIdRouteImport
+      parentRoute: typeof AdminAlunosRoute
+    }
     '/api/public/webhooks/asaas': {
       id: '/api/public/webhooks/asaas'
       path: '/api/public/webhooks/asaas'
@@ -646,8 +665,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminAlunosRouteChildren {
+  AdminAlunosStudentIdRoute: typeof AdminAlunosStudentIdRoute
+}
+
+const AdminAlunosRouteChildren: AdminAlunosRouteChildren = {
+  AdminAlunosStudentIdRoute: AdminAlunosStudentIdRoute,
+}
+
+const AdminAlunosRouteWithChildren = AdminAlunosRoute._addFileChildren(
+  AdminAlunosRouteChildren,
+)
+
 interface AdminRouteChildren {
-  AdminAlunosRoute: typeof AdminAlunosRoute
+  AdminAlunosRoute: typeof AdminAlunosRouteWithChildren
   AdminAoVivoRoute: typeof AdminAoVivoRoute
   AdminCursosRoute: typeof AdminCursosRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRoute
@@ -660,7 +691,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
-  AdminAlunosRoute: AdminAlunosRoute,
+  AdminAlunosRoute: AdminAlunosRouteWithChildren,
   AdminAoVivoRoute: AdminAoVivoRoute,
   AdminCursosRoute: AdminCursosRoute,
   AdminFinanceiroRoute: AdminFinanceiroRoute,
