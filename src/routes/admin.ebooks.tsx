@@ -324,11 +324,7 @@ function AdminEbooksPage() {
               </TabsContent>
 
               <TabsContent value="content" className="flex-1 mt-0">
-                <div className="flex flex-col items-center justify-center py-20 text-center text-white/20">
-                  <Layout className="h-12 w-12 mb-4" />
-                  <p>A ferramenta de edição de módulos e capítulos está sendo otimizada.</p>
-                  <p className="text-xs mt-2">Para gerenciar o conteúdo agora, utilize o Painel do Banco de Dados.</p>
-                </div>
+                {editingItem?.id && <EbookContentEditor ebookId={editingItem.id} />}
               </TabsContent>
             </Tabs>
           </div>
