@@ -56,7 +56,7 @@ function AdminStudentProfilePage() {
         .from('course_enrollments')
         .select(`
           *,
-          course:courses(title, image_url)
+          course:courses(title, cover_url)
         `)
         .eq('user_id', studentId);
 
@@ -68,12 +68,12 @@ function AdminStudentProfilePage() {
         .from('lesson_progress')
         .select('*')
         .eq('user_id', studentId)
-        .eq('completed', true);
+        .eq('is_completed', true);
       
       setStats({
-        coursesCompleted: enrollData?.filter(e => e.progress === 100).length || 0,
+        coursesCompleted: 0, // Simplified as we don't have progress in course_enrollments yet
         lessonsWatched: progressData?.length || 0,
-        totalSpent: 0 // Placeholder as we don't have a direct payments table for total sum yet
+        totalSpent: 0 
       });
 
     } catch (error: any) {
@@ -106,7 +106,7 @@ function AdminStudentProfilePage() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
       <div className="flex items-center gap-4">
         <button 
           onClick={() => window.history.back()}
@@ -190,7 +190,7 @@ function AdminStudentProfilePage() {
                 enrollments.map((enrollment) => (
                   <div key={enrollment.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition">
                     <img 
-                      src={enrollment.course?.image_url || "/placeholder.svg"} 
+                      src={enrollment.course?.cover_url || "/placeholder.svg"} 
                       alt={enrollment.course?.title}
                       className="w-16 h-16 rounded-lg object-cover bg-white/5"
                     />
@@ -200,15 +200,12 @@ function AdminStudentProfilePage() {
                         <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
                           <div 
                             className="h-full bg-gradient-to-r from-[#ff6a00] to-[#ff9500] transition-all duration-1000"
-                            style={{ width: `${enrollment.progress || 0}%` }}
+                            style={{ width: `0%` }}
                           />
                         </div>
-                        <span className="text-[10px] font-bold text-[#ff6a00]">{enrollment.progress || 0}%</span>
+                        <span className="text-[10px] font-bold text-[#ff6a00]">0%</span>
                       </div>
                     </div>
-                    {enrollment.progress === 100 && (
-                      <Trophy className="w-5 h-5 text-yellow-500" />
-                    )}
                   </div>
                 ))
               ) : (
@@ -219,7 +216,7 @@ function AdminStudentProfilePage() {
             </div>
           </section>
 
-          {/* Additional details or history could go here */}
+          {/* Activity Placeholder */}
           <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
              <div className="flex items-center gap-3 mb-6">
                 <History className="w-5 h-5 text-[#ff6a00]" />
