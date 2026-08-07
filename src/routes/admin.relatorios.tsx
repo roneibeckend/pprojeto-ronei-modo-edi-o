@@ -215,12 +215,24 @@ function AdminRelatoriosPage() {
 
   return (
     <div className="space-y-8 pb-10">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold">Relatórios Automáticos</h2>
           <p className="text-sm text-white/40 text-left">Relatórios diários via WhatsApp.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+           <button 
+             onClick={handleOpenPreview}
+             className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] font-bold text-white/60 uppercase tracking-widest hover:text-white hover:bg-white/10 transition"
+           >
+             <Eye className="h-3 w-3" /> Pré-visualizar
+           </button>
+           <button 
+             onClick={handleExportCSV}
+             className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] font-bold text-white/60 uppercase tracking-widest hover:text-white hover:bg-white/10 transition"
+           >
+             <Download className="h-3 w-3" /> Exportar CSV
+           </button>
            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
               <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Status Geral:</span>
               <button 
