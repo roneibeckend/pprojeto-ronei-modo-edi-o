@@ -231,7 +231,7 @@ export function Shell({ children }: { children: ReactNode }) {
               {unreadCount > 0 && (
                 <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary animate-pulse" />
               )}
-            </button>
+            </Link>
             <Link
               to="/app/perfil"
               className="flex items-center gap-2 rounded-md border border-white/10 py-1 pl-1 pr-3 transition-colors hover:border-primary/50"
