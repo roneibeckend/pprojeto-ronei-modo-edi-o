@@ -439,7 +439,7 @@ function AdminRelatoriosPage() {
           <section className="border border-white/5 bg-[#111] p-6 rounded-xl">
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-                <Smartphone className="h-4 w-4" style={{ color: ORANGE }} /> Destinatários do WhatsApp
+                <FileText className="h-4 w-4" style={{ color: ORANGE }} /> Destinatários do Relatório
               </div>
               <button 
                 onClick={() => { setEditingRecipient({ name: "", phone_e164: "55", active: true, report_types: ['financial'] }); setIsRecipientModalOpen(true); }}
