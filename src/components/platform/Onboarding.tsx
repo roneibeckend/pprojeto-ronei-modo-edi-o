@@ -31,10 +31,9 @@ export function Onboarding() {
           placement: "center",
           content: "Bem-vindo ao Espetinho na Veia! Vamos fazer um tour rápido.",
           title: "Boas-vindas",
-          disableBeacon: true,
         },
         {
-          target: 'button:has(svg[aria-hidden="true"])', // Botão Google
+          target: 'button[type="button"]', // Seletor genérico para o botão Google
           content: "Você pode entrar rapidamente usando sua conta Google.",
           title: "Login Rápido",
         },
@@ -51,7 +50,6 @@ export function Onboarding() {
           target: "header",
           content: "Aqui você encontra o menu principal e notificações.",
           title: "Navegação",
-          disableBeacon: true,
         },
         {
           target: 'nav[aria-label="Menu principal"]',
@@ -59,7 +57,7 @@ export function Onboarding() {
           title: "Menu Lateral",
         },
         {
-          target: ".grid.gap-6", // Container de cursos no app.index
+          target: ".grid.gap-6",
           content: "Aqui estão os cursos disponíveis para você começar a lucrar.",
           title: "Vitrine de Cursos",
         },
@@ -112,13 +110,18 @@ export function Onboarding() {
         buttonNext: {
           backgroundColor: "#f97316",
           borderRadius: "8px",
+          color: "#fff",
+          fontSize: "14px",
+          padding: "8px 16px",
         },
         buttonBack: {
           marginRight: "8px",
           color: "#ffffff",
+          fontSize: "14px",
         },
         buttonSkip: {
           color: "#a3a3a3",
+          fontSize: "14px",
         }
       }}
     />
