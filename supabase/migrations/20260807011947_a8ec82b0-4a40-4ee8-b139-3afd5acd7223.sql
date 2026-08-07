@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS public.ebook_progress CASCADE; DROP TABLE IF EXISTS public.ebook_chapters CASCADE; DROP TABLE IF EXISTS public.ebook_modules CASCADE; DROP TABLE IF EXISTS public.ebook_enrollments CASCADE; DROP TABLE IF EXISTS public.ebooks CASCADE;
