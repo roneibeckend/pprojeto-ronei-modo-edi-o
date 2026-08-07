@@ -51,28 +51,49 @@ function AdminStudentProfilePage() {
       if (profileError) throw profileError;
       setProfile(profileData);
 
+      // Fetch all lessons for courses to calculate progress
+      const { data: allLessons } = await supabase
+        .from('course_lessons')
+        .select('id, module_id, course_modules!inner(course_id)');
+
       // Fetch enrollments and associated courses
       const { data: enrollData, error: enrollError } = await supabase
         .from('course_enrollments')
         .select(`
           *,
-          course:courses(title, cover_url)
+          course:courses(id, title, cover_url)
         `)
         .eq('user_id', studentId);
 
       if (enrollError) throw enrollError;
-      setEnrollments(enrollData || []);
 
-      // Fetch progress stats
+      // Fetch progress status
       const { data: progressData } = await supabase
         .from('lesson_progress')
-        .select('*')
+        .select('lesson_id, is_completed')
         .eq('user_id', studentId)
         .eq('is_completed', true);
-      
+
+      const completedLessonIds = new Set(progressData?.map(p => p.lesson_id) || []);
+
+      // Calculate progress per enrollment
+      const enrollmentsWithProgress = (enrollData || []).map(enroll => {
+        const courseLessons = allLessons?.filter(l => (l.course_modules as any).course_id === enroll.course_id) || [];
+        const total = courseLessons.length;
+        const completed = courseLessons.filter(l => completedLessonIds.has(l.id)).length;
+        const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+        
+        return {
+          ...enroll,
+          progress: percent
+        };
+      });
+
+      setEnrollments(enrollmentsWithProgress);
+
       setStats({
-        coursesCompleted: 0, // Simplified as we don't have progress in course_enrollments yet
-        lessonsWatched: progressData?.length || 0,
+        coursesCompleted: enrollmentsWithProgress.filter(e => e.progress === 100).length,
+        lessonsWatched: completedLessonIds.size,
         totalSpent: 0 
       });
 
@@ -187,27 +208,34 @@ function AdminStudentProfilePage() {
 
             <div className="grid gap-4">
               {enrollments.length > 0 ? (
-                enrollments.map((enrollment) => (
-                  <div key={enrollment.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition">
-                    <img 
-                      src={enrollment.course?.cover_url || "/placeholder.svg"} 
-                      alt={enrollment.course?.title}
-                      className="w-16 h-16 rounded-lg object-cover bg-white/5"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-sm truncate">{enrollment.course?.title}</h4>
-                      <div className="mt-2 flex items-center gap-3">
-                        <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                enrollments.map((enrollment) => {
+                  // Calculate progress for this specific course
+                  // We need to fetch this in fetchStudentData or calculate here if we had all lessons
+                  // For now, let's use a placeholder or enhance fetchStudentData
+                  return (
+                    <div key={enrollment.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition">
+                      <img 
+                        src={enrollment.course?.cover_url || "/placeholder.svg"} 
+                        alt={enrollment.course?.title}
+                        className="w-16 h-16 rounded-lg object-cover bg-white/5"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-bold text-sm truncate">{enrollment.course?.title}</h4>
+                          <span className="text-[10px] font-bold text-[#ff6a00] uppercase tracking-widest">
+                            {enrollment.progress || 0}% Concluído
+                          </span>
+                        </div>
+                        <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                           <div 
                             className="h-full bg-gradient-to-r from-[#ff6a00] to-[#ff9500] transition-all duration-1000"
-                            style={{ width: `0%` }}
+                            style={{ width: `${enrollment.progress || 0}%` }}
                           />
                         </div>
-                        <span className="text-[10px] font-bold text-[#ff6a00]">0%</span>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               ) : (
                 <div className="text-center py-12 border border-dashed border-white/10 rounded-xl">
                   <p className="text-sm text-white/20 uppercase tracking-widest font-bold">Nenhum curso matriculado</p>
@@ -216,13 +244,30 @@ function AdminStudentProfilePage() {
             </div>
           </section>
 
-          {/* Activity Placeholder */}
+          {/* Activity Log */}
           <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
              <div className="flex items-center gap-3 mb-6">
                 <History className="w-5 h-5 text-[#ff6a00]" />
                 <h3 className="font-display text-xl font-bold text-white">Atividade Recente</h3>
              </div>
-             <p className="text-sm text-white/20 text-center py-8 italic">Dados de atividade detalhados serão integrados em breve.</p>
+             
+             <div className="space-y-4">
+                {profile.last_activity ? (
+                  <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.01] border border-white/5">
+                    <div className="mt-1 h-2 w-2 rounded-full bg-[#ff6a00] shadow-[0_0_10px_rgba(255,106,0,0.5)]" />
+                    <div>
+                      <p className="text-sm font-medium">Último acesso à plataforma</p>
+                      <p className="text-xs text-white/40 mt-1">
+                        {new Date(profile.last_activity).toLocaleString('pt-BR')}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 border border-dashed border-white/10 rounded-xl">
+                    <p className="text-sm text-white/20 italic">Nenhuma atividade registrada recentemente.</p>
+                  </div>
+                )}
+             </div>
           </section>
         </div>
       </div>
