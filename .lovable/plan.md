@@ -1,24 +1,48 @@
-# Plano de Migração: WhatsApp para E-mail (Resend)
+# Plano de Implementação: Integração Resend
 
-Este plano descreve a migração do sistema de notificações via WhatsApp para e-mail transacional utilizando o Resend.com.
+Este plano detalha a implementação do sistema de e-mails transacionais utilizando Resend e Supabase Edge Functions.
 
-## 1. Configuração e Infraestrutura
-- [ ] Criar `src/lib/resend.functions.ts` para centralizar a lógica de envio via Resend API.
-- [ ] Adicionar segredos via `add_secret`: `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `RESEND_FROM_NAME`.
-- [ ] Atualizar o esquema do banco de dados (tabela `report_recipients`) para incluir o campo `email` se não existir.
+## 1. Auditoria e Mapeamento
+- **Pontos de envio identificados:**
+  - Cadastro/Login (Auth) -> Gerenciado via Supabase Auth + SMTP Resend.
+  - Liberação de Produto (Webhook Asaas) -> Novo gatilho para `acesso_liberado_produto`.
+  - Suporte (Ticket Admin) -> Novo gatilho para `suporte_recebido` e `resposta_suporte`.
+  - Conclusão de Curso/Certificado -> Gatilho no componente de Certificados.
+  - Relatórios Financeiros -> Migrar de WhatsApp para e-mail.
+- **Status:** Nenhuma funcionalidade de e-mail transacional ativa além do padrão do Supabase.
 
-## 2. Integração com Resend
-- [ ] Implementar a função `sendEmail` no servidor usando `fetch` para a API do Resend.
-- [ ] Criar templates básicos de e-mail (HTML) para os relatórios financeiros.
+## 2. Configuração de Banco de Dados (Aditiva)
+- Tabela `email_settings`: Configurações de remetente e toggles.
+- Tabela `email_logs`: Auditoria completa e controle de idempotência.
+- Tabela `email_templates_config`: Armazenamento de assuntos e metadados de templates.
+- Atualização em `profiles`: Adição de campo `email_notifications_opt_in`.
 
-## 3. Substituição das Notificações
-- [ ] **Relatórios Diários**: Modificar `src/routes/api/public/daily-financial-report.ts` para chamar `sendEmail` em vez de `sendWhatsApp`.
-- [ ] **Painel Administrativo**: Atualizar `src/routes/admin.relatorios.tsx` para refletir a mudança (mudar ícones de WhatsApp para E-mail, atualizar labels e modais).
+## 3. Infraestrutura Supabase
+- **Edge Function `send-email`**:
+  - Runtime: Deno.
+  - SDK: `resend`.
+  - Segurança: Validação de JWT e verificação de `admin_role` via RPC `has_role`.
+  - Lógica: Idempotência via `email_logs` e retry com backoff.
+- **SMTP Supabase Auth**: Configurar `smtp.resend.com` nas definições do projeto.
 
-## 4. Limpeza e Refatoração
-- [ ] Remover ou marcar como legados os arquivos `src/lib/whatsapp.functions.ts` e rotas relacionadas.
-- [ ] Atualizar logs de envio para suportar contextos de e-mail.
+## 4. Templates de E-mail (React Email)
+- Layout base premium (claro).
+- Templates:
+  - `boas_vindas`
+  - `acesso_liberado_produto`
+  - `conclusao_curso`
+  - `certificado_emitido`
+  - `novo_conteudo`
+  - `suporte_recebido`
 
-## 5. Validação
-- [ ] Testar envio de e-mail de teste pelo Painel Admin.
-- [ ] Validar o recebimento dos e-mails com a formatação correta.
+## 5. Painel Administrativo
+- Integração no Hub: Novo card "Resend" em `/admin/integracoes`.
+- Gestão de Logs: Nova aba em `/admin/integracoes` ou seção dedicada.
+- Testes: Interface para envio de e-mails de teste.
+
+## 6. Próximos Passos (Ação)
+1. Executar migrations de banco de dados.
+2. Criar a Edge Function `send-email`.
+3. Desenvolver os templates e a biblioteca `resend.functions.ts`.
+4. Atualizar a interface administrativa.
+5. Configurar o SMTP do Supabase Auth.
