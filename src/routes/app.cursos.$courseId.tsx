@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useEffect, useState } from "react";
 import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
+import { VideoPlayer } from "@/components/platform/VideoPlayer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
@@ -154,24 +155,20 @@ function CoursePage() {
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         {/* Player */}
         <div className="min-w-0 space-y-4">
-          <div className="glass overflow-hidden rounded-2xl">
-            <div className="relative aspect-video bg-black">
-              <img src={course.cover_url || ""} alt="" className="h-full w-full object-cover opacity-40" />
-              <div className="absolute inset-0 grid place-items-center">
-                <button className="grid h-20 w-20 place-items-center rounded-full bg-fire shadow-fire transition hover:scale-105">
-                  <Play className="h-8 w-8 text-white" />
-                </button>
-              </div>
-              <div className="absolute bottom-3 left-3 rounded-full bg-black/70 px-3 py-1 text-xs">
-                {active.duration || "00:00"}
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center justify-between gap-3 p-5">
+          <div className="overflow-hidden rounded-2xl">
+            <VideoPlayer
+              videoId={active.id}
+              src={active.video_url || ""}
+              poster={course.cover_url || ""}
+              title={active.title}
+              className="w-full"
+            />
+            <div className="flex flex-wrap items-center justify-between gap-3 p-5 glass border-t-0 rounded-t-none">
               <div className="min-w-0">
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">Aula atual</div>
                 <div className="font-display text-lg font-bold">{active.title}</div>
               </div>
-              <button className="btn-fire text-sm">
+              <button className="btn-fire text-sm touch-target">
                 <Check className="h-4 w-4" /> Marcar como concluída
               </button>
             </div>
