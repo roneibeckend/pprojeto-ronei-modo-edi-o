@@ -9,46 +9,68 @@ export const requestPayout = createServerFn({ method: "POST" })
     amount: z.number().positive(),
     method: z.string(),
     pix_key: z.string().optional(),
+    user_type: z.enum(['affiliate', 'partner']).default('affiliate'),
   }).parse(data))
   .handler(async ({ data, context }) => {
     const userId = context.userId;
 
-    // 1. Validar saldo do afiliado
-    // O id na tabela affiliates é o user_id (FK para profiles.id)
-    const { data: affiliate, error: affError } = await supabaseAdmin
-      .from('affiliates')
-      .select('balance')
-      .eq('id', userId)
-      .single();
+    // 1. Validar saldo baseado no tipo de usuário
+    if (data.user_type === 'affiliate') {
+      const { data: affiliate, error: affError } = await supabaseAdmin
+        .from('affiliates')
+        .select('balance')
+        .eq('id', userId)
+        .single();
 
-    if (affError || !affiliate) {
-      throw new Error("Afiliado não encontrado.");
+      if (affError || !affiliate) throw new Error("Afiliado não encontrado.");
+      if (affiliate.balance < data.amount) throw new Error("Saldo insuficiente.");
+
+      // 2. Criar solicitação e descontar saldo
+      const { error: payoutError } = await supabaseAdmin
+        .from('payout_requests')
+        .insert({
+          user_id: userId,
+          amount: data.amount,
+          method: data.method,
+          pix_key: data.pix_key,
+          status: 'pending',
+          metadata: { user_type: 'affiliate' }
+        });
+
+      if (payoutError) throw new Error("Erro ao solicitar saque: " + payoutError.message);
+
+      await supabaseAdmin
+        .from('affiliates')
+        .update({ balance: affiliate.balance - data.amount })
+        .eq('id', userId);
+    } else {
+      const { data: partner, error: partError } = await supabaseAdmin
+        .from('partner_balances')
+        .select('balance')
+        .eq('user_id', userId)
+        .single();
+
+      if (partError || !partner) throw new Error("Saldo de sócio não encontrado.");
+      if (partner.balance < data.amount) throw new Error("Saldo insuficiente.");
+
+      const { error: payoutError } = await supabaseAdmin
+        .from('payout_requests')
+        .insert({
+          user_id: userId,
+          amount: data.amount,
+          method: data.method,
+          pix_key: data.pix_key,
+          status: 'pending',
+          metadata: { user_type: 'partner' }
+        });
+
+      if (payoutError) throw new Error("Erro ao solicitar saque: " + payoutError.message);
+
+      await supabaseAdmin
+        .from('partner_balances')
+        .update({ balance: partner.balance - data.amount })
+        .eq('user_id', userId);
     }
-
-    if (affiliate.balance < data.amount) {
-      throw new Error("Saldo insuficiente.");
-    }
-
-    // 2. Criar solicitação de saque
-    const { error: payoutError } = await supabaseAdmin
-      .from('payout_requests')
-      .insert({
-        user_id: userId,
-        amount: data.amount,
-        method: data.method,
-        pix_key: data.pix_key,
-        status: 'pending'
-      });
-
-    if (payoutError) {
-      throw new Error("Erro ao solicitar saque: " + payoutError.message);
-    }
-
-    // 3. Opcional: Bloquear saldo solicitado
-    await supabaseAdmin
-      .from('affiliates')
-      .update({ balance: affiliate.balance - data.amount })
-      .eq('id', userId);
 
     return { success: true };
   });
