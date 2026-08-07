@@ -23,6 +23,7 @@ import { Route as AppSuporteRouteImport } from './routes/app.suporte'
 import { Route as AppReceitasRouteImport } from './routes/app.receitas'
 import { Route as AppProgressoRouteImport } from './routes/app.progresso'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
+import { Route as AppNotificacoesRouteImport } from './routes/app.notificacoes'
 import { Route as AppMateriaisRouteImport } from './routes/app.materiais'
 import { Route as AppCursosRouteImport } from './routes/app.cursos'
 import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
@@ -109,6 +110,11 @@ const AppProgressoRoute = AppProgressoRouteImport.update({
 const AppPerfilRoute = AppPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNotificacoesRoute = AppNotificacoesRouteImport.update({
+  id: '/notificacoes',
+  path: '/notificacoes',
   getParentRoute: () => AppRoute,
 } as any)
 const AppMateriaisRoute = AppMateriaisRouteImport.update({
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/materiais': typeof AppMateriaisRoute
+  '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
@@ -249,6 +256,7 @@ export interface FileRoutesByTo {
   '/app/admin': typeof AppAdminRoute
   '/app/certificados': typeof AppCertificadosRoute
   '/app/materiais': typeof AppMateriaisRoute
+  '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
@@ -283,6 +291,7 @@ export interface FileRoutesById {
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/materiais': typeof AppMateriaisRoute
+  '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
@@ -318,6 +327,7 @@ export interface FileRouteTypes {
     | '/app/certificados'
     | '/app/cursos'
     | '/app/materiais'
+    | '/app/notificacoes'
     | '/app/perfil'
     | '/app/progresso'
     | '/app/receitas'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/app/admin'
     | '/app/certificados'
     | '/app/materiais'
+    | '/app/notificacoes'
     | '/app/perfil'
     | '/app/progresso'
     | '/app/receitas'
@@ -381,6 +392,7 @@ export interface FileRouteTypes {
     | '/app/certificados'
     | '/app/cursos'
     | '/app/materiais'
+    | '/app/notificacoes'
     | '/app/perfil'
     | '/app/progresso'
     | '/app/receitas'
@@ -503,6 +515,13 @@ declare module '@tanstack/react-router' {
       path: '/perfil'
       fullPath: '/app/perfil'
       preLoaderRoute: typeof AppPerfilRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/notificacoes': {
+      id: '/app/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/app/notificacoes'
+      preLoaderRoute: typeof AppNotificacoesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/materiais': {
@@ -676,6 +695,7 @@ interface AppRouteChildren {
   AppCertificadosRoute: typeof AppCertificadosRoute
   AppCursosRoute: typeof AppCursosRouteWithChildren
   AppMateriaisRoute: typeof AppMateriaisRoute
+  AppNotificacoesRoute: typeof AppNotificacoesRoute
   AppPerfilRoute: typeof AppPerfilRoute
   AppProgressoRoute: typeof AppProgressoRoute
   AppReceitasRoute: typeof AppReceitasRoute
@@ -688,6 +708,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppCertificadosRoute: AppCertificadosRoute,
   AppCursosRoute: AppCursosRouteWithChildren,
   AppMateriaisRoute: AppMateriaisRoute,
+  AppNotificacoesRoute: AppNotificacoesRoute,
   AppPerfilRoute: AppPerfilRoute,
   AppProgressoRoute: AppProgressoRoute,
   AppReceitasRoute: AppReceitasRoute,
