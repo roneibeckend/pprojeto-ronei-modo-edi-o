@@ -68,15 +68,15 @@ function AdminRootLayout() {
   ];
 
   return (
-    <div className="flex h-dvh bg-[#0a0a0a] text-white overflow-hidden">
+    <div className="flex h-dvh bg-[#0a0a0a] text-white overflow-hidden safe-top safe-bottom">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-white/10 flex flex-col">
-        <div className="p-6 border-b border-white/10 flex items-center gap-2">
+      <aside className="w-64 border-r border-white/10 flex flex-col shrink-0">
+        <div className="p-6 border-b border-white/10 flex items-center gap-2 shrink-0">
           <ShieldCheck className="h-6 w-6" style={{ color: ORANGE }} />
-          <span className="font-bold tracking-widest text-sm uppercase">Painel Admin</span>
+          <span className="font-bold tracking-widest text-sm uppercase truncate">Painel Admin</span>
         </div>
         
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
@@ -84,7 +84,7 @@ function AdminRootLayout() {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition shrink-0 ${
                   active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
                 }`}
               >
@@ -95,9 +95,9 @@ function AdminRootLayout() {
           })}
         </nav>
 
-        <div className="p-4 border-t border-white/10">
-          <Link to="/app" className="flex items-center gap-2 text-white/40 hover:text-white text-xs font-bold uppercase tracking-widest">
-            <ArrowLeft className="h-4 w-4" /> Voltar ao App
+        <div className="p-4 border-t border-white/10 shrink-0">
+          <Link to="/app" className="flex items-center gap-2 text-white/40 hover:text-white text-[10px] font-bold uppercase tracking-widest transition-colors">
+            <ArrowLeft className="h-3.5 w-3.5" /> Voltar ao App
           </Link>
         </div>
       </aside>
