@@ -167,7 +167,7 @@ function Field({
         )}
         <input 
           {...rest} 
-          className={`w-full rounded-xl border border-white/10 bg-white/[0.03] ${Icon ? 'pl-11' : 'px-4'} py-3.5 text-sm font-medium outline-none transition-all placeholder:text-white/10 focus:border-[#ff6a00]/50 focus:bg-[#ff6a00]/5 disabled:opacity-50`} 
+          className={`w-full rounded-xl border border-white/10 bg-white/[0.03] ${Icon ? 'pl-11' : 'px-4'} py-3.5 text-sm font-medium outline-none transition-all placeholder:text-white/10 focus:border-[#ff6a00]/50 focus:bg-[#ff6a00]/5 disabled:opacity-50 text-[16px] md:text-sm`} 
         />
       </div>
     </label>

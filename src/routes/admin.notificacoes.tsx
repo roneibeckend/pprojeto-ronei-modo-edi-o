@@ -79,7 +79,7 @@ function AdminNotifications() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ex: Nova aula disponível!"
-              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#ff6a00] transition"
+              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#ff6a00] transition text-[16px] md:text-sm"
             />
           </div>
 

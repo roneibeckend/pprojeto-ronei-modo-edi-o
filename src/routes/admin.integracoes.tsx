@@ -352,7 +352,7 @@ function IntegrationsPage() {
                                 ...selectedItem,
                                 credentials: { ...selectedItem.credentials, [key]: e.target.value }
                               })}
-                              className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm font-mono"
+                              className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm font-mono text-[16px] md:text-sm"
                               placeholder="sk-..."
                             />
                           </div>
