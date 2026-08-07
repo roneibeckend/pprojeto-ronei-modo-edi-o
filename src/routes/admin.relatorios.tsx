@@ -281,7 +281,7 @@ function AdminRelatoriosPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold">Relatórios Automáticos</h2>
-          <p className="text-sm text-white/40 text-left">Relatórios diários via WhatsApp.</p>
+          <p className="text-sm text-white/40 text-left">Relatórios diários via E-mail.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
            <button 
