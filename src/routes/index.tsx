@@ -24,9 +24,8 @@ import {
   Sparkles,
   ArrowRight,
   ChevronDown,
-  Instagram,
+  // Instagram and Youtube are missing in some lucide versions
   MessageCircle,
-  Youtube,
   Mail,
   Beef,
   Utensils,
