@@ -726,6 +726,101 @@ export type Database = {
         }
         Relationships: []
       }
+      report_logs: {
+        Row: {
+          created_at: string | null
+          error: string | null
+          id: string
+          provider_message_id: string | null
+          recipient_id: string | null
+          report_date: string
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          error?: string | null
+          id?: string
+          provider_message_id?: string | null
+          recipient_id?: string | null
+          report_date: string
+          sent_at?: string | null
+          status: string
+        }
+        Update: {
+          created_at?: string | null
+          error?: string | null
+          id?: string
+          provider_message_id?: string | null
+          recipient_id?: string | null
+          report_date?: string
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_logs_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "report_recipients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_recipients: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          phone_e164: string
+          report_types: string[]
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          phone_e164: string
+          report_types?: string[]
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          phone_e164?: string
+          report_types?: string[]
+        }
+        Relationships: []
+      }
+      report_settings: {
+        Row: {
+          enabled: boolean
+          id: string
+          send_time: string
+          send_when_no_activity: boolean
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          enabled?: boolean
+          id?: string
+          send_time?: string
+          send_when_no_activity?: boolean
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          enabled?: boolean
+          id?: string
+          send_time?: string
+          send_when_no_activity?: boolean
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       support_messages: {
         Row: {
           created_at: string | null
