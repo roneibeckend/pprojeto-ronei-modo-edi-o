@@ -134,25 +134,27 @@ function EbookReaderPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="glass min-h-[600px] overflow-hidden rounded-3xl"
+              className="glass min-h-[600px] overflow-hidden rounded-3xl pb-12"
             >
-              <div className="relative aspect-video w-full bg-black/40">
-                {activeChapter?.video_url ? (
-                  <iframe
-                    src={activeChapter.video_url}
-                    className="h-full w-full"
-                    allowFullScreen
-                  />
-                ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center text-muted-foreground">
-                    <BookOpen className="mb-4 h-12 w-12 opacity-20" />
-                    <span className="text-sm">Este capítulo não possui vídeo.</span>
+              {activeChapter?.video_url && (
+                <div className="w-full bg-black/40 border-b border-white/5">
+                  <div className="max-w-4xl mx-auto py-8 px-4">
+                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/60 group">
+                      <iframe
+                        src={activeChapter.video_url.includes('youtube.com') 
+                          ? activeChapter.video_url.replace('watch?v=', 'embed/') 
+                          : activeChapter.video_url}
+                        className="h-full w-full"
+                        allowFullScreen
+                      />
+                      <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-2xl"></div>
+                    </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
-              <div className="p-8 md:p-12">
-                <div className="mb-6 flex items-center justify-between">
+              <div className="p-8 md:p-12 mt-4">
+                <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <h1 className="font-display text-3xl font-black tracking-tight md:text-4xl">
                     {activeChapter?.title}
                   </h1>
@@ -163,9 +165,9 @@ function EbookReaderPage() {
                   )}
                 </div>
 
-                <div className="prose prose-invert max-w-none prose-p:text-muted-foreground prose-headings:text-foreground">
+                <div className="prose prose-invert max-w-4xl mx-auto prose-p:text-muted-foreground prose-headings:text-foreground prose-p:leading-relaxed prose-p:text-lg">
                   {activeChapter?.content ? (
-                    <div dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
+                    <div className="text-center md:text-left" dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
                   ) : (
                     <p className="italic opacity-50">Conteúdo em breve...</p>
                   )}
