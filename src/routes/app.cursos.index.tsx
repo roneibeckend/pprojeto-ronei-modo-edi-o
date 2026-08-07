@@ -134,7 +134,7 @@ function CoursesPage() {
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {ownedEbooks.map((e) => (
               <article key={e.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30">
-                <div className="relative aspect-[3/4] bg-muted/20">
+                <div className="relative aspect-video bg-muted/20">
                   <img 
                     src={e.cover_url || e.cover || IMG.hero} 
                     alt={e.title} 
