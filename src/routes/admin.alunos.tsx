@@ -14,12 +14,13 @@ import {
   Phone,
   UserCheck,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  User
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin/alunos")({
   head: () => ({ meta: [{ title: "Gestão de Alunos · Admin" }] }),
@@ -159,6 +160,14 @@ function AdminAlunosPage() {
                   <td className="px-6 py-4 text-white/40">{p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR') : "—"}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
+                      <Link
+                        to="/admin/alunos/$studentId"
+                        params={{ studentId: p.id }}
+                        className="p-2 text-white/40 hover:text-[#ff6a00] transition tooltip"
+                        title="Ver Perfil"
+                      >
+                        <User className="h-4 w-4" />
+                      </Link>
                       <button 
                         onClick={() => { setEditingItem(p); setIsModalOpen(true); }}
                         className="p-2 text-white/40 hover:text-white transition"
