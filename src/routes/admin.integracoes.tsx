@@ -792,9 +792,11 @@ function EmailIntegrationPanel() {
                 onClick={() => {
                   setIsSendingTest(true);
                   sendTestMutation.mutate({ 
-                    to: testTo, 
-                    template: testTemplate as any,
-                    data: { name: 'Usuário de Teste', product_name: 'Curso Mestre do Churrasco' }
+                    data: {
+                      to: testTo, 
+                      template: testTemplate as any,
+                      data: { name: 'Usuário de Teste', product_name: 'Curso Mestre do Churrasco' }
+                    }
                   });
                 }}
                 className="w-full bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-12"
