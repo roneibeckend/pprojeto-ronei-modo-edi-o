@@ -105,14 +105,6 @@ export function Onboarding() {
         skip: "Pular",
       }}
       styles={{
-        options: {
-          arrowColor: "#1a0d08",
-          backgroundColor: "#1a0d08",
-          overlayColor: "rgba(0, 0, 0, 0.75)",
-          primaryColor: "#f97316",
-          textColor: "#ffffff",
-          zIndex: 10000,
-        },
         tooltipContainer: {
           textAlign: "left",
         },
