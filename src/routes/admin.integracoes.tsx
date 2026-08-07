@@ -719,7 +719,7 @@ function EmailIntegrationPanel() {
                 </Button>
                 <Button 
                   variant="outline"
-                  onClick={() => updateSettingsMutation.mutate({ 
+                  onClick={() => settings && updateSettingsMutation.mutate({ 
                     data: {
                       from_name: settings.from_name,
                       from_email: settings.from_email,
