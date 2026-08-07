@@ -41,7 +41,7 @@ function AppGate() {
 
   if (!ready) {
     return (
-      <div className="grid min-h-screen place-items-center bg-background">
+      <div className="grid min-h-dvh place-items-center bg-background">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
       </div>
     );
