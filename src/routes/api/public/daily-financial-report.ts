@@ -14,7 +14,7 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
             return new Response("Unauthorized", { status: 401 });
           }
 
-          const { recipient_id, date, test } = (await request.json().catch(() => ({}))) || {};
+          const { recipient_id, date, test, preview } = (await request.json().catch(() => ({}))) || {};
 
           const supabase = supabaseAdmin;
 
