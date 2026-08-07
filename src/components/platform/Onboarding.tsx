@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
-import Joyride, { type CallBackProps, STATUS, type Step } from "react-joyride";
+import { Joyride, STATUS, type Step } from "react-joyride";
 import { useLocation } from "@tanstack/react-router";
+
+// Redefinindo CallBackProps manualmente se necessário ou usando any para evitar erros de importação
+interface JoyrideCallBackProps {
+  status: string;
+  action: string;
+  index: number;
+  type: string;
+  [key: string]: any;
+}
 
 export function Onboarding() {
   const location = useLocation();
@@ -66,7 +75,7 @@ export function Onboarding() {
     }
   }, [location.pathname, isMobile]);
 
-  const handleJoyrideCallback = (data: CallBackProps) => {
+  const handleJoyrideCallback = (data: JoyrideCallBackProps) => {
     const { status } = data;
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status as any)) {
       setRun(false);
