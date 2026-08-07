@@ -136,20 +136,22 @@ function EbookReaderPage() {
               exit={{ opacity: 0, y: -10 }}
               className="glass min-h-[600px] overflow-hidden rounded-3xl pb-12"
             >
-              <div className="relative aspect-video w-full bg-black/40">
-                {activeChapter?.video_url ? (
-                  <iframe
-                    src={activeChapter.video_url}
-                    className="h-full w-full"
-                    allowFullScreen
-                  />
-                ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center text-muted-foreground">
-                    <BookOpen className="mb-4 h-12 w-12 opacity-20" />
-                    <span className="text-sm">Este capítulo não possui vídeo.</span>
+              {activeChapter?.video_url && (
+                <div className="w-full bg-black/40 border-b border-white/5">
+                  <div className="max-w-4xl mx-auto py-8 px-4">
+                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/60 group">
+                      <iframe
+                        src={activeChapter.video_url.includes('youtube.com') 
+                          ? activeChapter.video_url.replace('watch?v=', 'embed/') 
+                          : activeChapter.video_url}
+                        className="h-full w-full"
+                        allowFullScreen
+                      />
+                      <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-2xl"></div>
+                    </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
               <div className="p-8 md:p-12">
                 <div className="mb-6 flex items-center justify-between">
