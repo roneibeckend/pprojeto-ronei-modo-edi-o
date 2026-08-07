@@ -29,7 +29,7 @@ const brl = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 type Cost = { id: string; label: string; value: number };
-type Partner = { id: string; name: string; percent: number };
+type Partner = { id: string; name: string; percent: number; user_id?: string | null };
 
 function FinancePage() {
   const queryClient = useQueryClient();
@@ -49,7 +49,12 @@ function FinancePage() {
 
       if (settingsRes.data) setRevenue(Number(settingsRes.data.manual_revenue));
       if (costsRes.data) setCosts(costsRes.data.map(c => ({ id: c.id, label: c.label, value: Number(c.value) })));
-      if (partnersRes.data) setPartners(partnersRes.data.map(p => ({ id: p.id, name: p.name, percent: Number(p.percent) })));
+      if (partnersRes.data) setPartners(partnersRes.data.map(p => ({ 
+        id: p.id, 
+        name: p.name, 
+        percent: Number(p.percent),
+        user_id: p.user_id
+      })));
 
       return {
         revenue: settingsRes.data,
@@ -82,7 +87,7 @@ function FinancePage() {
       await supabase.from("financial_partners").delete().neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all
       const { error: partnersError } = await supabase
         .from("financial_partners")
-        .insert(partners.map(p => ({ name: p.name, percent: p.percent })));
+        .insert(partners.map(p => ({ name: p.name, percent: p.percent, user_id: p.user_id })));
       if (partnersError) throw partnersError;
     },
     onSuccess: () => {
@@ -109,7 +114,16 @@ function FinancePage() {
     setPartners((ps) => ps.map((p) => (p.id === id ? { ...p, ...patch } : p)));
   const removePartner = (id: string) => setPartners((ps) => ps.filter((p) => p.id !== id));
   const addPartner = () =>
-    setPartners((ps) => [...ps, { id: `p${Date.now()}`, name: "Novo sócio", percent: 0 }]);
+    setPartners((ps) => [...ps, { id: `p${Date.now()}`, name: "Novo sócio", percent: 0, user_id: null }]);
+
+  const { data: users } = useQuery({
+    queryKey: ["users-profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles").select("id, name, email").order("name");
+      if (error) throw error;
+      return data;
+    }
+  });
 
   const distributeProfitsFn = useServerFn(distributeProfits);
 
@@ -130,15 +144,11 @@ function FinancePage() {
       for (const partner of partners) {
         if (partner.percent > 0) {
           const amount = (profit * partner.percent) / 100;
-          // Aqui precisamos do partnerId. Como os sócios no estado local são simulados,
-          // o administrador precisaria vincular cada sócio a um usuário real.
-          // Para este MVP, vamos assumir que o 'id' do sócio no estado já é o UUID do usuário
-          // se ele for um sócio cadastrado, ou permitir que o admin selecione.
-          // Como o requisito pede para processar, vamos tentar distribuir se o ID for UUID.
-          const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(partner.id);
           
-          if (isUUID) {
-            await distributeProfitsFn({ data: { amount, partnerId: partner.id } });
+          if (partner.user_id) {
+            await distributeProfitsFn({ data: { amount, partnerId: partner.user_id } });
+          } else {
+            console.warn(`Sócio ${partner.name} não possui usuário vinculado. Pulando distribuição.`);
           }
         }
       }
@@ -353,6 +363,18 @@ function FinancePage() {
                       className="flex-1 bg-transparent text-sm font-bold text-white outline-none"
                       placeholder="Nome do Sócio"
                     />
+                    <select
+                      value={p.user_id || ""}
+                      onChange={(e) => updatePartner(p.id, { user_id: e.target.value || null })}
+                      className="max-w-[150px] bg-black border border-white/10 rounded-sm px-2 py-1 text-[10px] text-white outline-none focus:border-orange-500"
+                    >
+                      <option value="">Vincular Usuário</option>
+                      {users?.map(u => (
+                        <option key={u.id} value={u.id}>
+                          {u.name || u.email}
+                        </option>
+                      ))}
+                    </select>
                     <div className="flex items-center gap-2">
                       <div className="relative w-16">
                          <input
