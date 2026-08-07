@@ -25,7 +25,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import { getWhatsAppQRCode, confirmWhatsAppConnection, disconnectWhatsApp } from "@/lib/whatsapp.functions";
+// WhatsApp imports removed as they are no longer used
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -54,12 +54,7 @@ function AdminRelatoriosPage() {
   const [previewData, setPreviewData] = useState<any>(null);
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
 
-  const [waInstance, setWaInstance] = useState<any>(null);
-  const [isConnectingWA, setIsConnectingWA] = useState(false);
-
-  const getQR = useServerFn(getWhatsAppQRCode);
-  const confirmWA = useServerFn(confirmWhatsAppConnection);
-  const disconnectWA = useServerFn(disconnectWhatsApp);
+  // WhatsApp state removed in favor of Email reports
 
   useEffect(() => {
     fetchData();
@@ -69,11 +64,10 @@ function AdminRelatoriosPage() {
   async function fetchData() {
     try {
       setLoading(true);
-      const [recipientsRes, settingsRes, logsRes, waRes] = await Promise.all([
+      const [recipientsRes, settingsRes, logsRes] = await Promise.all([
         supabase.from('report_recipients').select('*').order('created_at', { ascending: false }),
         supabase.from('report_settings').select('*').single(),
-        supabase.from('report_logs').select('*, recipient:report_recipients(name)').order('created_at', { ascending: false }).limit(20),
-        supabase.from('whatsapp_instances').select('*').eq('id', '00000000-0000-0000-0000-000000000000').single()
+        supabase.from('report_logs').select('*, recipient:report_recipients(name)').order('created_at', { ascending: false }).limit(20)
       ]);
 
       if (recipientsRes.error) throw recipientsRes.error;
@@ -82,7 +76,6 @@ function AdminRelatoriosPage() {
       setRecipients(recipientsRes.data || []);
       setSettings(settingsRes.data);
       setLogs(logsRes.data || []);
-      setWaInstance(waRes.data);
     } catch (error: any) {
       toast.error("Erro ao carregar dados: " + error.message);
     } finally {
@@ -90,51 +83,7 @@ function AdminRelatoriosPage() {
     }
   }
 
-  async function handleConnectWhatsApp() {
-    try {
-      setIsConnectingWA(true);
-      const res = await getQR();
-      if (res.success) {
-        toast.success("QR Code gerado! Escaneie para conectar.");
-        fetchData();
-      }
-    } catch (error: any) {
-      toast.error("Erro ao conectar WhatsApp: " + error.message);
-    } finally {
-      setIsConnectingWA(false);
-    }
-  }
-
-  async function handleConfirmWA() {
-    try {
-      setIsConnectingWA(true);
-      const res = await confirmWA();
-      if (res.success) {
-        toast.success("WhatsApp conectado com sucesso!");
-        fetchData();
-      }
-    } catch (error: any) {
-      toast.error("Erro ao confirmar: " + error.message);
-    } finally {
-      setIsConnectingWA(false);
-    }
-  }
-
-  async function handleDisconnectWA() {
-    if (!confirm("Deseja realmente desconectar o WhatsApp?")) return;
-    try {
-      setIsConnectingWA(true);
-      const res = await disconnectWA();
-      if (res.success) {
-        toast.success("WhatsApp desconectado.");
-        fetchData();
-      }
-    } catch (error: any) {
-      toast.error("Erro ao desconectar: " + error.message);
-    } finally {
-      setIsConnectingWA(false);
-    }
-  }
+  // WhatsApp handlers removed in favor of Email reports
 
 
   async function handleRecipientSubmit(e: React.FormEvent) {
@@ -210,16 +159,16 @@ function AdminRelatoriosPage() {
     try {
       const { data, error } = await supabase
         .from('report_logs')
-        .select('*, recipient:report_recipients(name, phone_e164)')
+        .select('*, recipient:report_recipients(name, email)')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      const headers = ["ID", "Destinatário", "Telefone", "Data do Relatório", "Status", "Enviado em", "Erro"];
+      const headers = ["ID", "Destinatário", "E-mail", "Data do Relatório", "Status", "Enviado em", "Erro"];
       const rows = data.map(log => [
         log.id,
         log.recipient?.name || "Sistema",
-        log.recipient?.phone_e164 || "",
+        log.recipient?.email || "",
         log.report_date,
         log.status,
         log.sent_at ? new Date(log.sent_at).toLocaleString('pt-BR') : "",
@@ -281,7 +230,7 @@ function AdminRelatoriosPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold">Relatórios Automáticos</h2>
-          <p className="text-sm text-white/40 text-left">Relatórios diários via WhatsApp.</p>
+          <p className="text-sm text-white/40 text-left">Relatórios diários via E-mail.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
            <button 
@@ -313,68 +262,23 @@ function AdminRelatoriosPage() {
         <div className="space-y-6 lg:col-span-1">
           <section className="border border-white/5 bg-[#111] p-6 rounded-xl">
             <div className="mb-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-              <MessageSquare className="h-4 w-4" style={{ color: ORANGE }} /> Conexão WhatsApp
+              <Plus className="h-4 w-4" style={{ color: ORANGE }} /> Destinatários de E-mail
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-black/40 border border-white/5">
-                <div>
-                  <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Status da Instância</div>
-                  <div className={cn(
-                    "text-xs font-bold mt-1",
-                    waInstance?.status === 'connected' ? "text-emerald-400" : 
-                    waInstance?.status === 'connecting' ? "text-yellow-400" : "text-red-400"
-                  )}>
-                    {waInstance?.status === 'connected' ? "CONECTADO" : 
-                     waInstance?.status === 'connecting' ? "AGUARDANDO QR CODE" : "DESCONECTADO"}
-                  </div>
-                </div>
-                {waInstance?.status === 'connected' && (
-                  <button 
-                    onClick={handleDisconnectWA}
-                    className="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition"
-                    title="Desconectar"
-                  >
-                    <LogOut className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-
-              {waInstance?.status === 'disconnected' && (
-                <button 
-                  onClick={handleConnectWhatsApp}
-                  disabled={isConnectingWA}
-                  className="w-full flex items-center justify-center gap-2 py-3 bg-[#ff6a00] text-black font-bold text-xs uppercase tracking-widest rounded-lg hover:opacity-90 transition disabled:opacity-50"
-                >
-                  {isConnectingWA ? <Loader2 className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
-                  Conectar Novo WhatsApp
-                </button>
-              )}
-
-              {waInstance?.status === 'connecting' && waInstance?.qr_code && (
-                <div className="space-y-4 animate-in fade-in duration-500">
-                  <div className="bg-white p-3 rounded-xl mx-auto w-fit border-4 border-[#ff6a00]">
-                    <img src={waInstance.qr_code} alt="WhatsApp QR Code" className="w-48 h-48" />
-                  </div>
-                  <p className="text-[10px] text-center text-white/40 px-4 leading-relaxed">
-                    Escaneie o QR Code acima com seu WhatsApp em Configurações &gt; Aparelhos Conectados.
-                  </p>
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={handleConfirmWA}
-                      className="flex-1 py-2 bg-emerald-500 text-black font-bold text-[10px] uppercase tracking-widest rounded-lg hover:opacity-90 transition"
-                    >
-                      Confirmar Leitura
-                    </button>
-                    <button 
-                      onClick={handleDisconnectWA}
-                      className="px-3 py-2 bg-white/5 text-white/40 hover:text-white rounded-lg transition"
-                    >
-                      Cancelar
-                    </button>
-                  </div>
-                </div>
-              )}
+              <p className="text-[10px] text-white/40 leading-relaxed">
+                Adicione os e-mails que devem receber o relatório financeiro diário.
+              </p>
+              <button 
+                onClick={() => {
+                  setEditingRecipient({ name: '', email: '', active: true });
+                  setIsRecipientModalOpen(true);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-[#ff6a00] text-black font-bold text-xs uppercase tracking-widest rounded-lg hover:opacity-90 transition"
+              >
+                <Plus className="h-4 w-4" />
+                Novo Destinatário
+              </button>
             </div>
           </section>
 
@@ -484,10 +388,10 @@ function AdminRelatoriosPage() {
           <section className="border border-white/5 bg-[#111] p-6 rounded-xl">
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-                <Smartphone className="h-4 w-4" style={{ color: ORANGE }} /> Destinatários do WhatsApp
+                <FileText className="h-4 w-4" style={{ color: ORANGE }} /> Destinatários do Relatório
               </div>
               <button 
-                onClick={() => { setEditingRecipient({ name: "", phone_e164: "55", active: true, report_types: ['financial'] }); setIsRecipientModalOpen(true); }}
+                onClick={() => { setEditingRecipient({ name: "", email: "", active: true, report_types: ['financial'] }); setIsRecipientModalOpen(true); }}
                 className="flex items-center gap-2 bg-[#ff6a00] px-3 py-1.5 rounded text-[10px] font-bold text-black uppercase tracking-widest"
               >
                 <Plus className="h-3 w-3" /> Novo
@@ -500,7 +404,7 @@ function AdminRelatoriosPage() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="font-bold text-sm">{r.name}</h3>
-                      <p className="text-xs text-white/40 font-mono mt-0.5">{r.phone_e164}</p>
+                      <p className="text-xs text-white/40 font-mono mt-0.5">{r.email}</p>
                     </div>
                     <button 
                       onClick={() => handleToggleRecipient(r.id, !r.active)}
@@ -558,15 +462,16 @@ function AdminRelatoriosPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">WhatsApp (E.164)</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail</label>
                 <input 
                   required 
-                  value={editingRecipient?.phone_e164 || ""} 
-                  onChange={e => setEditingRecipient({...editingRecipient, phone_e164: e.target.value.replace(/[^0-9]/g, '')})} 
-                  placeholder="5511999999999" 
+                  type="email"
+                  value={editingRecipient?.email || ""} 
+                  onChange={e => setEditingRecipient({...editingRecipient, email: e.target.value})} 
+                  placeholder="exemplo@email.com" 
                   className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] font-mono" 
                 />
-                <p className="text-[9px] text-white/30 font-bold uppercase tracking-widest">DDI + DDD + Número (Apenas números)</p>
+                <p className="text-[9px] text-white/30 font-bold uppercase tracking-widest">O relatório será enviado para este endereço.</p>
               </div>
 
               <div className="pt-4 flex gap-3">
@@ -620,7 +525,7 @@ function AdminRelatoriosPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Mensagem do WhatsApp</label>
+                    <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Conteúdo do E-mail (Texto)</label>
                     <div className="bg-black/60 rounded-xl p-6 border border-white/5 font-mono text-xs leading-relaxed whitespace-pre-wrap text-emerald-500/90 shadow-inner">
                       {previewData.message}
                     </div>

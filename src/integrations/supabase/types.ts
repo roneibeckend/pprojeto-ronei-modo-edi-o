@@ -1214,6 +1214,7 @@ export type Database = {
         Row: {
           active: boolean
           created_at: string
+          email: string | null
           id: string
           name: string
           phone_e164: string
@@ -1222,6 +1223,7 @@ export type Database = {
         Insert: {
           active?: boolean
           created_at?: string
+          email?: string | null
           id?: string
           name: string
           phone_e164: string
@@ -1230,6 +1232,7 @@ export type Database = {
         Update: {
           active?: boolean
           created_at?: string
+          email?: string | null
           id?: string
           name?: string
           phone_e164?: string
@@ -1239,6 +1242,7 @@ export type Database = {
       }
       report_settings: {
         Row: {
+          delivery_method: string | null
           enabled: boolean
           id: string
           send_time: string
@@ -1247,6 +1251,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          delivery_method?: string | null
           enabled?: boolean
           id?: string
           send_time?: string
@@ -1255,6 +1260,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          delivery_method?: string | null
           enabled?: boolean
           id?: string
           send_time?: string
