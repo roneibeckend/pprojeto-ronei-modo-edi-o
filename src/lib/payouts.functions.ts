@@ -108,3 +108,27 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
     if (error) throw error;
     return { success: true };
   });
+
+export const distributeProfits = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: unknown) => z.object({
+    amount: z.number().positive(),
+    partnerId: z.string(),
+  }).parse(data))
+  .handler(async ({ data, context }) => {
+    // Apenas admins podem distribuir
+    const { data: isAdmin } = await supabaseAdmin.rpc('has_role', { 
+      _user_id: context.userId, 
+      _role: 'admin' 
+    });
+    
+    if (!isAdmin) throw new Error("Acesso negado.");
+
+    const { error } = await supabaseAdmin.rpc('distribute_partner_profits', {
+      p_amount: data.amount,
+      p_partner_id: data.partnerId
+    });
+
+    if (error) throw error;
+    return { success: true };
+  });
