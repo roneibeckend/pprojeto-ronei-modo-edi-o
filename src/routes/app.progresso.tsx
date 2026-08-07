@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Award, Flame, Trophy, Lock } from "lucide-react";
+import { Award, Flame, Trophy, Lock, BookOpen, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { student, achievements, courses, ebooks, certificates } from "@/lib/platform-data";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/app/progresso")({
   head: () => ({ meta: [{ title: "Meu progresso — Espetinho na Veia" }] }),
@@ -11,20 +13,48 @@ export const Route = createFileRoute("/app/progresso")({
 const weeks = [30, 50, 45, 70, 65, 80, 92, 78, 88, 95, 82, 100];
 
 function ProgressPage() {
-  const started = courses.filter((c) => c.progress > 0).length;
-  const finished = courses.filter((c) => c.progress === 100).length;
-  const read = 0; // Removido biblioteca de ebooks
-  const unlocked = certificates.filter((c) => c.unlocked).length;
+  const { user } = useAuth();
+
+  const { data: courseProgress, isLoading: isLoadingCourses } = useQuery({
+    queryKey: ["course-progress", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("lesson_progress").select("*").eq("user_id", user?.id || "");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  const { data: ebookProgress, isLoading: isLoadingEbooks } = useQuery({
+    queryKey: ["ebook-progress", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("ebook_progress").select("*").eq("user_id", user?.id || "");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  if (isLoadingCourses || isLoadingEbooks) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-fire" />
+      </div>
+    );
+  }
+
+  const finishedCourses = 0; // Mock real logic if needed
+  const readChapters = ebookProgress?.length || 0;
 
   return (
     <div>
       <PageHeader title="Meu progresso" subtitle="Acompanhe sua evolução na jornada." />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Progresso total" value={`${student.totalProgress}%`} />
-        <Stat label="Cursos iniciados" value={String(started)} />
-        <Stat label="Cursos finalizados" value={String(finished)} />
-        <Stat label="Sequência" value={`${student.streak} dias`} icon={Flame} />
+        <Stat label="Aulas assistidas" value={String(courseProgress?.length || 0)} />
+        <Stat label="Capítulos lidos" value={String(readChapters)} icon={BookOpen} />
+        <Stat label="Sequência" value="0 dias" icon={Flame} />
+        <Stat label="Certificados" value="0" />
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
@@ -41,25 +71,20 @@ function ProgressPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 grid grid-cols-3 gap-3 text-center text-sm">
-            <div><div className="text-muted-foreground text-xs">Cursos concluídos</div><div className="font-bold">{finished}</div></div>
-            <div><div className="text-muted-foreground text-xs">Aulas assistidas</div><div className="font-bold">{student.lessonsWatched}</div></div>
-            <div><div className="text-muted-foreground text-xs">Certificados</div><div className="font-bold">{unlocked}</div></div>
-          </div>
         </section>
 
         <section className="glass rounded-2xl p-6">
-          <h3 className="font-display text-lg font-bold">Conquistas</h3>
-          <ul className="mt-4 space-y-3">
-            {achievements.map((a) => (
-              <li key={a.id} className={`flex items-center gap-3 rounded-xl border p-3 ${a.unlocked ? "border-primary/40 bg-fire/10" : "border-white/5 opacity-60"}`}>
-                <div className={`grid h-10 w-10 place-items-center rounded-full ${a.unlocked ? "bg-fire text-white" : "bg-white/5 text-muted-foreground"}`}>
-                  {a.unlocked ? <Trophy className="h-5 w-5" /> : <Lock className="h-4 w-4" />}
-                </div>
-                <span className="text-sm font-medium">{a.title}</span>
-              </li>
-            ))}
-          </ul>
+          <h3 className="font-display text-lg font-bold">Resumo da Atividade</h3>
+          <div className="mt-4 space-y-4">
+            <div className="flex items-center justify-between rounded-xl bg-white/5 p-4">
+              <span className="text-sm font-medium">Aulas Concluídas</span>
+              <span className="text-xl font-bold text-fire">{courseProgress?.length || 0}</span>
+            </div>
+            <div className="flex items-center justify-between rounded-xl bg-white/5 p-4">
+              <span className="text-sm font-medium">Capítulos de E-books</span>
+              <span className="text-xl font-bold text-gold">{readChapters}</span>
+            </div>
+          </div>
         </section>
       </div>
     </div>
@@ -74,7 +99,7 @@ function Stat({ label, value, icon: Icon = Award }: { label: string; value: stri
           <Icon className="h-5 w-5" />
         </div>
         <div>
-          <div className="text-xs uppercase tracking-widest text-muted-foreground">{label}</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
           <div className="font-display text-2xl font-bold">{value}</div>
         </div>
       </div>
