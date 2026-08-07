@@ -46,16 +46,16 @@ const navGroups: { title: string; items: NavItem[] }[] = [
     title: "Principal",
     items: [
       { to: "/app", label: "Início", icon: Home, exact: true },
-      { to: "/app/progresso", label: "Meu progresso", icon: TrendingUp },
+      { to: "/app/receitas", label: "Receitas", icon: ChefHat },
+      { to: "/app/materiais", label: "Planilhas", icon: FileSpreadsheet },
+      { to: "/app/materiais", label: "Materiais", icon: BookOpen },
     ],
   },
   {
     title: "Aprendizado",
     items: [
       { to: "/app/cursos", label: "Meus cursos", icon: GraduationCap },
-      
-      { to: "/app/receitas", label: "Receitas", icon: ChefHat },
-      { to: "/app/materiais", label: "Planilhas e materiais", icon: FileSpreadsheet },
+      { to: "/app/progresso", label: "Meu progresso", icon: TrendingUp },
     ],
   },
   {
