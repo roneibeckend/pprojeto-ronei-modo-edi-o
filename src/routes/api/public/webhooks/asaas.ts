@@ -54,11 +54,6 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                       user_id: userId,
                       course_id: productId,
                     }, { onConflict: 'user_id,course_id' });
-                  } else if (productType === 'ebook') {
-                    await supabaseAdmin.from('ebook_enrollments').upsert({
-                      user_id: userId,
-                      ebook_id: productId,
-                    }, { onConflict: 'user_id,ebook_id' });
                   }
                   
                   console.log(`[Webhook Asaas] Acesso liberado para ${customerEmail}: ${productType} ${productId}`);
