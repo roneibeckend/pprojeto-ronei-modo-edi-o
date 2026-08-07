@@ -79,7 +79,7 @@ function RecipesPage() {
                     }}
                     className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors"
                   >
-                    <div className="grid h-12 w-12 place-items-center rounded-full bg-fire text-white shadow-lg shadow-fire/20 scale-90 group-hover:scale-100 transition-transform">
+                    <div className="grid h-12 w-12 place-items-center rounded-full bg-fire text-white shadow-lg shadow-fire/20 scale-90 group-hover:scale-100 transition-transform touch-target">
                       <Play className="h-6 w-6 fill-white" />
                     </div>
                   </button>

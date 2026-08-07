@@ -267,7 +267,7 @@ function AffiliateFinancePage() {
                     placeholder="0,00"
                     value={payoutAmount}
                     onChange={(e) => setPayoutAmount(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white outline-none focus:border-fire/50"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white outline-none focus:border-fire/50 text-[16px] md:text-sm"
                   />
                 </div>
                 <div className="mt-1 flex justify-between text-[10px]">

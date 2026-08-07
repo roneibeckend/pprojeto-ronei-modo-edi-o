@@ -194,7 +194,8 @@ function LiveClassesPage() {
                   required
                   value={editingClass?.title || ""}
                   onChange={(e) => setEditingClass({ ...editingClass, title: e.target.value })}
-                  className="w-full rounded-lg border border-white/10 bg-black/40 p-3 text-sm outline-none focus:border-primary transition"
+                  className="w-full rounded-lg border border-white/10 bg-black/40 p-3 text-sm outline-none focus:border-primary transition text-[16px] md:text-sm"
+
                   placeholder="Ex.: Masterclass: O Segredo da Brasa"
                 />
               </div>

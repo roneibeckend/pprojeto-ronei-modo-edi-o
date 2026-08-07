@@ -219,7 +219,7 @@ function CoursePage() {
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Anote os pontos importantes desta aula..."
-                className="min-h-40 w-full rounded-lg border border-white/10 bg-secondary/50 p-3 text-sm outline-none focus:border-primary"
+                className="min-h-40 w-full rounded-lg border border-white/10 bg-secondary/50 p-3 text-sm outline-none focus:border-primary text-[16px] md:text-sm"
               />
             )}
           </div>
