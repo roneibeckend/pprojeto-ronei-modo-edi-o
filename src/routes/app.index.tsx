@@ -41,10 +41,10 @@ function Dashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Showcase / Vitrine */}
+      {/* Showcase / Cursos */}
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-display text-2xl font-bold tracking-tight">Vitrine de Cursos</h2>
+          <h2 className="font-display text-2xl font-bold tracking-tight">Cursos Disponíveis</h2>
           <Link to="/app/cursos" className="text-sm font-medium text-gold hover:underline">Ver todos</Link>
         </div>
         
