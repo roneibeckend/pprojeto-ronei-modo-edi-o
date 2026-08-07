@@ -37,6 +37,7 @@ import { Route as AdminReceitasRouteImport } from './routes/admin.receitas'
 import { Route as AdminNotificacoesRouteImport } from './routes/admin.notificacoes'
 import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin.financeiro'
+import { Route as AdminEbooksRouteImport } from './routes/admin.ebooks'
 import { Route as AdminCursosRouteImport } from './routes/admin.cursos'
 import { Route as AdminAoVivoRouteImport } from './routes/admin.ao-vivo'
 import { Route as AdminAlunosRouteImport } from './routes/admin.alunos'
@@ -194,6 +195,11 @@ const AdminFinanceiroRoute = AdminFinanceiroRouteImport.update({
   path: '/financeiro',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEbooksRoute = AdminEbooksRouteImport.update({
+  id: '/ebooks',
+  path: '/ebooks',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCursosRoute = AdminCursosRouteImport.update({
   id: '/cursos',
   path: '/cursos',
@@ -289,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/cursos': typeof AdminCursosRoute
+  '/admin/ebooks': typeof AdminEbooksRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
@@ -333,6 +340,7 @@ export interface FileRoutesByTo {
   '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/cursos': typeof AdminCursosRoute
+  '/admin/ebooks': typeof AdminEbooksRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
@@ -378,6 +386,7 @@ export interface FileRoutesById {
   '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/cursos': typeof AdminCursosRoute
+  '/admin/ebooks': typeof AdminEbooksRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
@@ -426,6 +435,7 @@ export interface FileRouteTypes {
     | '/admin/alunos'
     | '/admin/ao-vivo'
     | '/admin/cursos'
+    | '/admin/ebooks'
     | '/admin/financeiro'
     | '/admin/integracoes'
     | '/admin/notificacoes'
@@ -470,6 +480,7 @@ export interface FileRouteTypes {
     | '/admin/alunos'
     | '/admin/ao-vivo'
     | '/admin/cursos'
+    | '/admin/ebooks'
     | '/admin/financeiro'
     | '/admin/integracoes'
     | '/admin/notificacoes'
@@ -514,6 +525,7 @@ export interface FileRouteTypes {
     | '/admin/alunos'
     | '/admin/ao-vivo'
     | '/admin/cursos'
+    | '/admin/ebooks'
     | '/admin/financeiro'
     | '/admin/integracoes'
     | '/admin/notificacoes'
@@ -759,6 +771,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFinanceiroRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ebooks': {
+      id: '/admin/ebooks'
+      path: '/ebooks'
+      fullPath: '/admin/ebooks'
+      preLoaderRoute: typeof AdminEbooksRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/cursos': {
       id: '/admin/cursos'
       path: '/cursos'
@@ -903,6 +922,7 @@ interface AdminRouteChildren {
   AdminAlunosRoute: typeof AdminAlunosRouteWithChildren
   AdminAoVivoRoute: typeof AdminAoVivoRoute
   AdminCursosRoute: typeof AdminCursosRoute
+  AdminEbooksRoute: typeof AdminEbooksRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRouteWithChildren
   AdminIntegracoesRoute: typeof AdminIntegracoesRoute
   AdminNotificacoesRoute: typeof AdminNotificacoesRoute
@@ -918,6 +938,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAlunosRoute: AdminAlunosRouteWithChildren,
   AdminAoVivoRoute: AdminAoVivoRoute,
   AdminCursosRoute: AdminCursosRoute,
+  AdminEbooksRoute: AdminEbooksRoute,
   AdminFinanceiroRoute: AdminFinanceiroRouteWithChildren,
   AdminIntegracoesRoute: AdminIntegracoesRoute,
   AdminNotificacoesRoute: AdminNotificacoesRoute,
