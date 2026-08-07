@@ -85,37 +85,15 @@ function AdminRelatoriosPage() {
   }
 
   async function handleConnectWhatsApp() {
-    try {
-      setIsConnectingWA(true);
-      const res = await getQR();
-      if (res.success) {
-        toast.success("QR Code gerado! Escaneie para conectar.");
-        fetchData();
-      }
-    } catch (error: any) {
-      toast.error("Erro ao conectar WhatsApp: " + error.message);
-    } finally {
-      setIsConnectingWA(false);
-    }
+    toast.info("WhatsApp desativado.");
   }
 
   async function handleConfirmWA() {
-    try {
-      setIsConnectingWA(true);
-      const res = await confirmWA();
-      if (res.success) {
-        toast.success("WhatsApp conectado com sucesso!");
-        fetchData();
-      }
-    } catch (error: any) {
-      toast.error("Erro ao confirmar: " + error.message);
-    } finally {
-      setIsConnectingWA(false);
-    }
+    toast.info("WhatsApp desativado.");
   }
 
   async function handleDisconnectWA() {
-    toast.info("A funcionalidade de WhatsApp foi descontinuada em favor do E-mail.");
+    toast.info("WhatsApp desativado.");
   }
 
 
