@@ -705,10 +705,12 @@ function EmailIntegrationPanel() {
                     const from_email = (document.getElementById('from_email') as HTMLInputElement).value;
                     const reply_to = (document.getElementById('reply_to') as HTMLInputElement).value;
                     updateSettingsMutation.mutate({ 
-                      from_name, 
-                      from_email, 
-                      reply_to: reply_to || null,
-                      is_enabled: settings?.is_enabled ?? true
+                      data: {
+                        from_name, 
+                        from_email, 
+                        reply_to: reply_to || null,
+                        is_enabled: settings?.is_enabled ?? true
+                      }
                     });
                   }}
                   className="bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-10 px-8"
@@ -717,7 +719,14 @@ function EmailIntegrationPanel() {
                 </Button>
                 <Button 
                   variant="outline"
-                  onClick={() => updateSettingsMutation.mutate({ ...settings, is_enabled: !settings?.is_enabled })}
+                  onClick={() => updateSettingsMutation.mutate({ 
+                    data: {
+                      from_name: settings.from_name,
+                      from_email: settings.from_email,
+                      reply_to: settings.reply_to,
+                      is_enabled: !settings?.is_enabled 
+                    }
+                  })}
                   className="bg-white/5 border-white/10 hover:bg-white/10 font-bold uppercase tracking-widest text-[10px] h-10 px-6"
                 >
                   {settings?.is_enabled ? 'Desativar Envio' : 'Ativar Envio'}
