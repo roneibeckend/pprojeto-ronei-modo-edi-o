@@ -47,6 +47,7 @@ import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$cour
 import { Route as AppAfiliadosLinksRouteImport } from './routes/app.afiliados.links'
 import { Route as AppAfiliadosFinanceiroRouteImport } from './routes/app.afiliados.financeiro'
 import { Route as AppAfiliadosConfigRouteImport } from './routes/app.afiliados.config'
+import { Route as ApiPublicDailyFinancialReportRouteImport } from './routes/api/public/daily-financial-report'
 import { Route as AdminAlunosStudentIdRouteImport } from './routes/admin.alunos.$studentId'
 import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
 
@@ -240,6 +241,12 @@ const AppAfiliadosConfigRoute = AppAfiliadosConfigRouteImport.update({
   path: '/config',
   getParentRoute: () => AppAfiliadosRoute,
 } as any)
+const ApiPublicDailyFinancialReportRoute =
+  ApiPublicDailyFinancialReportRouteImport.update({
+    id: '/api/public/daily-financial-report',
+    path: '/api/public/daily-financial-report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminAlunosStudentIdRoute = AdminAlunosStudentIdRouteImport.update({
   id: '/$studentId',
   path: '/$studentId',
@@ -284,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
+  '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
@@ -322,6 +330,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
+  '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
@@ -365,6 +374,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
+  '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
@@ -409,6 +419,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/app/'
     | '/admin/alunos/$studentId'
+    | '/api/public/daily-financial-report'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
@@ -447,6 +458,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/app'
     | '/admin/alunos/$studentId'
+    | '/api/public/daily-financial-report'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
@@ -489,6 +501,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/app/'
     | '/admin/alunos/$studentId'
+    | '/api/public/daily-financial-report'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
@@ -508,6 +521,7 @@ export interface RootRouteChildren {
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
+  ApiPublicDailyFinancialReportRoute: typeof ApiPublicDailyFinancialReportRoute
   ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
 }
 
@@ -779,6 +793,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAfiliadosConfigRouteImport
       parentRoute: typeof AppAfiliadosRoute
     }
+    '/api/public/daily-financial-report': {
+      id: '/api/public/daily-financial-report'
+      path: '/api/public/daily-financial-report'
+      fullPath: '/api/public/daily-financial-report'
+      preLoaderRoute: typeof ApiPublicDailyFinancialReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/alunos/$studentId': {
       id: '/admin/alunos/$studentId'
       path: '/$studentId'
@@ -913,6 +934,7 @@ const rootRouteChildren: RootRouteChildren = {
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
+  ApiPublicDailyFinancialReportRoute: ApiPublicDailyFinancialReportRoute,
   ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
 }
 export const routeTree = rootRouteImport

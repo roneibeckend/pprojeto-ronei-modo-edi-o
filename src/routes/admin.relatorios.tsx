@@ -110,7 +110,16 @@ function AdminRelatoriosPage() {
         body: { recipient_id: recipientId, test: true }
       });
 
-      if (error) throw error;
+      // Se der erro 404 na Edge Function (não implantada), tentamos o Server Route
+      if (error || !data) {
+        const response = await fetch('/api/public/daily-financial-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ recipient_id: recipientId, test: true })
+        });
+        
+        if (!response.ok) throw new Error(await response.text());
+      }
       
       toast.dismiss();
       toast.success("Teste enviado com sucesso!");
