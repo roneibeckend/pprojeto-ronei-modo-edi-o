@@ -36,8 +36,6 @@ function AdminPartnerPayoutsPage() {
   const { data: payouts, isLoading } = useQuery({
     queryKey: ["admin-partner-payout-requests"],
     queryFn: async () => {
-      // Buscamos apenas saques de sócios (identificados pelo metadado user_type: partner)
-      // ou que não tenham o metadado user_type: affiliate (caso antigo)
       const { data, error } = await supabase
         .from("payout_requests")
         .select(`
@@ -47,24 +45,26 @@ function AdminPartnerPayoutsPage() {
         .order("created_at", { ascending: false });
       
       if (error) throw error;
-
-      // Filtrar no cliente para garantir que pegamos apenas os sócios (se o metadado existir)
-      // ou todos se quisermos uma visão geral, mas o requisito pede uma página distinta
-      return data?.filter(p => (p.metadata as any)?.user_type === 'partner');
+      return data?.filter(p => (p.metadata as any)?.user_type === 'partner') || [];
     }
   });
 
   const { data: partnerStats } = useQuery({
     queryKey: ["admin-partner-balances"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("partner_balances")
-        .select(`
-          *,
-          profile:profiles(name, email)
-        `);
-      if (error) throw error;
-      return data;
+      // Como partner_balances não tem FK no schema cache, buscamos separado e cruzamos manualmente
+      const [balancesRes, profilesRes] = await Promise.all([
+        supabase.from("partner_balances").select("*"),
+        supabase.from("profiles").select("id, name, email")
+      ]);
+
+      if (balancesRes.error) throw balancesRes.error;
+      if (profilesRes.error) throw profilesRes.error;
+
+      return balancesRes.data.map(balance => ({
+        ...balance,
+        profile: profilesRes.data.find(p => p.id === balance.user_id)
+      }));
     }
   });
 
@@ -109,7 +109,6 @@ function AdminPartnerPayoutsPage() {
         subtitle="Controle detalhado de retiradas de lucro e saldos de sócios e parceiros." 
       />
 
-      {/* Cards de Resumo Específicos para Sócios */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="border border-white/5 bg-white/[0.02] p-6 rounded-2xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
@@ -170,7 +169,6 @@ function AdminPartnerPayoutsPage() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        {/* Tabela de Solicitações */}
         <div className="xl:col-span-2 space-y-4">
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">
             <History className="w-4 h-4" /> Solicitações de Retirada
@@ -275,7 +273,6 @@ function AdminPartnerPayoutsPage() {
           )}
         </div>
 
-        {/* Sidebar: Saldo por Sócio */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">
             <TrendingUp className="w-4 h-4" /> Saldos Disponíveis
