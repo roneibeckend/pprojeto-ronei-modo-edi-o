@@ -33,12 +33,17 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
 
           // Se for pagamento confirmado ou recebido
           if (['PAYMENT_RECEIVED', 'PAYMENT_CONFIRMED'].includes(body.event)) {
-            const externalRef = body.payment?.externalReference; // Formato "type:id"
+            const externalRef = body.payment?.externalReference; // Formato "type:id" ou "type:id:ref_CODE"
             if (externalRef && externalRef.includes(':')) {
-              const [productType, productId] = externalRef.split(':');
+              const parts = externalRef.split(':');
+              const productType = parts[0];
+              const productId = parts[1];
+              const affiliatePart = parts.find(p => p.startsWith('ref_'));
+              const affiliateCode = affiliatePart ? affiliatePart.replace('ref_', '') : null;
+              
               const customerEmail = body.payment?.customerEmail;
+              const amount = body.value || body.payment?.value;
 
-              // Identificar o usuário pelo e-mail se possível (o Asaas envia o e-mail do cliente)
               if (customerEmail) {
                 const { data: profile } = await supabaseAdmin
                   .from('profiles')
@@ -54,6 +59,49 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                       user_id: userId,
                       course_id: productId,
                     }, { onConflict: 'user_id,course_id' });
+                  }
+
+                  // Processar Comissão de Afiliado
+                  if (affiliateCode) {
+                    const { data: linkData } = await supabaseAdmin
+                      .from('affiliate_links')
+                      .select('affiliate_id')
+                      .eq('code', affiliateCode)
+                      .single();
+
+                    if (linkData) {
+                      const affiliateId = linkData.affiliate_id;
+                      
+                      const { data: affiliate } = await supabaseAdmin
+                        .from('affiliates')
+                        .select('commission_rate')
+                        .eq('id', affiliateId)
+                        .eq('status', 'active')
+                        .single();
+
+                      if (affiliate) {
+                        const commissionRate = affiliate.commission_rate || 30;
+                        const commissionAmount = (amount * commissionRate) / 100;
+
+                        await supabaseAdmin.from('affiliate_sales').insert({
+                          affiliate_id: affiliateId,
+                          course_id: productType === 'course' ? productId : null,
+                          amount: amount,
+                          commission: commissionAmount,
+                          status: 'pending',
+                          metadata: { 
+                            payment_id: body.payment?.id,
+                            customer_email: customerEmail 
+                          }
+                        });
+
+                        // Incrementar ganhos totais e saldo
+                        await supabaseAdmin.rpc('increment_affiliate_earnings', {
+                          aff_id: affiliateId,
+                          amount_to_add: commissionAmount
+                        });
+                      }
+                    }
                   }
                   
                   console.log(`[Webhook Asaas] Acesso liberado para ${customerEmail}: ${productType} ${productId}`);

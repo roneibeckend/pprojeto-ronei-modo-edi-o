@@ -890,6 +890,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_affiliate_earnings: {
+        Args: { aff_id: string; amount_to_add: number }
+        Returns: undefined
+      }
       save_assistant_response: {
         Args: { p_content: string; p_ticket_id: string }
         Returns: undefined

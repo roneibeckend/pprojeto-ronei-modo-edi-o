@@ -12,6 +12,7 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
     title: z.string(),
     description: z.string().optional(),
     value: z.number(),
+    affiliateRef: z.string().optional(),
   }).parse(data))
   .handler(async ({ data }) => {
     // 1. Buscar credenciais do Asaas
@@ -55,7 +56,7 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
           endDate: null,
           maxInstallmentCount: 1,
           notificationEnabled: true,
-          externalReference: `${data.productType}:${data.productId}`
+          externalReference: `${data.productType}:${data.productId}${data.affiliateRef ? `:ref_${data.affiliateRef}` : ''}`
         })
       });
 
