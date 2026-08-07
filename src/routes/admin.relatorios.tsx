@@ -198,7 +198,7 @@ function AdminRelatoriosPage() {
     try {
       const { data, error } = await supabase
         .from('report_logs')
-        .select('*, recipient:report_recipients(name, phone_e164)')
+        .select('*, recipient:report_recipients(name, email)')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
