@@ -153,8 +153,8 @@ function EbookReaderPage() {
                 </div>
               )}
 
-              <div className="p-8 md:p-12">
-                <div className="mb-6 flex items-center justify-between">
+              <div className="p-8 md:p-12 mt-4">
+                <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <h1 className="font-display text-3xl font-black tracking-tight md:text-4xl">
                     {activeChapter?.title}
                   </h1>
