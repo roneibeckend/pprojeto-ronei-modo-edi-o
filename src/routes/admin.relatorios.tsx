@@ -135,11 +135,73 @@ function AdminRelatoriosPage() {
       }
       
       toast.dismiss();
-      toast.success("Teste enviado com sucesso!");
+      toast.success(isResend ? "Relatório reenviado!" : "Teste enviado com sucesso!");
       fetchData(); // Atualiza logs
     } catch (error: any) {
       toast.dismiss();
-      toast.error("Erro ao enviar teste: " + (error.message || "Verifique as configurações da Edge Function"));
+      toast.error("Erro ao enviar: " + (error.message || "Verifique as configurações"));
+    }
+  }
+
+  async function handleExportCSV() {
+    try {
+      const { data, error } = await supabase
+        .from('report_logs')
+        .select('*, recipient:report_recipients(name, phone_e164)')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const headers = ["ID", "Destinatário", "Telefone", "Data do Relatório", "Status", "Enviado em", "Erro"];
+      const rows = data.map(log => [
+        log.id,
+        log.recipient?.name || "Sistema",
+        log.recipient?.phone_e164 || "",
+        log.report_date,
+        log.status,
+        log.sent_at ? new Date(log.sent_at).toLocaleString('pt-BR') : "",
+        log.error || ""
+      ]);
+
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `relatorios_financeiros_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast.success("CSV exportado com sucesso!");
+    } catch (error: any) {
+      toast.error("Erro ao exportar CSV: " + error.message);
+    }
+  }
+
+  async function handleOpenPreview() {
+    try {
+      setIsLoadingPreview(true);
+      setIsPreviewOpen(true);
+      
+      const response = await fetch('/api/public/daily-financial-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ preview: true })
+      });
+      
+      if (!response.ok) throw new Error(await response.text());
+      const data = await response.json();
+      setPreviewData(data.data);
+    } catch (error: any) {
+      toast.error("Erro ao carregar pré-visualização: " + error.message);
+      setIsPreviewOpen(false);
+    } finally {
+      setIsLoadingPreview(false);
     }
   }
 
