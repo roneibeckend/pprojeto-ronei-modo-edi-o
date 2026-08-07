@@ -360,6 +360,210 @@ export type Database = {
         }
         Relationships: []
       }
+      ebook_chapters: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          ebook_id: string
+          id: string
+          module_id: string | null
+          order_index: number
+          reading_minutes: number | null
+          slug: string | null
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          ebook_id: string
+          id?: string
+          module_id?: string | null
+          order_index?: number
+          reading_minutes?: number | null
+          slug?: string | null
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          ebook_id?: string
+          id?: string
+          module_id?: string | null
+          order_index?: number
+          reading_minutes?: number | null
+          slug?: string | null
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ebook_chapters_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ebook_chapters_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "ebook_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ebook_enrollments: {
+        Row: {
+          created_at: string
+          ebook_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ebook_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ebook_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ebook_enrollments_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ebook_modules: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          ebook_id: string
+          id: string
+          order_index: number
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          ebook_id: string
+          id?: string
+          order_index?: number
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          ebook_id?: string
+          id?: string
+          order_index?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ebook_modules_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ebook_progress: {
+        Row: {
+          chapter_id: string
+          completed_at: string | null
+          id: string
+          last_read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          completed_at?: string | null
+          id?: string
+          last_read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          completed_at?: string | null
+          id?: string
+          last_read_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ebook_progress_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "ebook_chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ebooks: {
+        Row: {
+          category: string | null
+          content_url: string | null
+          cover: string | null
+          cover_url: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_ai_generated: boolean | null
+          is_locked: boolean | null
+          original_price: number | null
+          pages_count: number | null
+          price: number | null
+          subtitle: string | null
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          category?: string | null
+          content_url?: string | null
+          cover?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_ai_generated?: boolean | null
+          is_locked?: boolean | null
+          original_price?: number | null
+          pages_count?: number | null
+          price?: number | null
+          subtitle?: string | null
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          category?: string | null
+          content_url?: string | null
+          cover?: string | null
+          cover_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_ai_generated?: boolean | null
+          is_locked?: boolean | null
+          original_price?: number | null
+          pages_count?: number | null
+          price?: number | null
+          subtitle?: string | null
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       financial_costs: {
         Row: {
           created_at: string
