@@ -113,9 +113,9 @@ function AdminRelatoriosPage() {
     }
   }
 
-  async function handleTestSend(recipientId: string) {
+  async function handleTestSend(recipientId: string, isResend: boolean = false) {
     try {
-      toast.loading("Enviando relatório de teste...");
+      toast.loading(isResend ? "Reenviando relatório..." : "Enviando relatório de teste...");
       // Nota: Aqui chamaremos a Edge Function no futuro. 
       // Por enquanto, simulamos para a UI.
       
