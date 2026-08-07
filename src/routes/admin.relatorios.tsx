@@ -455,7 +455,7 @@ function AdminRelatoriosPage() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="font-bold text-sm">{r.name}</h3>
-                      <p className="text-xs text-white/40 font-mono mt-0.5">{r.phone_e164}</p>
+                      <p className="text-xs text-white/40 font-mono mt-0.5">{r.email || r.phone_e164}</p>
                     </div>
                     <button 
                       onClick={() => handleToggleRecipient(r.id, !r.active)}
