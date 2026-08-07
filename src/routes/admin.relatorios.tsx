@@ -121,19 +121,7 @@ function AdminRelatoriosPage() {
   }
 
   async function handleDisconnectWA() {
-    if (!confirm("Deseja realmente desconectar o WhatsApp?")) return;
-    try {
-      setIsConnectingWA(true);
-      const res = await disconnectWA();
-      if (res.success) {
-        toast.success("WhatsApp desconectado.");
-        fetchData();
-      }
-    } catch (error: any) {
-      toast.error("Erro ao desconectar: " + error.message);
-    } finally {
-      setIsConnectingWA(false);
-    }
+    toast.info("A funcionalidade de WhatsApp foi descontinuada em favor do E-mail.");
   }
 
 
