@@ -57,10 +57,6 @@ function AdminRelatoriosPage() {
   const [waInstance, setWaInstance] = useState<any>(null);
   const [isConnectingWA, setIsConnectingWA] = useState(false);
 
-  const getQR = useServerFn(getWhatsAppQRCode);
-  const confirmWA = useServerFn(confirmWhatsAppConnection);
-  const disconnectWA = useServerFn(disconnectWhatsApp);
-
   useEffect(() => {
     fetchData();
   }, []);
@@ -81,7 +77,6 @@ function AdminRelatoriosPage() {
       setRecipients(recipientsRes.data || []);
       setSettings(settingsRes.data);
       setLogs(logsRes.data || []);
-      setWaInstance(waRes.data);
     } catch (error: any) {
       toast.error("Erro ao carregar dados: " + error.message);
     } finally {
