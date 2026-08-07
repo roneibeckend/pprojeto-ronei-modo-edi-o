@@ -207,7 +207,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button
-                className="grid h-10 w-10 place-items-center rounded-md border border-white/10 lg:hidden"
+                className="grid h-10 w-10 place-items-center rounded-md border border-white/10 lg:hidden touch-target"
                 aria-label="Abrir menu"
               >
                 <Menu className="h-5 w-5" />
@@ -229,7 +229,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-2">
             <Link 
               to="/app/notificacoes"
-              className="relative grid h-10 w-10 place-items-center rounded-md border border-white/10 hover:border-primary/50 transition-colors"
+              className="relative grid h-10 w-10 place-items-center rounded-md border border-white/10 hover:border-primary/50 transition-colors touch-target"
             >
               <Bell className="h-5 w-5" />
               {unreadCount > 0 && (
@@ -238,7 +238,7 @@ export function Shell({ children }: { children: ReactNode }) {
             </Link>
             <Link
               to="/app/perfil"
-              className="flex items-center gap-2 rounded-md border border-white/10 py-1 pl-1 pr-3 transition-colors hover:border-primary/50"
+              className="flex items-center gap-2 rounded-md border border-white/10 py-1 pl-1 pr-3 transition-colors hover:border-primary/50 touch-target"
             >
             <img src={student.avatar} alt={student.name} className="h-8 w-8 rounded" />
               <span className="hidden text-sm font-medium sm:inline">{student.name.split(" ")[0]}</span>
