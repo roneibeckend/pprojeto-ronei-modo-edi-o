@@ -82,7 +82,6 @@ export function Onboarding() {
     <Joyride
       onEvent={handleJoyrideCallback}
       continuous
-      hideCloseButton
       run={run}
       scrollToFirstStep
       steps={steps}
