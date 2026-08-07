@@ -576,7 +576,7 @@ function AdminRelatoriosPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Mensagem do WhatsApp</label>
+                    <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Conteúdo do E-mail (Texto)</label>
                     <div className="bg-black/60 rounded-xl p-6 border border-white/5 font-mono text-xs leading-relaxed whitespace-pre-wrap text-emerald-500/90 shadow-inner">
                       {previewData.message}
                     </div>
