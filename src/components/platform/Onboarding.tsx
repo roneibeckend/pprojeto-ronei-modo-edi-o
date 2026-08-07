@@ -143,9 +143,6 @@ export function Onboarding() {
         },
         overlay: {
           backgroundColor: "rgba(0, 0, 0, 0.75)",
-        },
-        spotlight: {
-          borderRadius: "16px",
         }
       }}
     />
