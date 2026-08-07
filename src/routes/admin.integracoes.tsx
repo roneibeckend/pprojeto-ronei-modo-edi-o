@@ -23,13 +23,18 @@ import {
   Clock,
   RotateCcw,
   Zap,
-  Info
+  Info,
+  Mail,
+  History,
+  SendHorizontal,
+  BellRing
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { testIntegrationConnection, saveIntegration, getIntegrationHistory } from "@/lib/integrations.functions";
+import { getEmailLogs, getEmailSettings, updateEmailSettings, sendEmail } from "@/lib/resend.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
