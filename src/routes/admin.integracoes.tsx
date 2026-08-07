@@ -613,7 +613,7 @@ function EmailIntegrationPanel() {
 
   const { data: logs, isLoading: loadingLogs } = useQuery({
     queryKey: ['email_logs'],
-    queryFn: async () => await getEmailLogs({ limit: 20 })
+    queryFn: async () => await getEmailLogs({ data: { limit: 20, offset: 0 } })
   });
 
   const updateSettingsMutation = useMutation({
