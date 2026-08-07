@@ -448,6 +448,120 @@ function AdminRelatoriosPage() {
           </div>
         </div>
       )}
+      {/* Modal Preview */}
+      {isPreviewOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg bg-[#0e0e0e] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-white/5 bg-white/[0.02]">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-[#ff6a00]/10 flex items-center justify-center">
+                  <Eye className="h-4 w-4 text-[#ff6a00]" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold uppercase tracking-widest">Pré-visualização</h3>
+                  <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Relatório Diário</p>
+                </div>
+              </div>
+              <button onClick={() => setIsPreviewOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition text-white/40 hover:text-white"><X className="h-5 w-5" /></button>
+            </div>
+            
+            <div className="p-8">
+              {isLoadingPreview ? (
+                <div className="flex flex-col items-center justify-center py-12 gap-4">
+                  <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
+                  <p className="text-xs text-white/40 font-bold uppercase tracking-widest animate-pulse">Calculando métricas...</p>
+                </div>
+              ) : previewData ? (
+                <div className="space-y-8">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                      <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-1">Faturamento</div>
+                      <div className="text-lg font-bold text-white">
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(previewData.totalRevenue)}
+                      </div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                      <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-1">Lucro Líquido</div>
+                      <div className="text-lg font-bold text-emerald-400">
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(previewData.netProfit)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Mensagem do WhatsApp</label>
+                    <div className="bg-black/60 rounded-xl p-6 border border-white/5 font-mono text-xs leading-relaxed whitespace-pre-wrap text-emerald-500/90 shadow-inner">
+                      {previewData.message}
+                    </div>
+                  </div>
+
+                  <div className="pt-4 flex gap-3">
+                    <button 
+                      onClick={() => setIsPreviewOpen(false)} 
+                      className="flex-1 py-3 rounded-xl bg-white/5 font-bold hover:bg-white/10 transition uppercase tracking-widest text-[10px] text-white/60"
+                    >
+                      Fechar
+                    </button>
+                    <button 
+                      onClick={() => { setIsPreviewOpen(false); handleTestSend(recipients[0]?.id); }} 
+                      disabled={!recipients.length}
+                      className="flex-1 py-3 rounded-xl bg-[#ff6a00] text-black font-bold disabled:opacity-30 transition uppercase tracking-widest text-[10px]"
+                    >
+                      Enviar Agora
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="py-12 text-center text-white/20 text-xs font-bold uppercase tracking-widest">Não foi possível carregar os dados.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Recipient */}
+      {isRecipientModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-[#0e0e0e] border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-lg font-bold">{editingRecipient?.id ? "Editar Destinatário" : "Novo Destinatário"}</h3>
+              <button onClick={() => setIsRecipientModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition"><X className="h-5 w-5" /></button>
+            </div>
+            
+            <form onSubmit={handleRecipientSubmit} className="space-y-6 text-left">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome Completo</label>
+                <input 
+                  required 
+                  value={editingRecipient?.name || ""} 
+                  onChange={e => setEditingRecipient({...editingRecipient, name: e.target.value})} 
+                  placeholder="Ex: João Silva" 
+                  className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" 
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">WhatsApp (E.164)</label>
+                <input 
+                  required 
+                  value={editingRecipient?.phone_e164 || ""} 
+                  onChange={e => setEditingRecipient({...editingRecipient, phone_e164: e.target.value.replace(/[^0-9]/g, '')})} 
+                  placeholder="5511999999999" 
+                  className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] font-mono" 
+                />
+                <p className="text-[9px] text-white/30 font-bold uppercase tracking-widest">DDI + DDD + Número (Apenas números)</p>
+              </div>
+
+              <div className="pt-4 flex gap-3">
+                <button type="button" onClick={() => setIsRecipientModalOpen(false)} className="flex-1 py-3 rounded-xl bg-white/5 font-bold hover:bg-white/10 transition uppercase tracking-widest text-[10px]">Cancelar</button>
+                <button type="submit" disabled={isSaving} className="flex-1 py-3 rounded-xl bg-[#ff6a00] text-black font-bold disabled:opacity-50 transition uppercase tracking-widest text-[10px]">
+                  {isSaving ? "Salvando..." : "Salvar"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
