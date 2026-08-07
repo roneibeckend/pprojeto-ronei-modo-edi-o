@@ -17,7 +17,12 @@ import {
   Info,
   Layout,
   Users,
-  Settings
+  Settings,
+  ChevronDown,
+  GripVertical,
+  Save,
+  SendHorizontal,
+  Play
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
