@@ -48,7 +48,9 @@ function AdminPayoutsPage() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: 'analyzing' | 'approved' | 'paid' | 'rejected' }) => {
-      return updatePayoutFn({ payoutId: id, status });
+      return updatePayoutFn({
+        data: { payoutId: id, status }
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-payout-requests"] });
