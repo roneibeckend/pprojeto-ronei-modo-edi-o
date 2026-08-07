@@ -339,3 +339,275 @@ function AdminEbooksPage() {
     </div>
   );
 }
+
+function EbookContentEditor({ ebookId }: { ebookId: string }) {
+  const [modules, setModules] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingChapter, setEditingChapter] = useState<any>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    fetchContent();
+  }, [ebookId]);
+
+  async function fetchContent() {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('ebook_modules')
+        .select('*, chapters:ebook_chapters(*)')
+        .eq('ebook_id', ebookId)
+        .order('order_index', { ascending: true });
+
+      if (error) throw error;
+      setModules(data || []);
+    } catch (error: any) {
+      toast.error("Erro ao carregar conteúdo: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleAddModule() {
+    try {
+      const title = prompt("Título do novo módulo:");
+      if (!title) return;
+
+      const { error } = await supabase
+        .from('ebook_modules')
+        .insert({
+          ebook_id: ebookId,
+          title,
+          order_index: modules.length
+        });
+
+      if (error) throw error;
+      fetchContent();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  }
+
+  async function handleAddChapter(moduleId: string) {
+    try {
+      const title = prompt("Título do novo capítulo:");
+      if (!title) return;
+
+      const module = modules.find(m => m.id === moduleId);
+      const orderIndex = module.chapters?.length || 0;
+
+      const { error } = await supabase
+        .from('ebook_chapters')
+        .insert({
+          ebook_id: ebookId,
+          module_id: moduleId,
+          title,
+          order_index: orderIndex,
+          content: "<p>Comece a escrever aqui...</p>"
+        });
+
+      if (error) throw error;
+      fetchContent();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  }
+
+  async function handleSaveChapter() {
+    if (!editingChapter) return;
+    try {
+      setIsSaving(true);
+      const { error } = await supabase
+        .from('ebook_chapters')
+        .update({
+          title: editingChapter.title,
+          content: editingChapter.content,
+          video_url: editingChapter.video_url,
+          reading_minutes: editingChapter.reading_minutes,
+          order_index: editingChapter.order_index
+        })
+        .eq('id', editingChapter.id);
+
+      if (error) throw error;
+      toast.success("Capítulo salvo!");
+      setEditingChapter(null);
+      fetchContent();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function handleDeleteChapter(chapterId: string) {
+    if (!confirm("Tem certeza que deseja excluir este capítulo?")) return;
+    try {
+      const { error } = await supabase
+        .from('ebook_chapters')
+        .delete()
+        .eq('id', chapterId);
+      if (error) throw error;
+      fetchContent();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  }
+
+  async function handleDeleteModule(moduleId: string) {
+    if (!confirm("Isso excluirá o módulo e todos os seus capítulos. Continuar?")) return;
+    try {
+      const { error } = await supabase
+        .from('ebook_modules')
+        .delete()
+        .eq('id', moduleId);
+      if (error) throw error;
+      fetchContent();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  }
+
+  if (loading) return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" /></div>;
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-6 min-h-[500px]">
+      {/* Sidebar - Tree View */}
+      <div className="space-y-4 border-r border-white/5 pr-6">
+        <div className="flex items-center justify-between">
+          <h4 className="text-[10px] font-bold uppercase tracking-widest text-white/40">Estrutura de Conteúdo</h4>
+          <button onClick={handleAddModule} className="p-1 hover:bg-white/5 rounded text-[#ff6a00] transition-colors"><Plus className="h-4 w-4" /></button>
+        </div>
+
+        <div className="space-y-2">
+          {modules.map((module) => (
+            <div key={module.id} className="space-y-1">
+              <div className="flex items-center justify-between group px-2 py-1.5 rounded-lg bg-white/5 border border-white/5">
+                <span className="text-xs font-bold truncate">{module.title}</span>
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => handleAddChapter(module.id)} className="p-1 text-white/40 hover:text-white"><Plus className="h-3 w-3" /></button>
+                  <button onClick={() => handleDeleteModule(module.id)} className="p-1 text-white/40 hover:text-red-500"><Trash2 className="h-3 w-3" /></button>
+                </div>
+              </div>
+              <div className="pl-4 space-y-1">
+                {module.chapters?.sort((a: any, b: any) => a.order_index - b.order_index).map((chapter: any) => (
+                  <button
+                    key={chapter.id}
+                    onClick={() => setEditingChapter(chapter)}
+                    className={cn(
+                      "flex w-full items-center justify-between px-3 py-2 rounded-md text-[11px] transition-all",
+                      editingChapter?.id === chapter.id ? "bg-[#ff6a00]/10 text-[#ff6a00] font-bold" : "text-white/40 hover:text-white hover:bg-white/5"
+                    )}
+                  >
+                    <span className="truncate">{chapter.title}</span>
+                    <div className="flex items-center gap-2">
+                      {chapter.video_url && <Play className="h-2.5 w-2.5" />}
+                      <Edit3 className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Editor Area */}
+      <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6">
+        {editingChapter ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-white/5">
+              <h4 className="font-bold uppercase text-xs tracking-widest text-[#ff6a00]">Editando Capítulo</h4>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => handleDeleteChapter(editingChapter.id)}
+                  className="px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all"
+                >
+                  Excluir
+                </button>
+                <button 
+                  onClick={handleSaveChapter}
+                  disabled={isSaving}
+                  className="px-6 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-[#ff6a00] text-black hover:bg-[#ff8c33] transition-all flex items-center gap-2"
+                >
+                  {isSaving && <Loader2 className="h-3 w-3 animate-spin" />}
+                  Salvar Alterações
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do Capítulo</label>
+                  <input 
+                    value={editingChapter.title}
+                    onChange={e => setEditingChapter({...editingChapter, title: e.target.value})}
+                    className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Ordem</label>
+                    <input 
+                      type="number"
+                      value={editingChapter.order_index}
+                      onChange={e => setEditingChapter({...editingChapter, order_index: parseInt(e.target.value)})}
+                      className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Min. Leitura</label>
+                    <input 
+                      type="number"
+                      value={editingChapter.reading_minutes || 0}
+                      onChange={e => setEditingChapter({...editingChapter, reading_minutes: parseInt(e.target.value)})}
+                      className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4 pt-4">
+                  <VideoUpload 
+                    value={editingChapter.video_url || ""}
+                    onChange={url => setEditingChapter({...editingChapter, video_url: url})}
+                    label="Vídeo do Capítulo (YouTube/Direto)"
+                    description="Insira uma URL de vídeo para exibir este vídeo de forma centralizada no capítulo."
+                  />
+                  
+                  {editingChapter.video_url && (
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Preview do Vídeo</label>
+                      <div className="aspect-video w-full rounded-xl overflow-hidden bg-black border border-white/5">
+                        <iframe 
+                          src={editingChapter.video_url.includes('youtube.com') 
+                            ? editingChapter.video_url.replace('watch?v=', 'embed/') 
+                            : editingChapter.video_url} 
+                          className="w-full h-full"
+                          allowFullScreen
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-1.5 h-full flex flex-col">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do Capítulo (HTML)</label>
+                <textarea 
+                  value={editingChapter.content || ""}
+                  onChange={e => setEditingChapter({...editingChapter, content: e.target.value})}
+                  className="flex-1 w-full bg-black/40 border border-white/10 p-4 rounded-xl text-sm font-mono outline-none focus:border-[#ff6a00] resize-none min-h-[300px]"
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full text-center py-20 opacity-20">
+            <Edit3 className="h-12 w-12 mb-4" />
+            <p className="text-sm font-bold uppercase tracking-widest">Selecione um capítulo para editar</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
