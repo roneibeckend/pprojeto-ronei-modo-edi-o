@@ -65,6 +65,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
       { to: "/app/certificados", label: "Certificados", icon: Award },
       { to: "/app/perfil", label: "Meu perfil", icon: User },
       { to: "/app/suporte", label: "Suporte", icon: LifeBuoy },
+      { to: "/app/afiliados", label: "Afiliados", icon: TrendingUp },
     ],
   },
   {
@@ -74,6 +75,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
       { to: "/admin/usuarios", label: "Equipe", icon: User, module: "admin_only" }, // Apenas Admin Root
       { to: "/admin/alunos", label: "Alunos", icon: GraduationCap, module: "alunos" },
       { to: "/admin/suporte", label: "Suporte", icon: LifeBuoy, module: "suporte" },
+      { to: "/admin/afiliados", label: "Afiliados", icon: TrendingUp, module: "financeiro" }, // Reutilizando permissão financeira ou criando nova? Financeiro parece adequado.
     ],
   },
 ];
