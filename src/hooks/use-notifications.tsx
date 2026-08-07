@@ -24,7 +24,7 @@ export function useNotifications() {
   });
 
   const { data: userNotifications = [] } = useQuery({
-    queryKey: ["user_notifications", user?.id],
+    queryKey: ["user_notifications", user?.id || "anonymous"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("user_notifications")
@@ -55,7 +55,7 @@ export function useNotifications() {
       );
 
       if (error) throw error;
-      queryClient.invalidateQueries({ queryKey: ["user_notifications", user.id] });
+      queryClient.invalidateQueries({ queryKey: ["user_notifications", user?.id || "anonymous"] });
     } catch (error) {
       console.error("Erro ao marcar como lida:", error);
     }
