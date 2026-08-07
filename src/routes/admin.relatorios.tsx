@@ -44,6 +44,10 @@ function AdminRelatoriosPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [logs, setLogs] = useState<any[]>([]);
 
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewData, setPreviewData] = useState<any>(null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -54,7 +58,7 @@ function AdminRelatoriosPage() {
       const [recipientsRes, settingsRes, logsRes] = await Promise.all([
         supabase.from('report_recipients').select('*').order('created_at', { ascending: false }),
         supabase.from('report_settings').select('*').single(),
-        supabase.from('report_logs').select('*, recipient:report_recipients(name)').order('created_at', { ascending: false }).limit(10)
+        supabase.from('report_logs').select('*, recipient:report_recipients(name)').order('created_at', { ascending: false }).limit(20)
       ]);
 
       if (recipientsRes.error) throw recipientsRes.error;
