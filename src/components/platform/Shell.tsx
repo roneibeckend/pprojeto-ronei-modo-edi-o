@@ -22,6 +22,7 @@ import {
   Shield,
   ChevronRight,
   Settings,
+  Wallet,
 } from "lucide-react";
 import { student } from "@/lib/platform-data";
 import { supabase } from "@/integrations/supabase/client";
