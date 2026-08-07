@@ -82,7 +82,7 @@ function AdminRelatoriosPage() {
     try {
       const { error } = await supabase.from('report_recipients').update({ active }).eq('id', id);
       if (error) throw error;
-      setRecipients(prev => prev.map(r => r.id === id ? { ...r, active } : r));
+      setRecipients((prev: any[]) => prev.map(r => r.id === id ? { ...r, active } : r));
       toast.success(active ? "Destinatário ativado" : "Destinatário desativado");
     } catch (error: any) {
       toast.error("Erro: " + error.message);
@@ -93,7 +93,7 @@ function AdminRelatoriosPage() {
     try {
       const { error } = await supabase.from('report_settings').update(patch).eq('id', settings.id);
       if (error) throw error;
-      setSettings(prev => ({ ...prev, ...patch }));
+      setSettings((prev: any) => ({ ...prev, ...patch }));
       toast.success("Configurações atualizadas!");
     } catch (error: any) {
       toast.error("Erro ao atualizar configurações: " + error.message);
