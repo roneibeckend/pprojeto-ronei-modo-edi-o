@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { createAsaasPaymentLink } from "@/lib/asaas.functions";
+import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 
@@ -54,6 +55,7 @@ function CoursePage() {
           title: course.title,
           description: course.description,
           value: course.price || 0,
+          affiliateRef: getAffiliateRef() || undefined,
         }
       });
       
