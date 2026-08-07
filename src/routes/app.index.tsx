@@ -41,32 +41,6 @@ function Dashboard() {
 
   return (
     <div className="space-y-8">
-      <PageHeader
-        title={`Olá, ${user?.user_metadata?.full_name?.split(" ")[0] || student.name.split(" ")[0]}! Pronto para continuar aprendendo?`}
-        subtitle="Sua jornada rumo aos 10k por mês vendendo espetinhos."
-      />
-
-      {/* Banner */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/10">
-        <img src={IMG.hero} alt="Espetinhos na brasa" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/20" />
-        <div className="relative grid gap-6 p-8 sm:p-12 lg:grid-cols-[1.2fr_1fr]">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs uppercase tracking-widest">
-              <Flame className="h-3.5 w-3.5" /> Sua meta esta semana
-            </div>
-            <h2 className="mt-4 font-display text-2xl font-bold leading-tight text-white sm:text-4xl">
-              Seu negócio pode começar com uma churrasqueira, bons espetinhos e o <span className="text-gradient-fire">conhecimento certo</span>.
-            </h2>
-            {lastCourse && (
-              <Link to="/app/cursos/$courseId" params={{ courseId: lastCourse.id }} className="btn-fire mt-6 inline-flex">
-                <Play className="h-4 w-4" /> Continuar assistindo
-              </Link>
-            )}
-          </div>
-        </div>
-      </div>
-
       {/* Showcase / Vitrine */}
       <section>
         <div className="mb-6 flex items-center justify-between">
@@ -84,14 +58,6 @@ function Dashboard() {
           ))}
         </div>
       </section>
-
-      {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={TrendingUp} label="Progresso geral" value={`${student.totalProgress}%`} accent />
-        <StatCard icon={Play} label="Aulas assistidas" value={String(student.lessonsWatched)} />
-        <StatCard icon={BookOpen} label="Materiais disponíveis" value={String(student.materials)} />
-        <StatCard icon={Award} label="Sequência" value={`${student.streak} dias`} />
-      </div>
     </div>
   );
 }
