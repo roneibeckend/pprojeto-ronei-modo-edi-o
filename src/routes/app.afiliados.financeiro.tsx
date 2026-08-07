@@ -146,7 +146,7 @@ function AffiliateFinancePage() {
                   sales.map((sale) => (
                     <tr key={sale.id} className="hover:bg-white/[0.01] transition-colors">
                       <td className="px-6 py-4 text-white/60">
-                        {new Date(sale.created_at).toLocaleDateString('pt-BR')}
+                        {sale.created_at ? new Date(sale.created_at).toLocaleDateString('pt-BR') : '-'}
                         <div className="text-[10px] text-white/20 mt-1">{sale.course?.title || "Venda"}</div>
                       </td>
                       <td className="px-6 py-4 font-bold text-fire">
