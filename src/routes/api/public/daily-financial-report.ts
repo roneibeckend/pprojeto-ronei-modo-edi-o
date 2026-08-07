@@ -14,7 +14,7 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
             return new Response("Unauthorized", { status: 401 });
           }
 
-          const { recipient_id, date, test } = (await request.json().catch(() => ({}))) || {};
+          const { recipient_id, date, test, preview } = (await request.json().catch(() => ({}))) || {};
 
           const supabase = supabaseAdmin;
 
@@ -110,6 +110,32 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
               });
               results.push({ recipient: recipient.name, status: "failed", error: err.message });
             }
+          }
+
+          if (preview) {
+            const brl = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+            const formattedDate = new Intl.DateTimeFormat('pt-BR').format(targetDate);
+            
+            const message = `📊 *PRÉ-VISUALIZAÇÃO — ${formattedDate}*\n` +
+              `💰 Faturamento: ${brl(totalRevenue)}\n` +
+              `💸 Custos: ${brl(totalCosts)}\n` +
+              `✅ Lucro: ${brl(netProfit)} (margem ${margin.toFixed(0)}%)\n` +
+              `🧾 Vendas: ${salesCount} · Ticket médio: ${brl(avgTicket)}\n\n` +
+              `_Este é um rascunho. O envio real ocorrerá no horário configurado._`;
+            
+            return Response.json({ 
+              success: true, 
+              preview: true,
+              data: {
+                totalRevenue,
+                totalCosts,
+                netProfit,
+                margin,
+                salesCount,
+                avgTicket,
+                message
+              }
+            });
           }
 
           return Response.json({ success: true, results });

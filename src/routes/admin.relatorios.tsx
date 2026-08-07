@@ -14,10 +14,19 @@ import {
   AlertCircle,
   Loader2,
   X,
-  Smartphone
+  Smartphone,
+  Download,
+  Eye,
+  RefreshCw
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export const Route = createFileRoute("/admin/relatorios")({
   head: () => ({ meta: [{ title: "Relatórios Financeiros · Admin" }] }),
@@ -35,6 +44,10 @@ function AdminRelatoriosPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [logs, setLogs] = useState<any[]>([]);
 
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewData, setPreviewData] = useState<any>(null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -45,7 +58,7 @@ function AdminRelatoriosPage() {
       const [recipientsRes, settingsRes, logsRes] = await Promise.all([
         supabase.from('report_recipients').select('*').order('created_at', { ascending: false }),
         supabase.from('report_settings').select('*').single(),
-        supabase.from('report_logs').select('*, recipient:report_recipients(name)').order('created_at', { ascending: false }).limit(10)
+        supabase.from('report_logs').select('*, recipient:report_recipients(name)').order('created_at', { ascending: false }).limit(20)
       ]);
 
       if (recipientsRes.error) throw recipientsRes.error;
@@ -100,9 +113,9 @@ function AdminRelatoriosPage() {
     }
   }
 
-  async function handleTestSend(recipientId: string) {
+  async function handleTestSend(recipientId: string, isResend: boolean = false) {
     try {
-      toast.loading("Enviando relatório de teste...");
+      toast.loading(isResend ? "Reenviando relatório..." : "Enviando relatório de teste...");
       // Nota: Aqui chamaremos a Edge Function no futuro. 
       // Por enquanto, simulamos para a UI.
       
@@ -122,11 +135,73 @@ function AdminRelatoriosPage() {
       }
       
       toast.dismiss();
-      toast.success("Teste enviado com sucesso!");
+      toast.success(isResend ? "Relatório reenviado!" : "Teste enviado com sucesso!");
       fetchData(); // Atualiza logs
     } catch (error: any) {
       toast.dismiss();
-      toast.error("Erro ao enviar teste: " + (error.message || "Verifique as configurações da Edge Function"));
+      toast.error("Erro ao enviar: " + (error.message || "Verifique as configurações"));
+    }
+  }
+
+  async function handleExportCSV() {
+    try {
+      const { data, error } = await supabase
+        .from('report_logs')
+        .select('*, recipient:report_recipients(name, phone_e164)')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const headers = ["ID", "Destinatário", "Telefone", "Data do Relatório", "Status", "Enviado em", "Erro"];
+      const rows = data.map(log => [
+        log.id,
+        log.recipient?.name || "Sistema",
+        log.recipient?.phone_e164 || "",
+        log.report_date,
+        log.status,
+        log.sent_at ? new Date(log.sent_at).toLocaleString('pt-BR') : "",
+        log.error || ""
+      ]);
+
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `relatorios_financeiros_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast.success("CSV exportado com sucesso!");
+    } catch (error: any) {
+      toast.error("Erro ao exportar CSV: " + error.message);
+    }
+  }
+
+  async function handleOpenPreview() {
+    try {
+      setIsLoadingPreview(true);
+      setIsPreviewOpen(true);
+      
+      const response = await fetch('/api/public/daily-financial-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ preview: true })
+      });
+      
+      if (!response.ok) throw new Error(await response.text());
+      const data = await response.json();
+      setPreviewData(data.data);
+    } catch (error: any) {
+      toast.error("Erro ao carregar pré-visualização: " + error.message);
+      setIsPreviewOpen(false);
+    } finally {
+      setIsLoadingPreview(false);
     }
   }
 
@@ -140,12 +215,24 @@ function AdminRelatoriosPage() {
 
   return (
     <div className="space-y-8 pb-10">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold">Relatórios Automáticos</h2>
           <p className="text-sm text-white/40 text-left">Relatórios diários via WhatsApp.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+           <button 
+             onClick={handleOpenPreview}
+             className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] font-bold text-white/60 uppercase tracking-widest hover:text-white hover:bg-white/10 transition"
+           >
+             <Eye className="h-3 w-3" /> Pré-visualizar
+           </button>
+           <button 
+             onClick={handleExportCSV}
+             className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] font-bold text-white/60 uppercase tracking-widest hover:text-white hover:bg-white/10 transition"
+           >
+             <Download className="h-3 w-3" /> Exportar CSV
+           </button>
            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
               <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Status Geral:</span>
               <button 
@@ -212,23 +299,46 @@ function AdminRelatoriosPage() {
           </section>
 
           <section className="border border-white/5 bg-[#111] p-6 rounded-xl">
-             <div className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-              <Activity className="h-4 w-4" style={{ color: ORANGE }} /> Logs de Envio (Top 10)
+             <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+                <Activity className="h-4 w-4" style={{ color: ORANGE }} /> Logs de Envio (Top 20)
+              </div>
+              {logs.some(l => l.status === 'failed') && (
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-[9px] font-bold text-red-400 uppercase tracking-widest animate-pulse">
+                  <AlertCircle className="h-2.5 w-2.5" /> Falhas detectadas
+                </div>
+              )}
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               {logs.map(log => (
                 <div key={log.id} className="text-[10px] flex items-center justify-between p-2 rounded bg-white/[0.02] border border-white/5">
                   <div className="space-y-0.5">
                     <div className="text-white/80 font-bold">{log.recipient?.name || 'Sistema'}</div>
                     <div className="text-white/40">{new Date(log.created_at).toLocaleString('pt-BR')}</div>
                   </div>
-                  {log.status === 'sent' ? (
-                    <div className="flex items-center gap-1 text-emerald-400 font-bold"><CheckCircle2 className="h-3 w-3" /> Enviado</div>
-                  ) : log.status === 'skipped' ? (
-                    <div className="flex items-center gap-1 text-white/40 font-bold"><AlertCircle className="h-3 w-3" /> Pulado</div>
-                  ) : (
-                    <div className="flex items-center gap-1 text-red-400 font-bold" title={log.error}><XCircle className="h-3 w-3" /> Falha</div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      {log.status === 'sent' ? (
+                        <div className="flex items-center gap-1 text-emerald-400 font-bold"><CheckCircle2 className="h-3 w-3" /> Enviado</div>
+                      ) : log.status === 'skipped' ? (
+                        <div className="flex items-center gap-1 text-white/40 font-bold"><AlertCircle className="h-3 w-3" /> Pulado</div>
+                      ) : (
+                        <div className="flex flex-col items-end gap-0.5">
+                          <div className="flex items-center gap-1 text-red-400 font-bold"><XCircle className="h-3 w-3" /> Falha</div>
+                          {log.error && <div className="text-[8px] text-red-500/60 max-w-[80px] truncate" title={log.error}>{log.error}</div>}
+                        </div>
+                      )}
+                    </div>
+                    {log.recipient_id && (
+                      <button 
+                        onClick={() => handleTestSend(log.recipient_id, true)}
+                        className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition"
+                        title="Reenviar agora"
+                      >
+                        <RefreshCw className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
               {logs.length === 0 && (
@@ -338,6 +448,77 @@ function AdminRelatoriosPage() {
           </div>
         </div>
       )}
+      {/* Modal Preview */}
+      {isPreviewOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg bg-[#0e0e0e] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-white/5 bg-white/[0.02]">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-[#ff6a00]/10 flex items-center justify-center">
+                  <Eye className="h-4 w-4 text-[#ff6a00]" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold uppercase tracking-widest">Pré-visualização</h3>
+                  <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Relatório Diário</p>
+                </div>
+              </div>
+              <button onClick={() => setIsPreviewOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition text-white/40 hover:text-white"><X className="h-5 w-5" /></button>
+            </div>
+            
+            <div className="p-8">
+              {isLoadingPreview ? (
+                <div className="flex flex-col items-center justify-center py-12 gap-4">
+                  <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
+                  <p className="text-xs text-white/40 font-bold uppercase tracking-widest animate-pulse">Calculando métricas...</p>
+                </div>
+              ) : previewData ? (
+                <div className="space-y-8">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                      <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-1">Faturamento</div>
+                      <div className="text-lg font-bold text-white">
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(previewData.totalRevenue)}
+                      </div>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                      <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-1">Lucro Líquido</div>
+                      <div className="text-lg font-bold text-emerald-400">
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(previewData.netProfit)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Mensagem do WhatsApp</label>
+                    <div className="bg-black/60 rounded-xl p-6 border border-white/5 font-mono text-xs leading-relaxed whitespace-pre-wrap text-emerald-500/90 shadow-inner">
+                      {previewData.message}
+                    </div>
+                  </div>
+
+                  <div className="pt-4 flex gap-3">
+                    <button 
+                      onClick={() => setIsPreviewOpen(false)} 
+                      className="flex-1 py-3 rounded-xl bg-white/5 font-bold hover:bg-white/10 transition uppercase tracking-widest text-[10px] text-white/60"
+                    >
+                      Fechar
+                    </button>
+                    <button 
+                      onClick={() => { setIsPreviewOpen(false); handleTestSend(recipients[0]?.id); }} 
+                      disabled={!recipients.length}
+                      className="flex-1 py-3 rounded-xl bg-[#ff6a00] text-black font-bold disabled:opacity-30 transition uppercase tracking-widest text-[10px]"
+                    >
+                      Enviar Agora
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="py-12 text-center text-white/20 text-xs font-bold uppercase tracking-widest">Não foi possível carregar os dados.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

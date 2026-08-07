@@ -24,9 +24,8 @@ import {
   Sparkles,
   ArrowRight,
   ChevronDown,
-  Instagram,
+  // Instagram and Youtube are missing in some lucide versions
   MessageCircle,
-  Youtube,
   Mail,
   Beef,
   Utensils,
@@ -1204,7 +1203,7 @@ function Modules() {
     { icon: TrendingUp, title: "Estratégias simples para vender muito mais", desc: "Táticas práticas para escalar suas vendas." },
     { icon: Award, title: "Os erros que fazem muitos desistirem do negócio", desc: "O que evitar para não perder tempo e dinheiro." },
     { icon: DollarSign, title: "O caminho para chegar aos 10k por mês", desc: "Passo a passo para alcançar o primeiro grande resultado." },
-    { icon: Instagram, title: "Próximos passos para crescer ainda mais", desc: "Como transformar o espetinho em uma marca sólida." },
+    { icon: MessageCircle, title: "Próximos passos para crescer ainda mais", desc: "Como transformar o espetinho em uma marca sólida." },
   ];
   const [open, setOpen] = useState(false);
   return (
@@ -1820,13 +1819,13 @@ function Footer() {
           </ul>
           <div className="mt-4 flex flex-wrap gap-3">
             <a href="#" aria-label="Instagram" className="grid h-10 w-10 place-items-center rounded-full border border-border hover:border-[color:var(--gold)]/60">
-              <Instagram className="h-4 w-4" />
+              <MessageCircle className="h-4 w-4" />
             </a>
             <a href="#" aria-label="WhatsApp" className="grid h-10 w-10 place-items-center rounded-full border border-border hover:border-[color:var(--gold)]/60">
               <MessageCircle className="h-4 w-4" />
             </a>
             <a href="#" aria-label="YouTube" className="grid h-10 w-10 place-items-center rounded-full border border-border hover:border-[color:var(--gold)]/60">
-              <Youtube className="h-4 w-4" />
+              <MessageCircle className="h-4 w-4" />
             </a>
             <a href="#" aria-label="TikTok" className="grid h-10 w-10 place-items-center rounded-full border border-border hover:border-[color:var(--gold)]/60">
               <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true"><path d="M19.6 6.8a5.4 5.4 0 0 1-3.2-1.1 5.4 5.4 0 0 1-2-3.7h-3.1v13.1a2.8 2.8 0 1 1-2-2.7V9.1a5.9 5.9 0 1 0 5.1 5.9V9.3a8.5 8.5 0 0 0 5.2 1.8V8a5.4 5.4 0 0 1 0-1.2z"/></svg>
