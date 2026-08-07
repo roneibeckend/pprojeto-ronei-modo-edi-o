@@ -95,7 +95,10 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; }
+  html { 
+    scroll-behavior: smooth;
+    height: -webkit-fill-available;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -105,6 +108,12 @@
       radial-gradient(ellipse 60% 40% at 90% 10%, oklch(0.72 0.20 50 / 0.12), transparent 60%),
       radial-gradient(ellipse 70% 50% at 50% 100%, oklch(0.82 0.15 85 / 0.08), transparent 60%);
     background-attachment: fixed;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.005em; }
 
@@ -114,6 +123,10 @@
 }
 
 @layer utilities {
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .touch-target { min-width: 44px; min-height: 44px; }
+  
   .scrollbar-hidden {
     scrollbar-width: none;
     -ms-overflow-style: none;
