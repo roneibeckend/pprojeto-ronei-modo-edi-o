@@ -16,8 +16,8 @@ export const Route = createFileRoute("/app/cursos/")({
 
 function CoursesPage() {
   const { user } = useAuth();
-  const { courseEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
-
+  const { courseEnrollments, ebookEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
+  
   const { data: dbCourses, isLoading: isLoadingCourses } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
@@ -27,7 +27,16 @@ function CoursesPage() {
     },
   });
 
-  if (isLoadingCourses || isLoadingEnrollments) {
+  const { data: dbEbooks, isLoading: isLoadingEbooks } = useQuery({
+    queryKey: ["ebooks"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("ebooks").select("*");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  if (isLoadingCourses || isLoadingEnrollments || isLoadingEbooks) {
     return (
       <div className="flex h-64 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-fire" />
@@ -35,18 +44,13 @@ function CoursesPage() {
     );
   }
 
-  // Cursos que o usuário possui (comprados ou gratuitos por padrão no banco)
-  // No entanto, o requisito diz: "restringir o acesso a cursos e ebooks apenas para aqueles que realizaram a compra correspondente."
-  // E "Conteúdos classificados como "receitas", "planilhas" e "materiais" devem ser considerados gratuitos"
-  // Para cursos, assumimos que se não estiver em courseEnrollments, não está "comprado".
-  // Exceto se o preço for 0? O usuário não especificou isso, mas geralmente preço 0 = livre.
-  // "Conteúdo gratuito (receitas, planilhas, materiais) deve permanecer acessível para todos os clientes."
-  // Cursos e Ebooks são o conteúdo pago.
+  const ownedCourses = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || c.price === 0) || [];
+  const otherCourses = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0) || [];
   
-  const owned = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || c.price === 0) || [];
-  const others = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0) || [];
+  const ownedEbooks = dbEbooks?.filter((e) => ebookEnrollments.includes(e.id) || (e.price || 0) === 0) || [];
+  const otherEbooks = dbEbooks?.filter((e) => !ebookEnrollments.includes(e.id) && (e.price || 0) > 0) || [];
 
-  const totalProgress = owned.length > 0 ? 0 : 0; // Seria necessário buscar o progresso real do banco
+  const totalProgress = ownedCourses.length > 0 ? 0 : 0;
 
   return (
     <div className="pb-10">
@@ -73,9 +77,9 @@ function CoursesPage() {
           Seus Treinamentos
         </h2>
         
-        {owned.length > 0 ? (
+        {ownedCourses.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {owned.map((c) => (
+            {ownedCourses.map((c) => (
               <article key={c.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30">
                 <div className="relative aspect-video bg-muted/20">
                   <img 
@@ -120,18 +124,61 @@ function CoursesPage() {
         )}
       </section>
 
+      {/* Seção de E-books Adquiridos */}
+      <section className="mb-12">
+        <h2 className="mb-6 font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
+          Seus E-books
+        </h2>
+        
+        {ownedEbooks.length > 0 ? (
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {ownedEbooks.map((e) => (
+              <article key={e.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30">
+                <div className="relative aspect-[3/4] bg-muted/20">
+                  <img 
+                    src={e.cover_url || e.cover || IMG.hero} 
+                    alt={e.title} 
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                    loading="lazy" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" />
+                </div>
+                
+                <div className="p-5">
+                  <h3 className="font-display text-lg font-bold leading-tight">{e.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{e.description}</p>
+                  
+                  <Link
+                    to="/app/ebooks/$ebookId"
+                    params={{ ebookId: e.id }}
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold border border-fire/50 text-fire hover:bg-fire/10 transition-all"
+                  >
+                    <Play className="h-4 w-4 fill-current" /> 
+                    Ler e-book
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="glass flex flex-col items-center justify-center rounded-2xl py-20 text-center text-muted-foreground">
+            Você ainda não possui nenhum e-book liberado.
+          </div>
+        )}
+      </section>
+
       {/* Seção de Cursos Disponíveis para Compra */}
-      {others.length > 0 && (
-        <section>
+      {otherCourses.length > 0 && (
+        <section className="mb-12">
           <div className="mb-6 flex items-center gap-3">
             <h2 className="font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
-              Disponíveis para Compra
+              Cursos Disponíveis
             </h2>
             <div className="h-px flex-1 bg-white/5" />
           </div>
           
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {others.map((c) => (
+            {otherCourses.map((c) => (
               <article key={c.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100">
                 <div className="relative aspect-video bg-muted/20 grayscale-[0.3]">
                   <img 
@@ -139,11 +186,7 @@ function CoursesPage() {
                     alt={c.title} 
                     className="h-full w-full object-cover" 
                     loading="lazy" 
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = IMG.hero;
-                    }}
                   />
-
                   <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="rounded-full bg-black/60 p-3 text-gold backdrop-blur-md">
@@ -167,7 +210,61 @@ function CoursesPage() {
                   <Link 
                     to="/app/cursos/$courseId" 
                     params={{ courseId: c.id }}
-                    className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10 pointer-events-auto cursor-pointer"
+                    className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10"
+                  >
+                    <ShoppingCart className="h-4 w-4" /> Comprar e Liberar
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Seção de E-books Disponíveis para Compra */}
+      {otherEbooks.length > 0 && (
+        <section>
+          <div className="mb-6 flex items-center gap-3">
+            <h2 className="font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
+              E-books Disponíveis
+            </h2>
+            <div className="h-px flex-1 bg-white/5" />
+          </div>
+          
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {otherEbooks.map((e) => (
+              <article key={e.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100">
+                <div className="relative aspect-[3/4] bg-muted/20 grayscale-[0.3]">
+                  <img 
+                    src={e.cover_url || e.cover || IMG.hero} 
+                    alt={e.title} 
+                    className="h-full w-full object-cover" 
+                    loading="lazy" 
+                  />
+                  <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="rounded-full bg-black/60 p-3 text-gold backdrop-blur-md">
+                      <Lock className="h-6 w-6" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-5">
+                  <h3 className="font-display text-lg font-bold leading-tight">{e.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{e.description}</p>
+                  
+                  <div className="mt-6 flex items-end justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Investimento</span>
+                      <div className="font-display text-2xl font-bold text-gold">
+                        R$ {e.price?.toString().replace(".", ",")}
+                      </div>
+                    </div>
+                  </div>
+                  <Link 
+                    to="/app/ebooks/$ebookId" 
+                    params={{ ebookId: e.id }}
+                    className="btn-ghost-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg"
                   >
                     <ShoppingCart className="h-4 w-4" /> Comprar e Liberar
                   </Link>
