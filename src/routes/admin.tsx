@@ -14,7 +14,8 @@ import {
   BrainCircuit,
   Clapperboard,
   DollarSign,
-  HelpCircle
+  HelpCircle,
+  Bell
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -56,6 +57,7 @@ function AdminRootLayout() {
     { to: "/admin/alunos", label: "Alunos", icon: Users },
     { to: "/admin/suporte", label: "Suporte", icon: HelpCircle },
     { to: "/admin/integracoes", label: "Integrações", icon: Settings },
+    { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
   ];
 
   return (

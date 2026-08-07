@@ -23,6 +23,7 @@ import { Route as AppSuporteRouteImport } from './routes/app.suporte'
 import { Route as AppReceitasRouteImport } from './routes/app.receitas'
 import { Route as AppProgressoRouteImport } from './routes/app.progresso'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
+import { Route as AppNotificacoesRouteImport } from './routes/app.notificacoes'
 import { Route as AppMateriaisRouteImport } from './routes/app.materiais'
 import { Route as AppCursosRouteImport } from './routes/app.cursos'
 import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
@@ -30,6 +31,7 @@ import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminSuporteRouteImport } from './routes/admin.suporte'
 import { Route as AdminReceitasRouteImport } from './routes/admin.receitas'
+import { Route as AdminNotificacoesRouteImport } from './routes/admin.notificacoes'
 import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin.financeiro'
 import { Route as AdminCursosRouteImport } from './routes/admin.cursos'
@@ -110,6 +112,11 @@ const AppPerfilRoute = AppPerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => AppRoute,
 } as any)
+const AppNotificacoesRoute = AppNotificacoesRouteImport.update({
+  id: '/notificacoes',
+  path: '/notificacoes',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppMateriaisRoute = AppMateriaisRouteImport.update({
   id: '/materiais',
   path: '/materiais',
@@ -143,6 +150,11 @@ const AdminSuporteRoute = AdminSuporteRouteImport.update({
 const AdminReceitasRoute = AdminReceitasRouteImport.update({
   id: '/receitas',
   path: '/receitas',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNotificacoesRoute = AdminNotificacoesRouteImport.update({
+  id: '/notificacoes',
+  path: '/notificacoes',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminIntegracoesRoute = AdminIntegracoesRouteImport.update({
@@ -205,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/admin/cursos': typeof AdminCursosRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
+  '/admin/notificacoes': typeof AdminNotificacoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/suporte': typeof AdminSuporteRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
@@ -212,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/materiais': typeof AppMateriaisRoute
+  '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
@@ -235,12 +249,14 @@ export interface FileRoutesByTo {
   '/admin/cursos': typeof AdminCursosRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
+  '/admin/notificacoes': typeof AdminNotificacoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/suporte': typeof AdminSuporteRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/app/admin': typeof AppAdminRoute
   '/app/certificados': typeof AppCertificadosRoute
   '/app/materiais': typeof AppMateriaisRoute
+  '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
@@ -267,6 +283,7 @@ export interface FileRoutesById {
   '/admin/cursos': typeof AdminCursosRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/integracoes': typeof AdminIntegracoesRoute
+  '/admin/notificacoes': typeof AdminNotificacoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/suporte': typeof AdminSuporteRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
@@ -274,6 +291,7 @@ export interface FileRoutesById {
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/materiais': typeof AppMateriaisRoute
+  '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
@@ -301,6 +319,7 @@ export interface FileRouteTypes {
     | '/admin/cursos'
     | '/admin/financeiro'
     | '/admin/integracoes'
+    | '/admin/notificacoes'
     | '/admin/receitas'
     | '/admin/suporte'
     | '/admin/usuarios'
@@ -308,6 +327,7 @@ export interface FileRouteTypes {
     | '/app/certificados'
     | '/app/cursos'
     | '/app/materiais'
+    | '/app/notificacoes'
     | '/app/perfil'
     | '/app/progresso'
     | '/app/receitas'
@@ -331,12 +351,14 @@ export interface FileRouteTypes {
     | '/admin/cursos'
     | '/admin/financeiro'
     | '/admin/integracoes'
+    | '/admin/notificacoes'
     | '/admin/receitas'
     | '/admin/suporte'
     | '/admin/usuarios'
     | '/app/admin'
     | '/app/certificados'
     | '/app/materiais'
+    | '/app/notificacoes'
     | '/app/perfil'
     | '/app/progresso'
     | '/app/receitas'
@@ -362,6 +384,7 @@ export interface FileRouteTypes {
     | '/admin/cursos'
     | '/admin/financeiro'
     | '/admin/integracoes'
+    | '/admin/notificacoes'
     | '/admin/receitas'
     | '/admin/suporte'
     | '/admin/usuarios'
@@ -369,6 +392,7 @@ export interface FileRouteTypes {
     | '/app/certificados'
     | '/app/cursos'
     | '/app/materiais'
+    | '/app/notificacoes'
     | '/app/perfil'
     | '/app/progresso'
     | '/app/receitas'
@@ -493,6 +517,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPerfilRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/notificacoes': {
+      id: '/app/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/app/notificacoes'
+      preLoaderRoute: typeof AppNotificacoesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/materiais': {
       id: '/app/materiais'
       path: '/materiais'
@@ -540,6 +571,13 @@ declare module '@tanstack/react-router' {
       path: '/receitas'
       fullPath: '/admin/receitas'
       preLoaderRoute: typeof AdminReceitasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/notificacoes': {
+      id: '/admin/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/admin/notificacoes'
+      preLoaderRoute: typeof AdminNotificacoesRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/integracoes': {
@@ -614,6 +652,7 @@ interface AdminRouteChildren {
   AdminCursosRoute: typeof AdminCursosRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRoute
   AdminIntegracoesRoute: typeof AdminIntegracoesRoute
+  AdminNotificacoesRoute: typeof AdminNotificacoesRoute
   AdminReceitasRoute: typeof AdminReceitasRoute
   AdminSuporteRoute: typeof AdminSuporteRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
@@ -626,6 +665,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCursosRoute: AdminCursosRoute,
   AdminFinanceiroRoute: AdminFinanceiroRoute,
   AdminIntegracoesRoute: AdminIntegracoesRoute,
+  AdminNotificacoesRoute: AdminNotificacoesRoute,
   AdminReceitasRoute: AdminReceitasRoute,
   AdminSuporteRoute: AdminSuporteRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
@@ -655,6 +695,7 @@ interface AppRouteChildren {
   AppCertificadosRoute: typeof AppCertificadosRoute
   AppCursosRoute: typeof AppCursosRouteWithChildren
   AppMateriaisRoute: typeof AppMateriaisRoute
+  AppNotificacoesRoute: typeof AppNotificacoesRoute
   AppPerfilRoute: typeof AppPerfilRoute
   AppProgressoRoute: typeof AppProgressoRoute
   AppReceitasRoute: typeof AppReceitasRoute
@@ -667,6 +708,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppCertificadosRoute: AppCertificadosRoute,
   AppCursosRoute: AppCursosRouteWithChildren,
   AppMateriaisRoute: AppMateriaisRoute,
+  AppNotificacoesRoute: AppNotificacoesRoute,
   AppPerfilRoute: AppPerfilRoute,
   AppProgressoRoute: AppProgressoRoute,
   AppReceitasRoute: AppReceitasRoute,
@@ -690,13 +732,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
