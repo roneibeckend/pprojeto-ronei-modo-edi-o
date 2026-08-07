@@ -146,7 +146,7 @@ export const distributeProfits = createServerFn({ method: "POST" })
 
     const { error } = await supabaseAdmin.rpc('distribute_partner_profits', {
       p_amount: data.amount,
-      p_partner_id: data.partnerId
+      p_user_id: data.partnerId
     });
 
     if (error) throw error;
