@@ -49,6 +49,140 @@ export type Database = {
           },
         ]
       }
+      affiliate_links: {
+        Row: {
+          affiliate_id: string
+          clicks: number
+          code: string
+          course_id: string | null
+          created_at: string
+          id: string
+        }
+        Insert: {
+          affiliate_id: string
+          clicks?: number
+          code: string
+          course_id?: string | null
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          affiliate_id?: string
+          clicks?: number
+          code?: string
+          course_id?: string | null
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_links_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_links_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_sales: {
+        Row: {
+          affiliate_id: string | null
+          amount: number
+          commission: number
+          course_id: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          status: Database["public"]["Enums"]["affiliate_sale_status"]
+        }
+        Insert: {
+          affiliate_id?: string | null
+          amount: number
+          commission: number
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          status?: Database["public"]["Enums"]["affiliate_sale_status"]
+        }
+        Update: {
+          affiliate_id?: string | null
+          amount?: number
+          commission?: number
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          status?: Database["public"]["Enums"]["affiliate_sale_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_sales_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_sales_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliates: {
+        Row: {
+          balance: number
+          bank_info: Json | null
+          commission_rate: number
+          created_at: string
+          id: string
+          pix_key: string | null
+          status: Database["public"]["Enums"]["affiliate_status"]
+          total_earnings: number
+          updated_at: string
+        }
+        Insert: {
+          balance?: number
+          bank_info?: Json | null
+          commission_rate?: number
+          created_at?: string
+          id: string
+          pix_key?: string | null
+          status?: Database["public"]["Enums"]["affiliate_status"]
+          total_earnings?: number
+          updated_at?: string
+        }
+        Update: {
+          balance?: number
+          bank_info?: Json | null
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          pix_key?: string | null
+          status?: Database["public"]["Enums"]["affiliate_status"]
+          total_earnings?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliates_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_enrollments: {
         Row: {
           course_id: string
@@ -762,6 +896,8 @@ export type Database = {
       }
     }
     Enums: {
+      affiliate_sale_status: "pending" | "paid" | "cancelled"
+      affiliate_status: "pending" | "active" | "blocked"
       app_role: "admin" | "student" | "manager" | "agent"
       difficulty_level: "Fácil" | "Médio" | "Avançado"
       integration_type: "ia" | "payment"
@@ -895,6 +1031,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      affiliate_sale_status: ["pending", "paid", "cancelled"],
+      affiliate_status: ["pending", "active", "blocked"],
       app_role: ["admin", "student", "manager", "agent"],
       difficulty_level: ["Fácil", "Médio", "Avançado"],
       integration_type: ["ia", "payment"],
