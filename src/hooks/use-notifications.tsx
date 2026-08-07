@@ -29,7 +29,7 @@ export function useNotifications() {
       const { data, error } = await supabase
         .from("user_notifications")
         .select("*")
-        .eq("user_id", user?.id);
+        .eq("user_id", user?.id as string);
 
       if (error) throw error;
       return data;
