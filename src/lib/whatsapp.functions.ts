@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import QRCode from 'qrcode';
+
 
 /**
  * Simulates generating a WhatsApp QR code.
@@ -21,7 +23,18 @@ export const getWhatsAppQRCode = createServerFn({ method: "POST" })
     // 2. Mocking QR Code generation
     // We update the instance status to 'connecting' and generate a fake QR for demo purposes
     // A real implementation would integrate with Evolution API, Baileys, or similar.
-    const fakeQRCode = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=WA-CONNECT-" + Date.now();
+    // A real implementation would integrate with Evolution API, Baileys, or similar.
+    // For now, we generate a valid base64 QR code that scanners can actually parse.
+    const qrData = "WA-CONNECT-" + Date.now();
+    const fakeQRCode = await QRCode.toDataURL(qrData, {
+      margin: 2,
+      scale: 10,
+      color: {
+        dark: '#000000',
+        light: '#ffffff'
+      }
+    });
+
     
     const { error } = await supabaseAdmin
       .from('whatsapp_instances')
