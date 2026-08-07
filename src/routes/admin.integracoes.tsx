@@ -598,3 +598,269 @@ function IntegrationsPage() {
     </div>
   );
 }
+
+function EmailIntegrationPanel() {
+  const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState('config');
+  const [isSendingTest, setIsSendingTest] = useState(false);
+  const [testTo, setTestTo] = useState('');
+  const [testTemplate, setTestTemplate] = useState('boas_vindas');
+
+  const { data: settings, isLoading: loadingSettings } = useQuery({
+    queryKey: ['email_settings'],
+    queryFn: async () => await getEmailSettings()
+  });
+
+  const { data: logs, isLoading: loadingLogs } = useQuery({
+    queryKey: ['email_logs'],
+    queryFn: async () => await getEmailLogs({ limit: 20 })
+  });
+
+  const updateSettingsMutation = useMutation({
+    mutationFn: updateEmailSettings,
+    onSuccess: () => {
+      toast.success("Configurações de e-mail atualizadas!");
+      queryClient.invalidateQueries({ queryKey: ['email_settings'] });
+    },
+    onError: (err: any) => toast.error("Erro ao salvar: " + err.message)
+  });
+
+  const sendTestMutation = useMutation({
+    mutationFn: sendEmail,
+    onSuccess: () => {
+      toast.success("E-mail de teste enviado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ['email_logs'] });
+      setIsSendingTest(false);
+    },
+    onError: (err: any) => {
+      toast.error("Erro no envio: " + err.message);
+      setIsSendingTest(false);
+    }
+  });
+
+  if (loadingSettings) return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" /></div>;
+
+  return (
+    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
+          <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+            Configuração Resend
+          </TabsTrigger>
+          <TabsTrigger value="test" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+            Teste de Envio
+          </TabsTrigger>
+          <TabsTrigger value="logs" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+            Logs de Auditoria
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="config" className="space-y-6 m-0">
+          <Card className="bg-[#111] border-white/5">
+            <CardHeader className="border-b border-white/5 bg-white/[0.02]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg font-bold uppercase">Identidade do Remetente</CardTitle>
+                  <CardDescription className="text-xs text-white/40">Configure como os e-mails aparecerão para os alunos.</CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${settings?.is_enabled ? 'text-emerald-400 bg-emerald-400/10' : 'text-white/20 bg-white/5'}`}>
+                    {settings?.is_enabled ? 'ATIVO' : 'INATIVO'}
+                  </Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome do Remetente</Label>
+                  <Input 
+                    defaultValue={settings?.from_name}
+                    id="from_name"
+                    className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail do Remetente</Label>
+                  <Input 
+                    defaultValue={settings?.from_email}
+                    id="from_email"
+                    className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail de Resposta (Reply-To)</Label>
+                  <Input 
+                    defaultValue={settings?.reply_to || ""}
+                    id="reply_to"
+                    className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-4 border-t border-white/5">
+                <Button 
+                  onClick={() => {
+                    const from_name = (document.getElementById('from_name') as HTMLInputElement).value;
+                    const from_email = (document.getElementById('from_email') as HTMLInputElement).value;
+                    const reply_to = (document.getElementById('reply_to') as HTMLInputElement).value;
+                    updateSettingsMutation.mutate({ 
+                      from_name, 
+                      from_email, 
+                      reply_to: reply_to || null,
+                      is_enabled: settings?.is_enabled ?? true
+                    });
+                  }}
+                  className="bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-10 px-8"
+                >
+                  <Save className="h-4 w-4 mr-2" /> Salvar Configurações
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => updateSettingsMutation.mutate({ ...settings, is_enabled: !settings?.is_enabled })}
+                  className="bg-white/5 border-white/10 hover:bg-white/10 font-bold uppercase tracking-widest text-[10px] h-10 px-6"
+                >
+                  {settings?.is_enabled ? 'Desativar Envio' : 'Ativar Envio'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-blue-500/5 border-blue-500/20">
+            <CardHeader>
+              <CardTitle className="text-sm font-bold flex items-center gap-2 text-blue-400 uppercase tracking-widest">
+                <Info className="h-4 w-4" /> Configuração DNS (Resend)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-xs text-white/60 space-y-2">
+              <p>Para que os e-mails não caiam no spam, configure os seguintes registros no seu provedor de domínio:</p>
+              <div className="bg-black/40 p-3 rounded-lg font-mono text-[10px] space-y-1">
+                <p>MX: feedback-smtp.us-east-1.amazonses.com (ou específico do Resend)</p>
+                <p>TXT: resend-verification=xxxxxx</p>
+                <p>TXT: v=spf1 include:amazonses.com ~all</p>
+              </div>
+              <p className="mt-2 text-blue-400/60 italic">* Consulte o painel do Resend para os valores exatos de "xxxxxx".</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="test" className="space-y-6 m-0">
+          <Card className="bg-[#111] border-white/5">
+            <CardHeader>
+              <CardTitle className="text-lg font-bold uppercase">Simular Envio Transacional</CardTitle>
+              <CardDescription className="text-xs text-white/40">Teste a entrega e visualize como os templates chegam na caixa de entrada.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Destinatário de Teste</Label>
+                  <Input 
+                    placeholder="exemplo@email.com"
+                    value={testTo}
+                    onChange={(e) => setTestTo(e.target.value)}
+                    className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Template para Testar</Label>
+                  <select 
+                    value={testTemplate}
+                    onChange={(e) => setTestTemplate(e.target.value)}
+                    className="w-full h-11 bg-black border border-white/10 rounded-lg text-white text-sm px-4 outline-none focus:border-[#ff6a00]"
+                  >
+                    <option value="boas_vindas">Boas-vindas</option>
+                    <option value="acesso_liberado_produto">Acesso Liberado</option>
+                    <option value="conclusao_curso">Conclusão de Curso</option>
+                    <option value="certificado_emitido">Certificado Emitido</option>
+                    <option value="novo_conteudo">Novo Conteúdo</option>
+                    <option value="suporte_recebido">Suporte Recebido</option>
+                  </select>
+                </div>
+              </div>
+              
+              <Button 
+                disabled={!testTo || isSendingTest}
+                onClick={() => {
+                  setIsSendingTest(true);
+                  sendTestMutation.mutate({ 
+                    to: testTo, 
+                    template: testTemplate as any,
+                    data: { name: 'Usuário de Teste', product_name: 'Curso Mestre do Churrasco' }
+                  });
+                }}
+                className="w-full bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-12"
+              >
+                {isSendingTest ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <SendHorizontal className="h-4 w-4 mr-2" />}
+                Disparar E-mail de Teste
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="logs" className="m-0">
+          <Card className="bg-[#111] border-white/5">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-lg font-bold uppercase">Auditoria de Disparos</CardTitle>
+                <CardDescription className="text-xs text-white/40">Últimos 20 e-mails processados pelo sistema.</CardDescription>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => queryClient.invalidateQueries({ queryKey: ['email_logs'] })} className="text-white/40">
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-white/[0.02] border-y border-white/5">
+                      <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40">Template</th>
+                      <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40">Destinatário</th>
+                      <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40">Status</th>
+                      <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40">Data/Hora</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {loadingLogs ? (
+                      Array(5).fill(0).map((_, i) => <tr key={i} className="h-16 animate-pulse bg-white/[0.01]" />)
+                    ) : logs?.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="px-6 py-12 text-center text-xs text-white/20 uppercase font-bold tracking-widest">Nenhum log encontrado.</td>
+                      </tr>
+                    ) : (
+                      logs?.map((log: any) => (
+                        <tr key={log.id} className="hover:bg-white/[0.02] transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <div className="p-1.5 rounded bg-white/5 text-[#ff6a00]">
+                                <Mail className="h-3.5 w-3.5" />
+                              </div>
+                              <span className="text-xs font-medium text-white/80">{log.template_name}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="text-xs text-white/40">{log.recipient_email.replace(/(.{3}).*(@.*)/, '$1***$2')}</span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <Badge variant="outline" className={`text-[8px] uppercase tracking-widest border-none ${
+                              log.status === 'sent' ? 'text-emerald-400 bg-emerald-400/10' : 
+                              log.status === 'queued' ? 'text-blue-400 bg-blue-400/10' : 'text-red-400 bg-red-400/10'
+                            }`}>
+                              {log.status}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4 text-[10px] text-white/20">
+                            {new Date(log.created_at).toLocaleString('pt-BR')}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
