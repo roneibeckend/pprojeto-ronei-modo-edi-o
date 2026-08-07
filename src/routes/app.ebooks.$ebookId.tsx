@@ -165,9 +165,9 @@ function EbookReaderPage() {
                   )}
                 </div>
 
-                <div className="prose prose-invert max-w-none prose-p:text-muted-foreground prose-headings:text-foreground">
+                <div className="prose prose-invert max-w-4xl mx-auto prose-p:text-muted-foreground prose-headings:text-foreground prose-p:leading-relaxed prose-p:text-lg">
                   {activeChapter?.content ? (
-                    <div dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
+                    <div className="text-center md:text-left" dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
                   ) : (
                     <p className="italic opacity-50">Conteúdo em breve...</p>
                   )}
