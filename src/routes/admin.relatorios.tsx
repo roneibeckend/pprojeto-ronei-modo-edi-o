@@ -513,15 +513,16 @@ function AdminRelatoriosPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">WhatsApp (E.164)</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail</label>
                 <input 
                   required 
-                  value={editingRecipient?.phone_e164 || ""} 
-                  onChange={e => setEditingRecipient({...editingRecipient, phone_e164: e.target.value.replace(/[^0-9]/g, '')})} 
-                  placeholder="5511999999999" 
+                  type="email"
+                  value={editingRecipient?.email || ""} 
+                  onChange={e => setEditingRecipient({...editingRecipient, email: e.target.value})} 
+                  placeholder="exemplo@email.com" 
                   className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] font-mono" 
                 />
-                <p className="text-[9px] text-white/30 font-bold uppercase tracking-widest">DDI + DDD + Número (Apenas números)</p>
+                <p className="text-[9px] text-white/30 font-bold uppercase tracking-widest">O relatório será enviado para este endereço.</p>
               </div>
 
               <div className="pt-4 flex gap-3">
