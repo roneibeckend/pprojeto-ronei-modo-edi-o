@@ -17,7 +17,8 @@ import {
   HelpCircle,
   Bell,
   FileText,
-  Wallet
+  Wallet,
+  TrendingUp
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -53,6 +54,8 @@ function AdminRootLayout() {
     { to: "/admin/financeiro", label: "Financeiro", icon: DollarSign, exact: true },
     { to: "/admin/financeiro/saques", label: "Gestão de Saques", icon: Wallet },
     { to: "/admin/cursos", label: "Cursos", icon: Library },
+    { to: "/admin/ebooks", label: "eBooks", icon: BookOpen },
+    { to: "/admin/afiliados", label: "Afiliados", icon: TrendingUp },
     { to: "/admin/receitas", label: "Receitas", icon: ChefHat },
     
     { to: "/admin/ao-vivo", label: "Ao Vivo", icon: Clapperboard },
