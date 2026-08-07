@@ -14,10 +14,19 @@ import {
   AlertCircle,
   Loader2,
   X,
-  Smartphone
+  Smartphone,
+  Download,
+  Eye,
+  RefreshCw
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export const Route = createFileRoute("/admin/relatorios")({
   head: () => ({ meta: [{ title: "Relatórios Financeiros · Admin" }] }),
