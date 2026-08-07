@@ -24,6 +24,7 @@ import {
   Sparkles,
   ArrowRight,
   ChevronDown,
+  Play,
   // Instagram and Youtube are missing in some lucide versions
   MessageCircle,
   Mail,
@@ -215,7 +216,7 @@ function ScrollProgress() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <div className="fixed inset-x-0 top-0 z-[60] h-[3px] bg-transparent">
+    <div className="fixed inset-x-0 top-0 z-[60] h-[3px] bg-transparent safe-top">
       <div
         className="h-full bg-fire shadow-fire transition-[width] duration-100"
         style={{ width: `${pct}%` }}
