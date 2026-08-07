@@ -88,9 +88,11 @@ function AffiliateFinancePage() {
         throw new Error("Informe uma chave PIX para o recebimento");
       }
       return requestPayoutFn({
-        amount,
-        method: "pix",
-        pix_key: pixKey
+        data: {
+          amount,
+          method: "pix",
+          pix_key: pixKey
+        }
       });
     },
     onSuccess: () => {

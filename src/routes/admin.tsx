@@ -49,7 +49,8 @@ function AdminRootLayout() {
 
   const navItems = [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-    { to: "/admin/financeiro", label: "Financeiro", icon: DollarSign },
+    { to: "/admin/financeiro", label: "Financeiro", icon: DollarSign, exact: true },
+    { to: "/admin/financeiro/saques", label: "Gestão de Saques", icon: Wallet },
     { to: "/admin/cursos", label: "Cursos", icon: Library },
     { to: "/admin/receitas", label: "Receitas", icon: ChefHat },
     
