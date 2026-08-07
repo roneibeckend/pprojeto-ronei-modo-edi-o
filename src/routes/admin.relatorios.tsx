@@ -25,7 +25,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import { getWhatsAppQRCode, confirmWhatsAppConnection, disconnectWhatsApp } from "@/lib/whatsapp.functions";
+// WhatsApp imports removed as they are no longer used
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -69,11 +69,10 @@ function AdminRelatoriosPage() {
   async function fetchData() {
     try {
       setLoading(true);
-      const [recipientsRes, settingsRes, logsRes, waRes] = await Promise.all([
+      const [recipientsRes, settingsRes, logsRes] = await Promise.all([
         supabase.from('report_recipients').select('*').order('created_at', { ascending: false }),
         supabase.from('report_settings').select('*').single(),
-        supabase.from('report_logs').select('*, recipient:report_recipients(name)').order('created_at', { ascending: false }).limit(20),
-        supabase.from('whatsapp_instances').select('*').eq('id', '00000000-0000-0000-0000-000000000000').single()
+        supabase.from('report_logs').select('*, recipient:report_recipients(name)').order('created_at', { ascending: false }).limit(20)
       ]);
 
       if (recipientsRes.error) throw recipientsRes.error;
@@ -443,7 +442,7 @@ function AdminRelatoriosPage() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="font-bold text-sm">{r.name}</h3>
-                      <p className="text-xs text-white/40 font-mono mt-0.5">{r.email || r.phone_e164}</p>
+                      <p className="text-xs text-white/40 font-mono mt-0.5">{r.email}</p>
                     </div>
                     <button 
                       onClick={() => handleToggleRecipient(r.id, !r.active)}
