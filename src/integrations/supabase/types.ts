@@ -564,6 +564,102 @@ export type Database = {
         }
         Relationships: []
       }
+      email_logs: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          id: string
+          idempotency_key: string | null
+          payload: Json | null
+          provider_message_id: string | null
+          recipient_email: string
+          sent_at: string | null
+          status: string
+          template_name: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          idempotency_key?: string | null
+          payload?: Json | null
+          provider_message_id?: string | null
+          recipient_email: string
+          sent_at?: string | null
+          status?: string
+          template_name: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          idempotency_key?: string | null
+          payload?: Json | null
+          provider_message_id?: string | null
+          recipient_email?: string
+          sent_at?: string | null
+          status?: string
+          template_name?: string
+        }
+        Relationships: []
+      }
+      email_settings: {
+        Row: {
+          created_at: string | null
+          from_email: string
+          from_name: string
+          id: string
+          is_enabled: boolean | null
+          reply_to: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          from_email?: string
+          from_name?: string
+          id?: string
+          is_enabled?: boolean | null
+          reply_to?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          from_email?: string
+          from_name?: string
+          id?: string
+          is_enabled?: boolean | null
+          reply_to?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      email_templates_config: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          subject: string
+          template_name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          subject: string
+          template_name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          subject?: string
+          template_name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       financial_costs: {
         Row: {
           created_at: string
@@ -991,6 +1087,7 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           email: string | null
+          email_notifications_opt_in: boolean | null
           id: string
           name: string | null
           phone: string | null
@@ -1000,6 +1097,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           email?: string | null
+          email_notifications_opt_in?: boolean | null
           id: string
           name?: string | null
           phone?: string | null
@@ -1009,6 +1107,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           email?: string | null
+          email_notifications_opt_in?: boolean | null
           id?: string
           name?: string | null
           phone?: string | null
