@@ -43,6 +43,7 @@ import { Route as AdminAlunosRouteImport } from './routes/admin.alunos'
 import { Route as AdminAfiliadosRouteImport } from './routes/admin.afiliados'
 import { Route as AppCursosIndexRouteImport } from './routes/app.cursos.index'
 import { Route as AppAfiliadosIndexRouteImport } from './routes/app.afiliados.index'
+import { Route as AppEbooksEbookIdRouteImport } from './routes/app.ebooks.$ebookId'
 import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.preview'
 import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
 import { Route as AppAfiliadosLinksRouteImport } from './routes/app.afiliados.links'
@@ -223,6 +224,11 @@ const AppAfiliadosIndexRoute = AppAfiliadosIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppAfiliadosRoute,
 } as any)
+const AppEbooksEbookIdRoute = AppEbooksEbookIdRouteImport.update({
+  id: '/ebooks/$ebookId',
+  path: '/ebooks/$ebookId',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCursosPreviewRoute = AppCursosPreviewRouteImport.update({
   id: '/preview',
   path: '/preview',
@@ -311,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
+  '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/afiliados/': typeof AppAfiliadosIndexRoute
   '/app/cursos/': typeof AppCursosIndexRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
@@ -352,6 +359,7 @@ export interface FileRoutesByTo {
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
+  '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/afiliados': typeof AppAfiliadosIndexRoute
   '/app/cursos': typeof AppCursosIndexRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
@@ -398,6 +406,7 @@ export interface FileRoutesById {
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
+  '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/afiliados/': typeof AppAfiliadosIndexRoute
   '/app/cursos/': typeof AppCursosIndexRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
@@ -445,6 +454,7 @@ export interface FileRouteTypes {
     | '/app/afiliados/links'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
+    | '/app/ebooks/$ebookId'
     | '/app/afiliados/'
     | '/app/cursos/'
     | '/api/public/webhooks/asaas'
@@ -486,6 +496,7 @@ export interface FileRouteTypes {
     | '/app/afiliados/links'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
+    | '/app/ebooks/$ebookId'
     | '/app/afiliados'
     | '/app/cursos'
     | '/api/public/webhooks/asaas'
@@ -531,6 +542,7 @@ export interface FileRouteTypes {
     | '/app/afiliados/links'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
+    | '/app/ebooks/$ebookId'
     | '/app/afiliados/'
     | '/app/cursos/'
     | '/api/public/webhooks/asaas'
@@ -789,6 +801,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAfiliadosIndexRouteImport
       parentRoute: typeof AppAfiliadosRoute
     }
+    '/app/ebooks/$ebookId': {
+      id: '/app/ebooks/$ebookId'
+      path: '/ebooks/$ebookId'
+      fullPath: '/app/ebooks/$ebookId'
+      preLoaderRoute: typeof AppEbooksEbookIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/cursos/preview': {
       id: '/app/cursos/preview'
       path: '/preview'
@@ -958,6 +977,7 @@ interface AppRouteChildren {
   AppReceitasRoute: typeof AppReceitasRoute
   AppSuporteRoute: typeof AppSuporteRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppEbooksEbookIdRoute: typeof AppEbooksEbookIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -973,6 +993,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppReceitasRoute: AppReceitasRoute,
   AppSuporteRoute: AppSuporteRoute,
   AppIndexRoute: AppIndexRoute,
+  AppEbooksEbookIdRoute: AppEbooksEbookIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
