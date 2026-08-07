@@ -642,6 +642,53 @@ export type Database = {
         }
         Relationships: []
       }
+      payout_requests: {
+        Row: {
+          amount: number
+          asaas_payment_id: string | null
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          method: string
+          pix_key: string | null
+          status: Database["public"]["Enums"]["payout_status"]
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          asaas_payment_id?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          method: string
+          pix_key?: string | null
+          status?: Database["public"]["Enums"]["payout_status"]
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          asaas_payment_id?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          method?: string
+          pix_key?: string | null
+          status?: Database["public"]["Enums"]["payout_status"]
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payout_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1001,6 +1048,7 @@ export type Database = {
       difficulty_level: "Fácil" | "Médio" | "Avançado"
       integration_type: "ia" | "payment"
       live_class_status: "scheduled" | "live" | "completed"
+      payout_status: "pending" | "analyzing" | "approved" | "paid" | "rejected"
       support_sender_type: "student" | "assistant" | "support_agent" | "system"
       support_ticket_status: "open" | "in_progress" | "resolved" | "closed"
     }
@@ -1136,6 +1184,7 @@ export const Constants = {
       difficulty_level: ["Fácil", "Médio", "Avançado"],
       integration_type: ["ia", "payment"],
       live_class_status: ["scheduled", "live", "completed"],
+      payout_status: ["pending", "analyzing", "approved", "paid", "rejected"],
       support_sender_type: ["student", "assistant", "support_agent", "system"],
       support_ticket_status: ["open", "in_progress", "resolved", "closed"],
     },
