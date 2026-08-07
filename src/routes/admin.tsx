@@ -76,7 +76,7 @@ function AdminRootLayout() {
           <span className="font-bold tracking-widest text-sm uppercase">Painel Admin</span>
         </div>
         
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
@@ -84,7 +84,7 @@ function AdminRootLayout() {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition shrink-0 ${
                   active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
                 }`}
               >

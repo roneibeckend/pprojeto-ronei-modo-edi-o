@@ -127,10 +127,6 @@ export function Shell({ children }: { children: ReactNode }) {
       <nav 
         aria-label="Menu principal"
         className="scrollbar-hidden flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 py-4"
-        style={{
-          maskImage: 'linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0, black 12px, black calc(100% - 12px), transparent 100%)'
-        }}
       >
         {navGroups.filter(g => {
           if (g.title !== "Gestão") return true;
