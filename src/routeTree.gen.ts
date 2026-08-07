@@ -39,6 +39,7 @@ import { Route as AdminCursosRouteImport } from './routes/admin.cursos'
 import { Route as AdminAoVivoRouteImport } from './routes/admin.ao-vivo'
 import { Route as AdminAlunosRouteImport } from './routes/admin.alunos'
 import { Route as AppCursosIndexRouteImport } from './routes/app.cursos.index'
+import { Route as AppAfiliadosIndexRouteImport } from './routes/app.afiliados.index'
 import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.preview'
 import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
 import { Route as AdminAlunosStudentIdRouteImport } from './routes/admin.alunos.$studentId'
@@ -194,6 +195,11 @@ const AppCursosIndexRoute = AppCursosIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppCursosRoute,
 } as any)
+const AppAfiliadosIndexRoute = AppAfiliadosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppAfiliadosRoute,
+} as any)
 const AppCursosPreviewRoute = AppCursosPreviewRouteImport.update({
   id: '/preview',
   path: '/preview',
@@ -234,7 +240,7 @@ export interface FileRoutesByFullPath {
   '/admin/suporte': typeof AdminSuporteRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/app/admin': typeof AppAdminRoute
-  '/app/afiliados': typeof AppAfiliadosRoute
+  '/app/afiliados': typeof AppAfiliadosRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/materiais': typeof AppMateriaisRoute
@@ -248,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
+  '/app/afiliados/': typeof AppAfiliadosIndexRoute
   '/app/cursos/': typeof AppCursosIndexRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
 }
@@ -268,7 +275,6 @@ export interface FileRoutesByTo {
   '/admin/suporte': typeof AdminSuporteRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/app/admin': typeof AppAdminRoute
-  '/app/afiliados': typeof AppAfiliadosRoute
   '/app/certificados': typeof AppCertificadosRoute
   '/app/materiais': typeof AppMateriaisRoute
   '/app/notificacoes': typeof AppNotificacoesRoute
@@ -281,6 +287,7 @@ export interface FileRoutesByTo {
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
+  '/app/afiliados': typeof AppAfiliadosIndexRoute
   '/app/cursos': typeof AppCursosIndexRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
 }
@@ -304,7 +311,7 @@ export interface FileRoutesById {
   '/admin/suporte': typeof AdminSuporteRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/app/admin': typeof AppAdminRoute
-  '/app/afiliados': typeof AppAfiliadosRoute
+  '/app/afiliados': typeof AppAfiliadosRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/materiais': typeof AppMateriaisRoute
@@ -318,6 +325,7 @@ export interface FileRoutesById {
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
+  '/app/afiliados/': typeof AppAfiliadosIndexRoute
   '/app/cursos/': typeof AppCursosIndexRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
 }
@@ -356,6 +364,7 @@ export interface FileRouteTypes {
     | '/admin/alunos/$studentId'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
+    | '/app/afiliados/'
     | '/app/cursos/'
     | '/api/public/webhooks/asaas'
   fileRoutesByTo: FileRoutesByTo
@@ -376,7 +385,6 @@ export interface FileRouteTypes {
     | '/admin/suporte'
     | '/admin/usuarios'
     | '/app/admin'
-    | '/app/afiliados'
     | '/app/certificados'
     | '/app/materiais'
     | '/app/notificacoes'
@@ -389,6 +397,7 @@ export interface FileRouteTypes {
     | '/admin/alunos/$studentId'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
+    | '/app/afiliados'
     | '/app/cursos'
     | '/api/public/webhooks/asaas'
   id:
@@ -425,6 +434,7 @@ export interface FileRouteTypes {
     | '/admin/alunos/$studentId'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
+    | '/app/afiliados/'
     | '/app/cursos/'
     | '/api/public/webhooks/asaas'
   fileRoutesById: FileRoutesById
@@ -653,6 +663,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCursosIndexRouteImport
       parentRoute: typeof AppCursosRoute
     }
+    '/app/afiliados/': {
+      id: '/app/afiliados/'
+      path: '/'
+      fullPath: '/app/afiliados/'
+      preLoaderRoute: typeof AppAfiliadosIndexRouteImport
+      parentRoute: typeof AppAfiliadosRoute
+    }
     '/app/cursos/preview': {
       id: '/app/cursos/preview'
       path: '/preview'
@@ -724,6 +741,18 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface AppAfiliadosRouteChildren {
+  AppAfiliadosIndexRoute: typeof AppAfiliadosIndexRoute
+}
+
+const AppAfiliadosRouteChildren: AppAfiliadosRouteChildren = {
+  AppAfiliadosIndexRoute: AppAfiliadosIndexRoute,
+}
+
+const AppAfiliadosRouteWithChildren = AppAfiliadosRoute._addFileChildren(
+  AppAfiliadosRouteChildren,
+)
+
 interface AppCursosRouteChildren {
   AppCursosCourseIdRoute: typeof AppCursosCourseIdRoute
   AppCursosPreviewRoute: typeof AppCursosPreviewRoute
@@ -742,7 +771,7 @@ const AppCursosRouteWithChildren = AppCursosRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
-  AppAfiliadosRoute: typeof AppAfiliadosRoute
+  AppAfiliadosRoute: typeof AppAfiliadosRouteWithChildren
   AppCertificadosRoute: typeof AppCertificadosRoute
   AppCursosRoute: typeof AppCursosRouteWithChildren
   AppMateriaisRoute: typeof AppMateriaisRoute
@@ -756,7 +785,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
-  AppAfiliadosRoute: AppAfiliadosRoute,
+  AppAfiliadosRoute: AppAfiliadosRouteWithChildren,
   AppCertificadosRoute: AppCertificadosRoute,
   AppCursosRoute: AppCursosRouteWithChildren,
   AppMateriaisRoute: AppMateriaisRoute,
@@ -784,3 +813,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
