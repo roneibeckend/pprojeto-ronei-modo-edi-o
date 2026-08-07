@@ -54,8 +54,7 @@ function AdminRelatoriosPage() {
   const [previewData, setPreviewData] = useState<any>(null);
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
 
-  const [waInstance, setWaInstance] = useState<any>(null);
-  const [isConnectingWA, setIsConnectingWA] = useState(false);
+  // WhatsApp state removed in favor of Email reports
 
   useEffect(() => {
     fetchData();
@@ -84,17 +83,7 @@ function AdminRelatoriosPage() {
     }
   }
 
-  async function handleConnectWhatsApp() {
-    toast.info("WhatsApp desativado.");
-  }
-
-  async function handleConfirmWA() {
-    toast.info("WhatsApp desativado.");
-  }
-
-  async function handleDisconnectWA() {
-    toast.info("WhatsApp desativado.");
-  }
+  // WhatsApp handlers removed in favor of Email reports
 
 
   async function handleRecipientSubmit(e: React.FormEvent) {
