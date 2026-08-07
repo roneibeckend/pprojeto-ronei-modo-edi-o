@@ -708,6 +708,30 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_balances: {
+        Row: {
+          balance: number
+          id: string
+          total_withdrawn: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          id?: string
+          total_withdrawn?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          id?: string
+          total_withdrawn?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payout_requests: {
         Row: {
           amount: number
@@ -1087,6 +1111,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      distribute_partner_profits: {
+        Args: { p_amount: number; p_partner_id: string }
+        Returns: undefined
+      }
       has_module_access: {
         Args: { _module: string; _user_id: string }
         Returns: boolean

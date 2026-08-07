@@ -25,6 +25,7 @@ import { Route as AppProgressoRouteImport } from './routes/app.progresso'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppNotificacoesRouteImport } from './routes/app.notificacoes'
 import { Route as AppMateriaisRouteImport } from './routes/app.materiais'
+import { Route as AppFinanceiroRouteImport } from './routes/app.financeiro'
 import { Route as AppCursosRouteImport } from './routes/app.cursos'
 import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
 import { Route as AppAfiliadosRouteImport } from './routes/app.afiliados'
@@ -130,6 +131,11 @@ const AppNotificacoesRoute = AppNotificacoesRouteImport.update({
 const AppMateriaisRoute = AppMateriaisRouteImport.update({
   id: '/materiais',
   path: '/materiais',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCursosRoute = AppCursosRouteImport.update({
@@ -288,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/app/afiliados': typeof AppAfiliadosRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
+  '/app/financeiro': typeof AppFinanceiroRoute
   '/app/materiais': typeof AppMateriaisRoute
   '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -328,6 +335,7 @@ export interface FileRoutesByTo {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/app/admin': typeof AppAdminRoute
   '/app/certificados': typeof AppCertificadosRoute
+  '/app/financeiro': typeof AppFinanceiroRoute
   '/app/materiais': typeof AppMateriaisRoute
   '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -373,6 +381,7 @@ export interface FileRoutesById {
   '/app/afiliados': typeof AppAfiliadosRouteWithChildren
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
+  '/app/financeiro': typeof AppFinanceiroRoute
   '/app/materiais': typeof AppMateriaisRoute
   '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
@@ -419,6 +428,7 @@ export interface FileRouteTypes {
     | '/app/afiliados'
     | '/app/certificados'
     | '/app/cursos'
+    | '/app/financeiro'
     | '/app/materiais'
     | '/app/notificacoes'
     | '/app/perfil'
@@ -459,6 +469,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/app/admin'
     | '/app/certificados'
+    | '/app/financeiro'
     | '/app/materiais'
     | '/app/notificacoes'
     | '/app/perfil'
@@ -503,6 +514,7 @@ export interface FileRouteTypes {
     | '/app/afiliados'
     | '/app/certificados'
     | '/app/cursos'
+    | '/app/financeiro'
     | '/app/materiais'
     | '/app/notificacoes'
     | '/app/perfil'
@@ -649,6 +661,13 @@ declare module '@tanstack/react-router' {
       path: '/materiais'
       fullPath: '/app/materiais'
       preLoaderRoute: typeof AppMateriaisRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/financeiro': {
+      id: '/app/financeiro'
+      path: '/financeiro'
+      fullPath: '/app/financeiro'
+      preLoaderRoute: typeof AppFinanceiroRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/cursos': {
@@ -931,6 +950,7 @@ interface AppRouteChildren {
   AppAfiliadosRoute: typeof AppAfiliadosRouteWithChildren
   AppCertificadosRoute: typeof AppCertificadosRoute
   AppCursosRoute: typeof AppCursosRouteWithChildren
+  AppFinanceiroRoute: typeof AppFinanceiroRoute
   AppMateriaisRoute: typeof AppMateriaisRoute
   AppNotificacoesRoute: typeof AppNotificacoesRoute
   AppPerfilRoute: typeof AppPerfilRoute
@@ -945,6 +965,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAfiliadosRoute: AppAfiliadosRouteWithChildren,
   AppCertificadosRoute: AppCertificadosRoute,
   AppCursosRoute: AppCursosRouteWithChildren,
+  AppFinanceiroRoute: AppFinanceiroRoute,
   AppMateriaisRoute: AppMateriaisRoute,
   AppNotificacoesRoute: AppNotificacoesRoute,
   AppPerfilRoute: AppPerfilRoute,
@@ -971,13 +992,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
