@@ -2047,7 +2047,7 @@ function LeadPopup() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="lead-popup-title"
-      className="fixed inset-0 z-[70] flex items-end justify-center p-3 sm:items-center sm:p-4"
+      className="fixed inset-0 z-[70] flex items-end justify-center p-3 sm:items-center sm:p-4 safe-bottom"
     >
       <div
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
@@ -2085,8 +2085,8 @@ function LeadPopup() {
 function StickyMobileCTA() {
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 pt-3 backdrop-blur-xl md:hidden"
-      style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 pt-3 backdrop-blur-xl md:hidden safe-bottom"
+      style={{ paddingBottom: "0.75rem" }}
     >
       <a href="#oferta" onClick={() => trackInitiateCheckout("sticky-mobile")} className="btn-fire w-full !py-3 text-sm">
         Quero o eBook por R$ 47,90 <ArrowRight className="h-4 w-4" />
