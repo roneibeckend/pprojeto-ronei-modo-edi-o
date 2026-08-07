@@ -14,10 +14,11 @@ export const requestPayout = createServerFn({ method: "POST" })
     const userId = context.userId;
 
     // 1. Validar saldo do afiliado
+    // O id na tabela affiliates é o user_id (FK para profiles.id)
     const { data: affiliate, error: affError } = await supabaseAdmin
       .from('affiliates')
       .select('balance')
-      .eq('user_id', userId)
+      .eq('id', userId)
       .single();
 
     if (affError || !affiliate) {
@@ -47,7 +48,7 @@ export const requestPayout = createServerFn({ method: "POST" })
     await supabaseAdmin
       .from('affiliates')
       .update({ balance: affiliate.balance - data.amount })
-      .eq('user_id', userId);
+      .eq('id', userId);
 
     return { success: true };
   });
