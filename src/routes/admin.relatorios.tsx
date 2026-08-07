@@ -203,11 +203,11 @@ function AdminRelatoriosPage() {
 
       if (error) throw error;
 
-      const headers = ["ID", "Destinatário", "Telefone", "Data do Relatório", "Status", "Enviado em", "Erro"];
+      const headers = ["ID", "Destinatário", "E-mail", "Data do Relatório", "Status", "Enviado em", "Erro"];
       const rows = data.map(log => [
         log.id,
         log.recipient?.name || "Sistema",
-        log.recipient?.phone_e164 || "",
+        log.recipient?.email || "",
         log.report_date,
         log.status,
         log.sent_at ? new Date(log.sent_at).toLocaleString('pt-BR') : "",
