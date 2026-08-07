@@ -519,49 +519,6 @@ function AdminRelatoriosPage() {
         </div>
       )}
 
-      {/* Modal Recipient */}
-      {isRecipientModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-[#0e0e0e] border border-white/10 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-lg font-bold">{editingRecipient?.id ? "Editar Destinatário" : "Novo Destinatário"}</h3>
-              <button onClick={() => setIsRecipientModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition"><X className="h-5 w-5" /></button>
-            </div>
-            
-            <form onSubmit={handleRecipientSubmit} className="space-y-6 text-left">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome Completo</label>
-                <input 
-                  required 
-                  value={editingRecipient?.name || ""} 
-                  onChange={e => setEditingRecipient({...editingRecipient, name: e.target.value})} 
-                  placeholder="Ex: João Silva" 
-                  className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]" 
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">WhatsApp (E.164)</label>
-                <input 
-                  required 
-                  value={editingRecipient?.phone_e164 || ""} 
-                  onChange={e => setEditingRecipient({...editingRecipient, phone_e164: e.target.value.replace(/[^0-9]/g, '')})} 
-                  placeholder="5511999999999" 
-                  className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] font-mono" 
-                />
-                <p className="text-[9px] text-white/30 font-bold uppercase tracking-widest">DDI + DDD + Número (Apenas números)</p>
-              </div>
-
-              <div className="pt-4 flex gap-3">
-                <button type="button" onClick={() => setIsRecipientModalOpen(false)} className="flex-1 py-3 rounded-xl bg-white/5 font-bold hover:bg-white/10 transition uppercase tracking-widest text-[10px]">Cancelar</button>
-                <button type="submit" disabled={isSaving} className="flex-1 py-3 rounded-xl bg-[#ff6a00] text-black font-bold disabled:opacity-50 transition uppercase tracking-widest text-[10px]">
-                  {isSaving ? "Salvando..." : "Salvar"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
