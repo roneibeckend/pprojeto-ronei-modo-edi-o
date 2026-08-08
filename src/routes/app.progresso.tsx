@@ -50,7 +50,7 @@ function ProgressPage() {
     <div>
       <PageHeader title="Meu progresso" subtitle="Acompanhe sua evolução na jornada." />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <Stat label="Aulas assistidas" value={String(courseProgress?.length || 0)} />
         <Stat label="Capítulos lidos" value={String(readChapters)} icon={BookOpen} />
         <Stat label="Sequência" value="0 dias" icon={Flame} />

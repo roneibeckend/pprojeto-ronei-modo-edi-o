@@ -47,12 +47,12 @@ function RecipesPage() {
     <div>
       <PageHeader title="Receitas" subtitle="Receitas testadas com custo, preço e lucro estimado." />
 
-      <div className="mb-6 flex flex-wrap gap-2">
+      <div className="mb-6 flex overflow-x-auto pb-2 gap-2 scrollbar-hidden">
         {recipeCategories.map((c) => (
           <button
             key={c}
             onClick={() => setCat(c)}
-            className={`rounded-full border px-4 py-1.5 text-sm transition ${
+            className={`shrink-0 rounded-full border px-4 py-1.5 text-sm transition whitespace-nowrap ${
               cat === c ? "border-transparent bg-fire text-white shadow-fire" : "border-white/10 text-muted-foreground hover:border-white/30 hover:text-foreground"
             }`}
           >

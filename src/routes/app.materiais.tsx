@@ -12,7 +12,7 @@ function MaterialsPage() {
   return (
     <div>
       <PageHeader title="Planilhas e materiais" subtitle="Ferramentas prontas para acelerar seu negócio." />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {materials.map((m) => (
           <div key={m.id} className="glass card-tilt rounded-2xl p-5">
             <div className="flex items-start justify-between gap-3">

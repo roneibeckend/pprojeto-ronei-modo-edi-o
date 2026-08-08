@@ -68,33 +68,35 @@ function PreviewPage() {
   const [variant, setVariant] = useState<"A" | "B">("A");
   return (
     <div>
-      <PageHeader
-        title="Curso interativo — Previews"
-        subtitle="Duas propostas de aula guiada por etapas. Escolha qual seguir."
-        action={
-          <Link to="/app/cursos" className="btn-ghost-fire text-sm">
-            ← Cursos
-          </Link>
-        }
-      />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+        <PageHeader
+          title="Curso interativo — Previews"
+          subtitle="Duas propostas de aula guiada por etapas. Escolha qual seguir."
+        />
+        <Link to="/app/cursos" className="btn-ghost-fire text-sm w-full sm:w-auto">
+          ← Cursos
+        </Link>
+      </div>
 
-      <div className="mb-6 inline-flex gap-2 rounded-full border border-white/10 bg-black/40 p-1">
-        <button
-          onClick={() => setVariant("A")}
-          className={`rounded-full px-4 py-1.5 text-sm ${
-            variant === "A" ? "bg-fire text-white" : "text-muted-foreground"
-          }`}
-        >
-          Direção A — Stepper horizontal
-        </button>
-        <button
-          onClick={() => setVariant("B")}
-          className={`rounded-full px-4 py-1.5 text-sm ${
-            variant === "B" ? "bg-fire text-white" : "text-muted-foreground"
-          }`}
-        >
-          Direção B — Trilha vertical (skewer path)
-        </button>
+      <div className="mb-6 flex overflow-x-auto pb-2 gap-2 scrollbar-hidden">
+        <div className="inline-flex shrink-0 gap-2 rounded-full border border-white/10 bg-black/40 p-1">
+          <button
+            onClick={() => setVariant("A")}
+            className={`rounded-full px-4 py-1.5 text-sm whitespace-nowrap transition-all ${
+              variant === "A" ? "bg-fire text-white shadow-lg shadow-fire/20" : "text-muted-foreground hover:text-white"
+            }`}
+          >
+            Direção A — Stepper horizontal
+          </button>
+          <button
+            onClick={() => setVariant("B")}
+            className={`rounded-full px-4 py-1.5 text-sm whitespace-nowrap transition-all ${
+              variant === "B" ? "bg-fire text-white shadow-lg shadow-fire/20" : "text-muted-foreground hover:text-white"
+            }`}
+          >
+            Direção B — Trilha vertical (skewer path)
+          </button>
+        </div>
       </div>
 
       {variant === "A" ? <VariantA /> : <VariantB />}
@@ -121,46 +123,48 @@ function VariantA() {
             {done} de {stages.length} etapas concluídas
           </span>
         </div>
-        <div className="relative flex items-center justify-between">
-          <div className="absolute left-0 right-0 top-6 h-1 rounded-full bg-white/10" />
-          <div
-            className="absolute left-0 top-6 h-1 rounded-full bg-gradient-to-r from-fire to-gold"
-            style={{ width: `${((done - 0.5) / (stages.length - 1)) * 100}%` }}
-          />
-          {stages.map((s) => {
-            const isActive = s.id === active;
-            const isDone = s.status === "done";
-            const isLocked = s.status === "locked";
-            return (
-              <button
-                key={s.id}
-                disabled={isLocked}
-                onClick={() => setActive(s.id)}
-                className="relative z-10 flex flex-col items-center gap-2"
-              >
-                <span
-                  className={`grid h-12 w-12 place-items-center rounded-full border-2 transition ${
-                    isDone
-                      ? "border-fire bg-fire text-white"
-                      : isActive
-                        ? "border-gold bg-black text-gold shadow-[0_0_20px_hsl(var(--gold)/0.5)]"
-                        : "border-white/15 bg-black/60 text-muted-foreground"
-                  } ${isLocked ? "opacity-50" : ""}`}
+        <div className="relative overflow-x-auto pb-4 scrollbar-hidden">
+          <div className="flex items-center justify-between min-w-[600px] px-2">
+            <div className="absolute left-0 right-0 top-6 h-1 rounded-full bg-white/10" />
+            <div
+              className="absolute left-0 top-6 h-1 rounded-full bg-gradient-to-r from-fire to-gold"
+              style={{ width: `${((done - 0.5) / (stages.length - 1)) * 100}%` }}
+            />
+            {stages.map((s) => {
+              const isActive = s.id === active;
+              const isDone = s.status === "done";
+              const isLocked = s.status === "locked";
+              return (
+                <button
+                  key={s.id}
+                  disabled={isLocked}
+                  onClick={() => setActive(s.id)}
+                  className="relative z-10 flex flex-col items-center gap-2 touch-target"
                 >
-                  {isDone ? (
-                    <Check className="h-5 w-5" />
-                  ) : isLocked ? (
-                    <Lock className="h-4 w-4" />
-                  ) : (
-                    <span className="font-display font-bold">{s.id}</span>
-                  )}
-                </span>
-                <span className="w-24 text-center text-[11px] leading-tight text-muted-foreground">
-                  {s.title}
-                </span>
-              </button>
-            );
-          })}
+                  <span
+                    className={`grid h-12 w-12 place-items-center rounded-full border-2 transition ${
+                      isDone
+                        ? "border-fire bg-fire text-white"
+                        : isActive
+                          ? "border-gold bg-black text-gold shadow-[0_0_20px_hsl(var(--gold)/0.5)]"
+                          : "border-white/15 bg-black/60 text-muted-foreground"
+                    } ${isLocked ? "opacity-50" : ""}`}
+                  >
+                    {isDone ? (
+                      <Check className="h-5 w-5" />
+                    ) : isLocked ? (
+                      <Lock className="h-4 w-4" />
+                    ) : (
+                      <span className="font-display font-bold">{s.id}</span>
+                    )}
+                  </span>
+                  <span className="w-24 text-center text-[11px] leading-tight text-muted-foreground">
+                    {s.title}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 

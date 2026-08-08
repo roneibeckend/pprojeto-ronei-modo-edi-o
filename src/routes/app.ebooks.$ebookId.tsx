@@ -119,11 +119,13 @@ function EbookReaderPage() {
 
   return (
     <div className="mx-auto max-w-5xl pb-20">
-      <PageHeader
-        title={ebook.title}
-        subtitle={ebook.subtitle || "E-book Exclusivo"}
-        action={<Link to="/app/cursos" className="btn-ghost-fire text-sm">← Meus Conteúdos</Link>}
-      />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+        <PageHeader
+          title={ebook.title}
+          subtitle={ebook.subtitle || "E-book Exclusivo"}
+        />
+        <Link to="/app/cursos" className="btn-ghost-fire text-sm w-full sm:w-auto">← Meus Conteúdos</Link>
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
         {/* Reader Area */}

@@ -54,15 +54,15 @@ function CoursesPage() {
 
   return (
     <div className="pb-10">
-      <PageHeader
-        title="Meus cursos"
-        subtitle="Gerencie seus treinamentos e descubra novos conteúdos."
-        action={
-          <Link to="/app/cursos/preview" className="btn-ghost-fire text-sm">
-            <Sparkles className="h-4 w-4" /> Ver previews interativas
-          </Link>
-        }
-      />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+        <PageHeader
+          title="Meus cursos"
+          subtitle="Gerencie seus treinamentos e descubra novos conteúdos."
+        />
+        <Link to="/app/cursos/preview" className="btn-ghost-fire text-sm w-full sm:w-auto">
+          <Sparkles className="h-4 w-4" /> Ver previews interativas
+        </Link>
+      </div>
 
       <ProgressSummary 
         totalProgress={totalProgress}
