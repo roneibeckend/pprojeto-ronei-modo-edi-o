@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import { PageHeader } from "@/components/platform/Shell";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -76,11 +78,25 @@ function EbookReaderPage() {
 
   if (isLoadingEnrollments) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-fire" />
+      <div className="mx-auto max-w-5xl pb-20 animate-in fade-in duration-500">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+          <Skeleton className="h-12 w-64" />
+          <Skeleton className="h-10 w-48" />
+        </div>
+        <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
+          <div className="space-y-6">
+            <Skeleton className="h-[600px] w-full rounded-3xl" />
+            <Skeleton className="h-24 w-full rounded-2xl" />
+          </div>
+          <aside className="space-y-6">
+            <Skeleton className="h-[400px] w-full rounded-3xl" />
+            <Skeleton className="h-[200px] w-full rounded-3xl" />
+          </aside>
+        </div>
       </div>
     );
   }
+
 
   const isFree = (ebook.price || 0) === 0;
   const isEnrolled = isEnrolledInEbook(ebook.id);
