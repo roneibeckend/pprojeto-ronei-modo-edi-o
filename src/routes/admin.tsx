@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { 
   LayoutDashboard, 
   Library, 
@@ -18,9 +18,11 @@ import {
   Bell,
   FileText,
   Wallet,
-  TrendingUp
+  TrendingUp,
+  Menu
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/admin")({
   component: AdminRootLayout,
@@ -104,8 +106,6 @@ function AdminRootLayout() {
 
       {/* Sidebar - Mobile */}
       <div className="lg:hidden flex items-center p-4 border-b border-white/10 absolute top-0 w-full z-10 bg-[#0a0a0a]">
-        <import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-        <import { Menu } from "lucide-react";
         <Sheet>
           <SheetTrigger className="p-2">
             <Menu className="h-6 w-6" />
