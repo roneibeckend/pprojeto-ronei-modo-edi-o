@@ -19,7 +19,7 @@ function AffiliateNetworkPage() {
   const { data: network, isLoading } = useQuery({
     queryKey: ["affiliate-network", user?.id],
     enabled: !!user?.id,
-    queryFn: () => getAffiliateNetwork({ affiliateId: user?.id as string })
+    queryFn: () => getAffiliateNetwork({ data: { id: user?.id as string } })
   });
 
   if (isLoading) {

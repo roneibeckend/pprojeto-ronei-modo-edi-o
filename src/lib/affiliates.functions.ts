@@ -33,7 +33,7 @@ export const saveAffiliateMaterial = createServerFn({ method: "POST" })
   });
 
 export const getAffiliateNetwork = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({ affiliateId: z.string() }).parse(data))
+  .validator((data: unknown) => z.object({ id: z.string() }).parse(data))
   .handler(async ({ data }) => {
     const { data: network, error } = await supabaseAdmin
       .from("affiliates")
@@ -43,7 +43,7 @@ export const getAffiliateNetwork = createServerFn({ method: "GET" })
         created_at,
         profile:profiles(name, email)
       `)
-      .eq("referrer_id" as any, data.affiliateId);
+      .eq("referrer_id" as any, data.id);
     
     if (error) throw new Error(error.message);
     return network;

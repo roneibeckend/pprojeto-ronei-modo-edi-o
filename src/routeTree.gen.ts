@@ -47,6 +47,8 @@ import { Route as AppAfiliadosIndexRouteImport } from './routes/app.afiliados.in
 import { Route as AppEbooksEbookIdRouteImport } from './routes/app.ebooks.$ebookId'
 import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.preview'
 import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
+import { Route as AppAfiliadosRedeRouteImport } from './routes/app.afiliados.rede'
+import { Route as AppAfiliadosMateriaisRouteImport } from './routes/app.afiliados.materiais'
 import { Route as AppAfiliadosLinksRouteImport } from './routes/app.afiliados.links'
 import { Route as AppAfiliadosFinanceiroRouteImport } from './routes/app.afiliados.financeiro'
 import { Route as AppAfiliadosConfigRouteImport } from './routes/app.afiliados.config'
@@ -245,6 +247,16 @@ const AppCursosCourseIdRoute = AppCursosCourseIdRouteImport.update({
   path: '/$courseId',
   getParentRoute: () => AppCursosRoute,
 } as any)
+const AppAfiliadosRedeRoute = AppAfiliadosRedeRouteImport.update({
+  id: '/rede',
+  path: '/rede',
+  getParentRoute: () => AppAfiliadosRoute,
+} as any)
+const AppAfiliadosMateriaisRoute = AppAfiliadosMateriaisRouteImport.update({
+  id: '/materiais',
+  path: '/materiais',
+  getParentRoute: () => AppAfiliadosRoute,
+} as any)
 const AppAfiliadosLinksRoute = AppAfiliadosLinksRouteImport.update({
   id: '/links',
   path: '/links',
@@ -322,6 +334,8 @@ export interface FileRoutesByFullPath {
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
+  '/app/afiliados/materiais': typeof AppAfiliadosMateriaisRoute
+  '/app/afiliados/rede': typeof AppAfiliadosRedeRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
@@ -365,6 +379,8 @@ export interface FileRoutesByTo {
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
+  '/app/afiliados/materiais': typeof AppAfiliadosMateriaisRoute
+  '/app/afiliados/rede': typeof AppAfiliadosRedeRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
@@ -413,6 +429,8 @@ export interface FileRoutesById {
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
+  '/app/afiliados/materiais': typeof AppAfiliadosMateriaisRoute
+  '/app/afiliados/rede': typeof AppAfiliadosRedeRoute
   '/app/cursos/$courseId': typeof AppCursosCourseIdRoute
   '/app/cursos/preview': typeof AppCursosPreviewRoute
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
@@ -462,6 +480,8 @@ export interface FileRouteTypes {
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
+    | '/app/afiliados/materiais'
+    | '/app/afiliados/rede'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
@@ -505,6 +525,8 @@ export interface FileRouteTypes {
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
+    | '/app/afiliados/materiais'
+    | '/app/afiliados/rede'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
@@ -552,6 +574,8 @@ export interface FileRouteTypes {
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
+    | '/app/afiliados/materiais'
+    | '/app/afiliados/rede'
     | '/app/cursos/$courseId'
     | '/app/cursos/preview'
     | '/app/ebooks/$ebookId'
@@ -841,6 +865,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCursosCourseIdRouteImport
       parentRoute: typeof AppCursosRoute
     }
+    '/app/afiliados/rede': {
+      id: '/app/afiliados/rede'
+      path: '/rede'
+      fullPath: '/app/afiliados/rede'
+      preLoaderRoute: typeof AppAfiliadosRedeRouteImport
+      parentRoute: typeof AppAfiliadosRoute
+    }
+    '/app/afiliados/materiais': {
+      id: '/app/afiliados/materiais'
+      path: '/materiais'
+      fullPath: '/app/afiliados/materiais'
+      preLoaderRoute: typeof AppAfiliadosMateriaisRouteImport
+      parentRoute: typeof AppAfiliadosRoute
+    }
     '/app/afiliados/links': {
       id: '/app/afiliados/links'
       path: '/links'
@@ -955,6 +993,8 @@ interface AppAfiliadosRouteChildren {
   AppAfiliadosConfigRoute: typeof AppAfiliadosConfigRoute
   AppAfiliadosFinanceiroRoute: typeof AppAfiliadosFinanceiroRoute
   AppAfiliadosLinksRoute: typeof AppAfiliadosLinksRoute
+  AppAfiliadosMateriaisRoute: typeof AppAfiliadosMateriaisRoute
+  AppAfiliadosRedeRoute: typeof AppAfiliadosRedeRoute
   AppAfiliadosIndexRoute: typeof AppAfiliadosIndexRoute
 }
 
@@ -962,6 +1002,8 @@ const AppAfiliadosRouteChildren: AppAfiliadosRouteChildren = {
   AppAfiliadosConfigRoute: AppAfiliadosConfigRoute,
   AppAfiliadosFinanceiroRoute: AppAfiliadosFinanceiroRoute,
   AppAfiliadosLinksRoute: AppAfiliadosLinksRoute,
+  AppAfiliadosMateriaisRoute: AppAfiliadosMateriaisRoute,
+  AppAfiliadosRedeRoute: AppAfiliadosRedeRoute,
   AppAfiliadosIndexRoute: AppAfiliadosIndexRoute,
 }
 
