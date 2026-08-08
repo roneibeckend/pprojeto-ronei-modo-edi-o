@@ -141,8 +141,10 @@ function AffiliateLayout() {
 
   const navItems = [
     { label: "Dashboard", to: "/app/afiliados", icon: LayoutDashboard },
-    { label: "Meus Links", to: "/app/afiliados/links", icon: LinkIcon },
+    { label: "Links", to: "/app/afiliados/links", icon: LinkIcon },
+    { label: "Materiais", to: "/app/afiliados/materiais", icon: Users },
     { label: "Financeiro", to: "/app/afiliados/financeiro", icon: Wallet },
+    { label: "Rede", to: "/app/afiliados/rede", icon: Users },
     { label: "Configurações", to: "/app/afiliados/config", icon: Settings },
   ];
 
