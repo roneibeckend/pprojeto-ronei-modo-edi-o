@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Play, ShoppingCart, Sparkles, Lock } from "lucide-react";
-import { IMG } from "@/lib/platform-data";
+import { IMG, student } from "@/lib/platform-data";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
@@ -40,8 +40,10 @@ function Dashboard() {
     );
   }
 
-  // Fallback para o primeiro curso se não houver dados
-  const lastCourse = dbCourses?.[0];
+  // Fallback para o último curso se o usuário não tiver nada
+  const lastId = student.lastLesson.courseId;
+  const lastCourse = dbCourses?.find(c => c.id === lastId) || dbCourses?.[0];
+
 
 
   return (

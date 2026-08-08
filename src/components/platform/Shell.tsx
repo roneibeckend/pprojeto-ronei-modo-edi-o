@@ -1,5 +1,7 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
+import { useState, type ReactNode, Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import { toast } from "sonner";
 import { Bell } from "lucide-react";
 import { useNotifications } from "@/hooks/use-notifications";
@@ -244,7 +246,21 @@ export function Shell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 pb-24 lg:px-8 lg:py-8 lg:pb-8">{children}</main>
+        <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 pb-24 lg:px-8 lg:py-8 lg:pb-8">
+          <Suspense fallback={
+            <div className="animate-in fade-in duration-500 space-y-8">
+              <Skeleton className="h-10 w-64" />
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <Skeleton className="h-48 w-full rounded-2xl" />
+                <Skeleton className="h-48 w-full rounded-2xl" />
+                <Skeleton className="h-48 w-full rounded-2xl" />
+              </div>
+            </div>
+          }>
+            {children}
+          </Suspense>
+        </main>
+
       </div>
     </div>
   );
