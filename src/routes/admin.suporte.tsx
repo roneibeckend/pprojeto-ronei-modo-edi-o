@@ -9,6 +9,7 @@ import {
   AlertCircle,
   Loader2,
   ChevronRight,
+  ChevronLeft,
   Send,
   Trash2
 } from "lucide-react";
