@@ -146,11 +146,13 @@ function CoursePage() {
 
   return (
     <div>
-      <PageHeader
-        title={course.title}
-        subtitle={`Professor: ${course.teacher_name || "Equipe Espetinho na Veia"}`}
-        action={<Link to="/app/cursos" className="btn-ghost-fire text-sm">← Todos os cursos</Link>}
-      />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+        <PageHeader
+          title={course.title}
+          subtitle={`Professor: ${course.teacher_name || "Equipe Espetinho na Veia"}`}
+        />
+        <Link to="/app/cursos" className="btn-ghost-fire text-sm w-full sm:w-auto">← Todos os cursos</Link>
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         {/* Player */}
