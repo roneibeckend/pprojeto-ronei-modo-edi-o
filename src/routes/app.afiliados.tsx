@@ -94,10 +94,15 @@ function AffiliateLayout() {
             onClick={async () => {
               // Verificar se existe um padrinho pendente nos metadados do usuário
               const { data: { user: currentUser } } = await supabase.auth.getUser();
+              if (!currentUser) {
+                toast.error("Usuário não autenticado");
+                return;
+              }
+
               const pendingReferrerId = currentUser?.user_metadata?.pending_referrer_id;
 
               const { error } = await supabase.from('affiliates').insert({
-                id: user.id,
+                id: currentUser.id,
                 status: 'pending',
                 referrer_id: pendingReferrerId || null
               });
