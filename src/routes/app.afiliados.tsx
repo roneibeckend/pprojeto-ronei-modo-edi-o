@@ -97,7 +97,7 @@ function AffiliateLayout() {
               const pendingReferrerId = currentUser?.user_metadata?.pending_referrer_id;
 
               const { error } = await supabase.from('affiliates').insert({
-                id: user.id,
+                id: currentUser?.id,
                 status: 'pending',
                 referrer_id: pendingReferrerId || null
               });

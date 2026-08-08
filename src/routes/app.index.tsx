@@ -14,14 +14,14 @@ export const Route = createFileRoute("/app/")({
 });
 
 function Dashboard() {
-  const { isEnrolledInCourse, isLoading: isLoadingEnrollments } = useEnrollments();
+  const { isEnrolledInCourse, isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
 
   const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
     queryKey: ["showcase-items"],
     queryFn: async () => {
       const [coursesRes, ebooksRes] = await Promise.all([
         supabase.from("courses").select("*").eq("is_locked", false),
-        supabase.from("ebooks").select("*").eq("is_published", true),
+        supabase.from("ebooks").select("*").eq("is_locked", false), // Usando is_locked como padronizado nos cursos
       ]);
 
       if (coursesRes.error) throw coursesRes.error;
