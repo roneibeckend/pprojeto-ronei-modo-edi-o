@@ -230,7 +230,7 @@ function FinancePage() {
         </div>
 
         {/* Coluna 1: Receita e Profit Table */}
-        <div className="space-y-6 text-left">
+        <div className="space-y-6 text-left lg:col-span-1">
           <section className="border border-white/5 bg-black/40 p-6">
             <div className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <Calculator className="h-4 w-4" style={{ color: ORANGE }} /> Ajustar Receita
@@ -244,7 +244,7 @@ function FinancePage() {
                     type="number"
                     value={revenue}
                     onChange={(e) => setRevenue(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-sm border border-white/10 bg-black pl-11 pr-4 py-3 font-display text-2xl font-extrabold text-emerald-400 outline-none transition focus:border-[color:var(--orange)]"
+                    className="w-full rounded-sm border border-white/10 bg-black pl-11 pr-4 py-3 font-display text-xl sm:text-2xl font-extrabold text-emerald-400 outline-none transition focus:border-[color:var(--orange)] text-[16px]"
                     style={{ ["--orange" as any]: ORANGE }}
                   />
                 </div>
@@ -278,7 +278,7 @@ function FinancePage() {
         </div>
 
         {/* Coluna 2: Custos */}
-        <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left">
+        <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left lg:col-span-1">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <LayoutTemplate className="h-4 w-4" style={{ color: ORANGE }} /> Quadro de Custos
@@ -313,7 +313,7 @@ function FinancePage() {
                     type="number"
                     value={c.value}
                     onChange={(e) => updateCost(c.id, { value: parseFloat(e.target.value) || 0 })}
-                    className="w-full rounded-sm bg-black/60 pl-6 pr-2 py-1 text-right text-sm text-white outline-none focus:bg-black"
+                    className="w-full rounded-sm bg-black/60 pl-6 pr-2 py-1 text-right text-sm text-white outline-none focus:bg-black text-[16px]"
                   />
                 </div>
                 <button
@@ -333,7 +333,7 @@ function FinancePage() {
         </section>
 
         {/* Coluna 3: Sócios */}
-        <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left">
+        <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left lg:col-span-1">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <PieChart className="h-4 w-4" style={{ color: ORANGE }} /> Divisão de Sócios
