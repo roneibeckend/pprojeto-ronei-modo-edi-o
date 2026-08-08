@@ -131,7 +131,7 @@ function AdminRootLayout() {
             </nav>
           </SheetContent>
         </Sheet>
-        <span className="font-bold tracking-widest text-sm uppercase ml-4">Painel Admin</span>
+        <span className="font-bold tracking-widest text-[10px] sm:text-sm uppercase ml-4 truncate flex-1 pr-4">Painel Administrativo</span>
       </div>
 
       {/* Main Content */}

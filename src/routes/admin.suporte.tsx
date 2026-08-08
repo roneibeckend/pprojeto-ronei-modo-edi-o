@@ -191,24 +191,24 @@ function AdminSupportPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-160px)] flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="h-[calc(100vh-160px)] lg:h-[calc(100vh-160px)] flex flex-col gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold">Central de Suporte</h2>
-          <p className="text-sm text-white/40">Gerencie os tickets e dúvidas dos alunos.</p>
+          <h2 className="text-lg sm:text-xl font-bold">Central de Suporte</h2>
+          <p className="text-xs sm:text-sm text-white/40">Gerencie os tickets e dúvidas dos alunos.</p>
         </div>
         
-        <div className="flex items-center gap-2 bg-white/5 p-1 rounded-lg border border-white/10">
+        <div className="flex items-center gap-1 bg-white/5 p-1 rounded-lg border border-white/10 overflow-x-auto scrollbar-hidden">
           {[
             { id: 'all', label: 'Todos' },
             { id: 'open', label: 'Abertos' },
-            { id: 'in_progress', label: 'Em Análise' },
+            { id: 'in_progress', label: 'Análise' },
             { id: 'resolved', label: 'Resolvidos' }
           ].map((t) => (
             <button
               key={t.id}
               onClick={() => setFilter(t.id as any)}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest transition ${
+              className={`px-2 sm:px-3 py-1.5 rounded-md text-[8px] sm:text-[10px] font-bold uppercase tracking-widest transition shrink-0 ${
                 filter === t.id ? 'bg-[#ff6a00] text-black' : 'text-white/40 hover:text-white'
               }`}
             >
@@ -218,9 +218,9 @@ function AdminSupportPage() {
         </div>
       </div>
 
-      <div className="flex-1 grid lg:grid-cols-3 gap-6 overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-hidden">
         {/* Lista de Tickets */}
-        <div className="lg:col-span-1 border border-white/5 bg-[#111] rounded-xl overflow-y-auto">
+        <div className={`lg:col-span-1 border border-white/5 bg-[#111] rounded-xl overflow-y-auto ${selectedTicket ? 'hidden lg:block' : 'block'}`}>
           {loading ? (
             <div className="flex h-64 items-center justify-center">
               <Loader2 className="h-6 w-6 animate-spin text-[#ff6a00]" />
@@ -263,16 +263,21 @@ function AdminSupportPage() {
         </div>
 
         {/* Detalhes do Ticket */}
-        <div className="lg:col-span-2 border border-white/5 bg-[#111] rounded-xl flex flex-col overflow-hidden">
+        <div className={`lg:col-span-2 border border-white/5 bg-[#111] rounded-xl flex flex-col overflow-hidden ${selectedTicket ? 'block' : 'hidden lg:flex'}`}>
           {selectedTicket ? (
             <>
-              <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
-                <div>
-                  <h3 className="font-bold text-lg">{selectedTicket.subject}</h3>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="text-xs text-white/40">{selectedTicket.profiles?.name} ({selectedTicket.profiles?.email})</span>
-                    <span className="h-1 w-1 rounded-full bg-white/20" />
-                    <span className="text-xs text-white/40 font-bold uppercase tracking-widest text-[10px]">{selectedTicket.category}</span>
+              <div className="p-4 sm:p-6 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between bg-white/[0.01] gap-4">
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setSelectedTicket(null)} className="lg:hidden p-2 -ml-2 text-white/40 hover:text-white">
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <div>
+                    <h3 className="font-bold text-base sm:text-lg line-clamp-1">{selectedTicket.subject}</h3>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                      <span className="text-[10px] sm:text-xs text-white/40">{selectedTicket.profiles?.name}</span>
+                      <span className="hidden sm:block h-1 w-1 rounded-full bg-white/20" />
+                      <span className="text-[9px] sm:text-[10px] text-white/40 font-bold uppercase tracking-widest">{selectedTicket.category}</span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

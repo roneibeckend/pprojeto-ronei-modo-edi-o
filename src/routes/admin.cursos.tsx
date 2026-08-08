@@ -161,10 +161,10 @@ function AdminCursosPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold">Gestão de Cursos</h2>
-          <p className="text-sm text-white/40 text-left">Gerencie o catálogo de treinamentos e videoaulas.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 text-left">
+        <div className="space-y-1">
+          <h2 className="text-lg sm:text-xl font-bold">Gestão de Cursos</h2>
+          <p className="text-[10px] sm:text-sm text-white/40">Gerencie o catálogo de treinamentos e videoaulas.</p>
         </div>
         <button 
           onClick={() => { 
@@ -177,9 +177,9 @@ function AdminCursosPage() {
             }); 
             setIsModalOpen(true); 
           }}
-          className="flex items-center justify-center gap-2 bg-[#ff6a00] px-4 py-2.5 rounded-lg text-sm font-bold text-black hover:bg-[#ff8c33] transition-colors"
+          className="flex items-center justify-center gap-2 bg-[#ff6a00] px-5 py-3 sm:py-2.5 rounded-xl sm:rounded-lg text-sm font-bold text-black hover:bg-[#ff8c33] transition-colors w-full sm:w-auto"
         >
-          <Plus className="h-4 w-4" /> Criar primeiro curso
+          <Plus className="h-4 w-4" /> Criar Novo Curso
         </button>
       </div>
 
@@ -237,24 +237,24 @@ function AdminCursosPage() {
             <tbody className="divide-y divide-white/5">
               {courses.map((course) => (
                 <tr key={course.id} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
+                  <td className="px-4 sm:px-6 py-4">
+                    <div className="flex items-center gap-3 sm:gap-4">
                       {course.cover_url ? (
-                        <img src={course.cover_url} alt={course.title} className="h-10 w-16 object-cover rounded bg-white/5" />
+                        <img src={course.cover_url} alt={course.title} className="h-8 w-12 sm:h-10 sm:w-16 object-cover rounded bg-white/5 shrink-0" />
                       ) : (
-                        <div className="h-10 w-16 rounded bg-white/5 flex items-center justify-center text-white/20">
-                          <Library className="h-5 w-5" />
+                        <div className="h-8 w-12 sm:h-10 sm:w-16 rounded bg-white/5 flex items-center justify-center text-white/20 shrink-0">
+                          <Library className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
                       )}
-                      <div>
-                        <div className="font-bold">{course.title}</div>
-                        <div className="text-[10px] text-white/20 uppercase tracking-tighter">
+                      <div className="min-w-0">
+                        <div className="font-bold text-xs sm:text-sm truncate">{course.title}</div>
+                        <div className="hidden sm:block text-[10px] text-white/20 uppercase tracking-tighter">
                           Atu. {format(new Date(course.updated_at), "dd/MM/yy HH:mm", { locale: ptBR })}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="hidden md:table-cell px-6 py-4">
                     <div className="flex flex-col">
                       <span className="font-medium">{course.modules?.length || 0} Módulos</span>
                       <span className="text-[10px] text-white/40">
@@ -262,39 +262,32 @@ function AdminCursosPage() {
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 sm:px-6 py-4">
                     <span className={cn(
-                      "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider",
+                      "px-1.5 py-0.5 rounded text-[8px] sm:text-[10px] font-bold uppercase tracking-wider",
                       course.status === 'published' ? "bg-green-500/10 text-green-500" : "bg-yellow-500/10 text-yellow-500"
                     )}>
-                      {course.status === 'published' ? 'Publicado' : 'Rascunho'}
+                      {course.status === 'published' ? 'PUB' : 'RASC'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-1">
+                  <td className="px-4 sm:px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-0.5 sm:gap-1">
                       <button 
                         onClick={() => handleStatusChange(course.id, course.status === 'published' ? 'draft' : 'published')}
                         title={course.status === 'published' ? 'Despublicar' : 'Publicar'}
-                        className="p-2 text-white/40 hover:text-white transition-colors"
+                        className="p-1.5 sm:p-2 text-white/40 hover:text-white transition-colors"
                       >
                         {course.status === 'published' ? <Eye className="h-4 w-4" /> : <Archive className="h-4 w-4" />}
                       </button>
                       <button 
-                        onClick={() => handleDuplicate(course)}
-                        title="Duplicar"
-                        className="p-2 text-white/40 hover:text-white transition-colors"
-                      >
-                        <Copy className="h-4 w-4" />
-                      </button>
-                      <button 
                         onClick={() => { setEditingItem(course); setIsModalOpen(true); }}
-                        className="p-2 text-white/40 hover:text-white transition-colors"
+                        className="p-1.5 sm:p-2 text-white/40 hover:text-white transition-colors"
                       >
                         <Edit3 className="h-4 w-4" />
                       </button>
                       <button 
                         onClick={() => handleDelete(course)}
-                        className="p-2 text-white/40 hover:text-red-500 transition-colors"
+                        className="p-1.5 sm:p-2 text-white/40 hover:text-red-500 transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -332,11 +325,11 @@ function AdminCursosPage() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left overflow-y-auto">
-          <div className="w-full max-w-4xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-8 min-h-[600px] flex flex-col">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo Curso"}</h3>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors"><X className="h-5 w-5" /></button>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 backdrop-blur-md p-0 sm:p-4 text-left overflow-y-auto">
+          <div className="w-full h-full sm:h-auto sm:max-w-4xl bg-[#0e0e0e] sm:border sm:border-white/10 sm:rounded-2xl p-6 flex flex-col">
+            <div className="flex items-center justify-between mb-6 shrink-0">
+              <h3 className="text-lg sm:text-xl font-bold truncate pr-4">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo Curso"}</h3>
+              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors shrink-0"><X className="h-5 w-5" /></button>
             </div>
 
             <Tabs defaultValue="info" className="flex-1 flex flex-col">
