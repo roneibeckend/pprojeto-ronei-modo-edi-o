@@ -195,19 +195,21 @@ function CoursePage() {
 
           {/* Tabs */}
           <div className="glass rounded-2xl p-5">
-            <div className="mb-4 flex gap-2">
-              <button
-                onClick={() => setTab("materiais")}
-                className={`rounded-full px-4 py-1.5 text-sm ${tab === "materiais" ? "bg-fire text-white" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                <FileText className="mr-1.5 inline h-3.5 w-3.5" /> Materiais
-              </button>
-              <button
-                onClick={() => setTab("anotacoes")}
-                className={`rounded-full px-4 py-1.5 text-sm ${tab === "anotacoes" ? "bg-fire text-white" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                <StickyNote className="mr-1.5 inline h-3.5 w-3.5" /> Anotações
-              </button>
+            <div className="mb-4 flex overflow-x-auto pb-2 gap-2 scrollbar-hidden">
+              <div className="flex min-w-max">
+                <button
+                  onClick={() => setTab("materiais")}
+                  className={`rounded-full px-4 py-1.5 text-sm whitespace-nowrap transition ${tab === "materiais" ? "bg-fire text-white shadow-lg shadow-fire/20" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  <FileText className="mr-1.5 inline h-3.5 w-3.5" /> Materiais
+                </button>
+                <button
+                  onClick={() => setTab("anotacoes")}
+                  className={`rounded-full px-4 py-1.5 text-sm whitespace-nowrap transition ${tab === "anotacoes" ? "bg-fire text-white shadow-lg shadow-fire/20" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  <StickyNote className="mr-1.5 inline h-3.5 w-3.5" /> Anotações
+                </button>
+              </div>
             </div>
             {tab === "materiais" ? (
               <ul className="space-y-2 text-sm">
