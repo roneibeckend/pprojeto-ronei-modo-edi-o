@@ -92,10 +92,14 @@ function AffiliateLayout() {
 
           <button 
             onClick={async () => {
-              if (!user) return;
+              // Verificar se existe um padrinho pendente nos metadados do usuário
+              const { data: { user: currentUser } } = await supabase.auth.getUser();
+              const pendingReferrerId = currentUser?.user_metadata?.pending_referrer_id;
+
               const { error } = await supabase.from('affiliates').insert({
                 id: user.id,
-                status: 'pending'
+                status: 'pending',
+                referrer_id: pendingReferrerId || null
               });
               if (error) {
                 toast.error("Erro ao solicitar cadastro: " + error.message);
