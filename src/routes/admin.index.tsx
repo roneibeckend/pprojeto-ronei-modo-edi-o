@@ -78,25 +78,25 @@ function AdminDashboard() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card, i) => (
-          <div key={i} className="p-6 rounded-xl border border-white/5 bg-[#111] group hover:border-white/10 transition">
+          <div key={i} className="p-4 sm:p-6 rounded-xl border border-white/5 bg-[#111] group hover:border-white/10 transition">
             <div className="flex items-center justify-between mb-4">
               <div className={`p-2 rounded-lg bg-white/5 ${card.color}`}>
                 <card.icon className="h-5 w-5" />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-widest text-white/20">Real-time</span>
             </div>
-            <div className="text-3xl font-bold tracking-tight">{card.value}</div>
-            <div className="text-xs text-white/40 mt-1 uppercase tracking-wider font-medium">{card.label}</div>
+            <div className="text-2xl sm:text-3xl font-bold tracking-tight">{card.value}</div>
+            <div className="text-[10px] sm:text-xs text-white/40 mt-1 uppercase tracking-wider font-medium">{card.label}</div>
           </div>
         ))}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="p-6 rounded-xl border border-white/5 bg-[#111]">
+        <div className="p-4 sm:p-6 rounded-xl border border-white/5 bg-[#111]">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold uppercase tracking-tight">Atalhos Rápidos</h3>
+            <h3 className="font-bold uppercase tracking-tight text-sm sm:text-base">Atalhos Rápidos</h3>
           </div>
           <div className="grid gap-3">
             {[
@@ -110,7 +110,7 @@ function AdminDashboard() {
               <Link 
                 key={i} 
                 to={link.to}
-                className="flex items-center justify-between p-4 rounded-lg bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition group text-left"
+                className="flex items-center justify-between p-3 sm:p-4 rounded-lg bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-medium">{link.label}</span>
@@ -124,9 +124,9 @@ function AdminDashboard() {
           </div>
         </div>
 
-        <div className="p-6 rounded-xl border border-white/5 bg-[#111]">
+        <div className="p-4 sm:p-6 rounded-xl border border-white/5 bg-[#111]">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold uppercase tracking-tight flex items-center gap-2">
+            <h3 className="font-bold uppercase tracking-tight flex items-center gap-2 text-sm sm:text-base">
               <Activity className="h-4 w-4 text-[#ff6a00]" />
               Saúde do Sistema
             </h3>
@@ -135,13 +135,13 @@ function AdminDashboard() {
           
           <div className="space-y-4">
             <div className="flex flex-col items-center justify-center py-2">
-              <div className="h-16 w-16 rounded-full bg-[#ff6a00]/10 flex items-center justify-center text-[#ff6a00] mb-4">
-                <DollarSign className="h-8 w-8" />
+              <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-[#ff6a00]/10 flex items-center justify-center text-[#ff6a00] mb-4">
+                <DollarSign className="h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="text-2xl font-bold tracking-tight">
+              <h3 className="text-xl sm:text-2xl font-bold tracking-tight">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats?.revenue || 0)}
               </h3>
-              <p className="text-sm text-white/40 mt-1 uppercase tracking-widest font-bold">Faturamento Estimado</p>
+              <p className="text-[10px] sm:text-sm text-white/40 mt-1 uppercase tracking-widest font-bold">Faturamento Estimado</p>
             </div>
 
             <div className="pt-4 border-t border-white/5 space-y-2">

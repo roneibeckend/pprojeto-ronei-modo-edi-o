@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { 
   LayoutDashboard, 
   Library, 
@@ -18,9 +18,11 @@ import {
   Bell,
   FileText,
   Wallet,
-  TrendingUp
+  TrendingUp,
+  Menu
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/admin")({
   component: AdminRootLayout,
@@ -69,8 +71,8 @@ function AdminRootLayout() {
 
   return (
     <div className="flex h-dvh bg-[#0a0a0a] text-white overflow-hidden safe-top safe-bottom">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-white/10 flex flex-col shrink-0">
+      {/* Sidebar - Desktop */}
+      <aside className="hidden lg:flex w-64 border-r border-white/10 flex-col shrink-0">
         <div className="p-6 border-b border-white/10 flex items-center gap-2 shrink-0">
           <ShieldCheck className="h-6 w-6" style={{ color: ORANGE }} />
           <span className="font-bold tracking-widest text-sm uppercase truncate">Painel Admin</span>
@@ -102,14 +104,44 @@ function AdminRootLayout() {
         </div>
       </aside>
 
+      {/* Sidebar - Mobile */}
+      <div className="lg:hidden flex items-center p-4 border-b border-white/10 absolute top-0 w-full z-10 bg-[#0a0a0a]">
+        <Sheet>
+          <SheetTrigger className="p-2">
+            <Menu className="h-6 w-6" />
+          </SheetTrigger>
+          <SheetContent side="left" className="bg-[#0a0a0a] border-white/10 w-64 p-0">
+            <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden mt-12">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition shrink-0 ${
+                      active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </SheetContent>
+        </Sheet>
+        <span className="font-bold tracking-widest text-[10px] sm:text-sm uppercase ml-4 truncate flex-1 pr-4">Painel Administrativo</span>
+      </div>
+
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <header className="p-8 border-b border-white/10">
+      <main className="flex-1 overflow-y-auto pt-20 lg:pt-0">
+        <header className="p-8 border-b border-white/10 hidden lg:block">
           <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight">
             Painel Central <span style={{ color: ORANGE }}>Administrativo</span>
           </h1>
         </header>
-        <div className="p-8">
+        <div className="p-4 lg:p-8">
           <Outlet />
         </div>
       </main>

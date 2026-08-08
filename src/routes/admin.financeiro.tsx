@@ -169,23 +169,23 @@ function FinancePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-sm text-black" style={{ backgroundColor: ORANGE }}>
+          <div className="grid h-10 w-10 place-items-center rounded-sm text-black shrink-0" style={{ backgroundColor: ORANGE }}>
             <DollarSign className="h-5 w-5" strokeWidth={2.5} />
           </div>
           <div>
-            <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-white text-left">
+            <h2 className="font-display text-lg sm:text-xl font-extrabold uppercase tracking-tight text-white text-left">
               Painel Financeiro
             </h2>
-            <p className="text-xs text-white/40 text-left">Custos, lucro e divisão de sócios</p>
+            <p className="text-[10px] sm:text-xs text-white/40 text-left">Custos, lucro e divisão de sócios</p>
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-2">
           <button
             onClick={handleDistribute}
-            className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-emerald-400 transition-all hover:bg-emerald-500/20 active:scale-[0.98]"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 sm:px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest text-emerald-400 transition-all hover:bg-emerald-500/20 active:scale-[0.98]"
           >
             <TrendingUp className="h-4 w-4" />
             Distribuir Lucros
@@ -194,7 +194,7 @@ function FinancePage() {
           <button
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending}
-            className="inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-black transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#ff6a00] px-4 sm:px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest text-black transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
           >
             {saveMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -209,28 +209,28 @@ function FinancePage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Resumo */}
         <div className="lg:col-span-3">
-           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-left">
-              <div className="border border-white/5 bg-white/[0.02] p-5">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Receita Bruta</div>
-                <div className="text-2xl font-display font-extrabold text-white">{brl(revenue)}</div>
+           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-left">
+              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5">
+                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Receita Bruta</div>
+                <div className="text-lg sm:text-2xl font-display font-extrabold text-white">{brl(revenue)}</div>
               </div>
-              <div className="border border-white/5 bg-white/[0.02] p-5">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Custos Totais</div>
-                <div className="text-2xl font-display font-extrabold text-red-400">{brl(totalCost)}</div>
+              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5">
+                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Custos Totais</div>
+                <div className="text-lg sm:text-2xl font-display font-extrabold text-red-400">{brl(totalCost)}</div>
               </div>
-              <div className="border border-white/5 bg-white/[0.02] p-5">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Lucro Líquido</div>
-                <div className="text-2xl font-display font-extrabold text-emerald-400">{brl(profit)}</div>
+              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5">
+                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Lucro Líquido</div>
+                <div className="text-lg sm:text-2xl font-display font-extrabold text-emerald-400">{brl(profit)}</div>
               </div>
-              <div className="border border-white/5 bg-white/[0.02] p-5">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Margem Líquida</div>
-                <div className={`text-2xl font-display font-extrabold ${margin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{margin.toFixed(1)}%</div>
+              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5">
+                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Margem Líquida</div>
+                <div className={`text-lg sm:text-2xl font-display font-extrabold ${margin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{margin.toFixed(1)}%</div>
               </div>
            </div>
         </div>
 
         {/* Coluna 1: Receita e Profit Table */}
-        <div className="space-y-6 text-left">
+        <div className="space-y-6 text-left lg:col-span-1">
           <section className="border border-white/5 bg-black/40 p-6">
             <div className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <Calculator className="h-4 w-4" style={{ color: ORANGE }} /> Ajustar Receita
@@ -244,7 +244,7 @@ function FinancePage() {
                     type="number"
                     value={revenue}
                     onChange={(e) => setRevenue(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-sm border border-white/10 bg-black pl-11 pr-4 py-3 font-display text-2xl font-extrabold text-emerald-400 outline-none transition focus:border-[color:var(--orange)]"
+                    className="w-full rounded-sm border border-white/10 bg-black pl-11 pr-4 py-3 font-display text-xl sm:text-2xl font-extrabold text-emerald-400 outline-none transition focus:border-[color:var(--orange)] text-[16px]"
                     style={{ ["--orange" as any]: ORANGE }}
                   />
                 </div>
@@ -278,7 +278,7 @@ function FinancePage() {
         </div>
 
         {/* Coluna 2: Custos */}
-        <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left">
+        <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left lg:col-span-1">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <LayoutTemplate className="h-4 w-4" style={{ color: ORANGE }} /> Quadro de Custos
@@ -313,7 +313,7 @@ function FinancePage() {
                     type="number"
                     value={c.value}
                     onChange={(e) => updateCost(c.id, { value: parseFloat(e.target.value) || 0 })}
-                    className="w-full rounded-sm bg-black/60 pl-6 pr-2 py-1 text-right text-sm text-white outline-none focus:bg-black"
+                    className="w-full rounded-sm bg-black/60 pl-6 pr-2 py-1 text-right text-sm text-white outline-none focus:bg-black text-[16px]"
                   />
                 </div>
                 <button
@@ -333,7 +333,7 @@ function FinancePage() {
         </section>
 
         {/* Coluna 3: Sócios */}
-        <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left">
+        <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left lg:col-span-1">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <PieChart className="h-4 w-4" style={{ color: ORANGE }} /> Divisão de Sócios
