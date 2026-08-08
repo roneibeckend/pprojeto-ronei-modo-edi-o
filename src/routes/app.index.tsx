@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Play, BookOpen, TrendingUp, Award, Flame, Lock, ShoppingCart, Sparkles, Loader2 } from "lucide-react";
-import { PageHeader } from "@/components/platform/Shell";
-import { student, IMG } from "@/lib/platform-data";
+import { Play, ShoppingCart, Sparkles, Lock } from "lucide-react";
+import { IMG, student } from "@/lib/platform-data";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
-import { useAuth } from "@/hooks/use-auth";
+import { CourseCardSkeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({
@@ -15,7 +14,6 @@ export const Route = createFileRoute("/app/")({
 });
 
 function Dashboard() {
-  const { user } = useAuth();
   const { isEnrolledInCourse, isLoading: isLoadingEnrollments } = useEnrollments();
 
   const { data: dbCourses, isLoading: isLoadingCourses } = useQuery({
@@ -29,8 +27,15 @@ function Dashboard() {
 
   if (isLoadingCourses || isLoadingEnrollments) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-fire" />
+      <div className="space-y-8">
+        <section>
+          <div className="mb-6 h-8 w-48 animate-pulse rounded-lg bg-white/5" />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <CourseCardSkeleton key={i} />
+            ))}
+          </div>
+        </section>
       </div>
     );
   }
@@ -38,6 +43,8 @@ function Dashboard() {
   // Fallback para o último curso se o usuário não tiver nada
   const lastId = student.lastLesson.courseId;
   const lastCourse = dbCourses?.find(c => c.id === lastId) || dbCourses?.[0];
+
+
 
   return (
     <div className="space-y-8">

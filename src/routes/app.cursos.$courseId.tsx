@@ -1,8 +1,7 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { VideoPlayer } from "@/components/platform/VideoPlayer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
@@ -10,6 +9,10 @@ import { createAsaasPaymentLink } from "@/lib/asaas.functions";
 import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const VideoPlayer = lazy(() => import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer })));
+
 
 export const Route = createFileRoute("/app/cursos/$courseId")({
   head: ({ params }) => {
@@ -129,11 +132,22 @@ function CoursePage() {
 
   if (isLoadingEnrollments) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-fire" />
+      <div className="animate-in fade-in duration-500 space-y-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+          <Skeleton className="h-12 w-64" />
+          <Skeleton className="h-10 w-48" />
+        </div>
+        <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+          <div className="space-y-4">
+            <Skeleton className="aspect-video w-full rounded-2xl" />
+            <Skeleton className="h-20 w-full rounded-2xl" />
+          </div>
+          <Skeleton className="h-[600px] w-full rounded-2xl" />
+        </div>
       </div>
     );
   }
+
 
   if (!active) {
     return (
@@ -158,13 +172,16 @@ function CoursePage() {
         {/* Player */}
         <div className="min-w-0 space-y-4">
           <div className="overflow-hidden rounded-2xl">
-            <VideoPlayer
-              videoId={active.id}
-              src={active.video_url || ""}
-              poster={course.cover_url || ""}
-              title={active.title}
-              className="w-full"
-            />
+            <Suspense fallback={<Skeleton className="aspect-video w-full rounded-2xl" />}>
+              <VideoPlayer
+                videoId={active.id}
+                src={active.video_url || ""}
+                poster={course.cover_url || ""}
+                title={active.title}
+                className="w-full"
+              />
+            </Suspense>
+
             <div className="flex flex-wrap items-center justify-between gap-3 p-5 glass border-t-0 rounded-t-none">
               <div className="min-w-0">
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">Aula atual</div>
