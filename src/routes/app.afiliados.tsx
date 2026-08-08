@@ -92,10 +92,14 @@ function AffiliateLayout() {
 
           <button 
             onClick={async () => {
-              if (!user) return;
+              // Verificar se existe um padrinho pendente nos metadados do usuário
+              const { data: { user: currentUser } } = await supabase.auth.getUser();
+              const pendingReferrerId = currentUser?.user_metadata?.pending_referrer_id;
+
               const { error } = await supabase.from('affiliates').insert({
                 id: user.id,
-                status: 'pending'
+                status: 'pending',
+                referrer_id: pendingReferrerId || null
               });
               if (error) {
                 toast.error("Erro ao solicitar cadastro: " + error.message);
@@ -141,8 +145,10 @@ function AffiliateLayout() {
 
   const navItems = [
     { label: "Dashboard", to: "/app/afiliados", icon: LayoutDashboard },
-    { label: "Meus Links", to: "/app/afiliados/links", icon: LinkIcon },
+    { label: "Links", to: "/app/afiliados/links", icon: LinkIcon },
+    { label: "Materiais", to: "/app/afiliados/materiais", icon: Users },
     { label: "Financeiro", to: "/app/afiliados/financeiro", icon: Wallet },
+    { label: "Rede", to: "/app/afiliados/rede", icon: Users },
     { label: "Configurações", to: "/app/afiliados/config", icon: Settings },
   ];
 

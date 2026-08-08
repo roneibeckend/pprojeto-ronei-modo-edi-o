@@ -49,6 +49,38 @@ export type Database = {
           },
         ]
       }
+      affiliate_custom_commissions: {
+        Row: {
+          affiliate_id: string
+          commission_rate: number
+          course_id: string
+          created_at: string | null
+          id: string
+        }
+        Insert: {
+          affiliate_id: string
+          commission_rate: number
+          course_id: string
+          created_at?: string | null
+          id?: string
+        }
+        Update: {
+          affiliate_id?: string
+          commission_rate?: number
+          course_id?: string
+          created_at?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_custom_commissions_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_links: {
         Row: {
           affiliate_id: string
@@ -90,6 +122,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      affiliate_materials: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          file_url: string
+          id: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          file_url: string
+          id?: string
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          file_url?: string
+          id?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       affiliate_sales: {
         Row: {
@@ -147,6 +212,7 @@ export type Database = {
           created_at: string
           id: string
           pix_key: string | null
+          referrer_id: string | null
           status: Database["public"]["Enums"]["affiliate_status"]
           total_earnings: number
           updated_at: string
@@ -158,6 +224,7 @@ export type Database = {
           created_at?: string
           id: string
           pix_key?: string | null
+          referrer_id?: string | null
           status?: Database["public"]["Enums"]["affiliate_status"]
           total_earnings?: number
           updated_at?: string
@@ -169,6 +236,7 @@ export type Database = {
           created_at?: string
           id?: string
           pix_key?: string | null
+          referrer_id?: string | null
           status?: Database["public"]["Enums"]["affiliate_status"]
           total_earnings?: number
           updated_at?: string
@@ -179,6 +247,13 @@ export type Database = {
             columns: ["id"]
             isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliates_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
             referencedColumns: ["id"]
           },
         ]

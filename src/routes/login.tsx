@@ -30,6 +30,13 @@ function LoginPage() {
 
   // Se já estiver logado, manda direto para a página inicial
   useEffect(() => {
+    // Capturar referência do afiliado da URL para persistir após login/signup
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    if (ref) {
+      localStorage.setItem('affiliate_referrer_code', ref);
+    }
+
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/inicio" });
     });
