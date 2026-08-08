@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/platform/Shell";
 import { student, orders } from "@/lib/platform-data";
 import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/app/perfil")({
   head: () => ({ meta: [{ title: "Meu perfil — Espetinho na Veia" }] }),
@@ -9,6 +11,31 @@ export const Route = createFileRoute("/app/perfil")({
 });
 
 function ProfilePage() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="animate-in fade-in duration-500">
+        <PageHeader title="Meu perfil" subtitle="Gerencie seus dados e veja seu histórico de compras." />
+        <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
+          <aside className="space-y-6">
+            <Skeleton className="h-[300px] w-full rounded-2xl" />
+            <Skeleton className="h-[200px] w-full rounded-2xl" />
+          </aside>
+          <div className="space-y-8">
+            <Skeleton className="h-[400px] w-full rounded-2xl" />
+            <Skeleton className="h-[300px] w-full rounded-2xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
       <PageHeader title="Meu perfil" subtitle="Gerencie seus dados e veja seu histórico de compras." />

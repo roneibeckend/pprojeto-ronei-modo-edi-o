@@ -40,10 +40,9 @@ function Dashboard() {
     );
   }
 
+  // Fallback para o primeiro curso se não houver dados
+  const lastCourse = dbCourses?.[0];
 
-  // Fallback para o último curso se o usuário não tiver nada
-  const lastId = student.lastLesson.courseId;
-  const lastCourse = dbCourses?.find(c => c.id === lastId) || dbCourses?.[0];
 
   return (
     <div className="space-y-8">

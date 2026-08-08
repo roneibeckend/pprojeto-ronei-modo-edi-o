@@ -5,21 +5,16 @@ import {
   Send, 
   MessageCircle, 
   Ticket as TicketIcon, 
-  ChevronRight, 
-  User, 
-  HelpCircle,
   PlusCircle,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
   Loader2
 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { supportQuestions } from "@/lib/platform-data";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/app/suporte")({
   head: () => ({ meta: [{ title: "Suporte e Central de Ajuda — Espetinho na Veia" }] }),
@@ -29,6 +24,7 @@ export const Route = createFileRoute("/app/suporte")({
 type Msg = { role: "user" | "ai"; text: string; time: string };
 
 function SupportPage() {
+
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"chat" | "tickets">("chat");
@@ -182,6 +178,25 @@ function SupportPage() {
     }
   };
 
+  if (isLoadingTickets) {
+    return (
+      <div className="animate-in fade-in duration-500">
+        <PageHeader title="Central de Suporte" subtitle="Escolha como deseja ser atendido hoje." />
+        <div className="mb-8 flex gap-2">
+          <Skeleton className="h-12 w-48" />
+          <Skeleton className="h-12 w-48" />
+        </div>
+        <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
+          <Skeleton className="h-[600px] w-full rounded-2xl" />
+          <div className="space-y-6">
+            <Skeleton className="h-[200px] w-full rounded-2xl" />
+            <Skeleton className="h-[300px] w-full rounded-2xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
       <PageHeader
@@ -214,6 +229,7 @@ function SupportPage() {
           Meus Chamados
         </button>
       </div>
+
 
       <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
         {/* Main Content Area */}
