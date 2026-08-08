@@ -74,12 +74,12 @@ function ProfilePage() {
         <div className="space-y-8">
           {/* Personal Data Form */}
           <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="font-display text-xl font-bold text-white">Dados da Conta</h3>
                 <p className="text-sm text-white/40">Mantenha suas informações sempre atualizadas.</p>
               </div>
-              <button className="btn-fire px-6 text-sm font-bold uppercase tracking-widest">Salvar</button>
+              <button className="btn-fire w-full sm:w-auto px-6 py-3 sm:py-2 text-sm font-bold uppercase tracking-widest">Salvar</button>
             </div>
             
             <div className="grid gap-6 md:grid-cols-2">
@@ -103,33 +103,35 @@ function ProfilePage() {
             </div>
 
             <div className="mt-6 overflow-hidden rounded-xl border border-white/5">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="bg-white/5 text-[10px] font-bold uppercase tracking-widest text-white/40">
-                    <th className="px-6 py-4">ID do Pedido</th>
-                    <th className="px-6 py-4">Data</th>
-                    <th className="px-6 py-4">Produto</th>
-                    <th className="hidden px-6 py-4 md:table-cell">Status</th>
-                    <th className="px-6 py-4 text-right">Valor</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {orders.map((order) => (
-                    <tr key={order.id} className="transition-colors hover:bg-white/[0.02]">
-                      <td className="px-6 py-4 font-mono font-medium text-[#ff6a00]">{order.id}</td>
-                      <td className="px-6 py-4 text-white/60">{order.date}</td>
-                      <td className="px-6 py-4 font-medium">{order.product}</td>
-                      <td className="hidden px-6 py-4 md:table-cell">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-500">
-                          <CheckCircle2 className="h-3 w-3" />
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right font-bold text-white">{order.value}</td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm min-w-[600px] md:min-w-0">
+                  <thead>
+                    <tr className="bg-white/5 text-[10px] font-bold uppercase tracking-widest text-white/40">
+                      <th className="px-6 py-4">ID do Pedido</th>
+                      <th className="px-6 py-4">Data</th>
+                      <th className="px-6 py-4">Produto</th>
+                      <th className="hidden md:table-cell px-6 py-4">Status</th>
+                      <th className="px-6 py-4 text-right">Valor</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {orders.map((order) => (
+                      <tr key={order.id} className="transition-colors hover:bg-white/[0.02]">
+                        <td className="px-6 py-4 font-mono font-medium text-[#ff6a00]">{order.id}</td>
+                        <td className="px-6 py-4 text-white/60">{order.date}</td>
+                        <td className="px-6 py-4 font-medium">{order.product}</td>
+                        <td className="hidden md:table-cell px-6 py-4">
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-500">
+                            <CheckCircle2 className="h-3 w-3" />
+                            {order.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right font-bold text-white">{order.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               {orders.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="mb-4 grid h-12 w-12 place-items-center rounded-full bg-white/5">
