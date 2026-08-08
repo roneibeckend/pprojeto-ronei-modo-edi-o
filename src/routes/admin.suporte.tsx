@@ -192,8 +192,8 @@ function AdminSupportPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-160px)] lg:h-[calc(100vh-160px)] flex flex-col gap-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="h-full lg:h-[calc(100vh-160px)] flex flex-col gap-6 overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
         <div>
           <h2 className="text-lg sm:text-xl font-bold">Central de Suporte</h2>
           <p className="text-xs sm:text-sm text-white/40">Gerencie os tickets e dúvidas dos alunos.</p>
@@ -232,7 +232,7 @@ function AdminSupportPage() {
                 <button
                   key={ticket.id}
                   onClick={() => setSelectedTicket(ticket)}
-                  className={`w-full p-4 text-left transition hover:bg-white/[0.02] ${
+                  className={`w-full p-4 sm:p-5 text-left transition hover:bg-white/[0.02] ${
                     selectedTicket?.id === ticket.id ? 'bg-[#ff6a00]/5 border-l-2 border-[#ff6a00]' : ''
                   }`}
                 >
@@ -353,7 +353,7 @@ function AdminSupportPage() {
                     placeholder="Escreva sua resposta para o aluno..."
                     value={reply}
                     onChange={(e) => setReply(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl p-4 pr-12 text-sm outline-none focus:border-[#ff6a00] transition min-h-[100px] resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl p-4 pr-12 text-sm outline-none focus:border-[#ff6a00] transition min-h-[100px] resize-none text-[16px]"
                     disabled={selectedTicket.status === 'resolved'}
                   />
                   <button
