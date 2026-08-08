@@ -19,6 +19,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AppSuporteRouteImport } from './routes/app.suporte'
 import { Route as AppReceitasRouteImport } from './routes/app.receitas'
 import { Route as AppProgressoRouteImport } from './routes/app.progresso'
@@ -106,6 +107,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppSuporteRoute = AppSuporteRouteImport.update({
   id: '/suporte',
@@ -326,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -371,6 +378,7 @@ export interface FileRoutesByTo {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -421,6 +429,7 @@ export interface FileRoutesById {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -472,6 +481,7 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
+    | '/auth/callback'
     | '/admin/'
     | '/app/'
     | '/admin/alunos/$studentId'
@@ -517,6 +527,7 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
+    | '/auth/callback'
     | '/admin'
     | '/app'
     | '/admin/alunos/$studentId'
@@ -566,6 +577,7 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
+    | '/auth/callback'
     | '/admin/'
     | '/app/'
     | '/admin/alunos/$studentId'
@@ -593,6 +605,7 @@ export interface RootRouteChildren {
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   ApiPublicDailyFinancialReportRoute: typeof ApiPublicDailyFinancialReportRoute
   ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
 }
@@ -668,6 +681,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/app/suporte': {
       id: '/app/suporte'
@@ -1070,19 +1090,10 @@ const rootRouteChildren: RootRouteChildren = {
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   ApiPublicDailyFinancialReportRoute: ApiPublicDailyFinancialReportRoute,
   ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
