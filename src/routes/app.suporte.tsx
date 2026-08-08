@@ -190,10 +190,10 @@ function SupportPage() {
       />
 
       {/* Tabs Navigation */}
-      <div className="mb-8 flex gap-2">
+      <div className="mb-8 flex flex-col sm:flex-row gap-2">
         <button 
           onClick={() => setActiveTab("chat")}
-          className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold uppercase tracking-widest transition ${
+          className={`flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold uppercase tracking-widest transition w-full sm:w-auto ${
             activeTab === "chat" 
               ? "bg-[#ff6a00] text-black shadow-lg shadow-[#ff6a00]/20" 
               : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white"
@@ -204,7 +204,7 @@ function SupportPage() {
         </button>
         <button 
           onClick={() => setActiveTab("tickets")}
-          className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold uppercase tracking-widest transition ${
+          className={`flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold uppercase tracking-widest transition w-full sm:w-auto ${
             activeTab === "tickets" 
               ? "bg-[#ff6a00] text-black shadow-lg shadow-[#ff6a00]/20" 
               : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white"
