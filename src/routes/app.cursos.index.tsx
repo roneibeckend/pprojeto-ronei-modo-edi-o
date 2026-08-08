@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Play, Sparkles, Lock, ShoppingCart, Loader2 } from "lucide-react";
+import { Play, Sparkles, Lock, ShoppingCart } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { ProgressSummary } from "@/components/platform/ProgressSummary";
 import { IMG } from "@/lib/platform-data";
@@ -7,7 +7,7 @@ import { IMG } from "@/lib/platform-data";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
-import { useAuth } from "@/hooks/use-auth";
+import { CourseCardSkeleton, Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/app/cursos/")({
   head: () => ({ meta: [{ title: "Meus cursos — Espetinho na Veia" }] }),
@@ -15,7 +15,6 @@ export const Route = createFileRoute("/app/cursos/")({
 });
 
 function CoursesPage() {
-  const { user } = useAuth();
   const { courseEnrollments, ebookEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
   
   const { data: dbCourses, isLoading: isLoadingCourses } = useQuery({
@@ -38,11 +37,30 @@ function CoursesPage() {
 
   if (isLoadingCourses || isLoadingEnrollments || isLoadingEbooks) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-fire" />
+      <div className="pb-10 space-y-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+          <Skeleton className="h-12 w-64" />
+          <Skeleton className="h-10 w-48" />
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-2xl" />
+          ))}
+        </div>
+
+        <section>
+          <Skeleton className="mb-6 h-6 w-48" />
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <CourseCardSkeleton key={i} />
+            ))}
+          </div>
+        </section>
       </div>
     );
   }
+
 
   const ownedCourses = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || c.price === 0) || [];
   const otherCourses = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0) || [];
