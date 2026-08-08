@@ -3,10 +3,10 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 export const deleteAffiliateMaterial = createServerFn({ method: "POST" })
-  .input(z.object({ id: z.string() }))
+  .validator((data: unknown) => z.object({ id: z.string() }).parse(data))
   .handler(async ({ data }) => {
     const { error } = await supabaseAdmin
-      .from("affiliate_materials")
+      .from("affiliate_materials" as any)
       .delete()
       .eq("id", data.id);
     
@@ -15,17 +15,17 @@ export const deleteAffiliateMaterial = createServerFn({ method: "POST" })
   });
 
 export const saveAffiliateMaterial = createServerFn({ method: "POST" })
-  .input(z.object({
+  .validator((data: unknown) => z.object({
     id: z.string().optional(),
     title: z.string(),
     description: z.string().optional(),
     category: z.string(),
     file_url: z.string(),
     thumbnail_url: z.string().optional(),
-  }))
+  }).parse(data))
   .handler(async ({ data }) => {
     const { error } = await supabaseAdmin
-      .from("affiliate_materials")
+      .from("affiliate_materials" as any)
       .upsert(data);
     
     if (error) throw new Error(error.message);
@@ -33,7 +33,7 @@ export const saveAffiliateMaterial = createServerFn({ method: "POST" })
   });
 
 export const getAffiliateNetwork = createServerFn({ method: "GET" })
-  .input(z.object({ affiliateId: z.string() }))
+  .validator((data: unknown) => z.object({ affiliateId: z.string() }).parse(data))
   .handler(async ({ data }) => {
     const { data: network, error } = await supabaseAdmin
       .from("affiliates")
@@ -43,7 +43,7 @@ export const getAffiliateNetwork = createServerFn({ method: "GET" })
         created_at,
         profile:profiles(name, email)
       `)
-      .eq("referrer_id", data.affiliateId);
+      .eq("referrer_id" as any, data.affiliateId);
     
     if (error) throw new Error(error.message);
     return network;
