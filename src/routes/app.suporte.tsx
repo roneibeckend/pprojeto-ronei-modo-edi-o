@@ -6,8 +6,15 @@ import {
   MessageCircle, 
   Ticket as TicketIcon, 
   PlusCircle,
-  Loader2
+  Loader2,
+  CheckCircle2,
+  Clock,
+  User,
+  ChevronRight,
+  HelpCircle,
+  AlertCircle
 } from "lucide-react";
+
 import { PageHeader } from "@/components/platform/Shell";
 import { supportQuestions } from "@/lib/platform-data";
 import { toast } from "sonner";
