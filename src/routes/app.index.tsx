@@ -16,16 +16,27 @@ export const Route = createFileRoute("/app/")({
 function Dashboard() {
   const { isEnrolledInCourse, isLoading: isLoadingEnrollments } = useEnrollments();
 
-  const { data: dbCourses, isLoading: isLoadingCourses } = useQuery({
-    queryKey: ["courses"],
+  const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
+    queryKey: ["showcase-items"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("courses").select("*").eq("is_locked", false);
-      if (error) throw error;
-      return data;
+      const [coursesRes, ebooksRes] = await Promise.all([
+        supabase.from("courses").select("*").eq("is_locked", false),
+        supabase.from("ebooks").select("*").eq("is_published", true),
+      ]);
+
+      if (coursesRes.error) throw coursesRes.error;
+      if (ebooksRes.error) throw ebooksRes.error;
+
+      const items = [
+        ...(coursesRes.data || []).map(c => ({ ...c, type: 'course' as const })),
+        ...(ebooksRes.data || []).map(e => ({ ...e, type: 'ebook' as const })),
+      ];
+
+      return items.sort((a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime());
     },
   });
 
-  if (isLoadingCourses || isLoadingEnrollments) {
+  if (isLoadingItems || isLoadingEnrollments) {
     return (
       <div className="space-y-8">
         <section>
@@ -42,7 +53,7 @@ function Dashboard() {
 
   // Fallback para o último curso se o usuário não tiver nada
   const lastId = student.lastLesson.courseId;
-  const lastCourse = dbCourses?.find(c => c.id === lastId) || dbCourses?.[0];
+  const lastItem = showcaseItems?.find(i => i.id === lastId) || showcaseItems?.[0];
 
 
 
@@ -51,16 +62,20 @@ function Dashboard() {
       {/* Showcase / Cursos */}
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-display text-2xl font-bold tracking-tight">Cursos Disponíveis</h2>
+          <h2 className="font-display text-2xl font-bold tracking-tight">Novidades para você</h2>
           <Link to="/app/cursos" className="text-sm font-medium text-gold hover:underline">Ver todos</Link>
         </div>
         
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {dbCourses?.map((course) => (
+          {showcaseItems?.map((item) => (
             <CourseShowcaseCard 
-              key={course.id} 
-              course={course} 
-              isEnrolled={isEnrolledInCourse(course.id) || (course.price || 0) === 0} 
+              key={`${item.type}-${item.id}`} 
+              item={item} 
+              isEnrolled={
+                item.type === 'course' 
+                  ? isEnrolledInCourse(item.id) || (item.price || 0) === 0
+                  : isEnrolledInEbook(item.id) || (item.price || 0) === 0
+              } 
             />
           ))}
         </div>
@@ -69,15 +84,17 @@ function Dashboard() {
   );
 }
 
-function CourseShowcaseCard({ course, isEnrolled }: { course: any; isEnrolled: boolean }) {
+function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boolean }) {
   const isLocked = !isEnrolled;
+  const linkTo = item.type === 'course' ? "/app/cursos/$courseId" : "/app/ebooks/$ebookId";
+  const linkParams = item.type === 'course' ? { courseId: item.id } : { ebookId: item.id };
   
   return (
     <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"}`}>
       <div className="relative aspect-video bg-muted/20">
         <img 
-          src={course.cover_url || IMG.hero} 
-          alt={course.title} 
+          src={item.cover_url || IMG.hero} 
+          alt={item.title} 
           className={`h-full w-full object-cover ${isLocked ? "blur-[1px] brightness-75" : ""}`} 
           loading="lazy"
           onError={(e) => {
@@ -87,9 +104,9 @@ function CourseShowcaseCard({ course, isEnrolled }: { course: any; isEnrolled: b
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
         
-        {course.badge && !isLocked && (
+        {item.badge && !isLocked && (
           <div className="absolute left-3 top-3 rounded-full bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-black">
-            <Sparkles className="mr-1 inline h-3 w-3" /> {course.badge}
+            <Sparkles className="mr-1 inline h-3 w-3" /> {item.badge}
           </div>
         )}
 
@@ -103,19 +120,19 @@ function CourseShowcaseCard({ course, isEnrolled }: { course: any; isEnrolled: b
       </div>
 
       <div className="p-5">
-        <h3 className="font-display text-lg font-bold line-clamp-1">{course.title}</h3>
-        <p className="mt-1 line-clamp-2 text-sm text-muted-foreground min-h-[40px]">{course.description}</p>
+        <h3 className="font-display text-lg font-bold line-clamp-1">{item.title}</h3>
+        <p className="mt-1 line-clamp-2 text-sm text-muted-foreground min-h-[40px]">{item.description}</p>
         
         {isLocked ? (
           <div className="mt-4">
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Acesso imediato</span>
-                <div className="font-display text-xl font-bold text-gold">R$ {course.price?.toString().replace(".", ",")}</div>
+                <div className="font-display text-xl font-bold text-gold">R$ {item.price?.toString().replace(".", ",")}</div>
               </div>
               <Link 
-                to="/app/cursos/$courseId" 
-                params={{ courseId: course.id }}
+                to={linkTo} 
+                params={linkParams}
                 className="btn-fire px-4 py-2 text-xs pointer-events-auto cursor-pointer"
               >
                 <ShoppingCart className="mr-1.5 h-3.5 w-3.5" /> Comprar
@@ -125,11 +142,11 @@ function CourseShowcaseCard({ course, isEnrolled }: { course: any; isEnrolled: b
         ) : (
           <div className="mt-4">
             <Link
-              to="/app/cursos/$courseId"
-              params={{ courseId: course.id }}
+              to={linkTo}
+              params={linkParams}
               className="btn-fire flex w-full items-center justify-center gap-2 py-2.5 text-xs font-bold uppercase tracking-widest"
             >
-              <Play className="h-3.5 w-3.5" /> Continuar Aluno
+              <Play className="h-3.5 w-3.5" /> {item.type === 'course' ? 'Continuar Aluno' : 'Acessar E-book'}
             </Link>
           </div>
         )}
