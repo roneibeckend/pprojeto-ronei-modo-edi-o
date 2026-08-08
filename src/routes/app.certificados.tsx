@@ -91,10 +91,10 @@ function CertificatesPage() {
       <PageHeader title="Certificados" subtitle="Sua vitrine oficial de conquistas — assinada por Ronnei e verificável por código único." />
 
       {/* Hero stats */}
-      <div className="mb-8 grid gap-3 sm:grid-cols-3">
+      <div className="mb-8 grid gap-3 grid-cols-2 md:grid-cols-3">
         <StatCard icon={<Award className="h-5 w-5" strokeWidth={2.5} />} label="Conquistados" value={`${unlockedCount}/${certificates.length}`} accent />
         <StatCard icon={<Clock className="h-5 w-5" strokeWidth={2.5} />} label="Carga total" value={`${totalHours}h`} />
-        <StatCard icon={<GraduationCap className="h-5 w-5" strokeWidth={2.5} />} label="Próximo objetivo" value={nextCert?.course ?? "Todos concluídos"} small />
+        <StatCard className="col-span-2 md:col-span-1" icon={<GraduationCap className="h-5 w-5" strokeWidth={2.5} />} label="Próximo objetivo" value={nextCert?.course ?? "Todos concluídos"} small />
       </div>
 
       {/* Grid */}
@@ -128,9 +128,9 @@ function CertificatesPage() {
   );
 }
 
-function StatCard({ icon, label, value, accent, small }: { icon: React.ReactNode; label: string; value: string; accent?: boolean; small?: boolean }) {
+function StatCard({ icon, label, value, accent, small, className = "" }: { icon: React.ReactNode; label: string; value: string; accent?: boolean; small?: boolean; className?: string }) {
   return (
-    <div className={`relative overflow-hidden rounded-xl border ${accent ? "border-[#ff6a00]/40 bg-[#ff6a00]/[0.06]" : "border-white/5 bg-[#0e0e0e]"} p-5`}>
+    <div className={`relative overflow-hidden rounded-xl border ${accent ? "border-[#ff6a00]/40 bg-[#ff6a00]/[0.06]" : "border-white/5 bg-[#0e0e0e]"} p-5 ${className}`}>
       {accent && <span className="absolute left-0 top-0 h-full w-1 bg-[#ff6a00]" />}
       <div className={`mb-3 grid h-10 w-10 place-items-center rounded-lg ${accent ? "bg-[#ff6a00] text-black" : "bg-white/5 text-white/70"}`}>{icon}</div>
       <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/40">{label}</div>
