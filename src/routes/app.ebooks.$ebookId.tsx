@@ -15,7 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
   head: () => ({
-    meta: [{ title: "E-book — Espetinho na Veia" }],
+    meta: [{ title: "E-book Interativo — Espetinho na Veia" }],
   }),
   loader: async ({ params }) => {
     const { data: ebook, error } = await supabase

@@ -148,7 +148,7 @@ function AdminEbooksPage() {
           }}
           className="flex items-center justify-center gap-2 bg-[#ff6a00] px-4 py-2.5 rounded-lg text-sm font-bold text-black hover:bg-[#ff8c33] transition-colors"
         >
-          <Plus className="h-4 w-4" /> Novo E-book
+          <Plus className="h-4 w-4" /> Adicionar Novo E-book
         </button>
       </div>
 
