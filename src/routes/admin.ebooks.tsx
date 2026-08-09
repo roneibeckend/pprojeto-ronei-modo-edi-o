@@ -95,7 +95,8 @@ function AdminEbooksPage() {
         .from('ebooks')
         .upsert({
           ...payload,
-          id: editingItem.id || undefined
+          id: editingItem.id || undefined,
+          updated_at: new Date().toISOString()
         })
         .select()
         .single();
