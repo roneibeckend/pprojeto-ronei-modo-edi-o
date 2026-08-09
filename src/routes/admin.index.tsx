@@ -27,8 +27,8 @@ function AdminDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!authLoading && !["admin", "manager", "agent"].includes(role || "")) {
-      toast.error("Acesso restrito a colaboradores.");
+    if (!authLoading && !["admin", "manager", "agent", "student"].includes(role || "")) {
+      toast.error("Acesso restrito.");
       navigate({ to: "/app" });
     }
   }, [authLoading, role, navigate]);
