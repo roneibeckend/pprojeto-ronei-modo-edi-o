@@ -136,8 +136,12 @@ function AdminEbooksPage() {
           onClick={() => { 
             setEditingItem({ 
               title: "", 
+              subtitle: "",
+              description: "",
               price: 0,
-              is_locked: false
+              is_locked: false,
+              category: "",
+              cover_url: ""
             }); 
             setIsModalOpen(true); 
           }}
