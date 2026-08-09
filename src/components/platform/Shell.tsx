@@ -132,7 +132,6 @@ export function Shell({ children }: { children: ReactNode }) {
       >
         {navGroups.filter(g => {
           if (g.title !== "Gestão") return true;
-          // Se for grupo Gestão, verifica se é admin, gerente ou agente
           return ["admin", "manager", "agent"].includes(role || "");
         }).map((group) => (
           <div key={group.title} className="mb-4 last:mb-0">
