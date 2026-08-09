@@ -95,7 +95,8 @@ function AdminEbooksPage() {
         .from('ebooks')
         .upsert({
           ...payload,
-          id: editingItem.id || undefined
+          id: editingItem.id || undefined,
+          updated_at: new Date().toISOString()
         })
         .select()
         .single();
@@ -136,14 +137,18 @@ function AdminEbooksPage() {
           onClick={() => { 
             setEditingItem({ 
               title: "", 
+              subtitle: "",
+              description: "",
               price: 0,
-              is_locked: false
+              is_locked: false,
+              category: "",
+              cover_url: ""
             }); 
             setIsModalOpen(true); 
           }}
           className="flex items-center justify-center gap-2 bg-[#ff6a00] px-4 py-2.5 rounded-lg text-sm font-bold text-black hover:bg-[#ff8c33] transition-colors"
         >
-          <Plus className="h-4 w-4" /> Novo E-book
+          <Plus className="h-4 w-4" /> Adicionar Novo E-book
         </button>
       </div>
 
@@ -595,11 +600,12 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
               </div>
 
               <div className="space-y-1.5 h-full flex flex-col">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do Capítulo (HTML)</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do Capítulo (HTML ou Markdown)</label>
                 <textarea 
                   value={editingChapter.content || ""}
                   onChange={e => setEditingChapter({...editingChapter, content: e.target.value})}
-                  className="flex-1 w-full bg-black/40 border border-white/10 p-4 rounded-xl text-sm font-mono outline-none focus:border-[#ff6a00] resize-none min-h-[300px]"
+                  placeholder="Escreva aqui o conteúdo do capítulo. Suporta HTML básico..."
+                  className="flex-1 w-full bg-black/40 border border-white/10 p-4 rounded-xl text-sm font-mono outline-none focus:border-[#ff6a00] resize-none min-h-[400px]"
                 />
               </div>
             </div>

@@ -15,7 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
   head: () => ({
-    meta: [{ title: "E-book — Espetinho na Veia" }],
+    meta: [{ title: "E-book Interativo — Espetinho na Veia" }],
   }),
   loader: async ({ params }) => {
     const { data: ebook, error } = await supabase
@@ -185,7 +185,7 @@ function EbookReaderPage() {
 
                 <div className="prose prose-invert max-w-4xl mx-auto prose-p:text-muted-foreground prose-headings:text-foreground prose-p:leading-relaxed prose-p:text-lg">
                   {activeChapter?.content ? (
-                    <div className="text-center md:text-left" dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
+                    <div className="text-center md:text-left leading-relaxed text-lg text-white/80" dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
                   ) : (
                     <p className="italic opacity-50">Conteúdo em breve...</p>
                   )}
