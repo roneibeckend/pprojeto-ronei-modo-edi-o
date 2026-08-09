@@ -89,14 +89,15 @@ function CoursesPage() {
         streak={0}
       />
 
-      {/* Seção de Cursos Adquiridos */}
+      {/* Seção de Treinamentos (Cursos e E-books Adquiridos) */}
       <section className="mb-12">
         <h2 className="mb-6 font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
           Seus Treinamentos
         </h2>
         
-        {ownedCourses.length > 0 ? (
+        {(ownedCourses.length > 0 || ownedEbooks.length > 0) ? (
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {/* Renderizar Cursos */}
             {ownedCourses.map((c) => (
               <article key={c.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30">
                 <div className="relative aspect-video bg-muted/20">
@@ -134,22 +135,8 @@ function CoursesPage() {
                 </div>
               </article>
             ))}
-          </div>
-        ) : (
-          <div className="glass flex flex-col items-center justify-center rounded-2xl py-20 text-center text-muted-foreground">
-            Você ainda não possui nenhum curso liberado.
-          </div>
-        )}
-      </section>
 
-      {/* Seção de E-books Adquiridos */}
-      <section className="mb-12">
-        <h2 className="mb-6 font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
-          Seus E-books
-        </h2>
-        
-        {ownedEbooks.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {/* Renderizar E-books */}
             {ownedEbooks.map((e) => (
               <article key={e.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30">
                 <div className="relative aspect-video bg-muted/20">
@@ -163,6 +150,9 @@ function CoursesPage() {
                 </div>
                 
                 <div className="p-5">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-gold bg-gold/10 px-2 py-0.5 rounded">E-book</span>
+                  </div>
                   <h3 className="font-display text-lg font-bold leading-tight">{e.title}</h3>
                   <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{e.description}</p>
                   
@@ -180,7 +170,7 @@ function CoursesPage() {
           </div>
         ) : (
           <div className="glass flex flex-col items-center justify-center rounded-2xl py-20 text-center text-muted-foreground">
-            Você ainda não possui nenhum e-book liberado.
+            Você ainda não possui nenhum treinamento liberado.
           </div>
         )}
       </section>
