@@ -600,11 +600,12 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
               </div>
 
               <div className="space-y-1.5 h-full flex flex-col">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do Capítulo (HTML)</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do Capítulo (HTML ou Markdown)</label>
                 <textarea 
                   value={editingChapter.content || ""}
                   onChange={e => setEditingChapter({...editingChapter, content: e.target.value})}
-                  className="flex-1 w-full bg-black/40 border border-white/10 p-4 rounded-xl text-sm font-mono outline-none focus:border-[#ff6a00] resize-none min-h-[300px]"
+                  placeholder="Escreva aqui o conteúdo do capítulo. Suporta HTML básico..."
+                  className="flex-1 w-full bg-black/40 border border-white/10 p-4 rounded-xl text-sm font-mono outline-none focus:border-[#ff6a00] resize-none min-h-[400px]"
                 />
               </div>
             </div>
