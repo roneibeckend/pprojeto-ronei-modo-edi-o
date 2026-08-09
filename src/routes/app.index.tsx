@@ -32,7 +32,8 @@ function Dashboard() {
         ...(ebooksRes.data || []).map(e => ({ ...e, type: 'ebook' as const })),
       ];
 
-      return items.sort((a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime());
+      const sortedItems = items.sort((a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime());
+      return sortedItems;
     },
   });
 
@@ -67,17 +68,25 @@ function Dashboard() {
         </div>
         
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {showcaseItems?.map((item) => (
-            <CourseShowcaseCard 
-              key={`${item.type}-${item.id}`} 
-              item={item} 
-              isEnrolled={
-                item.type === 'course' 
-                  ? isEnrolledInCourse(item.id) || (item.price || 0) === 0
-                  : isEnrolledInEbook(item.id) || (item.price || 0) === 0
-              } 
-            />
-          ))}
+          {showcaseItems
+            ?.map(item => ({
+              ...item,
+              isEnrolled: item.type === 'course' 
+                ? isEnrolledInCourse(item.id) || (item.price || 0) === 0
+                : isEnrolledInEbook(item.id) || (item.price || 0) === 0
+            }))
+            .sort((a, b) => {
+              if (a.isEnrolled && !b.isEnrolled) return -1;
+              if (!a.isEnrolled && b.isEnrolled) return 1;
+              return 0;
+            })
+            .map((item) => (
+              <CourseShowcaseCard 
+                key={`${item.type}-${item.id}`} 
+                item={item} 
+                isEnrolled={item.isEnrolled} 
+              />
+            ))}
         </div>
       </section>
     </div>
