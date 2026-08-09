@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X } from "lucide-react";
+import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X, Play } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { PageHeader } from "@/components/platform/Shell";
@@ -47,13 +47,19 @@ function EbookReaderPage() {
 
   useEffect(() => {
     if (ebook?.opening_video_url) {
-      const hasSeen = sessionStorage.getItem(`ebook_opening_${ebook.id}`);
+      // Check if user has already seen it or if it's the first visit
+      const hasSeen = localStorage.getItem(`ebook_opening_${ebook.id}`);
       if (!hasSeen) {
         setShowOpeningVideo(true);
-        sessionStorage.setItem(`ebook_opening_${ebook.id}`, 'true');
+        // We set it to true after the first full watch or manual skip
       }
     }
   }, [ebook.id, ebook.opening_video_url]);
+
+  const markVideoAsSeen = () => {
+    setShowOpeningVideo(false);
+    localStorage.setItem(`ebook_opening_${ebook.id}`, 'true');
+  };
 
   const chapters = ebook.modules?.flatMap((m: any) => m.chapters || []).sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0)) || [];
   const [activeChapterId, setActiveChapterId] = useState<string | undefined>(chapters[0]?.id);
@@ -172,7 +178,7 @@ function EbookReaderPage() {
           >
             <div className="relative w-full max-w-4xl">
               <button 
-                onClick={() => setShowOpeningVideo(false)}
+                onClick={markVideoAsSeen}
                 className="absolute -top-12 right-0 flex items-center gap-2 text-white/60 hover:text-white transition-colors"
               >
                 <span>Pular Vídeo de Abertura</span>
@@ -197,7 +203,7 @@ function EbookReaderPage() {
 
               <div className="mt-8 flex justify-center">
                 <button 
-                  onClick={() => setShowOpeningVideo(false)}
+                  onClick={markVideoAsSeen}
                   className="btn-fire px-10 py-4 font-black text-lg shadow-2xl shadow-fire/30 flex items-center gap-3"
                 >
                   <BookOpen className="h-6 w-6" />
@@ -300,6 +306,22 @@ function EbookReaderPage() {
             </h3>
             
             <div className="space-y-6">
+              {ebook.opening_video_url && (
+                <div className="mb-4">
+                  <button
+                    onClick={() => setShowOpeningVideo(true)}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm transition-all bg-fire/5 border border-fire/10 text-fire hover:bg-fire/10 group"
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-fire/20 text-fire group-hover:scale-110 transition-transform">
+                      <Play className="h-4 w-4 fill-current" />
+                    </div>
+                    <div>
+                      <div className="font-bold">Vídeo de Abertura</div>
+                      <div className="text-[10px] opacity-60 uppercase tracking-widest">Introdução do Autor</div>
+                    </div>
+                  </button>
+                </div>
+              )}
               {ebook.modules?.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0)).map((m: any) => (
                 <div key={m.id}>
                   <div className="mb-3 px-2 text-xs font-bold text-fire/70 uppercase tracking-wider">{m.title}</div>

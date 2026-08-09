@@ -1,22 +1,25 @@
-# Plan: Corrigir Exibição da Listagem de Capítulos do E-book
+# Plano: Otimização do Vídeo de Abertura nos E-books
 
-O usuário relatou que a interface de edição de capítulos no painel administrativo está "bugada". A análise do código em `src/routes/admin.ebooks.tsx` (componente `EbookContentEditor`) revelou que o layout atual utiliza um grid fixo que pode causar sobreposições em telas menores e não possui tratamento de rolagem para listas extensas de capítulos.
+O objetivo é transformar o "Vídeo de Abertura" de um elemento intrusivo em uma ferramenta de boas-vindas inteligente e opcional, melhorando a experiência do aluno e a flexibilidade para o autor.
 
-## Alterações Propostas
+## Estratégia de Implementação
 
-### UI/Layout (`src/routes/admin.ebooks.tsx`)
-- **Scroll na Sidebar**: Adicionar `overflow-y-auto` e uma altura máxima (`max-h`) para a listagem de módulos e capítulos, garantindo que o cabeçalho da sidebar e o editor permaneçam acessíveis.
-- **Melhoria da Responsividade**: Ajustar o grid de `grid-cols-[350px_1fr]` para `flex-col lg:flex-row` com larguras flexíveis, permitindo que a sidebar ocupe menos espaço em telas menores.
-- **Visibilidade de Ações**: Garantir que os botões de ação (Plus, Trash) na sidebar tenham um tamanho de toque adequado e contraste visual, mesmo sem hover (útil para mobile/tablet).
-- **Ajuste de Padding e Gap**: Aumentar o espaçamento entre a árvore de capítulos e a área do editor para evitar a sensação de "aperto".
-- **Empty State**: Melhorar o estado vazio do editor para ser mais informativo.
+### 1. Persistência Inteligente
+- **Mudança para LocalStorage**: O status de "visto" do vídeo será movido de `sessionStorage` para `localStorage`. Isso garante que, uma vez que o aluno assista ou pule o vídeo, ele não será importunado novamente em futuras sessões no mesmo dispositivo.
 
-### Correções de UX
-- Garantir que o botão de "Adicionar Módulo" e "Adicionar Capítulo" não causem deslocamento de layout (layout shift).
-- Ajustar a área de conteúdo (textarea) para expandir corretamente conforme o espaço disponível.
+### 2. Acesso On-Demand
+- **Botão de Reprise na Sidebar**: Adicionaremos um botão destacado no topo do índice de conteúdos do e-book chamado "Vídeo de Abertura".
+- **Benefício**: O aluno pode revisitar a introdução a qualquer momento, e novos alunos que pularam inicialmente podem assistir quando se sentirem prontos.
+
+### 3. Melhoria no Modal de Boas-Vindas
+- **Clareza de Ação**: O modal terá botões claros para "Pular" ou "Começar Leitura", tratando o vídeo como uma introdução opcional mas recomendada.
+- **Contexto Visual**: O modal exibirá o título do e-book e um selo de "Vídeo de Boas-vindas", criando uma recepção calorosa.
+
+### 4. Alternativas Consideradas (Descrição para o Usuário)
+- **Vídeo como Capítulo Zero**: Uma alternativa seria colocar o vídeo como o primeiro capítulo obrigatório. No entanto, a solução de Modal + Sidebar é superior pois não bloqueia a navegação imediata se o aluno estiver com pressa.
+- **Picture-in-Picture automático**: Iniciar o vídeo em um player flutuante no canto da tela enquanto o aluno começa a ler. (Pode ser implementado futuramente se houver demanda por multitarefa).
 
 ## Validação
-- Abrir o editor de capítulos para um e-book existente.
-- Verificar se a lista de capítulos é rolável independentemente do editor.
-- Testar a responsividade mudando o tamanho da janela do navegador.
-- Confirmar que as ações de edição e exclusão estão visíveis e funcionais.
+- Entrar no e-book pela primeira vez: O vídeo deve aparecer automaticamente.
+- Clicar em "Pular" ou "Começar Leitura": O vídeo deve fechar e não aparecer novamente ao recarregar a página ou reabrir o navegador.
+- Clicar no botão "Vídeo de Abertura" na sidebar: O vídeo deve reabrir conforme solicitado.
