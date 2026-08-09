@@ -161,8 +161,8 @@ function CoursePage() {
   }
 
   return (
-    <div>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div className="mx-auto max-w-7xl px-0 sm:px-4">
+      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between mb-8 sm:px-0">
         <PageHeader
           title={course.title}
           subtitle={`Professor: ${course.teacher_name || "Equipe Espetinho na Veia"}`}
@@ -173,7 +173,7 @@ function CoursePage() {
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         {/* Player */}
         <div className="min-w-0 space-y-4">
-          <div className="overflow-hidden rounded-2xl">
+          <div className="overflow-hidden rounded-none sm:rounded-2xl">
             <Suspense fallback={<Skeleton className="aspect-video w-full rounded-2xl" />}>
               <VideoPlayer
                 videoId={active.id}
@@ -206,7 +206,7 @@ function CoursePage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-0">
             <button
               disabled={!prev}
               onClick={() => prev && setActiveId(prev.id)}
@@ -224,7 +224,7 @@ function CoursePage() {
           </div>
 
           {/* Tabs */}
-          <div className="glass rounded-2xl p-5">
+          <div className="glass rounded-none sm:rounded-2xl p-6 sm:p-5">
             <div className="mb-4 flex overflow-x-auto pb-2 gap-2 scrollbar-hidden">
               <div className="flex min-w-max">
                 <button
@@ -260,7 +260,7 @@ function CoursePage() {
         </div>
 
         {/* Modules */}
-        <aside className="glass rounded-2xl p-4">
+        <aside className="glass rounded-none sm:rounded-2xl p-6 sm:p-4">
           <div className="mb-3 px-2 font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
             Conteúdo do curso
           </div>

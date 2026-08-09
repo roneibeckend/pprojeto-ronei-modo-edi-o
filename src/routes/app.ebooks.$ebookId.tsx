@@ -159,8 +159,8 @@ function EbookReaderPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl pb-20">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div className="mx-auto max-w-5xl px-0 pb-20 sm:px-4">
+      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between mb-8 sm:px-0">
         <PageHeader
           title={ebook.title}
           subtitle={ebook.subtitle || "E-book Exclusivo"}
@@ -224,12 +224,12 @@ function EbookReaderPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="glass min-h-[600px] overflow-hidden rounded-3xl pb-12"
+              className="glass min-h-[500px] overflow-hidden rounded-none sm:rounded-3xl pb-12 sm:min-h-[600px]"
             >
               {activeChapter?.video_url && (
                 <div className="w-full bg-black/40 border-b border-white/5">
-                  <div className="max-w-4xl mx-auto py-8 px-4">
-                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/60 group">
+                  <div className="max-w-4xl mx-auto py-4 sm:py-8 px-0 sm:px-4">
+                    <div className="relative aspect-video w-full rounded-none sm:rounded-2xl overflow-hidden shadow-2xl border-y sm:border border-white/10 bg-black/60 group">
                       <iframe
                         src={activeChapter.video_url.includes('youtube.com') 
                           ? activeChapter.video_url.replace('watch?v=', 'embed/') 
@@ -243,7 +243,7 @@ function EbookReaderPage() {
                 </div>
               )}
 
-              <div className="p-8 md:p-12 mt-4">
+              <div className="p-6 md:p-12 mt-4">
                 <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <h1 className="font-display text-3xl font-black tracking-tight md:text-4xl">
                     {activeChapter?.title}
@@ -267,7 +267,7 @@ function EbookReaderPage() {
           </AnimatePresence>
 
           {/* Navigation Controls */}
-          <div className="mt-8 flex items-center justify-between gap-4">
+          <div className="mt-8 flex items-center justify-between gap-4 px-4 sm:px-0">
             <button
               disabled={!prevChapter}
               onClick={() => setActiveChapterId(prevChapter?.id)}
@@ -299,7 +299,7 @@ function EbookReaderPage() {
         </div>
 
         {/* Sidebar Index */}
-        <aside className="space-y-6">
+        <aside className="space-y-6 px-4 sm:px-0">
           <div className="glass rounded-3xl p-6">
             <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
               Conteúdo do E-book

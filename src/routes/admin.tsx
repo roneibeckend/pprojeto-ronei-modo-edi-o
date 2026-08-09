@@ -135,13 +135,13 @@ function AdminRootLayout() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto pt-20 lg:pt-0">
+      <main className="flex-1 overflow-y-auto pt-20 lg:pt-0 w-full">
         <header className="p-8 border-b border-white/10 hidden lg:block">
           <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight">
             Painel Central <span style={{ color: ORANGE }}>Administrativo</span>
           </h1>
         </header>
-        <div className="p-4 lg:p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           <Outlet />
         </div>
       </main>
