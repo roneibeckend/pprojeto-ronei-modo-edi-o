@@ -119,7 +119,10 @@ function AdminRootLayout() {
           </SheetTrigger>
           <SheetContent side="left" className="bg-[#0a0a0a] border-white/10 w-64 p-0">
             <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden mt-12">
-              {navItems.map((item) => {
+              {navItems.filter(item => {
+                if (role !== "student") return true;
+                return item.to === "/admin";
+              }).map((item) => {
                 const Icon = item.icon;
                 const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
                 return (
