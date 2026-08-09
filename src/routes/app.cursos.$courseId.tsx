@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, Suspense, lazy } from "react";
-import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart } from "lucide-react";
+import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart, CheckCircle2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +10,7 @@ import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useProgress } from "@/hooks/use-progress";
 
 const VideoPlayer = lazy(() => import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer })));
 
@@ -46,6 +47,7 @@ function CoursePage() {
   const course = data?.course;
   const navigate = useNavigate();
   const { isEnrolledInCourse, isLoading: isLoadingEnrollments } = useEnrollments();
+  const { isLessonCompleted, toggleLessonProgress, isTogglingLesson } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
 
@@ -187,8 +189,19 @@ function CoursePage() {
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">Aula atual</div>
                 <div className="font-display text-lg font-bold">{active.title}</div>
               </div>
-              <button className="btn-fire text-sm touch-target">
-                <Check className="h-4 w-4" /> Marcar como concluída
+              <button 
+                onClick={() => toggleLessonProgress({ lessonId: active.id, completed: !isLessonCompleted(active.id) })}
+                disabled={isTogglingLesson}
+                className={`btn-fire text-sm touch-target flex items-center gap-2 ${isLessonCompleted(active.id) ? 'bg-green-600 shadow-green-600/20' : ''}`}
+              >
+                {isTogglingLesson ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : isLessonCompleted(active.id) ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  <Check className="h-4 w-4" />
+                )}
+                {isLessonCompleted(active.id) ? "Concluída" : "Marcar como concluída"}
               </button>
             </div>
           </div>
@@ -275,8 +288,8 @@ function CoursePage() {
                             isActive ? "bg-fire/20 text-foreground" : "hover:bg-white/5"
                           }`}
                         >
-                          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-white/10">
-                            {isActive ? <Play className="h-3 w-3" /> : <Play className="h-3 w-3 opacity-50" />}
+                          <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border ${isLessonCompleted(l.id) ? 'bg-green-600/20 border-green-600 text-green-500' : 'border-white/10'}`}>
+                            {isLessonCompleted(l.id) ? <Check className="h-3 w-3" /> : (isActive ? <Play className="h-3 w-3" /> : <Play className="h-3 w-3 opacity-50" />)}
                           </span>
                           <span className="min-w-0 flex-1 truncate">{l.title}</span>
                           <span className="text-xs text-muted-foreground">{l.duration || "00:00"}</span>

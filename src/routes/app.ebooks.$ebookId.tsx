@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/platform/Shell";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
+import { useProgress } from "@/hooks/use-progress";
 import { createAsaasPaymentLink } from "@/lib/asaas.functions";
 import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { useServerFn } from "@tanstack/react-start";
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
 function EbookReaderPage() {
   const { ebook } = Route.useLoaderData() as { ebook: any };
   const { isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
+  const { isChapterCompleted, completeChapter } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
 
@@ -50,6 +52,12 @@ function EbookReaderPage() {
   
   const prevChapter = activeIndex > 0 ? chapters[activeIndex - 1] : null;
   const nextChapter = activeIndex < chapters.length - 1 ? chapters[activeIndex + 1] : null;
+
+  useEffect(() => {
+    if (activeChapterId) {
+      completeChapter(activeChapterId);
+    }
+  }, [activeChapterId, completeChapter]);
 
   const handlePurchase = async () => {
     try {
@@ -250,9 +258,9 @@ function EbookReaderPage() {
                               : "hover:bg-white/5 text-muted-foreground hover:text-foreground"
                           }`}
                         >
-                          <div className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-fire" : "bg-white/20"}`} />
+                          <div className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-fire" : (isChapterCompleted(c.id) ? "bg-green-500" : "bg-white/20")}`} />
                           <span className="flex-1 truncate">{c.title}</span>
-                          {isActive && <CheckCircle2 className="h-3.5 w-3.5" />}
+                          {(isActive || isChapterCompleted(c.id)) && <CheckCircle2 className={`h-3.5 w-3.5 ${isChapterCompleted(c.id) && !isActive ? "text-green-500" : ""}`} />}
                         </button>
                       );
                     })}
