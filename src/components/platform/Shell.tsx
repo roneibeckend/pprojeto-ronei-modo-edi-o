@@ -130,51 +130,70 @@ export function Shell({ children }: { children: ReactNode }) {
         aria-label="Menu principal"
         className="scrollbar-hidden flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 py-4"
       >
-        {navGroups.filter(g => {
-          if (g.title !== "Gestão") return true;
-          return ["admin", "manager", "agent"].includes(role || "");
-        }).map((group) => (
-          <div key={group.title} className="mb-4 last:mb-0">
-            <div className="mb-1 px-3 text-[11px] font-bold uppercase tracking-wider text-sidebar-foreground/35">
-              {group.title}
+        {navGroups.map((group) => {
+          // Filtra itens do grupo com base nas permissões
+          const visibleItems = group.items.filter(item => {
+            if (!item.module) return true;
+            if (item.module === "admin_only") return isAdmin;
+            return hasModule(item.module);
+          });
+
+          // Se for o grupo "Gestão" e o usuário for um aluno comum, 
+          // mostra apenas o item "Painel Central" (que redireciona para o admin mas deve se comportar como solicitado)
+          // Na verdade, o requisito diz: "Se o usuário for um aluno comum, o clique em 'GESTAO' deve levar apenas ao 'painel central'."
+          // E "Os menus 'equipe', 'alunos', 'cursos', 'e-books', 'suporte', 'afiliados' devem ser ocultos para usuários com perfil de aluno comum."
+          
+          let displayItems = visibleItems;
+          if (group.title === "Gestão" && role === "student") {
+            // Para alunos, mantemos apenas o primeiro item (Painel Central) e mudamos o label se necessário
+            displayItems = visibleItems.filter(item => item.to === "/admin").map(item => ({
+              ...item,
+              label: "Painel Central",
+              badge: undefined // Remove badge Admin para alunos
+            }));
+          }
+
+          if (displayItems.length === 0) return null;
+
+          return (
+            <div key={group.title} className="mb-4 last:mb-0">
+              <div className="mb-1 px-3 text-[11px] font-bold uppercase tracking-wider text-sidebar-foreground/35">
+                {group.title}
+              </div>
+              <div className="space-y-0.5">
+                {displayItems.map((item) => {
+                  const active = isActive(item.to, item.exact);
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      aria-current={active ? "page" : undefined}
+                      onClick={() => setOpen(false)}
+                      className={`group relative flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none ${
+                        active
+                          ? "bg-primary text-primary-foreground"
+                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                      }`}
+                    >
+                      <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={active ? 2.5 : 2} />
+                      <span className="truncate">{item.label}</span>
+                      {item.badge && (
+                        <span
+                          className={`ml-auto rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
+                            active ? "bg-black/20 text-primary-foreground" : "bg-primary/15 text-primary"
+                          }`}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-            <div className="space-y-0.5">
-              {group.items.filter(item => {
-                if (!item.module) return true;
-                if (item.module === "admin_only") return isAdmin;
-                return hasModule(item.module);
-              }).map((item) => {
-                const active = isActive(item.to, item.exact);
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    aria-current={active ? "page" : undefined}
-                    onClick={() => setOpen(false)}
-                    className={`group relative flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none ${
-                      active
-                        ? "bg-primary text-primary-foreground"
-                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                    }`}
-                  >
-                    <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={active ? 2.5 : 2} />
-                    <span className="truncate">{item.label}</span>
-                    {item.badge && (
-                      <span
-                        className={`ml-auto rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
-                          active ? "bg-black/20 text-primary-foreground" : "bg-primary/15 text-primary"
-                        }`}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
       {/* Footer */}
