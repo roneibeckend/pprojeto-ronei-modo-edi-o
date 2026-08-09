@@ -321,6 +321,15 @@ function AdminEbooksPage() {
                           />
                         </div>
                       </div>
+
+                      <div className="space-y-4">
+                        <VideoUpload 
+                          value={editingItem?.opening_video_url || ""} 
+                          onChange={url => setEditingItem({...editingItem, opening_video_url: url})}
+                          label="Vídeo de Abertura"
+                          description="Este vídeo será exibido antes do início do conteúdo para o aluno."
+                        />
+                      </div>
                     </div>
                   </div>
 

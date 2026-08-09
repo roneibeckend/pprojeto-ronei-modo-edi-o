@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2 } from "lucide-react";
+import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { PageHeader } from "@/components/platform/Shell";
@@ -42,7 +42,18 @@ function EbookReaderPage() {
   const { isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
   const { isChapterCompleted, completeChapter } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showOpeningVideo, setShowOpeningVideo] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
+
+  useEffect(() => {
+    if (ebook?.opening_video_url) {
+      const hasSeen = sessionStorage.getItem(`ebook_opening_${ebook.id}`);
+      if (!hasSeen) {
+        setShowOpeningVideo(true);
+        sessionStorage.setItem(`ebook_opening_${ebook.id}`, 'true');
+      }
+    }
+  }, [ebook.id, ebook.opening_video_url]);
 
   const chapters = ebook.modules?.flatMap((m: any) => m.chapters || []).sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0)) || [];
   const [activeChapterId, setActiveChapterId] = useState<string | undefined>(chapters[0]?.id);
@@ -150,6 +161,53 @@ function EbookReaderPage() {
         />
         <Link to="/app/cursos" className="btn-ghost-fire text-sm w-full sm:w-auto">← Meus Conteúdos</Link>
       </div>
+
+      <AnimatePresence>
+        {showOpeningVideo && ebook.opening_video_url && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 backdrop-blur-md"
+          >
+            <div className="relative w-full max-w-4xl">
+              <button 
+                onClick={() => setShowOpeningVideo(false)}
+                className="absolute -top-12 right-0 flex items-center gap-2 text-white/60 hover:text-white transition-colors"
+              >
+                <span>Pular Vídeo de Abertura</span>
+                <X className="h-6 w-6" />
+              </button>
+              
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-black text-white mb-2">{ebook.title}</h2>
+                <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Boas-vindas</p>
+              </div>
+
+              <div className="relative aspect-video w-full rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black">
+                <iframe
+                  src={ebook.opening_video_url.includes('youtube.com') 
+                    ? ebook.opening_video_url.replace('watch?v=', 'embed/') + "?autoplay=1"
+                    : ebook.opening_video_url + "?autoplay=1"}
+                  className="h-full w-full"
+                  allow="autoplay; fullscreen"
+                  allowFullScreen
+                />
+              </div>
+
+              <div className="mt-8 flex justify-center">
+                <button 
+                  onClick={() => setShowOpeningVideo(false)}
+                  className="btn-fire px-10 py-4 font-black text-lg shadow-2xl shadow-fire/30 flex items-center gap-3"
+                >
+                  <BookOpen className="h-6 w-6" />
+                  Começar Leitura agora
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
         {/* Reader Area */}
