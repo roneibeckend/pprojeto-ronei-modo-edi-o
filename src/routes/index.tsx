@@ -2206,7 +2206,7 @@ function LandingPage() {
         <Offer />
         <FAQ />
 
-        <span className="hidden">{"\u2063"}</span>
+        <span className="hidden">{"\u2064"}</span>
       </main>
       <Footer />
       <StickyMobileCTA />
