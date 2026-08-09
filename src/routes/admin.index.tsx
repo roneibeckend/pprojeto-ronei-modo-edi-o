@@ -7,16 +7,16 @@ import {
   Users as UsersIcon, 
   DollarSign, 
   Library, 
-  BookOpen,
-  Loader2,
   TrendingUp,
   ChevronRight,
   AlertCircle,
-  MessageSquare,
   Activity,
-  UserCheck
+  UserCheck,
+  ShieldAlert,
+  GraduationCap
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
@@ -27,8 +27,8 @@ function AdminDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!authLoading && !["admin", "manager", "agent"].includes(role || "")) {
-      toast.error("Acesso restrito a colaboradores.");
+    if (!authLoading && !["admin", "manager", "agent", "student"].includes(role || "")) {
+      toast.error("Acesso restrito.");
       navigate({ to: "/app" });
     }
   }, [authLoading, role, navigate]);
@@ -36,6 +36,8 @@ function AdminDashboard() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
+      if (role === 'student') return null;
+
       const [
         studentsRes,
         coursesRes,
@@ -58,13 +60,70 @@ function AdminDashboard() {
         pendingTickets: ticketsRes.count || 0,
         recentLogs: recentLogsRes.data || []
       };
-    }
+    },
+    enabled: role !== 'student' && !authLoading
   });
 
-  if (isLoading || authLoading) {
+  if (authLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
+      </div>
+    );
+  }
+
+  if (role === 'student') {
+    return (
+      <div className="space-y-8 animate-in fade-in duration-700">
+        <div className="rounded-2xl border border-white/5 bg-[#111] p-8 text-center max-w-2xl mx-auto">
+          <div className="h-20 w-20 rounded-full bg-[#ff6a00]/10 flex items-center justify-center text-[#ff6a00] mx-auto mb-6">
+            <ShieldAlert className="h-10 w-10" />
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight mb-2">Painel Central de Aluno</h2>
+          <p className="text-white/40 mb-8">
+            Você está acessando a área de gestão. Como aluno, você pode visualizar comunicados importantes e solicitar suporte avançado.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Link 
+              to="/app/cursos" 
+              className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-[#ff6a00]/50 transition group"
+            >
+              <div className="h-10 w-10 rounded-lg bg-[#ff6a00]/10 flex items-center justify-center text-[#ff6a00]">
+                <GraduationCap className="h-5 w-5" />
+              </div>
+              <div className="text-left">
+                <div className="text-sm font-bold">Meus Cursos</div>
+                <div className="text-[10px] text-white/40 uppercase tracking-widest">Acessar aulas</div>
+              </div>
+            </Link>
+            <Link 
+              to="/app/suporte" 
+              className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-[#ff6a00]/50 transition group"
+            >
+              <div className="h-10 w-10 rounded-lg bg-[#ff6a00]/10 flex items-center justify-center text-[#ff6a00]">
+                <Activity className="h-5 w-5" />
+              </div>
+              <div className="text-left">
+                <div className="text-sm font-bold">Abrir Ticket</div>
+                <div className="text-[10px] text-white/40 uppercase tracking-widest">Falar com suporte</div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          {[1,2,3,4].map(i => <Skeleton key={i} className="h-32 w-full rounded-xl bg-white/5" />)}
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Skeleton className="h-64 w-full rounded-xl bg-white/5" />
+          <Skeleton className="h-64 w-full rounded-xl bg-white/5" />
+        </div>
       </div>
     );
   }
@@ -101,7 +160,6 @@ function AdminDashboard() {
           <div className="grid gap-3">
             {[
               { to: "/admin/cursos", label: "Gerenciar Catálogo de Cursos", visible: isAdmin },
-              
               { to: "/admin/alunos", label: "Base de Alunos e Matrículas", visible: hasModule("alunos") },
               { to: "/admin/suporte", label: "Central de Suporte (Tickets)", highlight: (stats?.pendingTickets || 0) > 0, visible: hasModule("suporte") },
               { to: "/admin/receitas", label: "Central de Receitas", visible: isAdmin },
@@ -164,4 +222,8 @@ function AdminDashboard() {
       </div>
     </div>
   );
+}
+
+function Loader2({ className }: { className?: string }) {
+  return <Activity className={`animate-spin ${className}`} />;
 }

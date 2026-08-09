@@ -36,7 +36,7 @@ function AdminRootLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
-    if (!isLoading && !isAdmin && !["manager", "agent"].includes(role || "")) {
+    if (!isLoading && !isAdmin && !["manager", "agent", "student"].includes(role || "")) {
       navigate({ to: "/app", replace: true });
     }
   }, [isAdmin, isLoading, navigate]);
@@ -49,7 +49,7 @@ function AdminRootLayout() {
     );
   }
 
-  if (!isAdmin && !["manager", "agent"].includes(role || "")) return null;
+  if (!isAdmin && !["manager", "agent", "student"].includes(role || "")) return null;
 
   const navItems = [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -75,11 +75,18 @@ function AdminRootLayout() {
       <aside className="hidden lg:flex w-64 border-r border-white/10 flex-col shrink-0">
         <div className="p-6 border-b border-white/10 flex items-center gap-2 shrink-0">
           <ShieldCheck className="h-6 w-6" style={{ color: ORANGE }} />
-          <span className="font-bold tracking-widest text-sm uppercase truncate">Painel Admin</span>
+          <span className="font-bold tracking-widest text-sm uppercase truncate">
+            {role === "student" ? "Painel Central" : "Painel Admin"}
+          </span>
         </div>
         
         <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden">
-          {navItems.map((item) => {
+          {navItems.filter(item => {
+            if (role !== "student") return true;
+            // Para alunos, só o dashboard principal e talvez financeiro se tiver módulo?
+            // Mas o requisito diz: "Se o usuário for um aluno comum, o clique em 'GESTAO' deve levar apenas ao 'painel central'."
+            return item.to === "/admin";
+          }).map((item) => {
             const Icon = item.icon;
             const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
             return (
@@ -112,7 +119,10 @@ function AdminRootLayout() {
           </SheetTrigger>
           <SheetContent side="left" className="bg-[#0a0a0a] border-white/10 w-64 p-0">
             <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden mt-12">
-              {navItems.map((item) => {
+              {navItems.filter(item => {
+                if (role !== "student") return true;
+                return item.to === "/admin";
+              }).map((item) => {
                 const Icon = item.icon;
                 const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
                 return (
@@ -138,7 +148,9 @@ function AdminRootLayout() {
       <main className="flex-1 overflow-y-auto pt-20 lg:pt-0 w-full">
         <header className="p-8 border-b border-white/10 hidden lg:block">
           <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight">
-            Painel Central <span style={{ color: ORANGE }}>Administrativo</span>
+            {role === "student" ? "Painel Central" : (
+              <>Painel Central <span style={{ color: ORANGE }}>Administrativo</span></>
+            )}
           </h1>
         </header>
         <div className="p-4 sm:p-6 lg:p-8">
