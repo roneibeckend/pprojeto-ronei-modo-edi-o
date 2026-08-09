@@ -350,12 +350,6 @@ function EbookReaderPage() {
             </div>
           </div>
 
-          <div className="glass overflow-hidden rounded-3xl p-6 text-center">
-            <div className="mb-4 aspect-[3/4] overflow-hidden rounded-xl border border-white/5 bg-muted/20 shadow-2xl">
-              <img src={ebook.cover_url || ebook.cover} alt={ebook.title} className="h-full w-full object-cover" />
-            </div>
-            <p className="text-xs text-muted-foreground">Você está lendo a versão digital completa.</p>
-          </div>
         </aside>
       </div>
     </div>
