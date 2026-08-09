@@ -75,7 +75,9 @@ function AdminRootLayout() {
       <aside className="hidden lg:flex w-64 border-r border-white/10 flex-col shrink-0">
         <div className="p-6 border-b border-white/10 flex items-center gap-2 shrink-0">
           <ShieldCheck className="h-6 w-6" style={{ color: ORANGE }} />
-          <span className="font-bold tracking-widest text-sm uppercase truncate">Painel Admin</span>
+          <span className="font-bold tracking-widest text-sm uppercase truncate">
+            {role === "student" ? "Painel Central" : "Painel Admin"}
+          </span>
         </div>
         
         <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden">
