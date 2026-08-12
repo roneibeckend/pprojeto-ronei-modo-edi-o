@@ -69,7 +69,7 @@ function Dashboard() {
       {/* Showcase / Cursos */}
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-display text-2xl font-bold tracking-tight">Novidades para você</h2>
+          <h2 className="font-display text-2xl font-bold tracking-tight break-words">Novidades para você</h2>
           <Link to="/app/cursos" className="text-sm font-medium text-gold hover:underline">Ver todos</Link>
         </div>
         
@@ -169,8 +169,8 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
       </div>
 
       <div className="p-4 sm:p-5">
-        <h3 className="font-display text-base sm:text-lg font-bold line-clamp-2">{item.title}</h3>
-        <p className="mt-1 line-clamp-3 text-xs sm:text-sm text-muted-foreground min-h-[48px] sm:min-h-[60px]">{item.description}</p>
+        <h3 className="font-display text-base sm:text-lg font-bold line-clamp-2 break-words">{item.title}</h3>
+        <p className="mt-1 line-clamp-3 text-xs sm:text-sm text-muted-foreground min-h-[48px] sm:min-h-[60px] break-words">{item.description}</p>
         
         {isLocked ? (
           <div className="mt-4">

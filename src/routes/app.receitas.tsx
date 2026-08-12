@@ -124,18 +124,18 @@ function RecipesPage() {
           <div className="glass max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl" onClick={(e) => e.stopPropagation()}>
             <img src={open.image_url || "/placeholder.svg"} alt={open.name} className="h-56 w-full object-cover" />
             <div className="p-6">
-              <h3 className="font-display text-2xl font-bold whitespace-normal">{open.name}</h3>
+              <h3 className="font-display text-2xl font-bold whitespace-normal break-words">{open.name}</h3>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <div>
                   <h4 className="font-bold">Ingredientes</h4>
                   <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                    {open.ingredients?.map((i: string) => <li key={i}>{i}</li>)}
+                    {open.ingredients?.map((i: string) => <li key={i} className="break-words">{i}</li>)}
                   </ul>
                 </div>
                 <div>
                   <h4 className="font-bold">Modo de preparo</h4>
                   <ol className="mt-2 list-inside list-decimal space-y-1 text-sm text-muted-foreground">
-                    {open.steps?.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                    {open.steps?.map((s: string, i: number) => <li key={i} className="break-words">{s}</li>)}
                   </ol>
                 </div>
               </div>

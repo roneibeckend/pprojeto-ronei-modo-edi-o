@@ -253,7 +253,7 @@ function EbookReaderPage() {
 
               <div className="p-6 md:p-12 mt-4">
                 <div className="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <h1 className="font-display text-2xl font-black tracking-tight sm:text-3xl md:text-4xl">
+                  <h1 className="font-display text-2xl font-black tracking-tight sm:text-3xl md:text-4xl break-words">
                     {activeChapter?.title}
                   </h1>
                   {activeChapter?.reading_minutes && (
@@ -295,7 +295,7 @@ function EbookReaderPage() {
               </div>
               <div className="hidden text-left md:block">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Anterior</div>
-                <div className="line-clamp-2 text-sm font-bold">{prevChapter?.title || "Início"}</div>
+                <div className="line-clamp-2 text-sm font-bold break-words">{prevChapter?.title || "Início"}</div>
               </div>
             </button>
 
@@ -306,7 +306,7 @@ function EbookReaderPage() {
             >
               <div className="hidden md:block">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Próximo</div>
-                <div className="line-clamp-2 text-sm font-bold">{nextChapter?.title || "Fim"}</div>
+                <div className="line-clamp-2 text-sm font-bold break-words">{nextChapter?.title || "Fim"}</div>
               </div>
               <div className="grid h-10 w-10 place-items-center rounded-xl bg-fire text-white shadow-lg shadow-fire/20">
                 <ChevronRight className="h-5 w-5" />

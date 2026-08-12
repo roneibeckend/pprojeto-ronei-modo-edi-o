@@ -81,7 +81,7 @@ function ProfilePage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">E-mail</div>
-                  <div className="truncate text-sm font-medium">{student.email}</div>
+                  <div className="text-sm font-medium break-words">{student.email}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -90,7 +90,7 @@ function ProfilePage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Telefone</div>
-                  <div className="truncate text-sm font-medium">{student.phone}</div>
+                  <div className="text-sm font-medium break-words">{student.phone}</div>
                 </div>
               </div>
             </div>

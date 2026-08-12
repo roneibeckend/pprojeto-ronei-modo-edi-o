@@ -21,8 +21,8 @@ function MaterialsPage() {
               </div>
               <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">{m.type}</span>
             </div>
-            <h3 className="mt-4 font-display text-lg font-bold">{m.title}</h3>
-            <p className="mt-1 text-sm text-muted-foreground">{m.description}</p>
+            <h3 className="mt-4 font-display text-lg font-bold break-words">{m.title}</h3>
+            <p className="mt-1 text-sm text-muted-foreground break-words">{m.description}</p>
             <button className="btn-fire mt-4 w-full text-sm"><Download className="h-4 w-4" /> Baixar material</button>
           </div>
         ))}

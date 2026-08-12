@@ -225,7 +225,7 @@ function CoursePage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5 glass border-t-0 rounded-t-none">
               <div className="min-w-0">
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Aula atual</div>
-                <div className="font-display text-base sm:text-lg font-bold">{active.title}</div>
+                <div className="font-display text-base sm:text-lg font-bold break-words">{active.title}</div>
               </div>
               <button 
                 onClick={() => toggleLessonProgress({ 
@@ -316,7 +316,7 @@ function CoursePage() {
                       setActiveId(m.lessons[0].id);
                     }
                   }}
-                  className="w-full text-left px-2 pb-2 text-sm font-semibold hover:text-fire transition-colors"
+                  className="w-full text-left px-2 pb-2 text-sm font-semibold hover:text-fire transition-colors break-words"
                 >
                   {m.title}
                 </button>
@@ -334,7 +334,7 @@ function CoursePage() {
                           <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border ${isLessonCompleted(l.id) ? 'bg-green-600/20 border-green-600 text-green-500' : 'border-white/10'}`}>
                             {isLessonCompleted(l.id) ? <Check className="h-3 w-3" /> : (isActive ? <Play className="h-3 w-3" /> : <Play className="h-3 w-3 opacity-50" />)}
                           </span>
-                          <span className="min-w-0 flex-1 whitespace-normal">{l.title}</span>
+                          <span className="min-w-0 flex-1 whitespace-normal break-words">{l.title}</span>
                           <span className="text-xs text-muted-foreground">{l.duration || "00:00"}</span>
                         </button>
                       </li>

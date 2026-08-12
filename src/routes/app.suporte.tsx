@@ -442,7 +442,7 @@ function SupportPage() {
                         ) : ticketMessages.length > 0 ? (
                           ticketMessages.map((m: any) => (
                             <div key={m.id} className={`flex flex-col ${m.sender_type === 'student' ? 'items-end' : 'items-start'}`}>
-                              <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
+                              <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm break-words ${
                                 m.sender_type === 'student' 
                                   ? 'bg-[#ff6a00] text-black font-medium rounded-tr-none' 
                                   : 'bg-white/10 text-white rounded-tl-none'
@@ -496,7 +496,7 @@ function SupportPage() {
                               <span className="font-mono text-[10px] font-bold text-[#ff6a00] uppercase tracking-widest">{t.id.slice(0, 8)}</span>
                               <span className="text-[10px] font-bold uppercase tracking-widest text-white/20">{t.category}</span>
                             </div>
-                            <h5 className="mt-1 font-bold text-white group-hover:text-[#ff6a00] transition">{t.subject}</h5>
+                            <h5 className="mt-1 font-bold text-white group-hover:text-[#ff6a00] transition break-words">{t.subject}</h5>
                             <div className="mt-2 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-white/30">
                               <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(t.created_at).toLocaleDateString('pt-BR')}</span>
                               <span className="flex items-center gap-1"><User className="h-3 w-3" /> {t.status === 'resolved' ? 'Finalizado' : 'Aguardando'}</span>

@@ -157,8 +157,8 @@ function CoursesPage() {
                 </div>
                 
                 <div className="p-4 sm:p-5">
-                  <h3 className="font-display text-base sm:text-lg font-bold leading-tight line-clamp-2">{c.title}</h3>
-                  <p className="mt-2 line-clamp-3 text-xs sm:text-sm text-muted-foreground">{c.description}</p>
+                  <h3 className="font-display text-base sm:text-lg font-bold leading-tight line-clamp-2 break-words">{c.title}</h3>
+                  <p className="mt-2 line-clamp-3 text-xs sm:text-sm text-muted-foreground break-words">{c.description}</p>
                   
                   <Link
                     to="/app/cursos/$courseId"
@@ -189,8 +189,8 @@ function CoursesPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-gold bg-gold/10 px-2 py-0.5 rounded">E-book</span>
                   </div>
-                  <h3 className="font-display text-lg font-bold leading-tight line-clamp-2">{e.title}</h3>
-                  <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{e.description}</p>
+                  <h3 className="font-display text-lg font-bold leading-tight line-clamp-2 break-words">{e.title}</h3>
+                  <p className="mt-2 line-clamp-3 text-sm text-muted-foreground break-words">{e.description}</p>
                   
                   <Link
                     to="/app/ebooks/$ebookId"
@@ -240,8 +240,8 @@ function CoursesPage() {
                 </div>
                 
                 <div className="p-5">
-                  <h3 className="font-display text-lg font-bold leading-tight line-clamp-2">{c.title}</h3>
-                  <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{c.description}</p>
+                  <h3 className="font-display text-lg font-bold leading-tight line-clamp-2 break-words">{c.title}</h3>
+                  <p className="mt-2 line-clamp-3 text-sm text-muted-foreground break-words">{c.description}</p>
                   
                   <div className="mt-6 flex items-end justify-between">
                     <div>
@@ -295,8 +295,8 @@ function CoursesPage() {
                 </div>
                 
                 <div className="p-5">
-                  <h3 className="font-display text-lg font-bold leading-tight line-clamp-2">{e.title}</h3>
-                  <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{e.description}</p>
+                  <h3 className="font-display text-lg font-bold leading-tight line-clamp-2 break-words">{e.title}</h3>
+                  <p className="mt-2 line-clamp-3 text-sm text-muted-foreground break-words">{e.description}</p>
                   
                   <div className="mt-6 flex items-end justify-between">
                     <div>
