@@ -76,12 +76,11 @@ export async function sendResendEmail(params: {
     // Log the email attempt in a central table if it exists
     try {
       await supabaseAdmin.from('email_logs').insert({
-        to: Array.isArray(params.to) ? params.to.join(', ') : params.to,
-        subject: params.subject,
+        recipient_email: Array.isArray(params.to) ? params.to.join(', ') : params.to,
+        template_name: params.subject, // We use subject as template name if not provided
         status: 'sent',
-        provider: 'resend',
-        external_id: data.id,
-        metadata: { tags: params.tags }
+        provider_message_id: data.id,
+        payload: { tags: params.tags } as any
       });
     } catch (logError) {
       console.warn('[Resend] Falha ao logar envio de email:', logError);
@@ -94,10 +93,9 @@ export async function sendResendEmail(params: {
     // Log failure
     try {
       await supabaseAdmin.from('email_logs').insert({
-        to: Array.isArray(params.to) ? params.to.join(', ') : params.to,
-        subject: params.subject,
+        recipient_email: Array.isArray(params.to) ? params.to.join(', ') : params.to,
+        template_name: params.subject,
         status: 'error',
-        provider: 'resend',
         error_message: error.message
       });
     } catch (logError) {
