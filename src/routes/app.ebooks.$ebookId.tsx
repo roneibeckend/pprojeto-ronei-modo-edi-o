@@ -267,8 +267,8 @@ function EbookReaderPage() {
                 onClick={() => setShowIntroVideo(true)}
               >
                 <iframe
-                  src={ebook.opening_video_url.includes('youtube.com') 
-                    ? ebook.opening_video_url.replace('watch?v=', 'embed/').split('&')[0]
+                  src={ebook.opening_video_url.includes('youtube.com') || ebook.opening_video_url.includes('youtu.be')
+                    ? (ebook.opening_video_url.includes('watch?v=') ? ebook.opening_video_url.replace('watch?v=', 'embed/').split('&')[0] : `https://www.youtube.com/embed/${ebook.opening_video_url.split('youtu.be/')[1].split('?')[0]}`)
                     : ebook.opening_video_url}
                   className="h-full w-full pointer-events-none"
                 />
