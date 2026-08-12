@@ -104,7 +104,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <Flame className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} />
         </div>
         <div className="min-w-0">
-          <div className="truncate font-display text-base font-extrabold uppercase leading-none tracking-wide text-sidebar-foreground">
+          <div className="font-display text-base font-extrabold uppercase leading-tight tracking-wide text-sidebar-foreground">
             Espetinho <span className="text-primary">na Veia</span>
           </div>
           <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-sidebar-foreground/40">
@@ -120,8 +120,8 @@ export function Shell({ children }: { children: ReactNode }) {
           <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-sidebar bg-emerald-500" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-semibold text-sidebar-foreground">{student.name}</div>
-          <div className="text-[10px] font-bold uppercase tracking-widest text-primary truncate">Aluno ativo</div>
+          <div className="text-sm font-semibold text-sidebar-foreground">{student.name}</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-primary">Aluno ativo</div>
         </div>
       </div>
 
@@ -177,7 +177,7 @@ export function Shell({ children }: { children: ReactNode }) {
                       }`}
                     >
                       <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={active ? 2.5 : 2} />
-                      <span className="truncate">{item.label}</span>
+                      <span>{item.label}</span>
                       {item.badge && (
                         <span
                           className={`ml-auto rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
@@ -240,7 +240,7 @@ export function Shell({ children }: { children: ReactNode }) {
           </Sheet>
 
           <div className="min-w-0 flex-1">
-            <div className="truncate font-display text-lg font-extrabold uppercase tracking-wide sm:text-xl text-foreground">
+            <div className="font-display text-lg font-extrabold uppercase tracking-wide sm:text-xl text-foreground">
               Espetinho <span className="text-primary">na Veia</span>
             </div>
           </div>
@@ -288,7 +288,7 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
   return (
     <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 sm:flex sm:flex-wrap sm:justify-between">
       <div className="min-w-0">
-        <h1 className="truncate font-display text-2xl font-bold sm:text-3xl text-foreground">{title}</h1>
+        <h1 className="font-display text-2xl font-bold sm:text-3xl text-foreground">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       {action}
