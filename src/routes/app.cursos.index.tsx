@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Play, Sparkles, Lock, ShoppingCart, Loader2 } from "lucide-react";
-import { usePaymentModal } from "@/components/platform/AsaasPaymentModal";
+import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { createAsaasPaymentLink } from "@/lib/asaas.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
@@ -43,7 +43,7 @@ function CoursesPage() {
       });
       
       if (result.url) {
-        openPayment(result.url, item.title);
+        openPayment(result.url, item.title, item.id, type);
       }
     } catch (error: any) {
       console.error("Erro ao processar compra:", error);
