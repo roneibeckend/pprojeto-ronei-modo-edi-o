@@ -233,7 +233,7 @@ function CoursePage() {
   // Scroll to top when lesson changes (all devices)
   useEffect(() => {
     if (activeId) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
   }, [activeId]);
 
