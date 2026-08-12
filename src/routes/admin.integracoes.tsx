@@ -632,6 +632,15 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
     queryFn: async () => await getEmailSettings()
   });
 
+  const { data: resendIntegration, isLoading: loadingResend } = useQuery({
+    queryKey: ['resend_integration'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('integrations').select('*').eq('category', 'resend').maybeSingle();
+      if (error) throw error;
+      return data as Integration;
+    }
+  });
+
   const { data: logs, isLoading: loadingLogs } = useQuery({
     queryKey: ['email_logs'],
     queryFn: async () => await getEmailLogs({ data: { limit: 20, offset: 0 } })
