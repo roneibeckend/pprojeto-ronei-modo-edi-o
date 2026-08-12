@@ -122,16 +122,29 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                           .eq('id', userId)
                           .maybeSingle();
 
-                        await sendEmail({
+                        const productName = productType === 'course' ? 'seu Curso' : 'seu E-book';
+                        const subject = 'Acesso Liberado! 🚀 Seu conteúdo já está disponível';
+                        const userName = profile?.name || 'Cliente';
+                        
+                        await sendResendEmail({
                           to: customerEmail,
-                          template: 'acesso_liberado_produto',
-                          data: {
-                            userName: profile?.name || 'Cliente',
-                            productName: productType === 'course' ? 'seu Curso' : 'seu E-book',
-                            productType: productType,
-                            productId: productId,
-                            subject: 'Acesso Liberado! 🚀 Seu conteúdo já está disponível'
-                          }
+                          subject: subject,
+                          html: `
+                            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+                              <h1 style="color: #ff6a00;">Olá, ${userName}!</h1>
+                              <p>Boas notícias! Seu pagamento foi confirmado e seu acesso ao <strong>${productName}</strong> já está liberado.</p>
+                              <div style="background: #f4f4f4; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                                <p style="margin-top: 0;">Para acessar, basta entrar na plataforma com seu e-mail:</p>
+                                <a href="https://lovable.app" style="display: inline-block; background: #ff6a00; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Acessar Plataforma</a>
+                              </div>
+                              <p>Se tiver qualquer dúvida, basta responder a este e-mail.</p>
+                              <p>Bons estudos!<br>Equipe Plataforma</p>
+                            </div>
+                          `,
+                          tags: [
+                            { name: 'product_type', value: productType },
+                            { name: 'product_id', value: productId }
+                          ]
                         });
                         console.log(`[Webhook Asaas] Email de acesso enviado para ${customerEmail}`);
                       } catch (emailErr) {
