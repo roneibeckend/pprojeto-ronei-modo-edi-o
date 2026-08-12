@@ -36,12 +36,44 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
         await new Promise(resolve => setTimeout(resolve, 800));
         responseBody = { model: data.settings?.defaultModel || 'default', usage: 'ok' };
       } else if (category === 'stripe' || category === 'asaas' || category === 'mercadopago') {
-        endpoint = environment === 'production' ? 'https://api.payment.com/v1' : 'https://sandbox.payment.com/v1';
+        const asaasSandbox = 'https://sandbox.asaas.com/api/v3';
+        const asaasProduction = 'https://www.asaas.com/api/v3';
+        
+        endpoint = category === 'asaas' 
+          ? (environment === 'production' ? asaasProduction : asaasSandbox)
+          : (environment === 'production' ? 'https://api.payment.com/v1' : 'https://sandbox.payment.com/v1');
+
         if (!credentials.apiKey && !credentials.accessToken && !credentials.secretKey) {
           throw new Error("Credenciais de pagamento incompletas.");
         }
-        await new Promise(resolve => setTimeout(resolve, 1200));
-        responseBody = { account_status: 'active', balance: { amount: 0, currency: 'BRL' } };
+
+        if (category === 'asaas') {
+          // Real test call for Asaas to verify credentials and User-Agent requirement
+          try {
+            const response = await fetch(`${endpoint}/paymentLinks?limit=1`, {
+              method: 'GET',
+              headers: {
+                'accept': 'application/json',
+                'access_token': credentials.apiKey as string,
+                'User-Agent': 'Lovable-LMS-Platform/1.0.0 (+https://lovable.app)'
+              }
+            });
+
+            httpCode = response.status;
+            responseBody = await response.json();
+
+            if (!response.ok) {
+              const errorData = responseBody as any;
+              throw new Error(errorData.errors?.[0]?.description || `Erro ${response.status} na API do Asaas`);
+            }
+          } catch (fetchError: any) {
+            throw new Error(`Falha ao conectar com Asaas: ${fetchError.message}`);
+          }
+        } else {
+          // Simulated logic for other payment providers
+          await new Promise(resolve => setTimeout(resolve, 1200));
+          responseBody = { account_status: 'active', balance: { amount: 0, currency: 'BRL' } };
+        }
       }
 
       const latency = `${Date.now() - startTime}ms`;

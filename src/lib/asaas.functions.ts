@@ -49,7 +49,8 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
         headers: {
           'accept': 'application/json',
           'content-type': 'application/json',
-          'access_token': apiKey
+          'access_token': apiKey,
+          'User-Agent': 'Lovable-LMS-Platform/1.0.0 (+https://lovable.app)'
         },
         body: JSON.stringify({
           name: data.title,
