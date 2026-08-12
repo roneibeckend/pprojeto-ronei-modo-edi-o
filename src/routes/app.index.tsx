@@ -103,6 +103,8 @@ function Dashboard() {
 
 function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boolean }) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showOffer, setShowOffer] = useState(false);
+  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
   
@@ -110,15 +112,38 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
     e.preventDefault();
     e.stopPropagation();
     
+    if (isOfferEnabled) {
+      setShowOffer(true);
+      return;
+    }
+
+    await executeCheckout([]);
+  };
+
+  const executeCheckout = async (additionalItems: any[]) => {
     try {
       setIsProcessing(true);
-      const result = await createPaymentLink({
-        data: {
+      
+      const products = [
+        {
           productId: item.id,
           productType: item.type,
           title: item.title,
           description: item.description,
           value: item.price || 0,
+        },
+        ...additionalItems.map(off => ({
+          productId: off.id,
+          productType: off.type,
+          title: off.title,
+          description: off.description,
+          value: (off.price || 0) * 0.85, // 15% discount
+        }))
+      ];
+
+      const result = await createPaymentLink({
+        data: {
+          products,
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: item.payment_type || 'unique',
           dueDays: item.due_days || 3,
@@ -133,6 +158,7 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
       toast.error(error.message || "Erro ao gerar link de pagamento.");
     } finally {
       setIsProcessing(false);
+      setShowOffer(false);
     }
   };
 
