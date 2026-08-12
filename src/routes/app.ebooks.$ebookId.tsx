@@ -14,6 +14,8 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
+import { FeedbackSummary } from "@/components/platform/FeedbackSummary";
+import { FeedbackModal } from "@/components/platform/FeedbackModal";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
