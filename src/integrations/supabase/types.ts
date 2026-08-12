@@ -303,9 +303,11 @@ export type Database = {
       }
       course_feedback: {
         Row: {
+          admin_reply: string | null
           comment: string | null
-          course_id: string
+          course_id: string | null
           created_at: string
+          ebook_id: string | null
           id: string
           rating: number
           status: string
@@ -314,9 +316,11 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          admin_reply?: string | null
           comment?: string | null
-          course_id: string
+          course_id?: string | null
           created_at?: string
+          ebook_id?: string | null
           id?: string
           rating: number
           status?: string
@@ -325,9 +329,11 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          admin_reply?: string | null
           comment?: string | null
-          course_id?: string
+          course_id?: string | null
           created_at?: string
+          ebook_id?: string | null
           id?: string
           rating?: number
           status?: string
@@ -341,6 +347,13 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_feedback_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
             referencedColumns: ["id"]
           },
           {
