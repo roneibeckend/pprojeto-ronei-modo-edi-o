@@ -119,7 +119,18 @@ function AdminEbooksPage() {
     try {
       setIsSaving(true);
       // Prepare data for upsert, ensuring no virtual 'modules' column is sent
+      // Convert keywords string back to array if needed to avoid "malformed array literal"
       const { modules, ...payload } = editingItem;
+      
+      // Handle keywords serialization: string (from input) to text[] (for Postgres)
+      if (typeof payload.keywords === 'string') {
+        payload.keywords = payload.keywords
+          .split(',')
+          .map((k: string) => k.trim())
+          .filter((k: string) => k !== '');
+      } else if (!payload.keywords) {
+        payload.keywords = [];
+      }
       
       const { data, error } = await supabase
         .from('ebooks')
@@ -394,13 +405,13 @@ function AdminEbooksPage() {
                           )}
                         </div>
                         <input 
-                          value={editingItem?.keywords || ""} 
+                          value={Array.isArray(editingItem?.keywords) ? editingItem.keywords.join(', ') : (editingItem?.keywords || "")} 
                           onChange={e => setEditingItem({...editingItem, keywords: e.target.value})} 
                           placeholder="ex: churrasco, espetinho, receitas, gourmet"
                           className={cn(
                             "w-full bg-white/5 border p-3 rounded-lg text-sm outline-none transition-colors",
-                            editingItem?.keywords?.split(',').filter((k: string) => k.trim()).length >= 5 ? "border-green-500/30 focus:border-green-500" : 
-                            editingItem?.keywords?.length > 0 ? "border-yellow-500/30 focus:border-yellow-500" : "border-white/10 focus:border-[#ff6a00]"
+                            (Array.isArray(editingItem?.keywords) ? editingItem.keywords.join(', ') : (editingItem?.keywords || "")).split(',').filter((k: string) => k.trim()).length >= 5 ? "border-green-500/30 focus:border-green-500" : 
+                            (editingItem?.keywords?.length > 0) ? "border-yellow-500/30 focus:border-yellow-500" : "border-white/10 focus:border-[#ff6a00]"
                           )}
                         />
                       </div>
@@ -1033,7 +1044,7 @@ function SEOTooltip({ type, content, keywords }: { type: 'title' | 'description'
         data: { 
           title: type === 'title' ? content : undefined,
           description: type === 'description' ? content : undefined,
-          keywords: type === 'keywords' ? content : keywords
+          keywords: type === 'keywords' ? (Array.isArray(content) ? content.join(', ') : content) : (Array.isArray(keywords) ? keywords.join(', ') : keywords)
         } 
       });
       setSuggestions(result[type]);
