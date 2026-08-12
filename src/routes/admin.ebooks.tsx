@@ -286,7 +286,7 @@ function AdminEbooksPage() {
               const modalOverlay = document.querySelector('.fixed.inset-0.z-50');
               if (modalOverlay) modalOverlay.scrollTo({ top: 0, behavior: 'smooth' });
             }}>
-              <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start sticky top-0 z-20 backdrop-blur-md">
+              <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start sticky top-[68px] z-20 backdrop-blur-md">
                 <TabsTrigger value="info" className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Info className="h-4 w-4" /> Informações
                 </TabsTrigger>
