@@ -535,7 +535,12 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
           toast.success(`PDF importado com sucesso! ${result.chapters_count} capítulos criados.`);
           fetchContent();
         } catch (err: any) {
-          toast.error("Erro no processamento do PDF: " + err.message);
+          const errorMessage = err.message || "Erro desconhecido";
+          if (errorMessage.includes("página de erro técnica")) {
+             toast.error("Erro no Processamento: Ocorreu uma falha técnica no serviço de PDF. Por favor, tente novamente em instantes ou contate o suporte.");
+          } else {
+             toast.error("Erro no processamento do PDF: " + errorMessage);
+          }
         }
       };
       reader.readAsDataURL(file);
