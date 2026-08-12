@@ -236,11 +236,16 @@ function EbookReaderPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-0 pb-20 sm:px-4 overflow-x-hidden">
-      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 sm:px-0">
-        <PageHeader
-          title={ebook.title}
-          subtitle={ebook.subtitle || "E-book Exclusivo"}
-        />
+      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-end sm:justify-between mb-6 sm:mb-8 sm:px-0">
+        <div>
+          <div className="mb-4">
+            <FeedbackSummary ebookId={ebook.id} />
+          </div>
+          <PageHeader
+            title={ebook.title}
+            subtitle={ebook.subtitle || "E-book Exclusivo"}
+          />
+        </div>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           {ebook.opening_video_url && (
             <button 
