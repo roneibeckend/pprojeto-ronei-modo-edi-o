@@ -22,14 +22,7 @@ export function AsaasPaymentModal() {
     let interval: number | undefined;
 
     if (isOpen && productId && productType && status !== 'confirmed') {
-      // Monitorar mensagens do iframe para detectar falhas no Asaas
       const handleMessage = (event: MessageEvent) => {
-        // O Asaas envia mensagens via postMessage em alguns casos
-        // ou redireciona para URLs de erro. 
-        // Como estamos em iframe, se o Asaas redirecionar para sua própria página de erro,
-        // o polling de matrícula continuará rodando.
-        // Se quisermos ser proativos, podemos tentar detectar mudanças de URL (limitado por CORS)
-        // ou esperar o usuário fechar/reabrir.
         console.log('[PaymentModal] Message received:', event.data);
       };
 
@@ -44,13 +37,13 @@ export function AsaasPaymentModal() {
           setStatus('confirmed');
           if (interval) clearInterval(interval);
         }
-      }, 3000); // Poll a cada 3 segundos
-    }
+      }, 3000);
 
-    return () => {
-      window.removeEventListener('message', handleMessage);
-      if (interval) clearInterval(interval);
-    };
+      return () => {
+        window.removeEventListener('message', handleMessage);
+        if (interval) clearInterval(interval);
+      };
+    }
   }, [isOpen, productId, productType, status, isEnrolledInCourse, isEnrolledInEbook, setStatus]);
 
   // Redirecionamento automático após confirmação
