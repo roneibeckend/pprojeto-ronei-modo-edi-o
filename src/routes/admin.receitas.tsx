@@ -107,7 +107,7 @@ function AdminReceitasPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {recipes.map((recipe) => (
             <div key={recipe.id} className="group relative overflow-hidden rounded-xl border border-white/5 bg-[#111] transition-all hover:border-[#ff6a00]/30">
-              <div className="aspect-video w-full bg-white/5 overflow-hidden">
+              <div className="aspect-[9/16] max-h-[300px] w-full bg-white/5 overflow-hidden">
                 {recipe.image_url ? (
                   <img src={recipe.image_url} alt={recipe.name} className="h-full w-full object-cover opacity-60 group-hover:opacity-80 transition" />
                 ) : (

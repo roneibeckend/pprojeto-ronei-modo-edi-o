@@ -305,7 +305,7 @@ function EbookReaderPage() {
                 <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Apresentação</p>
               </div>
  
-              <div className="relative aspect-video w-full rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black">
+              <div className="relative aspect-[9/16] h-[70vh] max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black">
                 <iframe
                   src={ebook.opening_video_url.includes('youtube.com') || ebook.opening_video_url.includes('youtu.be')
                     ? (ebook.opening_video_url.includes('watch?v=') ? ebook.opening_video_url.replace('watch?v=', 'embed/').split('&')[0] : `https://www.youtube.com/embed/${ebook.opening_video_url.split('youtu.be/')[1].split('?')[0]}`) + "?autoplay=1"
@@ -351,7 +351,7 @@ function EbookReaderPage() {
               {activeChapter?.video_url && (
                 <div className="w-full bg-black/40 border-b border-white/5">
                   <div className="max-w-4xl mx-auto py-4 sm:py-8 px-0 sm:px-4">
-                    <div className="relative aspect-video w-full rounded-none sm:rounded-2xl overflow-hidden shadow-2xl border-y sm:border border-white/10 bg-black/60 group">
+                    <div className="relative aspect-[9/16] max-h-[70vh] max-w-[400px] mx-auto rounded-none sm:rounded-2xl overflow-hidden shadow-2xl border-y sm:border border-white/10 bg-black/60 group">
                       <iframe
                         key={activeChapter.video_url}
                         src={activeChapter.video_url.includes('youtube.com') || activeChapter.video_url.includes('youtu.be')

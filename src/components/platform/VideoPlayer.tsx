@@ -98,7 +98,7 @@ export function VideoPlayer({
 
   if (isYouTube || isGoogleDrive) {
     return (
-      <div className={cn("relative aspect-video bg-black rounded-xl overflow-hidden glass", className)}>
+      <div className={cn("relative aspect-[9/16] max-h-[85vh] mx-auto bg-black rounded-xl overflow-hidden glass", className)}>
         <iframe
           src={getEmbedUrl(src)}
           className="w-full h-full"
@@ -111,7 +111,7 @@ export function VideoPlayer({
 
   return (
     <div 
-      className={cn("relative group aspect-video bg-black rounded-xl overflow-hidden glass", className)}
+      className={cn("relative group aspect-[9/16] max-h-[85vh] mx-auto bg-black rounded-xl overflow-hidden glass", className)}
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => !videoRef.current?.paused && setShowControls(false)}
     >
@@ -119,7 +119,7 @@ export function VideoPlayer({
         ref={videoRef}
         src={src}
         poster={poster}
-        className="w-full h-full object-contain"
+        className="w-full h-full object-cover"
         playsInline
         controls={false} // Custom controls
         preload="auto" // Changed from metadata to auto for better initial quality/loading
