@@ -21,15 +21,11 @@ async function run() {
   console.log(`Encontradas ${parts.length} partes principais.`);
 
   // Clear existing structure (Keep the ebook row itself)
-  // We'll delete chapters and modules. 
-  // IMPORTANT: Since progress is tied to IDs, and we are replacing the entire book,
-  // we accept that progress IDs won't match. But we MUST keep the ebook ID.
-  
   console.log("Limpando estrutura antiga...");
   await supabaseAdmin.from('ebook_chapters').delete().eq('ebook_id', EBOOK_ID);
   await supabaseAdmin.from('ebook_modules').delete().eq('ebook_id', EBOOK_ID);
 
-  // Create one main module for all content to keep it simple as requested
+  // Create one main module for all content
   const { data: module, error: modError } = await supabaseAdmin
     .from('ebook_modules')
     .insert({
@@ -43,33 +39,50 @@ async function run() {
   if (modError) throw modError;
 
   const chaptersToInsert = parts.map((part, index) => {
-    // Extract title from the first line or before the first tag
-    // The part starts right after <h1>, so the title is usually at the beginning
-    const titleMatch = part.match(/^([^<]+)/);
-    let title = titleMatch ? titleMatch[1].trim() : `Capítulo ${index + 1}`;
+    // Extract title from <h1> text (the part after split starts with the content after <h1>)
+    // But mammoth split puts the content after the tag in the part.
+    // The previous <h1> text is lost in a standard split.
+    // Let's use a better regex or manual parsing.
     
-    // If title is "Sumário", we skip it as it's a digital book with its own navigation
-    if (title.toLowerCase().includes("sumário")) return null;
+    const h1Regex = /<h1[^>]*>(.*?)<\/h1>/gi;
+    // We already split by <h1>, so each part starts with the content AFTER <h1>.
+    // Let's find titles using a better approach.
+    return null;
+  });
 
-    let content = part.replace(/^[^<]+/, '').trim();
-    // Add some styling for tables and boxes if they exist
+  // Better approach: use a loop to find all <h1> and its subsequent content
+  const sections: {title: string, content: string}[] = [];
+  const h1Matches = Array.from(html.matchAll(/<h1[^>]*>(.*?)<\/h1>/gi));
+  
+  for (let i = 0; i < h1Matches.length; i++) {
+    const title = h1Matches[i][1].replace(/<[^>]+>/g, '').trim();
+    const startIdx = h1Matches[i].index! + h1Matches[i][0].length;
+    const endIdx = i < h1Matches.length - 1 ? h1Matches[i+1].index! : html.length;
+    let content = html.substring(startIdx, endIdx).trim();
+    
+    if (title.toLowerCase().includes("sumário")) continue;
+
+    // Adapt styling
     content = content.replace(/<table>/g, '<div class="overflow-x-auto my-4"><table class="min-w-full border border-white/10 text-sm">');
     content = content.replace(/<td>/g, '<td class="border border-white/10 p-4">');
+    content = content.replace(/<tr>/g, '<tr class="border-b border-white/5">');
     
-    return {
-      ebook_id: EBOOK_ID,
-      module_id: module.id,
-      title: title,
-      content: content,
-      order_index: index
-    };
-  }).filter(Boolean);
+    sections.push({ title, content });
+  }
 
-  console.log(`Inserindo ${chaptersToInsert.length} capítulos...`);
+  console.log(`Inserindo ${sections.length} capítulos...`);
+
+  const finalChapters = sections.map((s, index) => ({
+    ebook_id: EBOOK_ID,
+    module_id: module.id,
+    title: s.title,
+    content: s.content,
+    order_index: index
+  }));
 
   const { error: chapError } = await supabaseAdmin
     .from('ebook_chapters')
-    .insert(chaptersToInsert);
+    .insert(finalChapters);
 
   if (chapError) throw chapError;
 
