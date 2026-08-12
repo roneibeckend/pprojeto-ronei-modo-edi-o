@@ -106,7 +106,7 @@ function EbookReaderPage() {
 
       // Show feedback modal if finished
       if (!hasSubmittedFeedback) {
-        const completedCount = chapters.filter(c => isChapterCompleted(c.id)).length;
+        const completedCount = chapters.filter((c: any) => isChapterCompleted(c.id)).length;
         if (completedCount >= chapters.length && chapters.length > 0) {
           setShowFeedbackModal(true);
         }
