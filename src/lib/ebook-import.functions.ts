@@ -187,9 +187,19 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
       };
     } catch (err: any) {
       console.error("Server function error [importEbookFromFile]:", err);
-      const cleanMessage = err.message?.includes("<!doctype html>") 
+      
+      const errorMessage = err.message || "";
+      
+      // If it's a DOCX error, provide a specific prefix to differentiate from generic PDF infra errors
+      if (data.mime_type?.includes('officedocument') || data.file_name?.toLowerCase().endsWith('.docx')) {
+        if (errorMessage.includes("<!doctype html>") || errorMessage.includes("This page didn't load")) {
+          throw new Error("DOCX_INFRA_ERROR: O servidor encontrou uma instabilidade ao processar o Word. Tente simplificar o documento ou dividi-lo.");
+        }
+      }
+
+      const cleanMessage = errorMessage.includes("<!doctype html>") 
         ? "Erro de infraestrutura. Tente um arquivo menor." 
-        : err.message;
+        : errorMessage;
       throw new Error(cleanMessage || "Erro interno no servidor");
     }
   });

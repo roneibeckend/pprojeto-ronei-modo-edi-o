@@ -537,7 +537,7 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
           toast.success(`Arquivo importado com sucesso! ${result.chapters_count} capítulos criados.`);
           fetchContent();
         } catch (err: any) {
-          console.error("PDF Import Failure:", err);
+          console.error("File Import Failure:", err);
           const errorMessage = err.message || "Erro desconhecido";
           
           if (errorMessage.includes("LIMITE_EXCEDIDO")) {
@@ -548,11 +548,15 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
              toast.error("Processamento Interrompido: O arquivo é muito complexo (contém muitas imagens ou tabelas). Tente remover elementos pesados ou dividir o arquivo.", {
                duration: 8000
              });
+          } else if (errorMessage.includes("DOCX_INFRA_ERROR")) {
+             toast.error("Erro no Processamento do Word: O documento é muito complexo para o conversor. Tente salvar como PDF ou simplificar a formatação.", {
+               duration: 8000
+             });
           } else if (errorMessage.includes("página de erro técnica") || 
               errorMessage.includes("instabilidade na infraestrutura") || 
               errorMessage.includes("This page didn't load") ||
               errorMessage.includes("INFRA_ERROR_HTML")) {
-             toast.error("Falha Técnica Temporária: O servidor de processamento encontrou uma instabilidade. Isso é comum com arquivos densos ou próximos ao limite de 60MB. Tente novamente em instantes.", {
+             toast.error("Falha Técnica Temporária: O servidor encontrou uma instabilidade. Isso é comum com arquivos muito densos ou próximos ao limite. Tente novamente em instantes.", {
                duration: 8000
              });
           } else {
