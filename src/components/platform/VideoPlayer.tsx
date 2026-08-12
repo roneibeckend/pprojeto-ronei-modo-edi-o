@@ -122,13 +122,16 @@ export function VideoPlayer({
         className="w-full h-full object-contain"
         playsInline
         controls={false} // Custom controls
-        preload="metadata"
+        preload="auto" // Changed from metadata to auto for better initial quality/loading
         onLoadStart={() => setIsLoading(true)}
         onCanPlay={() => setIsLoading(false)}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onClick={togglePlay}
-      />
+      >
+        <source src={src} type="video/mp4" />
+        {/* Support for original quality by ensuring no browser-side compression is hinted */}
+      </video>
 
       {/* Loading Overlay */}
       {isLoading && (
