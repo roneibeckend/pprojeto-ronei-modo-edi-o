@@ -77,6 +77,44 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                 console.log(
                   `[Webhook Asaas] Acesso ${granted ? 'liberado' : 'NÃO liberado'}: ${productType}/${productId} -> ${userId}`,
                 );
+                
+                // --- REGISTRO DE PAGAMENTO AUTOMATIZADO ---
+                try {
+                  const { apiKey, baseUrl } = await getAsaasConfig();
+                  const res = await fetch(`${baseUrl}/payments/${body.payment?.id}`, {
+                    headers: asaasHeaders(apiKey)
+                  });
+                  
+                  if (res.ok) {
+                    const fullPayment = await res.json();
+                    
+                    // Cálculo de taxas Asaas: 
+                    // Se o Asaas não retornar netValue, calculamos estimativa
+                    // Geralmente Asaas retorna: value (bruto), netValue (líquido)
+                    const amount = fullPayment.value || body.payment?.value || 0;
+                    const netAmount = fullPayment.netValue || (amount * 0.97 - 0.50); // Fallback 3% + 0.50 se não disponível
+                    const fee = amount - netAmount;
+
+                    await supabaseAdmin.from('payments').upsert({
+                      external_id: body.payment?.id,
+                      user_id: userId,
+                      amount: amount,
+                      net_amount: netAmount,
+                      fee: fee,
+                      status: body.payment?.status || 'CONFIRMED',
+                      billing_type: fullPayment.billingType,
+                      external_reference: body.payment?.externalReference,
+                      customer_id: fullPayment.customer,
+                      confirmed_at: fullPayment.confirmedDate || new Date().toISOString(),
+                      updated_at: new Date().toISOString()
+                    }, { onConflict: 'external_id' });
+                    
+                    console.log(`[Webhook Asaas] Pagamento registrado: R$ ${netAmount.toFixed(2)} (Líquido)`);
+                  }
+                } catch (e) {
+                  console.error('[Webhook Asaas] Erro ao registrar pagamento:', e);
+                }
+                // ------------------------------------------
 
                 // Comissão de afiliado
                 if (affiliateCode) {
