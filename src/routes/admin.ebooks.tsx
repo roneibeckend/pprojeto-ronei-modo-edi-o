@@ -22,7 +22,8 @@ import {
   GripVertical,
   Save,
   SendHorizontal,
-  Play
+  Play,
+  FileUp
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -37,6 +38,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { importEbookFromPdf } from "@/lib/ebook-import.functions";
 
 export const Route = createFileRoute("/admin/ebooks")({
   head: () => ({ meta: [{ title: "Gestão de E-books · Admin" }] }),
@@ -391,6 +393,7 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
   const [loading, setLoading] = useState(true);
   const [editingChapter, setEditingChapter] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   useEffect(() => {
     fetchContent();
@@ -513,6 +516,37 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
     }
   }
 
+  async function handleImportPdf(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsImporting(true);
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64 = reader.result as string;
+        try {
+          const result = await importEbookFromPdf({
+            data: {
+              ebook_id: ebookId,
+              file_base64: base64
+            }
+          });
+          toast.success(`PDF importado com sucesso! ${result.chapters_count} capítulos criados.`);
+          fetchContent();
+        } catch (err: any) {
+          toast.error("Erro no processamento do PDF: " + err.message);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error: any) {
+      toast.error("Erro na leitura do arquivo: " + error.message);
+    } finally {
+      setIsImporting(false);
+      e.target.value = '';
+    }
+  }
+
   if (loading) return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" /></div>;
 
   return (
@@ -521,7 +555,23 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
       <div className="space-y-4 border-r border-white/5 pr-6">
         <div className="flex items-center justify-between">
           <h4 className="text-[10px] font-bold uppercase tracking-widest text-white/40">Estrutura de Conteúdo</h4>
-          <button onClick={handleAddModule} className="p-1 hover:bg-white/5 rounded text-[#ff6a00] transition-colors"><Plus className="h-4 w-4" /></button>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={handleImportPdf}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                disabled={isImporting}
+              />
+              <button className="p-1 hover:bg-white/5 rounded text-white/40 transition-colors" title="Importar PDF">
+                {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
+              </button>
+            </div>
+            <button onClick={handleAddModule} className="p-1 hover:bg-white/5 rounded text-[#ff6a00] transition-colors" title="Adicionar Módulo">
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         <div className="space-y-2">
