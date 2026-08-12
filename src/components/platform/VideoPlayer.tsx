@@ -26,26 +26,41 @@ export function VideoPlayer({
   const [isMuted, setIsMuted] = useState(false);
 
   const isYouTube = src.includes('youtube.com') || src.includes('youtu.be');
+  const isGoogleDrive = src.includes('drive.google.com');
   
   const getEmbedUrl = (url: string) => {
     if (!url) return '';
-    if (url.includes('youtube.com/embed/')) return url;
     
-    let videoId = '';
-    if (url.includes('youtube.com/watch?v=')) {
-      videoId = url.split('v=')[1].split('&')[0];
-    } else if (url.includes('youtu.be/')) {
-      videoId = url.split('youtu.be/')[1].split('?')[0];
+    // YouTube
+    if (isYouTube) {
+      if (url.includes('youtube.com/embed/')) return url;
+      
+      let videoId = '';
+      if (url.includes('youtube.com/watch?v=')) {
+        videoId = url.split('v=')[1].split('&')[0];
+      } else if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[1].split('?')[0];
+      }
+      
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+      }
+    }
+
+    // Google Drive
+    if (isGoogleDrive) {
+      if (url.includes('/preview')) return url;
+      const match = url.match(/\/file\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
+      if (match && match[1]) {
+        return `https://drive.google.com/file/d/${match[1]}/preview`;
+      }
     }
     
-    if (videoId) {
-      return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
-    }
     return url;
   };
 
   useEffect(() => {
-    if (isYouTube) {
+    if (isYouTube || isGoogleDrive) {
       setIsLoading(false);
       return;
     }
@@ -81,7 +96,7 @@ export function VideoPlayer({
     }
   };
 
-  if (isYouTube) {
+  if (isYouTube || isGoogleDrive) {
     return (
       <div className={cn("relative aspect-video bg-black rounded-xl overflow-hidden glass", className)}>
         <iframe

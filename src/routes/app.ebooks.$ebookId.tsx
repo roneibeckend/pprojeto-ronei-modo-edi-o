@@ -220,6 +220,8 @@ function EbookReaderPage() {
                 <iframe
                   src={ebook.opening_video_url.includes('youtube.com') || ebook.opening_video_url.includes('youtu.be')
                     ? (ebook.opening_video_url.includes('watch?v=') ? ebook.opening_video_url.replace('watch?v=', 'embed/').split('&')[0] : `https://www.youtube.com/embed/${ebook.opening_video_url.split('youtu.be/')[1].split('?')[0]}`) + "?autoplay=1"
+                    : ebook.opening_video_url.includes('drive.google.com')
+                    ? (ebook.opening_video_url.includes('/preview') ? ebook.opening_video_url : `https://drive.google.com/file/d/${(ebook.opening_video_url.match(/\/file\/d\/([^\/]+)/) || ebook.opening_video_url.match(/id=([^&]+)/))?.[1]}/preview`) + "?autoplay=1"
                     : ebook.opening_video_url + "?autoplay=1"}
                   className="h-full w-full"
                   allow="autoplay; fullscreen"
@@ -269,6 +271,8 @@ function EbookReaderPage() {
                 <iframe
                   src={ebook.opening_video_url.includes('youtube.com') || ebook.opening_video_url.includes('youtu.be')
                     ? (ebook.opening_video_url.includes('watch?v=') ? ebook.opening_video_url.replace('watch?v=', 'embed/').split('&')[0] : `https://www.youtube.com/embed/${ebook.opening_video_url.split('youtu.be/')[1].split('?')[0]}`)
+                    : ebook.opening_video_url.includes('drive.google.com')
+                    ? (ebook.opening_video_url.includes('/preview') ? ebook.opening_video_url : `https://drive.google.com/file/d/${(ebook.opening_video_url.match(/\/file\/d\/([^\/]+)/) || ebook.opening_video_url.match(/id=([^&]+)/))?.[1]}/preview`)
                     : ebook.opening_video_url}
                   className="h-full w-full pointer-events-none"
                 />
@@ -306,6 +310,8 @@ function EbookReaderPage() {
                       <iframe
                         src={activeChapter.video_url.includes('youtube.com') || activeChapter.video_url.includes('youtu.be')
                           ? (activeChapter.video_url.includes('watch?v=') ? activeChapter.video_url.replace('watch?v=', 'embed/').split('&')[0] : `https://www.youtube.com/embed/${activeChapter.video_url.split('youtu.be/')[1].split('?')[0]}`)
+                          : activeChapter.video_url.includes('drive.google.com')
+                          ? (activeChapter.video_url.includes('/preview') ? activeChapter.video_url : `https://drive.google.com/file/d/${(activeChapter.video_url.match(/\/file\/d\/([^\/]+)/) || activeChapter.video_url.match(/id=([^&]+)/))?.[1]}/preview`)
                           : activeChapter.video_url}
                         className="h-full w-full"
                         allowFullScreen

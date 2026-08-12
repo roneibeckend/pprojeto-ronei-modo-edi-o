@@ -384,7 +384,8 @@ function AdminEbooksPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL do Vídeo de Abertura (YouTube/Vimeo)</label>
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL do Vídeo de Abertura (YouTube/Vimeo/Drive)</label>
+                        <p className="text-[10px] text-white/20 mb-1">Para Google Drive, use a opção "Qualquer pessoa com o link pode ver".</p>
                         <input 
                           value={editingItem?.opening_video_url || ""} 
                           onChange={e => setEditingItem({...editingItem, opening_video_url: e.target.value})} 
