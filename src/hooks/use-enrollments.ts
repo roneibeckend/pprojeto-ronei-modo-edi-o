@@ -5,7 +5,7 @@ import { useAuth } from "./use-auth";
 export function useEnrollments() {
   const { user } = useAuth();
 
-  const { data: courseEnrollments, isLoading: isLoadingCourses } = useQuery({
+  const { data: courseEnrollments, isLoading: isLoadingCourses, refetch: refetchCourses } = useQuery({
     queryKey: ["course-enrollments", user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
@@ -20,7 +20,7 @@ export function useEnrollments() {
     enabled: !!user?.id,
   });
 
-  const { data: ebookEnrollments, isLoading: isLoadingEbooks } = useQuery({
+  const { data: ebookEnrollments, isLoading: isLoadingEbooks, refetch: refetchEbooks } = useQuery({
     queryKey: ["ebook-enrollments", user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
@@ -39,7 +39,11 @@ export function useEnrollments() {
     courseEnrollments: courseEnrollments || [],
     ebookEnrollments: ebookEnrollments || [],
     isLoading: isLoadingCourses || isLoadingEbooks,
+    refetchEnrollments: async () => {
+      await Promise.all([refetchCourses(), refetchEbooks()]);
+    },
     isEnrolledInCourse: (id: string) => courseEnrollments?.includes(id) || false,
     isEnrolledInEbook: (id: string) => ebookEnrollments?.includes(id) || false,
   };
 }
+
