@@ -230,9 +230,9 @@ function CoursePage() {
     }
   }, [activeId, course.id]);
 
-  // Scroll to top when lesson changes (mobile only)
+  // Scroll to top when lesson changes (all devices)
   useEffect(() => {
-    if (activeId && window.innerWidth < 1024) {
+    if (activeId) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [activeId]);
