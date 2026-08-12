@@ -311,7 +311,7 @@ function EbookReaderPage() {
                         className="h-full w-full"
                         allowFullScreen
                       />
-                      <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-2xl"></div>
+                      <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-none sm:rounded-2xl"></div>
                     </div>
                   </div>
                 </div>
