@@ -10,8 +10,8 @@ import { IMG } from '@/lib/platform-data';
 interface OfferItem {
   id: string;
   title: string;
-  description: string;
-  price: number;
+  description: string | null;
+  price: number | null;
   type: 'course' | 'ebook';
   cover_url?: string | null;
 }
