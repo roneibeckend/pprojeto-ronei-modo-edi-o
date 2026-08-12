@@ -54,11 +54,19 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                 if (profile) {
                   const userId = profile.id;
 
+                  // Lógica de Matrícula (Cursos ou Ebooks)
                   if (productType === 'course') {
                     await supabaseAdmin.from('course_enrollments').upsert({
                       user_id: userId,
                       course_id: productId,
                     }, { onConflict: 'user_id,course_id' });
+                    console.log(`[Webhook Asaas] Matrícula em curso realizada: ${productId} para ${customerEmail}`);
+                  } else if (productType === 'ebook') {
+                    await supabaseAdmin.from('ebook_enrollments').upsert({
+                      user_id: userId,
+                      ebook_id: productId,
+                    }, { onConflict: 'user_id,ebook_id' });
+                    console.log(`[Webhook Asaas] Matrícula em ebook realizada: ${productId} para ${customerEmail}`);
                   }
 
                   // Processar Comissão de Afiliado
@@ -86,6 +94,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                         await supabaseAdmin.from('affiliate_sales').insert({
                           affiliate_id: affiliateId,
                           course_id: productType === 'course' ? productId : null,
+                          ebook_id: productType === 'ebook' ? productId : null,
                           amount: amount,
                           commission: commissionAmount,
                           status: 'pending',
@@ -100,11 +109,12 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                           aff_id: affiliateId,
                           amount_to_add: commissionAmount
                         });
+                        console.log(`[Webhook Asaas] Comissão de afiliado processada: R$ ${commissionAmount.toFixed(2)}`);
                       }
                     }
                   }
-                  
-                  console.log(`[Webhook Asaas] Acesso liberado para ${customerEmail}: ${productType} ${productId}`);
+                } else {
+                  console.warn(`[Webhook Asaas] Perfil não encontrado para o email: ${customerEmail}`);
                 }
               }
             }
