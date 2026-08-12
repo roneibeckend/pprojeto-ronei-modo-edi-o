@@ -69,7 +69,7 @@ function Dashboard() {
       {/* Showcase / Cursos */}
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-display text-2xl font-bold tracking-tight">Novidades para você</h2>
+          <h2 className="font-display text-2xl font-bold tracking-tight break-words">Novidades para você</h2>
           <Link to="/app/cursos" className="text-sm font-medium text-gold hover:underline">Ver todos</Link>
         </div>
         
