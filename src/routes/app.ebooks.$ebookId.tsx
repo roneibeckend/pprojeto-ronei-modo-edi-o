@@ -167,7 +167,7 @@ function EbookReaderPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-0 pb-20 sm:px-4">
+    <div className="mx-auto max-w-5xl px-0 pb-20 sm:px-4 overflow-x-hidden">
       <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 sm:px-0">
         <PageHeader
           title={ebook.title}
