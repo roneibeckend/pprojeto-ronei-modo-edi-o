@@ -16,7 +16,17 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
   }).parse(data))
   .handler(async ({ data }) => {
     const { category, credentials, settings } = data;
-    const environment = (String(settings?.testMode) === 'true' || settings?.environment === 'sandbox') ? 'sandbox' : 'production';
+    let environment = (String(settings?.testMode) === 'true' || settings?.environment === 'sandbox') ? 'sandbox' : 'production';
+    
+    // Auto-detect environment from Asaas API key prefix
+    if (category === 'asaas' && credentials.apiKey) {
+      const apiKey = credentials.apiKey as string;
+      if (apiKey.startsWith('$aact_prod_')) {
+        environment = 'production';
+      } else if (apiKey.startsWith('$aact_test_')) {
+        environment = 'sandbox';
+      }
+    }
     const startTime = Date.now();
     let status = 'success';
     let message = 'Conexão estabelecida com sucesso.';
