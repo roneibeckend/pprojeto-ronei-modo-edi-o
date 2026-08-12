@@ -177,13 +177,20 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
         order_index: section.order_index
       }));
 
-      const chunkSize = 20;
+      // Inserção em lotes (batching) com verificação de erro individual para maior resiliência
+      const chunkSize = 15; // Reduzido ligeiramente para evitar sobrecarga de payload
       for (let i = 0; i < chaptersToInsert.length; i += chunkSize) {
         const chunk = chaptersToInsert.slice(i, i + chunkSize);
+        console.log(`[importEbookFromFile] Inserindo lote de capítulos ${i + 1} até ${Math.min(i + chunkSize, chaptersToInsert.length)}`);
+        
         const { error: chapterError } = await supabase
           .from('ebook_chapters')
           .insert(chunk);
-        if (chapterError) throw new Error("Erro ao inserir capítulos: " + chapterError.message);
+          
+        if (chapterError) {
+          console.error(`[importEbookFromFile] Erro no lote ${i}:`, chapterError);
+          throw new Error("Erro ao inserir capítulos: " + chapterError.message);
+        }
       }
 
       const duration = Date.now() - startTime;
