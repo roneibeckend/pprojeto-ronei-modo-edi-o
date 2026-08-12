@@ -1044,7 +1044,7 @@ function SEOTooltip({ type, content, keywords }: { type: 'title' | 'description'
         data: { 
           title: type === 'title' ? content : undefined,
           description: type === 'description' ? content : undefined,
-          keywords: type === 'keywords' ? content : keywords
+          keywords: type === 'keywords' ? (Array.isArray(content) ? content.join(', ') : content) : (Array.isArray(keywords) ? keywords.join(', ') : keywords)
         } 
       });
       setSuggestions(result[type]);
