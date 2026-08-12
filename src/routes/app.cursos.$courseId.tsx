@@ -324,17 +324,37 @@ function CoursePage() {
           </div>
           <div className="space-y-4">
             {course.modules?.map((m: any) => (
-              <div key={m.id}>
-                <button 
-                  onClick={() => {
-                    if (m.lessons && m.lessons.length > 0) {
-                      setActiveId(m.lessons[0].id);
-                    }
-                  }}
-                  className="w-full text-left px-2 pb-2 text-sm font-semibold hover:text-fire transition-colors break-words"
-                >
-                  {m.title}
-                </button>
+              <div key={m.id} className="space-y-3">
+                <div className="space-y-2">
+                  <button 
+                    onClick={() => {
+                      if (m.lessons && m.lessons.length > 0) {
+                        setActiveId(m.lessons[0].id);
+                      }
+                    }}
+                    className="w-full text-left px-2 text-sm font-semibold hover:text-fire transition-colors break-words"
+                  >
+                    {m.title}
+                  </button>
+                  
+                  {m.video_url && (
+                    <div className="px-2">
+                      <div className="relative aspect-video rounded-lg overflow-hidden glass border border-white/5">
+                        <Suspense fallback={<Skeleton className="w-full h-full" />}>
+                          <VideoPlayer
+                            videoId={`module-${m.id}`}
+                            src={m.video_url}
+                            title={`Intro: ${m.title}`}
+                            className="w-full h-full scale-[1.01]"
+                          />
+                        </Suspense>
+                        <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-fire/90 text-[8px] font-bold uppercase tracking-wider text-white">
+                          Intro
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <ul className="space-y-1">
                   {m.lessons?.map((l: any) => {
                     const isActive = l.id === active?.id;
