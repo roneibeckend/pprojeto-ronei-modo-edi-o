@@ -948,7 +948,8 @@ function OffersIntegrationPanel() {
 
   if (isLoading) return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" /></div>;
 
-  const currentDiscount = offerSettings?.settings?.discountPercentage || 15;
+  const settings = offerSettings?.settings as Record<string, any> || {};
+  const currentDiscount = settings.discountPercentage || 15;
   const isEnabled = offerSettings?.status ?? true;
 
   return (
