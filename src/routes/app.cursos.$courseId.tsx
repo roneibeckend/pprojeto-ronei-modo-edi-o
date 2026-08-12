@@ -11,6 +11,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProgress } from "@/hooks/use-progress";
+import { usePaymentModal } from "@/components/platform/AsaasPaymentModal";
 
 const VideoPlayer = lazy(() => import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer })));
 
@@ -50,6 +51,7 @@ function CoursePage() {
   const { isLessonCompleted, toggleLessonProgress, isTogglingLesson } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
+  const { openPayment } = usePaymentModal();
 
   const handlePurchase = async () => {
     try {
@@ -68,7 +70,10 @@ function CoursePage() {
       });
       
       if (result.url) {
-        window.location.href = result.url;
+        openPayment(result.url, course.title, () => {
+          // Quando o modal fechar, podemos verificar se houve progresso/matricula
+          // mas o webhook cuida disso. O usuário pode recarregar se quiser ver instantâneo.
+        });
       }
     } catch (error: any) {
       console.error("Erro ao processar compra:", error);
