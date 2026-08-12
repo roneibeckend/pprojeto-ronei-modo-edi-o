@@ -230,6 +230,15 @@ function CoursePage() {
     }
   }, [activeId, course.id]);
 
+  // Scroll to top when lesson changes
+  useEffect(() => {
+    if (activeId) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeId]);
+
+
+
   const [tab, setTab] = useState<"materiais" | "anotacoes">("materiais");
   const [note, setNote] = useState("");
 

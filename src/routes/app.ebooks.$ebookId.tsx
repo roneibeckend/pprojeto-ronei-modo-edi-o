@@ -90,6 +90,15 @@ function EbookReaderPage() {
     }
   }, [activeChapterId, ebook.id]);
 
+  // Scroll to top when chapter changes
+  useEffect(() => {
+    if (activeChapterId) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeChapterId]);
+
+
+
   const activeChapter = chapters.find((c: any) => c.id === activeChapterId) || chapters[0];
   const activeIndex = chapters.findIndex((c: any) => c.id === activeChapter?.id);
   
