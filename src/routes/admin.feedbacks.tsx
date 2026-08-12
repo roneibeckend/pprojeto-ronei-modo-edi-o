@@ -259,6 +259,14 @@ function AdminFeedbacksPage() {
                       </button>
                     </>
                   )}
+                  {feedback.status === 'approved' && !feedback.admin_reply && activeReplyId !== feedback.id && (
+                    <button 
+                      onClick={() => setActiveReplyId(feedback.id)}
+                      className="p-2 rounded-lg bg-[#ff6a00]/10 text-[#ff6a00] hover:bg-[#ff6a00] hover:text-black transition-all flex items-center gap-2 text-xs font-bold uppercase tracking-widest"
+                    >
+                      <Reply className="h-4 w-4" /> Responder
+                    </button>
+                  )}
                   {feedback.status !== 'pending' && (
                      <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
                         feedback.status === 'approved' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'
