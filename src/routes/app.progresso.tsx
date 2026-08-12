@@ -103,7 +103,7 @@ function RankingPage() {
               <div className="absolute -bottom-2 left-1/2 grid h-8 w-8 -translate-x-1/2 place-items-center rounded-full bg-slate-400 font-bold text-slate-900">2</div>
             </div>
             <div className="text-center">
-              <div className="font-bold whitespace-normal">{top3[1].name}</div>
+              <div className="font-bold whitespace-normal break-words">{top3[1].name}</div>
               <div className="text-sm text-slate-400">{top3[1].total_points} pts</div>
             </div>
             <div className="mt-4 hidden h-24 w-full rounded-t-2xl bg-slate-400/10 sm:block" />
@@ -123,7 +123,7 @@ function RankingPage() {
               <div className="absolute -bottom-2 left-1/2 grid h-10 w-10 -translate-x-1/2 place-items-center rounded-full bg-yellow-500 font-bold text-yellow-950">1</div>
             </div>
             <div className="text-center">
-              <div className="font-black text-lg whitespace-normal">{top3[0].name}</div>
+              <div className="font-black text-lg whitespace-normal break-words">{top3[0].name}</div>
               <div className="text-sm text-yellow-500 font-bold">{top3[0].total_points} pts</div>
             </div>
             <div className="mt-4 hidden h-32 w-full rounded-t-2xl bg-yellow-500/10 sm:block" />
@@ -143,7 +143,7 @@ function RankingPage() {
               <div className="absolute -bottom-2 left-1/2 grid h-7 w-7 -translate-x-1/2 place-items-center rounded-full bg-amber-700 font-bold text-amber-100">3</div>
             </div>
             <div className="text-center">
-              <div className="font-bold whitespace-normal">{top3[2].name}</div>
+              <div className="font-bold whitespace-normal break-words">{top3[2].name}</div>
               <div className="text-sm text-amber-700">{top3[2].total_points} pts</div>
             </div>
             <div className="mt-4 hidden h-16 w-full rounded-t-2xl bg-amber-700/10 sm:block" />
@@ -158,7 +158,7 @@ function RankingPage() {
             <div key={student.user_id} className="flex items-center gap-4 p-4 transition-colors hover:bg-white/[0.02]">
               <div className="w-8 text-center font-bold text-muted-foreground">{student.global_rank}</div>
               <img src={student.avatar_url || "/placeholder.svg"} className="h-10 w-10 rounded-full object-cover" alt="" />
-              <div className="flex-1 font-medium">{student.name}</div>
+              <div className="flex-1 font-medium break-words">{student.name}</div>
               <div className="text-right">
                 <div className="font-bold text-primary">{student.total_points}</div>
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">pontos</div>
