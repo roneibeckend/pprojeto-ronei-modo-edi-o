@@ -69,7 +69,7 @@ async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
     
     const parsePromise = pdfParser(buffer);
     const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error("TIMEOUT_PDF_INFRA")), 25000)
+      setTimeout(() => reject(new Error("TIMEOUT_PDF_INFRA")), 45000)
     );
 
     const data = await Promise.race([parsePromise, timeoutPromise]) as any;
@@ -127,7 +127,10 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
     mime_type: z.string().optional(),
   }).parse(data))
   .handler(async ({ data }) => {
+    const startTime = Date.now();
     try {
+      console.log(`[importEbookFromFile] Iniciando processamento de ${data.file_name || 'arquivo'} (${data.file_base64.length} bytes base64)`);
+      
       if (data.file_base64.length > 85 * 1024 * 1024) {
         throw new Error("LIMITE_EXCEDIDO: O arquivo excede o limite de 60MB para processamento automático.");
       }
@@ -147,6 +150,8 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
       } else {
         throw new Error("Formato de arquivo não suportado. Use PDF ou DOCX.");
       }
+
+      console.log(`[importEbookFromFile] Conteúdo extraído: ${processedSections.length} seções em ${Date.now() - startTime}ms`);
 
       if (processedSections.length === 0) {
         throw new Error("Nenhum conteúdo estruturado encontrado no arquivo.");
@@ -172,18 +177,27 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
         order_index: section.order_index
       }));
 
-      const chunkSize = 20;
+      // Inserção em lotes (batching) com verificação de erro individual para maior resiliência
+      const chunkSize = 15; // Reduzido ligeiramente para evitar sobrecarga de payload
       for (let i = 0; i < chaptersToInsert.length; i += chunkSize) {
         const chunk = chaptersToInsert.slice(i, i + chunkSize);
+        console.log(`[importEbookFromFile] Inserindo lote de capítulos ${i + 1} até ${Math.min(i + chunkSize, chaptersToInsert.length)}`);
+        
         const { error: chapterError } = await supabase
           .from('ebook_chapters')
           .insert(chunk);
-        if (chapterError) throw new Error("Erro ao inserir capítulos: " + chapterError.message);
+          
+        if (chapterError) {
+          console.error(`[importEbookFromFile] Erro no lote ${i}:`, chapterError);
+          throw new Error("Erro ao inserir capítulos: " + chapterError.message);
+        }
       }
 
+      const duration = Date.now() - startTime;
       return { 
         success: true, 
-        chapters_count: processedSections.length 
+        chapters_count: processedSections.length,
+        duration_ms: duration
       };
     } catch (err: any) {
       console.error("Server function error [importEbookFromFile]:", err);
@@ -197,9 +211,11 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
         }
       }
 
-      const cleanMessage = errorMessage.includes("<!doctype html>") 
-        ? "Erro de infraestrutura. Tente um arquivo menor." 
-        : errorMessage;
+      if (errorMessage.includes("<!doctype html>") || errorMessage.includes("This page didn't load") || errorMessage.includes("INFRA_ERROR_HTML")) {
+        throw new Error("Ocorreu uma instabilidade na infraestrutura ao tentar processar o arquivo. Isso pode ser causado por um arquivo muito complexo. Tente dividir o arquivo em partes menores (ex: 20-30 páginas por vez).");
+      }
+
+      const cleanMessage = errorMessage;
       throw new Error(cleanMessage || "Erro interno no servidor");
     }
   });

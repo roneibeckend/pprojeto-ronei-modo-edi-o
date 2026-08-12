@@ -534,7 +534,7 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
               mime_type: file.type
             }
           });
-          toast.success(`Arquivo importado com sucesso! ${result.chapters_count} capítulos criados.`);
+          toast.success(`Arquivo importado com sucesso! ${result.chapters_count} capítulos criados em ${(result.duration_ms / 1000).toFixed(1)}s.`);
           fetchContent();
         } catch (err: any) {
           console.error("File Import Failure:", err);
@@ -556,8 +556,8 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
               errorMessage.includes("instabilidade na infraestrutura") || 
               errorMessage.includes("This page didn't load") ||
               errorMessage.includes("INFRA_ERROR_HTML")) {
-             toast.error("Falha Técnica Temporária: O servidor encontrou uma instabilidade. Isso é comum com arquivos muito densos ou próximos ao limite. Tente novamente em instantes.", {
-               duration: 8000
+             toast.error("Instabilidade no Processamento: O servidor encontrou uma dificuldade com a densidade deste arquivo. Sugerimos dividir o arquivo em partes menores (ex: 20-30 páginas por vez) e importar cada parte separadamente.", {
+               duration: 10000
              });
           } else {
              toast.error("Não foi possível importar o arquivo: " + errorMessage);
