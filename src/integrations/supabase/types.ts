@@ -679,6 +679,7 @@ export type Database = {
           id: string
           is_ai_generated: boolean | null
           is_locked: boolean | null
+          keywords: string[] | null
           opening_video_url: string | null
           original_price: number | null
           pages_count: number | null
@@ -701,6 +702,7 @@ export type Database = {
           id?: string
           is_ai_generated?: boolean | null
           is_locked?: boolean | null
+          keywords?: string[] | null
           opening_video_url?: string | null
           original_price?: number | null
           pages_count?: number | null
@@ -723,6 +725,7 @@ export type Database = {
           id?: string
           is_ai_generated?: boolean | null
           is_locked?: boolean | null
+          keywords?: string[] | null
           opening_video_url?: string | null
           original_price?: number | null
           pages_count?: number | null
