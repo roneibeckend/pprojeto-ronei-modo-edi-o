@@ -6,13 +6,14 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface FeedbackModalProps {
-  courseId: string;
-  courseTitle: string;
+  courseId?: string;
+  ebookId?: string;
+  itemTitle: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function FeedbackModal({ courseId, courseTitle, isOpen, onClose }: FeedbackModalProps) {
+export function FeedbackModal({ courseId, ebookId, itemTitle, isOpen, onClose }: FeedbackModalProps) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -25,29 +26,48 @@ export function FeedbackModal({ courseId, courseTitle, isOpen, onClose }: Feedba
       return;
     }
 
+    // Client-side anti-spam: check last submission time
+    const lastSubmission = localStorage.getItem(`last_feedback_${courseId || ebookId}`);
+    if (lastSubmission) {
+      const lastTime = parseInt(lastSubmission, 10);
+      const now = Date.now();
+      const oneHour = 60 * 60 * 1000;
+      if (now - lastTime < oneHour) {
+        toast.error("Você já enviou um feedback recentemente. Tente novamente mais tarde.");
+        return;
+      }
+    }
+
     try {
       setIsSubmitting(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado.");
 
+      const feedbackData: any = {
+        user_id: user.id,
+        rating,
+        comment,
+        status: 'pending'
+      };
+
+      if (courseId) {
+        feedbackData.course_id = courseId;
+      } else if (ebookId) {
+        feedbackData.ebook_id = ebookId;
+      }
+
       const { error } = await supabase
         .from("course_feedback")
-        .upsert({
-          user_id: user.id,
-          course_id: courseId,
-          rating,
-          comment,
-          status: 'pending'
-        }, {
-          onConflict: 'user_id,course_id'
+        .upsert(feedbackData, {
+          onConflict: courseId ? 'user_id,course_id' : 'user_id,ebook_id'
         });
 
       if (error) throw error;
 
+      localStorage.setItem(`last_feedback_${courseId || ebookId}`, Date.now().toString());
       setIsSubmitted(true);
       toast.success("Feedback enviado com sucesso! Ele passará por moderação.");
       
-      // Close after a short delay
       setTimeout(() => {
         onClose();
       }, 3000);
@@ -84,7 +104,7 @@ export function FeedbackModal({ courseId, courseTitle, isOpen, onClose }: Feedba
                   O que você achou do curso?
                 </DialogTitle>
                 <p className="text-sm text-white/40">
-                  Parabéns por concluir <span className="text-white font-bold">{courseTitle}</span>! Sua opinião nos ajuda a melhorar.
+                  Parabéns por concluir <span className="text-white font-bold">{itemTitle}</span>! Sua opinião nos ajuda a melhorar.
                 </p>
               </DialogHeader>
 
