@@ -1,29 +1,37 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import pdf from "pdf-parse";
+import * as pdf from "pdf-parse";
 
-// PDF Processing Helper (Server-side)
-async function processPdfContent(buffer: Buffer) {
+// Using require for pdf-parse if default import fails or to handle type mismatch
+// @ts-ignore
+const pdfParser = pdf.default || pdf;
+
+interface ProcessedSection {
+  title: string;
+  content: string;
+  order_index: number;
+}
+
+async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
   try {
-    const data = await pdf(buffer);
+    const data = await pdfParser(buffer);
     const text = data.text;
     
     // Split by common chapter/section patterns
-    // We look for patterns like "Capítulo", "Módulo", "Parte", or large uppercase titles followed by double newlines
     const sections = text.split(/\n(?=(?:CAPÍTULO|MÓDULO|PARTE|CHAPTER|MODULE|SECTION)\s+\d+|[A-Z\s]{10,}\n\n)/i);
     
     return sections
-      .map(s => s.trim())
-      .filter(s => s.length > 50) // Ignore small fragments
-      .map((content, index) => {
+      .map((s: string) => s.trim())
+      .filter((s: string) => s.length > 50) 
+      .map((content: string, index: number) => {
         const lines = content.split('\n');
         const title = lines[0].length < 100 ? lines[0].trim() : `Seção ${index + 1}`;
         const body = lines.length > 1 ? lines.slice(1).join('\n').trim() : content;
         
         return {
           title,
-          content: body.replace(/\n/g, '<br />'), // Simple text to HTML conversion
+          content: body.replace(/\n/g, '<br />'),
           order_index: index
         };
       });
@@ -36,20 +44,17 @@ async function processPdfContent(buffer: Buffer) {
 export const importEbookFromPdf = createServerFn({ method: "POST" })
   .validator((data: unknown) => z.object({
     ebook_id: z.string().uuid(),
-    file_base64: z.string(), // We'll send base64 since it's a server function
+    file_base64: z.string(), 
   }).parse(data))
   .handler(async ({ data }) => {
-    // 1. Decode PDF
     const buffer = Buffer.from(data.file_base64.split(',')[1] || data.file_base64, 'base64');
     
-    // 2. Process content
     const processedSections = await processPdfContent(buffer);
     
     if (processedSections.length === 0) {
       throw new Error("Nenhum conteúdo estruturado encontrado no PDF.");
     }
 
-    // 3. Create a default module if none exists or for the imported content
     const { data: module, error: moduleError } = await supabase
       .from('ebook_modules')
       .insert({
@@ -62,8 +67,7 @@ export const importEbookFromPdf = createServerFn({ method: "POST" })
 
     if (moduleError) throw new Error(moduleError.message);
 
-    // 4. Insert chapters
-    const chaptersToInsert = processedSections.map(section => ({
+    const chaptersToInsert = processedSections.map((section: ProcessedSection) => ({
       ebook_id: data.ebook_id,
       module_id: module.id,
       title: section.title,
