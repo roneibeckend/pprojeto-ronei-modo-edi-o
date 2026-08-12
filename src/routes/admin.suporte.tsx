@@ -242,7 +242,7 @@ function AdminSupportPage() {
                     </span>
                     <StatusBadge status={ticket.status} />
                   </div>
-                  <h4 className="font-bold text-sm mb-1 line-clamp-1">{ticket.subject}</h4>
+                  <h4 className="font-bold text-sm mb-1">{ticket.subject}</h4>
                   <p className="text-[10px] text-white/40 uppercase tracking-tight mb-2">
                     {ticket.profiles?.name || 'Aluno'} · {ticket.category}
                   </p>
@@ -273,7 +273,7 @@ function AdminSupportPage() {
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                   <div>
-                    <h3 className="font-bold text-base sm:text-lg line-clamp-1">{selectedTicket.subject}</h3>
+                    <h3 className="font-bold text-base sm:text-lg">{selectedTicket.subject}</h3>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
                       <span className="text-[10px] sm:text-xs text-white/40">{selectedTicket.profiles?.name}</span>
                       <span className="hidden sm:block h-1 w-1 rounded-full bg-white/20" />
