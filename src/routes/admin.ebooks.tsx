@@ -119,7 +119,18 @@ function AdminEbooksPage() {
     try {
       setIsSaving(true);
       // Prepare data for upsert, ensuring no virtual 'modules' column is sent
+      // Convert keywords string back to array if needed to avoid "malformed array literal"
       const { modules, ...payload } = editingItem;
+      
+      // Handle keywords serialization: string (from input) to text[] (for Postgres)
+      if (typeof payload.keywords === 'string') {
+        payload.keywords = payload.keywords
+          .split(',')
+          .map((k: string) => k.trim())
+          .filter((k: string) => k !== '');
+      } else if (!payload.keywords) {
+        payload.keywords = [];
+      }
       
       const { data, error } = await supabase
         .from('ebooks')
