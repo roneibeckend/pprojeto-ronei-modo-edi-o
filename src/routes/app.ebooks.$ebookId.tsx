@@ -288,12 +288,13 @@ function EbookReaderPage() {
       <div className="grid gap-8 lg:grid-cols-[1fr_300px] max-w-full overflow-x-hidden">
         {/* Reader Area */}
         <div className="min-w-0">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={activeChapter?.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               className="glass min-h-[500px] overflow-hidden rounded-none sm:rounded-3xl pb-12 sm:min-h-[600px] w-full max-w-full"
             >
               {activeChapter?.video_url && (

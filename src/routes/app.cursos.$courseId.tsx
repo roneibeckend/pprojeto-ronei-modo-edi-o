@@ -260,9 +260,10 @@ function CoursePage() {
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         {/* Player */}
         <div className="min-w-0 space-y-4">
-          <div className="overflow-hidden rounded-none sm:rounded-2xl">
-            <Suspense fallback={<Skeleton className="aspect-video w-full rounded-2xl" />}>
+          <div className="overflow-hidden rounded-none sm:rounded-2xl bg-black/20 min-h-[200px]">
+            <Suspense fallback={<div className="aspect-video w-full rounded-2xl bg-white/5 animate-pulse" />}>
               <VideoPlayer
+                key={active.id}
                 videoId={active.id}
                 src={active.video_url || ""}
                 poster={course.cover_url || ""}
