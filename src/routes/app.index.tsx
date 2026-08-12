@@ -23,6 +23,11 @@ export const Route = createFileRoute("/app/")({
 
 function Dashboard() {
   const { isEnrolledInCourse, isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
+  const { syncWithDatabase } = usePostPurchaseOfferStore();
+
+  useState(() => {
+    syncWithDatabase();
+  });
 
   const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
     queryKey: ["showcase-items"],
@@ -104,6 +109,7 @@ function Dashboard() {
 function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boolean }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
+  const [discountPercentage, setDiscountPercentage] = useState(15);
   const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
@@ -113,6 +119,12 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
     e.stopPropagation();
     
     if (isOfferEnabled) {
+      // Fetch current discount for calculation consistency
+      const { data } = await supabase.from('integrations').select('settings').eq('category', 'offer_settings').maybeSingle();
+      if (data?.settings && typeof data.settings === 'object') {
+        const s = data.settings as any;
+        if (s.discountPercentage) setDiscountPercentage(s.discountPercentage);
+      }
       setShowOffer(true);
       return;
     }
@@ -137,7 +149,7 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
           productType: off.type,
           title: off.title,
           description: off.description,
-          value: (off.price || 0) * 0.85, // 15% discount
+          value: (off.price || 0) * (1 - (discountPercentage / 100)),
         }))
       ];
 
