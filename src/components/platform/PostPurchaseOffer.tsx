@@ -34,6 +34,7 @@ export function PostPurchaseOffer({
   const [offers, setOffers] = useState<OfferItem[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [discountPercentage, setDiscountPercentage] = useState(15);
   const { isEnrolledInCourse, isEnrolledInEbook } = useEnrollments();
 
   useEffect(() => {
