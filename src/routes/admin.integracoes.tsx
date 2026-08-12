@@ -707,6 +707,9 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
           <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
             Identidade
           </TabsTrigger>
+          <TabsTrigger value="templates" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+            Templates
+          </TabsTrigger>
           <TabsTrigger value="resend" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
             API Key (Resend)
           </TabsTrigger>
