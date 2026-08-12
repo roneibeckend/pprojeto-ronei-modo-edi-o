@@ -167,7 +167,7 @@ function EbookReaderPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-0 pb-20 sm:px-4">
+    <div className="mx-auto max-w-5xl px-0 pb-20 sm:px-4 overflow-x-hidden">
       <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 sm:px-0">
         <PageHeader
           title={ebook.title}
@@ -223,7 +223,7 @@ function EbookReaderPage() {
         )}
       </AnimatePresence>
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
+      <div className="grid gap-8 lg:grid-cols-[1fr_300px] max-w-full overflow-x-hidden">
         {/* Reader Area */}
         <div className="min-w-0">
           <AnimatePresence mode="wait">
@@ -232,7 +232,7 @@ function EbookReaderPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="glass min-h-[500px] overflow-hidden rounded-none sm:rounded-3xl pb-12 sm:min-h-[600px]"
+              className="glass min-h-[500px] overflow-hidden rounded-none sm:rounded-3xl pb-12 sm:min-h-[600px] w-full max-w-full"
             >
               {activeChapter?.video_url && (
                 <div className="w-full bg-black/40 border-b border-white/5">
@@ -263,9 +263,9 @@ function EbookReaderPage() {
                   )}
                 </div>
 
-                <div className="prose prose-invert max-w-4xl mx-auto prose-p:text-muted-foreground prose-headings:text-foreground prose-p:leading-relaxed prose-p:text-base sm:text-lg">
+                <div className="prose prose-invert w-full max-w-full prose-p:text-muted-foreground prose-headings:text-foreground prose-p:leading-relaxed prose-p:text-base sm:text-lg overflow-x-hidden">
                   {activeChapter?.content ? (
-                    <div className="text-center md:text-left leading-relaxed text-lg text-white/80" dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
+                    <div className="text-center md:text-left leading-relaxed text-lg text-white/80 break-words [&_img]:max-w-full [&_img]:h-auto [&_table]:block [&_table]:overflow-x-auto [&_table]:w-full" dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
                   ) : (
                     <p className="italic opacity-50">Conteúdo em breve...</p>
                   )}
