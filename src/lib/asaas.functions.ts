@@ -80,6 +80,7 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
       };
     } catch (error: any) {
       console.error("[Asaas] Erro ao criar link:", error);
-      throw new Error(error.message || "Falha na comunicação com o Asaas");
+      const errorMessage = error.message || "Falha na comunicação com o Asaas";
+      throw new Error(`${errorMessage}. Verifique se a Chave de API está correta e se o ambiente (Produção/Sandbox) corresponde à chave.`);
     }
   });
