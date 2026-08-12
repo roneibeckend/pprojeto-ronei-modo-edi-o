@@ -556,8 +556,8 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
               errorMessage.includes("instabilidade na infraestrutura") || 
               errorMessage.includes("This page didn't load") ||
               errorMessage.includes("INFRA_ERROR_HTML")) {
-             toast.error("Falha Técnica Temporária: O servidor encontrou uma instabilidade. Isso é comum com arquivos muito densos ou próximos ao limite. Tente novamente em instantes.", {
-               duration: 8000
+             toast.error("Instabilidade no Processamento: O servidor encontrou uma dificuldade com a densidade deste arquivo. Sugerimos dividir o arquivo em partes menores (ex: 20-30 páginas por vez) e importar cada parte separadamente.", {
+               duration: 10000
              });
           } else {
              toast.error("Não foi possível importar o arquivo: " + errorMessage);
