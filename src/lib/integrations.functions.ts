@@ -85,6 +85,29 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
           await new Promise(resolve => setTimeout(resolve, 1200));
           responseBody = { account_status: 'active', balance: { amount: 0, currency: 'BRL' } };
         }
+      } else if (category === 'resend') {
+        endpoint = 'https://api.resend.com/emails';
+        if (!credentials.apiKey) {
+          throw new Error("API Key do Resend ausente.");
+        }
+        
+        try {
+          const response = await fetch('https://api.resend.com/domains', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`
+            }
+          });
+          
+          httpCode = response.status;
+          responseBody = await response.json();
+          
+          if (!response.ok) {
+            throw new Error(`Erro ${response.status} na API do Resend`);
+          }
+        } catch (fetchError: any) {
+          throw new Error(`Falha ao conectar com Resend: ${fetchError.message}`);
+        }
       }
 
       const latency = `${Date.now() - startTime}ms`;

@@ -30,7 +30,8 @@ import {
   BellRing,
   Percent,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  AlertCircle
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
@@ -324,7 +325,7 @@ function IntegrationsPage() {
 
         {/* Detail Panel */}
         <div className="lg:col-span-8">
-          {activeCategory === 'email' ? <EmailIntegrationPanel /> : activeCategory === 'offers' ? <OffersIntegrationPanel /> : selectedItem ? (
+          {activeCategory === 'email' ? <EmailIntegrationPanel integrations={integrations} /> : activeCategory === 'offers' ? <OffersIntegrationPanel /> : selectedItem ? (
             <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
               <Tabs defaultValue="config" className="w-full">
                 <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
@@ -619,7 +620,7 @@ function IntegrationsPage() {
   );
 }
 
-function EmailIntegrationPanel() {
+function EmailIntegrationPanel({ integrations }: { integrations: Integration[] | undefined }) {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('config');
   const [isSendingTest, setIsSendingTest] = useState(false);
@@ -691,6 +692,17 @@ function EmailIntegrationPanel() {
               </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
+              {!integrations?.find((i: Integration) => i.category === 'resend' && i.status) && (
+                <Alert className="bg-amber-500/10 border-amber-500/20 mb-4">
+                  <AlertCircle className="h-4 w-4 text-amber-500" />
+                  <AlertTitle className="text-xs font-bold uppercase tracking-widest text-amber-500">Credenciais Necessárias</AlertTitle>
+                  <AlertDescription className="text-[10px] text-white/50">
+                    A API do Resend não foi configurada ou não está ativa na aba "Pagamentos" (Resend). 
+                    Por favor, adicione sua API Key lá primeiro.
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome do Remetente</Label>
