@@ -69,7 +69,7 @@ async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
     
     const parsePromise = pdfParser(buffer);
     const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error("TIMEOUT_PDF_INFRA")), 25000)
+      setTimeout(() => reject(new Error("TIMEOUT_PDF_INFRA")), 45000)
     );
 
     const data = await Promise.race([parsePromise, timeoutPromise]) as any;
@@ -211,9 +211,11 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
         }
       }
 
-      const cleanMessage = errorMessage.includes("<!doctype html>") 
-        ? "Erro de infraestrutura. Tente um arquivo menor." 
-        : errorMessage;
+      if (errorMessage.includes("<!doctype html>") || errorMessage.includes("This page didn't load") || errorMessage.includes("INFRA_ERROR_HTML")) {
+        throw new Error("Ocorreu uma instabilidade na infraestrutura ao tentar processar o arquivo. Isso pode ser causado por um arquivo muito complexo. Tente dividir o arquivo em partes menores (ex: 20-30 páginas por vez).");
+      }
+
+      const cleanMessage = errorMessage;
       throw new Error(cleanMessage || "Erro interno no servidor");
     }
   });
