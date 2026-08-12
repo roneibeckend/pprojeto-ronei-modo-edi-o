@@ -1,5 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Play, ShoppingCart, Sparkles, Lock } from "lucide-react";
+import { Play, ShoppingCart, Sparkles, Lock, Loader2 } from "lucide-react";
+import { usePaymentModal } from "@/components/platform/AsaasPaymentModal";
+import { createAsaasPaymentLink } from "@/lib/asaas.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
+import { toast } from "sonner";
+import { useState } from "react";
 import { IMG, student } from "@/lib/platform-data";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -94,6 +100,40 @@ function Dashboard() {
 }
 
 function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boolean }) {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const createPaymentLink = useServerFn(createAsaasPaymentLink);
+  const { openPayment } = usePaymentModal();
+  
+  const handlePurchase = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      setIsProcessing(true);
+      const result = await createPaymentLink({
+        data: {
+          productId: item.id,
+          productType: item.type,
+          title: item.title,
+          description: item.description,
+          value: item.price || 0,
+          affiliateRef: getAffiliateRef() || undefined,
+          paymentType: item.payment_type || 'unique',
+          dueDays: item.due_days || 3,
+        }
+      });
+      
+      if (result.url) {
+        openPayment(result.url, item.title);
+      }
+    } catch (error: any) {
+      console.error("Erro ao processar compra:", error);
+      toast.error(error.message || "Erro ao gerar link de pagamento.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const isLocked = !isEnrolled;
   const linkTo = item.type === 'course' ? "/app/cursos/$courseId" : "/app/ebooks/$ebookId";
   const linkParams = item.type === 'course' ? { courseId: item.id } : { ebookId: item.id };
@@ -139,13 +179,14 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Acesso imediato</span>
                 <div className="font-display text-xl font-bold text-gold">R$ {item.price?.toString().replace(".", ",")}</div>
               </div>
-              <Link 
-                to={linkTo} 
-                params={linkParams}
-                className="btn-fire px-4 py-2 text-xs pointer-events-auto cursor-pointer"
+              <button 
+                onClick={handlePurchase}
+                disabled={isProcessing}
+                className="btn-fire px-4 py-2 text-xs flex items-center gap-1.5 disabled:opacity-50"
               >
-                <ShoppingCart className="mr-1.5 h-3.5 w-3.5" /> Comprar
-              </Link>
+                {isProcessing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}
+                {isProcessing ? "..." : "Comprar"}
+              </button>
             </div>
           </div>
         ) : (
