@@ -1001,8 +1001,10 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
       toast.success("API Key do Resend salva com sucesso.");
       
       // Auto-validate after save if we have the identity email
-      const { data: settings } = await getEmailSettings();
+      const settingsResult = await getEmailSettings();
+      const settings = (settingsResult as any);
       if (settings?.from_email && integration.credentials.apiKey) {
+
         validateMutation.mutate({ 
           data: { 
             apiKey: integration.credentials.apiKey, 
