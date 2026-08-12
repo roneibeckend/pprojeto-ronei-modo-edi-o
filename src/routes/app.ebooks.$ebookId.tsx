@@ -174,7 +174,18 @@ function EbookReaderPage() {
           title={ebook.title}
           subtitle={ebook.subtitle || "E-book Exclusivo"}
         />
-        <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4">← Meus Conteúdos</Link>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          {ebook.opening_video_url && (
+            <button 
+              onClick={() => setShowIntroVideo(true)}
+              className="btn-fire flex items-center justify-center gap-2 px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold"
+            >
+              <Play className="h-4 w-4 fill-current" />
+              Ver Vídeo Intro
+            </button>
+          )}
+          <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4 flex items-center justify-center">← Meus Conteúdos</Link>
+        </div>
       </div>
 
       <AnimatePresence>
