@@ -304,7 +304,7 @@ function IntegrationsPage() {
                     >
                       <div className="flex items-center justify-between mb-3">
                         <div className={`p-2 rounded-lg ${selectedItem?.id === item.id ? 'bg-[#ff6a00] text-black' : 'bg-white/5 text-[#ff6a00]'}`}>
-                          {item.type === 'ia' ? <Sparkles className="h-4 w-4" /> : <CreditCard className="h-4 w-4" />}
+                          {item.type === 'ia' || item.category === 'resend' ? <Sparkles className="h-4 w-4" /> : <CreditCard className="h-4 w-4" />}
                         </div>
                         <Badge variant="outline" className={`text-[8px] uppercase tracking-widest border-none ${status === 'connected' ? 'text-emerald-400 bg-emerald-400/10' : status === 'incomplete' ? 'text-amber-400 bg-amber-400/10' : 'text-white/20 bg-white/5'}`}>
                           {status === 'connected' ? '✅ Configurado' : status === 'incomplete' ? '⚠ Incompleto' : '❌ Não Configurado'}
