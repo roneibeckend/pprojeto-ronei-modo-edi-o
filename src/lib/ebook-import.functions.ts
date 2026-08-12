@@ -7,6 +7,7 @@ import * as pdf from "pdf-parse";
 // @ts-ignore
 let pdfParser: any;
 try {
+  // @ts-ignore
   pdfParser = pdf.default || pdf;
 } catch (e) {
   console.error("Critical: Failed to initialize pdf-parse", e);
