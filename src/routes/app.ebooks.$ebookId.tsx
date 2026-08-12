@@ -44,6 +44,7 @@ function EbookReaderPage() {
   const { isChapterCompleted, completeChapter } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOpeningVideo, setShowOpeningVideo] = useState(false);
+  const [showIntroVideo, setShowIntroVideo] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
 
@@ -173,11 +174,22 @@ function EbookReaderPage() {
           title={ebook.title}
           subtitle={ebook.subtitle || "E-book Exclusivo"}
         />
-        <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4">← Meus Conteúdos</Link>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          {ebook.opening_video_url && (
+            <button 
+              onClick={() => setShowIntroVideo(true)}
+              className="btn-fire flex items-center justify-center gap-2 px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold"
+            >
+              <Play className="h-4 w-4 fill-current" />
+              Ver Vídeo Intro
+            </button>
+          )}
+          <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4 flex items-center justify-center">← Meus Conteúdos</Link>
+        </div>
       </div>
 
       <AnimatePresence>
-        {showOpeningVideo && ebook.opening_video_url && (
+        {(showOpeningVideo || showIntroVideo) && ebook.opening_video_url && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -186,36 +198,42 @@ function EbookReaderPage() {
           >
             <div className="relative w-full max-w-4xl">
               <button 
-                onClick={markVideoAsSeen}
+                onClick={() => {
+                  if (showOpeningVideo) markVideoAsSeen();
+                  setShowIntroVideo(false);
+                }}
                 className="absolute -top-12 right-0 flex items-center gap-2 text-white/60 hover:text-white transition-colors"
               >
-                <span>Pular Vídeo de Abertura</span>
+                <span>{showOpeningVideo ? "Pular Vídeo" : "Fechar"}</span>
                 <X className="h-6 w-6" />
               </button>
               
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-black text-white mb-2">{ebook.title}</h2>
-                <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Boas-vindas</p>
+                <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Apresentação</p>
               </div>
-
+ 
               <div className="relative aspect-video w-full rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black">
                 <iframe
                   src={ebook.opening_video_url.includes('youtube.com') 
-                    ? ebook.opening_video_url.replace('watch?v=', 'embed/') + "?autoplay=1"
+                    ? ebook.opening_video_url.replace('watch?v=', 'embed/').split('&')[0] + "?autoplay=1"
                     : ebook.opening_video_url + "?autoplay=1"}
                   className="h-full w-full"
                   allow="autoplay; fullscreen"
                   allowFullScreen
                 />
               </div>
-
+ 
               <div className="mt-8 flex justify-center">
                 <button 
-                  onClick={markVideoAsSeen}
+                  onClick={() => {
+                    if (showOpeningVideo) markVideoAsSeen();
+                    setShowIntroVideo(false);
+                  }}
                   className="btn-fire px-10 py-4 font-black text-lg shadow-2xl shadow-fire/30 flex items-center gap-3"
                 >
                   <BookOpen className="h-6 w-6" />
-                  Começar Leitura agora
+                  {showOpeningVideo ? "Começar Leitura agora" : "Continuar Leitura"}
                 </button>
               </div>
             </div>
