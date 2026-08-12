@@ -14,12 +14,23 @@ interface ProcessedSection {
 }
 
 async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
+  let rawText = "";
   try {
     const data = await pdfParser(buffer);
-    const text = data.text;
+    rawText = data.text;
+    
+    // Check if the content is an HTML error page
+    if (rawText.includes("<!doctype html>") || rawText.includes("<html") || rawText.includes("This page didn't load")) {
+      console.error("PDF service returned an HTML error page:", rawText);
+      throw new Error("O serviço de PDF retornou uma página de erro técnica. Por favor, verifique se o arquivo PDF é válido e tente novamente.");
+    }
+
+    if (!rawText || rawText.trim().length === 0) {
+      throw new Error("O PDF parece estar vazio ou não pôde ser lido.");
+    }
     
     // Split by common chapter/section patterns
-    const sections = text.split(/\n(?=(?:CAPÍTULO|MÓDULO|PARTE|CHAPTER|MODULE|SECTION)\s+\d+|[A-Z\s]{10,}\n\n)/i);
+    const sections = rawText.split(/\n(?=(?:CAPÍTULO|MÓDULO|PARTE|CHAPTER|MODULE|SECTION)\s+\d+|[A-Z\s]{10,}\n\n)/i);
     
     return sections
       .map((s: string) => s.trim())
@@ -35,9 +46,13 @@ async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
           order_index: index
         };
       });
-  } catch (error) {
+  } catch (error: any) {
+    // If it's already our custom error, rethrow it
+    if (error.message && error.message.includes("O serviço de PDF")) {
+      throw error;
+    }
     console.error("Error parsing PDF:", error);
-    throw new Error("Falha ao processar o arquivo PDF.");
+    throw new Error("Falha ao processar o arquivo PDF. Verifique se o arquivo não está corrompido.");
   }
 }
 
