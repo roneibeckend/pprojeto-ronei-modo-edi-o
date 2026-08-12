@@ -28,7 +28,8 @@ import {
   ChevronUp,
   AlertCircle,
   CheckCircle2,
-  HelpCircle
+  HelpCircle,
+  Flag
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -496,9 +497,60 @@ function AdminEbooksPage() {
                 </form>
               </TabsContent>
 
-              <TabsContent value="content" className="flex-1 mt-0 outline-none">
-                {editingItem?.id && <EbookContentEditor ebookId={editingItem.id} />}
-              </TabsContent>
+                <TabsContent value="checkpoints" className="flex-1 mt-0">
+                  {editingItem?.id && (
+                    <div className="space-y-6">
+                      <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                        <h4 className="font-bold flex items-center gap-2 mb-4">
+                          <Flag className="h-5 w-5 text-[#ff6a00]" /> Configurar Checkpoints do E-book
+                        </h4>
+                        <p className="text-sm text-white/60 mb-6">
+                          Defina marcos específicos onde o progresso de leitura deve ser registrado.
+                          As notificações de progresso (25%, 50%, 75%, 100%) são automáticas.
+                        </p>
+                        
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                            <span className="text-sm">Final de cada módulo</span>
+                            <button 
+                              type="button"
+                              className="text-[10px] font-bold uppercase text-[#ff6a00] hover:underline"
+                              onClick={() => {
+                                const current = editingItem.checkpoints || [];
+                                setEditingItem({...editingItem, checkpoints: [...current, { type: 'module_end', label: 'Conclusão de Módulo' }]});
+                              }}
+                            >
+                              Habilitar
+                            </button>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest">Checkpoints Ativos</label>
+                            {(editingItem.checkpoints || []).map((cp: any, idx: number) => (
+                              <div key={idx} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+                                <span className="text-sm font-medium">{cp.label}</span>
+                                <button 
+                                  type="button"
+                                  onClick={() => {
+                                    const filtered = editingItem.checkpoints.filter((_: any, i: number) => i !== idx);
+                                    setEditingItem({...editingItem, checkpoints: filtered});
+                                  }}
+                                  className="text-red-500 hover:text-red-400"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="content" className="flex-1 mt-0 outline-none">
+                  {editingItem?.id && <EbookContentEditor ebookId={editingItem.id} />}
+                </TabsContent>
             </Tabs>
           </div>
         </div>
