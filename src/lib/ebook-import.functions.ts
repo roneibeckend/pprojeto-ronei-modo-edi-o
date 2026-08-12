@@ -107,13 +107,15 @@ export const importEbookFromPdf = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     try {
       // Basic validation of base64 size to fail early if too large (e.g. > 10MB)
-      if (data.file_base64.length > 15 * 1024 * 1024) {
-        throw new Error("O arquivo PDF é muito grande (limite de 10MB para processamento direto).");
+      // Base64 is roughly 1.37x the original file size. 13MB base64 is ~9.5MB file.
+      if (data.file_base64.length > 13 * 1024 * 1024) {
+        throw new Error("LIMITE_EXCEDIDO: O arquivo PDF excede o limite de 10MB para processamento automático. Tente dividir o PDF em partes menores.");
       }
 
       const buffer = Buffer.from(data.file_base64.split(',')[1] || data.file_base64, 'base64');
       
       const processedSections = await processPdfContent(buffer);
+
       
       if (processedSections.length === 0) {
         throw new Error("Nenhum conteúdo estruturado encontrado no PDF.");
