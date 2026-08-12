@@ -93,7 +93,7 @@ function EbookReaderPage() {
   // Scroll to top when chapter changes (all devices)
   useEffect(() => {
     if (activeChapterId) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
   }, [activeChapterId]);
 
