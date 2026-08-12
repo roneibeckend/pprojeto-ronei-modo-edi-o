@@ -24,7 +24,8 @@ import {
   SendHorizontal,
   Play,
   FileUp,
-  ShieldCheck
+  ShieldCheck,
+  ChevronUp
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -42,6 +43,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { importEbookFromFile } from "@/lib/ebook-import.functions";
 import { fixEbookVisibility } from "@/lib/ebook-visibility-fix.functions";
+import { reorderChapter } from "@/lib/ebook-reorder.functions";
 
 export const Route = createFileRoute("/admin/ebooks")({
   head: () => ({ meta: [{ title: "Gestão de E-books · Admin" }] }),
@@ -648,21 +650,59 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
                 </div>
               </div>
               <div className="pl-4 space-y-1">
-                {module.chapters?.sort((a: any, b: any) => a.order_index - b.order_index).map((chapter: any) => (
-                  <button
-                    key={chapter.id}
-                    onClick={() => setEditingChapter(chapter)}
-                    className={cn(
-                      "flex w-full items-center justify-between px-3 py-2 rounded-md text-[11px] transition-all",
-                      editingChapter?.id === chapter.id ? "bg-[#ff6a00]/10 text-[#ff6a00] font-bold" : "text-white/40 hover:text-white hover:bg-white/5"
-                    )}
-                  >
-                    <span className="truncate">{chapter.title}</span>
-                    <div className="flex items-center gap-2">
-                      {chapter.video_url && <Play className="h-2.5 w-2.5" />}
-                      <Edit3 className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                {module.chapters?.sort((a: any, b: any) => a.order_index - b.order_index).map((chapter: any, index: number) => (
+                  <div key={chapter.id} className="flex items-center gap-1 group/item">
+                    <button
+                      onClick={() => setEditingChapter(chapter)}
+                      className={cn(
+                        "flex-1 flex items-center justify-between px-3 py-2 rounded-md text-[11px] transition-all",
+                        editingChapter?.id === chapter.id ? "bg-[#ff6a00]/10 text-[#ff6a00] font-bold" : "text-white/40 hover:text-white hover:bg-white/5"
+                      )}
+                    >
+                      <span className="truncate">{chapter.title}</span>
+                      <div className="flex items-center gap-2">
+                        {chapter.video_url && <Play className="h-2.5 w-2.5" />}
+                        <Edit3 className="h-3 w-3 opacity-0 group-hover/item:opacity-100" />
+                      </div>
+                    </button>
+                    
+                    <div className="flex flex-col opacity-0 group-hover/item:opacity-100 transition-opacity">
+                      {index > 0 && (
+                        <button 
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            try {
+                              await reorderChapter({ data: { chapterId: chapter.id, newOrderIndex: index - 1, moduleId: module.id } });
+                              fetchContent();
+                            } catch (err: any) {
+                              toast.error(err.message);
+                            }
+                          }}
+                          className="p-0.5 hover:text-[#ff6a00] text-white/20"
+                          title="Mover para cima"
+                        >
+                          <ChevronUp className="h-3 w-3" />
+                        </button>
+                      )}
+                      {index < module.chapters.length - 1 && (
+                        <button 
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            try {
+                              await reorderChapter({ data: { chapterId: chapter.id, newOrderIndex: index + 1, moduleId: module.id } });
+                              fetchContent();
+                            } catch (err: any) {
+                              toast.error(err.message);
+                            }
+                          }}
+                          className="p-0.5 hover:text-[#ff6a00] text-white/20"
+                          title="Mover para baixo"
+                        >
+                          <ChevronDown className="h-3 w-3" />
+                        </button>
+                      )}
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
