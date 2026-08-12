@@ -89,10 +89,13 @@ function AdminCursosPage() {
     e.preventDefault();
     try {
       setIsSaving(true);
+      // Remove virtual 'modules' property before saving to 'courses' table
+      const { modules, ...payload } = editingItem;
+
       const { data, error } = await supabase
         .from('courses')
         .upsert({
-          ...editingItem,
+          ...payload,
           updated_at: new Date().toISOString()
         })
         .select()
