@@ -98,10 +98,10 @@ export function VideoPlayer({
 
   if (isYouTube || isGoogleDrive) {
     return (
-      <div className={cn("relative aspect-[9/16] max-h-[85vh] mx-auto bg-black rounded-xl overflow-hidden glass", className)}>
+      <div className={cn("relative aspect-[9/16] max-h-[85vh] w-full mx-auto bg-black rounded-xl overflow-hidden glass", className)}>
         <iframe
           src={getEmbedUrl(src)}
-          className="w-full h-full"
+          className="absolute inset-0 w-full h-full object-cover border-0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         />
