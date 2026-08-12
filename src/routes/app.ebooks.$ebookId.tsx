@@ -73,10 +73,14 @@ function EbookReaderPage() {
   const nextChapter = activeIndex < chapters.length - 1 ? chapters[activeIndex + 1] : null;
 
   useEffect(() => {
-    if (activeChapterId) {
-      completeChapter(activeChapterId);
+    if (activeChapterId && activeChapter) {
+      completeChapter({ 
+        chapterId: activeChapterId,
+        ebookId: ebook.id,
+        moduleId: activeChapter.module_id
+      });
     }
-  }, [activeChapterId, completeChapter]);
+  }, [activeChapterId, activeChapter, ebook.id, completeChapter]);
 
   const handlePurchase = async () => {
     try {

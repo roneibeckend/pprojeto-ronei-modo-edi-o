@@ -47,6 +47,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "admin_permissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "student_ranking"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       affiliate_custom_commissions: {
@@ -250,6 +257,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "affiliates_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "student_ranking"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "affiliates_referrer_id_fkey"
             columns: ["referrer_id"]
             isOneToOne: false
@@ -335,6 +349,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "student_ranking"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1224,6 +1245,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "payout_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "student_ranking"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       profiles: {
@@ -1256,6 +1284,36 @@ export type Database = {
           name?: string | null
           phone?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      progress_tracking: {
+        Row: {
+          completed_at: string | null
+          id: string
+          item_id: string
+          item_type: string
+          points_awarded: number | null
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          id?: string
+          item_id: string
+          item_type: string
+          points_awarded?: number | null
+          started_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          item_id?: string
+          item_type?: string
+          points_awarded?: number | null
+          started_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1451,6 +1509,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "support_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "student_ranking"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "support_messages_ticket_id_fkey"
             columns: ["ticket_id"]
             isOneToOne: false
@@ -1507,6 +1572,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "support_tickets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "student_ranking"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       user_notifications: {
@@ -1562,6 +1634,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_stats: {
+        Row: {
+          created_at: string
+          level: number
+          rank: number | null
+          total_points: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          level?: number
+          rank?: number | null
+          total_points?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          level?: number
+          rank?: number | null
+          total_points?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       whatsapp_instances: {
         Row: {
           created_at: string
@@ -1597,9 +1696,22 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      student_ranking: {
+        Row: {
+          avatar_url: string | null
+          global_rank: number | null
+          name: string | null
+          total_points: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      award_points: {
+        Args: { p_points: number; p_user_id: string }
+        Returns: undefined
+      }
       distribute_partner_profits: {
         Args: { p_amount: number; p_partner_id: string }
         Returns: undefined
