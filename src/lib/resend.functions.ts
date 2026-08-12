@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { sendResendEmail } from "./resend.server";
 
 /**
  * Camada de abstração para envio de e-mail através da Edge Function do Supabase.
