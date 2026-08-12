@@ -159,7 +159,7 @@ function IntegrationsPage() {
           category: selectedItem.category,
           credentials: selectedItem.credentials,
           settings: selectedItem.settings,
-          environment: (selectedItem.settings?.testMode === true || selectedItem.settings?.testMode === 'true') ? 'sandbox' : 'production'
+          environment: (selectedItem.settings?.testMode === true || String(selectedItem.settings?.testMode) === 'true') ? 'sandbox' : 'production'
         }
       });
       setTestResult(result);
@@ -387,12 +387,12 @@ function IntegrationsPage() {
                                     if (key === 'testMode') {
                                       setSelectedItem({
                                         ...selectedItem,
-                                        settings: { ...selectedItem.settings, [key]: val === 'sandbox' }
+                                        settings: { ...selectedItem.settings, [key]: val === 'sandbox' } as Record<string, any>
                                       });
                                     } else {
                                       setSelectedItem({
                                         ...selectedItem,
-                                        settings: { ...selectedItem.settings, [key]: val }
+                                        settings: { ...selectedItem.settings, [key]: val } as Record<string, any>
                                       });
                                     }
                                   }}
