@@ -265,7 +265,16 @@ function EbookReaderPage() {
 
                 <div className="prose prose-invert w-full max-w-full prose-p:text-muted-foreground prose-headings:text-foreground prose-p:leading-relaxed prose-p:text-base sm:text-lg overflow-x-hidden">
                   {activeChapter?.content ? (
-                    <div className="text-center md:text-left leading-[1.6] text-lg text-white/80 break-words [&_img]:max-w-full [&_img]:h-auto [&_table]:block [&_table]:overflow-x-auto [&_table]:w-full [&_p]:min-h-[1.5em] [&_p]:mb-4" dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
+                    <div className="text-center md:text-left leading-[1.6] text-lg text-white/80 break-words 
+                      [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-2xl [&_img]:my-6 [&_img]:mx-auto
+                      [&_table]:block [&_table]:overflow-x-auto [&_table]:w-full [&_table]:my-6 [&_table]:border-collapse [&_table]:rounded-xl [&_table]:bg-white/5
+                      [&_td]:p-3 [&_td]:border [&_td]:border-white/10
+                      [&_th]:p-3 [&_th]:border [&_th]:border-white/10 [&_th]:bg-white/10 [&_th]:font-bold
+                      [&_p]:min-h-[1.5em] [&_p]:mb-4
+                      [&_figcaption]:text-sm [&_figcaption]:text-muted-foreground [&_figcaption]:text-center [&_figcaption]:mt-2 [&_figcaption]:mb-6
+                      [&_.table-wrapper]:overflow-x-auto [&_.table-wrapper]:max-w-full [&_.table-wrapper]:mb-6" 
+                      dangerouslySetInnerHTML={{ __html: activeChapter.content }} 
+                    />
                   ) : (
                     <p className="italic opacity-50">Conteúdo em breve...</p>
                   )}
