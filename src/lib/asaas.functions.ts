@@ -28,10 +28,14 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
     }
 
     const credentials = integration.credentials as Record<string, string>;
-    const settings = integration.settings as Record<string, string>;
+    const settings = (integration.settings || {}) as Record<string, any>;
     const apiKey = credentials.apiKey;
-    const environment = settings.environment || 'sandbox';
-    const baseUrl = environment === 'production' ? ASAAS_PRODUCTION_URL : ASAAS_SANDBOX_URL;
+    
+    // O banco de dados usa testMode (boolean) em vez de environment (string)
+    const isTestMode = settings.testMode === true || settings.testMode === 'true' || settings.environment === 'sandbox';
+    const baseUrl = isTestMode ? ASAAS_SANDBOX_URL : ASAAS_PRODUCTION_URL;
+    
+    console.log(`[Asaas] Usando ambiente: ${isTestMode ? 'SANDBOX' : 'PRODUCTION'} | URL: ${baseUrl}`);
 
     if (!apiKey) {
       throw new Error("Chave de API do Asaas ausente nas configurações.");
