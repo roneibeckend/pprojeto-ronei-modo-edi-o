@@ -128,7 +128,7 @@ export function PostPurchaseOffer({
               Turbine seu aprendizado!
             </DialogTitle>
             <p className="text-muted-foreground mt-2">
-              Adicione estes itens complementares agora e ganhe <span className="text-gold font-bold">15% de desconto</span> em cada um.
+              Adicione estes itens complementares agora e ganhe <span className="text-gold font-bold">{discountPercentage}% de desconto</span> em cada um.
             </p>
           </DialogHeader>
 
@@ -146,7 +146,7 @@ export function PostPurchaseOffer({
           ) : (
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               {offers.map(offer => {
-                const discountPrice = (offer.price || 0) * 0.85;
+                const discountPrice = (offer.price || 0) * (1 - (discountPercentage / 100));
                 const isSelected = selectedIds.includes(offer.id);
                 
                 return (
