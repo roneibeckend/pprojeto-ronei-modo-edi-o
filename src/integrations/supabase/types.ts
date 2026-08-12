@@ -420,6 +420,7 @@ export type Database = {
           id: string
           order_index: number | null
           title: string
+          video_url: string | null
         }
         Insert: {
           course_id: string
@@ -428,6 +429,7 @@ export type Database = {
           id?: string
           order_index?: number | null
           title: string
+          video_url?: string | null
         }
         Update: {
           course_id?: string
@@ -436,6 +438,7 @@ export type Database = {
           id?: string
           order_index?: number | null
           title?: string
+          video_url?: string | null
         }
         Relationships: [
           {
