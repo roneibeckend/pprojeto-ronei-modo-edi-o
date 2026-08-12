@@ -269,9 +269,17 @@ function AdminEbooksPage() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/80 backdrop-blur-sm p-4 text-left overflow-y-auto outline-none" tabIndex={-1}>
           <div className="w-full max-w-4xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-8 min-h-[600px] flex flex-col relative z-50 shadow-2xl">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo E-book"}</h3>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors"><X className="h-5 w-5" /></button>
+            <div className="flex items-center justify-between mb-6 sticky top-0 z-30 bg-[#0e0e0e] pb-4 border-b border-white/5 pt-2">
+              <h3 className="text-xl font-bold truncate pr-4">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo E-book"}</h3>
+              <button 
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setEditingItem(null);
+                }} 
+                className="p-2 hover:bg-white/5 rounded-full transition-colors flex-shrink-0"
+              >
+                <X className="h-5 w-5" />
+              </button>
             </div>
 
             <Tabs defaultValue="info" className="flex-1 flex flex-col" onValueChange={() => {
