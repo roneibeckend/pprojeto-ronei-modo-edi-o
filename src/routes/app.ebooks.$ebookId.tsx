@@ -14,6 +14,8 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
+import { FeedbackSummary } from "@/components/platform/FeedbackSummary";
+import { FeedbackModal } from "@/components/platform/FeedbackModal";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
@@ -45,6 +47,8 @@ function EbookReaderPage() {
   const { isChapterCompleted, completeChapter } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
   useState(() => {
@@ -99,8 +103,16 @@ function EbookReaderPage() {
         ebookId: ebook.id,
         moduleId: activeChapter.module_id
       });
+
+      // Show feedback modal if finished
+      if (!hasSubmittedFeedback) {
+        const completedCount = chapters.filter((c: any) => isChapterCompleted(c.id)).length;
+        if (completedCount >= chapters.length && chapters.length > 0) {
+          setShowFeedbackModal(true);
+        }
+      }
     }
-  }, [activeChapterId, activeChapter, ebook.id, completeChapter]);
+  }, [activeChapterId, activeChapter, ebook.id, completeChapter, chapters.length, isChapterCompleted]);
 
   const handlePurchase = async () => {
     if (isOfferEnabled) {
@@ -234,11 +246,16 @@ function EbookReaderPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-0 pb-20 sm:px-4 overflow-x-hidden">
-      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 sm:px-0">
-        <PageHeader
-          title={ebook.title}
-          subtitle={ebook.subtitle || "E-book Exclusivo"}
-        />
+      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-end sm:justify-between mb-6 sm:mb-8 sm:px-0">
+        <div>
+          <div className="mb-4">
+            <FeedbackSummary ebookId={ebook.id} />
+          </div>
+          <PageHeader
+            title={ebook.title}
+            subtitle={ebook.subtitle || "E-book Exclusivo"}
+          />
+        </div>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           {ebook.opening_video_url && (
             <button 
@@ -461,6 +478,15 @@ function EbookReaderPage() {
 
         </aside>
       </div>
+      <FeedbackModal
+        ebookId={ebook.id}
+        itemTitle={ebook.title}
+        isOpen={showFeedbackModal}
+        onClose={() => {
+          setShowFeedbackModal(false);
+          setHasSubmittedFeedback(true);
+        }}
+      />
     </div>
   );
 }

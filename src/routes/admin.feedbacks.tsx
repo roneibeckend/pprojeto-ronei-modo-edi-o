@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Star, CheckCircle2, XCircle, Trash2, Search, Filter, MessageSquare, Loader2, User } from "lucide-react";
+import { Star, CheckCircle2, XCircle, Trash2, Search, Filter, MessageSquare, Loader2, User, Reply, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -15,6 +15,8 @@ export const Route = createFileRoute("/admin/feedbacks")({
 function AdminFeedbacksPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("pending");
+  const [replyText, setReplyText] = useState("");
+  const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const { data: feedbacks, isLoading } = useQuery({
@@ -25,6 +27,7 @@ function AdminFeedbacksPage() {
         .select(`
           *,
           course:courses(title),
+          ebook:ebooks(title),
           profile:profiles(name, avatar_url, email)
         `)
 
@@ -40,6 +43,7 @@ function AdminFeedbacksPage() {
       if (searchTerm) {
         return data.filter(f => 
           f.course?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          f.ebook?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           f.profile?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           f.comment?.toLowerCase().includes(searchTerm.toLowerCase())
         );
@@ -64,6 +68,25 @@ function AdminFeedbacksPage() {
     },
     onError: (error: any) => {
       toast.error("Erro ao moderar feedback: " + error.message);
+    }
+  });
+
+  const replyMutation = useMutation({
+    mutationFn: async ({ id, admin_reply }: { id: string, admin_reply: string }) => {
+      const { error } = await supabase
+        .from("course_feedback")
+        .update({ admin_reply, updated_at: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-feedbacks"] });
+      toast.success("Resposta enviada com sucesso!");
+      setActiveReplyId(null);
+      setReplyText("");
+    },
+    onError: (error: any) => {
+      toast.error("Erro ao enviar resposta: " + error.message);
     }
   });
 
@@ -169,7 +192,7 @@ function AdminFeedbacksPage() {
                       ))}
                     </div>
                     <span className="text-xs font-bold uppercase tracking-widest text-[#ff6a00]">
-                      {feedback.course?.title}
+                      {feedback.course?.title || feedback.ebook?.title}
                     </span>
                     <span className="text-xs text-white/20">
                       {format(new Date(feedback.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
@@ -178,6 +201,44 @@ function AdminFeedbacksPage() {
                   <p className="text-sm text-white/70 italic leading-relaxed">
                     "{feedback.comment || "Sem comentários."}"
                   </p>
+                  {feedback.admin_reply && (
+                    <div className="mt-4 p-4 rounded-xl bg-[#ff6a00]/5 border border-[#ff6a00]/10 ml-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <MessageSquare className="h-3 w-3 text-[#ff6a00]" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00]">Resposta Oficial</span>
+                      </div>
+                      <p className="text-sm text-white/60 leading-relaxed italic">
+                        "{feedback.admin_reply}"
+                      </p>
+                    </div>
+                  )}
+
+                  {activeReplyId === feedback.id && (
+                    <div className="mt-4 space-y-3">
+                      <textarea
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Escreva sua resposta oficial aqui..."
+                        className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm min-h-[100px] outline-none focus:border-[#ff6a00] transition"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <button 
+                          onClick={() => setActiveReplyId(null)}
+                          className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white"
+                        >
+                          Cancelar
+                        </button>
+                        <button 
+                          onClick={() => replyMutation.mutate({ id: feedback.id, admin_reply: replyText })}
+                          disabled={replyMutation.isPending || !replyText.trim()}
+                          className="px-4 py-2 bg-[#ff6a00] text-black rounded-lg text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-[#ff8c33] transition disabled:opacity-50"
+                        >
+                          {replyMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
+                          Enviar Resposta
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Actions */}
@@ -197,6 +258,14 @@ function AdminFeedbacksPage() {
                         <XCircle className="h-4 w-4" /> Rejeitar
                       </button>
                     </>
+                  )}
+                  {feedback.status === 'approved' && !feedback.admin_reply && activeReplyId !== feedback.id && (
+                    <button 
+                      onClick={() => setActiveReplyId(feedback.id)}
+                      className="p-2 rounded-lg bg-[#ff6a00]/10 text-[#ff6a00] hover:bg-[#ff6a00] hover:text-black transition-all flex items-center gap-2 text-xs font-bold uppercase tracking-widest"
+                    >
+                      <Reply className="h-4 w-4" /> Responder
+                    </button>
                   )}
                   {feedback.status !== 'pending' && (
                      <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${

@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useProgress } from "@/hooks/use-progress";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { FeedbackModal } from "@/components/platform/FeedbackModal";
+import { FeedbackSummary } from "@/components/platform/FeedbackSummary";
 import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 
@@ -267,11 +268,16 @@ function CoursePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-0 sm:px-4">
-      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 sm:px-0">
-        <PageHeader
-          title={course.title}
-          subtitle={`Professor: ${course.teacher_name || "Equipe Espetinho na Veia"}`}
-        />
+      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-end sm:justify-between mb-6 sm:mb-8 sm:px-0">
+        <div>
+          <div className="mb-4">
+            <FeedbackSummary courseId={course.id} />
+          </div>
+          <PageHeader
+            title={course.title}
+            subtitle={`Professor: ${course.teacher_name || "Equipe Espetinho na Veia"}`}
+          />
+        </div>
         <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4">← Todos os cursos</Link>
       </div>
 
@@ -438,7 +444,7 @@ function CoursePage() {
 
       <FeedbackModal
         courseId={course.id}
-        courseTitle={course.title}
+        itemTitle={course.title}
         isOpen={showFeedbackModal}
         onClose={() => {
           setShowFeedbackModal(false);
