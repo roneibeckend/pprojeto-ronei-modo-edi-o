@@ -11,6 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { CourseCardSkeleton } from "@/components/ui/skeleton";
+import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
+import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({
@@ -139,7 +141,15 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
   const linkParams = item.type === 'course' ? { courseId: item.id } : { ebookId: item.id };
   
   return (
-    <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"}`}>
+    <>
+      <PostPurchaseOffer
+        isOpen={showOffer}
+        onClose={() => setShowOffer(false)}
+        onProceedWithOffers={(selected) => executeCheckout(selected)}
+        onProceedWithoutOffers={() => executeCheckout([])}
+        originalProductId={item.id}
+      />
+      <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"}`}>
       <div className="relative aspect-video bg-muted/20">
         <img 
           src={item.cover_url || IMG.hero} 
@@ -202,6 +212,7 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
         )}
       </div>
     </article>
+    </>
   );
 }
 

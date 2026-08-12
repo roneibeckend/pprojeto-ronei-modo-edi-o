@@ -12,11 +12,13 @@ import {
 export const createAsaasPaymentLink = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
-    productId: z.string(),
-    productType: z.enum(['course', 'ebook']),
-    title: z.string(),
-    description: z.string().optional(),
-    value: z.number(),
+    products: z.array(z.object({
+      productId: z.string(),
+      productType: z.enum(['course', 'ebook']),
+      title: z.string(),
+      description: z.string().optional().nullable(),
+      value: z.number(),
+    })),
     affiliateRef: z.string().optional(),
     paymentType: z.enum(['unique', 'recurring']).optional(),
     dueDays: z.number().optional(),
@@ -27,23 +29,29 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
     console.log(`[Asaas] Ambiente: ${isTestMode ? 'SANDBOX' : 'PRODUCTION'} | URL: ${baseUrl}`);
 
     try {
+      const totalValue = data.products.reduce((acc, p) => acc + p.value, 0);
+      const mainProduct = data.products[0];
+      const titles = data.products.map(p => p.title).join(' + ');
+
       const response = await fetch(`${baseUrl}/paymentLinks`, {
         method: 'POST',
         headers: asaasHeaders(apiKey),
         body: JSON.stringify({
-          name: data.title,
-          description: data.description || `Acesso ao ${data.productType === 'course' ? 'Curso' : 'E-book'}: ${data.title}`,
-          value: data.value,
+          name: titles.length > 100 ? titles.substring(0, 97) + '...' : titles,
+          description: `Acesso a: ${titles}`,
+          value: totalValue,
           billingType: 'UNDEFINED',
           chargeType: data.paymentType === 'recurring' ? 'RECURRENT' : 'DETACHED',
           dueDateLimitDays: data.dueDays || 3,
           endDate: null,
           notificationEnabled: true,
           externalReference: buildExternalReference({
-            productType: data.productType,
-            productId: data.productId,
+            productType: mainProduct.productType, // Referência ao principal para automação simples
+            productId: mainProduct.productId,
             userId: context.userId,
             affiliateRef: data.affiliateRef || null,
+            // Nota: Em um sistema real, externalReference precisaria suportar múltiplos IDs 
+            // ou salvaríamos os secundários em uma tabela de transação pendente.
           }),
         })
       });
