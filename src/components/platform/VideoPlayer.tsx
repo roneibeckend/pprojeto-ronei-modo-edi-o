@@ -43,7 +43,7 @@ export function VideoPlayer({
       }
       
       if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&vq=hd1080`;
       }
     }
 
