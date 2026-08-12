@@ -1258,3 +1258,139 @@ function OffersIntegrationPanel() {
     </div>
   );
 }
+
+function EmailTemplatesTab() {
+  const queryClient = useQueryClient();
+  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const getTemplatesFn = useServerFn(getEmailTemplates);
+  const saveTemplateFn = useServerFn(saveEmailTemplate);
+  const deleteTemplateFn = useServerFn(deleteEmailTemplate);
+
+  const { data: templates, isLoading } = useQuery({
+    queryKey: ['email_templates'],
+    queryFn: async () => await getTemplatesFn()
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: saveTemplateFn,
+    onSuccess: () => {
+      toast.success("Template salvo com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ['email_templates'] });
+      setIsEditing(false);
+      setSelectedTemplate(null);
+    },
+    onError: (err: any) => toast.error("Erro ao salvar template: " + err.message)
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteTemplateFn,
+    onSuccess: () => {
+      toast.success("Template removido.");
+      queryClient.invalidateQueries({ queryKey: ['email_templates'] });
+      setSelectedTemplate(null);
+    }
+  });
+
+  const handleSave = () => {
+    const name = (document.getElementById('temp_name') as HTMLInputElement).value;
+    const subject = (document.getElementById('temp_subject') as HTMLInputElement).value;
+    const content_html = (document.getElementById('temp_html') as HTMLTextAreaElement).value;
+    const description = (document.getElementById('temp_desc') as HTMLInputElement).value;
+
+    saveMutation.mutate({ 
+      data: {
+        id: selectedTemplate?.id,
+        name,
+        subject,
+        content_html,
+        description,
+        variables: selectedTemplate?.variables || []
+      }
+    });
+  };
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-12">
+      <div className="lg:col-span-4 space-y-4">
+        <Button 
+          onClick={() => { setSelectedTemplate({ name: '', subject: '', content_html: '', description: '' }); setIsEditing(true); }}
+          className="w-full bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-10"
+        >
+          <Plus className="h-4 w-4 mr-2" /> Novo Template
+        </Button>
+        
+        <div className="space-y-2">
+          {isLoading ? (
+            Array(3).fill(0).map((_, i) => <div key={i} className="h-16 bg-white/5 animate-pulse rounded-lg" />)
+          ) : templates?.map((temp: any) => (
+            <button
+              key={temp.id}
+              onClick={() => { setSelectedTemplate(temp); setIsEditing(true); }}
+              className={}
+            >
+              <p className="text-xs font-bold text-white uppercase tracking-tight">{temp.name}</p>
+              <p className="text-[10px] text-white/40 mt-1 truncate">{temp.subject}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="lg:col-span-8">
+        {isEditing && selectedTemplate ? (
+          <Card className="bg-[#111] border-white/5">
+            <CardHeader>
+              <CardTitle className="text-lg font-bold uppercase">Editar Template</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 p-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Identificador (Slug)</Label>
+                  <Input id="temp_name" defaultValue={selectedTemplate.name} className="bg-black/40 border-white/10" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição</Label>
+                  <Input id="temp_desc" defaultValue={selectedTemplate.description} className="bg-black/40 border-white/10" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Assunto do E-mail</Label>
+                <Input id="temp_subject" defaultValue={selectedTemplate.subject} className="bg-black/40 border-white/10" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo HTML</Label>
+                <textarea 
+                  id="temp_html" 
+                  defaultValue={selectedTemplate.content_html} 
+                  rows={12}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg p-4 font-mono text-xs text-white/80 focus:border-[#ff6a00] outline-none"
+                />
+              </div>
+              
+              <div className="flex items-center gap-3 pt-4">
+                <Button onClick={handleSave} disabled={saveMutation.isPending} className="bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] px-8">
+                  {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                  Salvar Template
+                </Button>
+                {selectedTemplate.id && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => deleteMutation.mutate({ data: { id: selectedTemplate.id } })}
+                    className="border-red-500/20 text-red-500 hover:bg-red-500/10 uppercase text-[10px] font-bold"
+                  >
+                    Excluir
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="h-[400px] border border-dashed border-white/5 rounded-2xl flex flex-col items-center justify-center text-white/10">
+            <Mail className="h-12 w-12 mb-4 opacity-5" />
+            <p className="text-xs uppercase font-bold tracking-widest">Selecione ou crie um template</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
