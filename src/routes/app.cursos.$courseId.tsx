@@ -336,7 +336,7 @@ function CoursePage() {
                 {isLessonCompleted(active.id) ? "Concluída" : "Marcar como concluída"}
               </button>
             </div>
-          </div>
+          </motion.div>
 
           <div className="flex items-center justify-between gap-3 px-4 sm:px-0">
             <button
