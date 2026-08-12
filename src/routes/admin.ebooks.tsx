@@ -38,7 +38,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { importEbookFromPdf } from "@/lib/ebook-import.functions";
+import { importEbookFromFile } from "@/lib/ebook-import.functions";
 
 export const Route = createFileRoute("/admin/ebooks")({
   head: () => ({ meta: [{ title: "Gestão de E-books · Admin" }] }),
@@ -516,7 +516,7 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
     }
   }
 
-  async function handleImportPdf(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -526,35 +526,37 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
       reader.onload = async () => {
         const base64 = reader.result as string;
         try {
-          const result = await importEbookFromPdf({
+          const result = await importEbookFromFile({
             data: {
               ebook_id: ebookId,
-              file_base64: base64
+              file_base64: base64,
+              file_name: file.name,
+              mime_type: file.type
             }
           });
-          toast.success(`PDF importado com sucesso! ${result.chapters_count} capítulos criados.`);
+          toast.success(`Arquivo importado com sucesso! ${result.chapters_count} capítulos criados.`);
           fetchContent();
         } catch (err: any) {
           console.error("PDF Import Failure:", err);
           const errorMessage = err.message || "Erro desconhecido";
           
           if (errorMessage.includes("LIMITE_EXCEDIDO")) {
-             toast.error("O arquivo é muito grande para ser processado automaticamente (limite de 60MB). Por favor, divida o PDF em arquivos menores.", {
+             toast.error("O arquivo é muito grande para ser processado automaticamente (limite de 60MB). Por favor, divida o arquivo em partes menores.", {
                duration: 8000
              });
           } else if (errorMessage.includes("TIMEOUT_PDF_INFRA") || errorMessage.includes("demorou muito")) {
-             toast.error("Processamento Interrompido: O PDF é muito complexo (contém muitas imagens ou tabelas). Tente remover imagens pesadas ou dividir o arquivo.", {
+             toast.error("Processamento Interrompido: O arquivo é muito complexo (contém muitas imagens ou tabelas). Tente remover elementos pesados ou dividir o arquivo.", {
                duration: 8000
              });
           } else if (errorMessage.includes("página de erro técnica") || 
               errorMessage.includes("instabilidade na infraestrutura") || 
               errorMessage.includes("This page didn't load") ||
               errorMessage.includes("INFRA_ERROR_HTML")) {
-             toast.error("Falha Técnica Temporária: O servidor de processamento encontrou uma instabilidade. Isso é comum com PDFs densos ou próximos ao limite de 60MB. Tente novamente em instantes.", {
+             toast.error("Falha Técnica Temporária: O servidor de processamento encontrou uma instabilidade. Isso é comum com arquivos densos ou próximos ao limite de 60MB. Tente novamente em instantes.", {
                duration: 8000
              });
           } else {
-             toast.error("Não foi possível importar o PDF: " + errorMessage);
+             toast.error("Não foi possível importar o arquivo: " + errorMessage);
           }
         }
 
@@ -581,12 +583,12 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
             <div className="relative">
               <input
                 type="file"
-                accept=".pdf"
-                onChange={handleImportPdf}
+                accept=".pdf,.docx"
+                onChange={handleImportFile}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 disabled={isImporting}
               />
-              <button className="p-1 hover:bg-white/5 rounded text-white/40 transition-colors" title="Importar PDF">
+              <button className="p-1 hover:bg-white/5 rounded text-white/40 transition-colors" title="Importar PDF ou Word (.docx)">
                 {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
               </button>
             </div>

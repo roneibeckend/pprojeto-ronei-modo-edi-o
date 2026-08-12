@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import * as pdf from "pdf-parse";
+import * as mammoth from "mammoth";
 
 // Using require for pdf-parse if default import fails or to handle type mismatch
 // @ts-ignore
@@ -19,15 +20,44 @@ interface ProcessedSection {
   order_index: number;
 }
 
-// Memory-efficient text extractor (manual) if pdf-parse fails/is heavy
-async function extractTextFromPdfMinimal(buffer: Buffer): Promise<string> {
-  // This is a placeholder for a more robust manual extractor if needed.
-  // For now, we rely on the library but with extreme protection.
-  if (!pdfParser) {
-    throw new Error("Mecanismo de PDF indisponível.");
+async function processDocxContent(buffer: Buffer): Promise<ProcessedSection[]> {
+  try {
+    const result = await mammoth.convertToHtml({ buffer });
+    const html = result.value;
+    
+    if (!html || html.trim().length === 0) {
+      throw new Error("O arquivo Word parece estar vazio ou não pôde ser lido.");
+    }
+
+    // Split by common chapter/section patterns in HTML
+    // Mammoth generates <h2> or <h1> for titles usually, or we can look for specific text
+    let sections = html.split(/<h[1-3][^>]*>/i);
+    
+    // If no headers, try to split by bold text or common keywords
+    if (sections.length <= 1) {
+      sections = html.split(/<p><strong>(?=(?:CAPÍTULO|MÓDULO|PARTE|CHAPTER|MODULE|SECTION)\s+\d+)/i);
+    }
+
+    return sections
+      .map((s: string) => s.trim())
+      .filter((s: string) => s.length > 20)
+      .slice(0, 100)
+      .map((content: string, index: number) => {
+        // Clean up HTML tags for the title
+        const titleMatch = content.match(/^([^<]+)/);
+        const title = titleMatch ? titleMatch[1].trim() : `Seção ${index + 1}`;
+        const body = content.replace(/^[^<]+/, '').trim();
+        
+        return {
+          title: title.length < 100 ? title : `Capítulo ${index + 1}`,
+          content: body || content, // Preserve HTML from mammoth
+          order_index: index
+        };
+      });
+  } catch (error: any) {
+    console.error("DOCX processing error:", error);
+    throw new Error("Falha ao processar o arquivo Word. Verifique se o arquivo não está corrompido.");
   }
-  const data = await pdfParser(buffer);
-  return data?.text || "";
 }
 
 async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
@@ -37,7 +67,6 @@ async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
       throw new Error("O mecanismo de processamento de PDF não foi inicializado corretamente.");
     }
     
-    // Attempt to parse with a timeout (manual racing)
     const parsePromise = pdfParser(buffer);
     const timeoutPromise = new Promise((_, reject) => 
       setTimeout(() => reject(new Error("TIMEOUT_PDF_INFRA")), 25000)
@@ -46,9 +75,7 @@ async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
     const data = await Promise.race([parsePromise, timeoutPromise]) as any;
     rawText = data?.text || "";
     
-    // Check if the content is an HTML error page (the root cause of "This page didn't load" leaking)
     if (rawText.includes("<!doctype html>") || rawText.includes("<html") || rawText.includes("This page didn't load")) {
-      console.error("PDF service returned an HTML error page inside the data result");
       throw new Error("INFRA_ERROR_HTML");
     }
 
@@ -56,14 +83,12 @@ async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
       throw new Error("O PDF parece estar vazio ou não pôde ser lido.");
     }
     
-    // Split by common chapter/section patterns
-    // Refined regex to be less catastrophic on large strings
     const sections = rawText.split(/\n(?=(?:CAPÍTULO|MÓDULO|PARTE|CHAPTER|MODULE|SECTION)\s+\d+)/i);
     
     return sections
       .map((s: string) => s.trim())
       .filter((s: string) => s.length > 20) 
-      .slice(0, 100) // Limit sections to prevent DB payload errors
+      .slice(0, 100)
       .map((content: string, index: number) => {
         const lines = content.split('\n');
         const title = lines[0].length < 100 ? lines[0].trim() : `Seção ${index + 1}`;
@@ -83,14 +108,9 @@ async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
     }
 
     if (error.message === "INFRA_ERROR_HTML" || error.message?.includes("<!doctype html>") || error.message?.includes("This page didn't load")) {
-       throw new Error("Ocorreu uma instabilidade na infraestrutura ao tentar processar o arquivo. Isso geralmente acontece com PDFs muito pesados. Tente dividir o arquivo.");
+       throw new Error("Ocorreu uma instabilidade na infraestrutura ao tentar processar o arquivo. Tente dividir o arquivo.");
     }
 
-    if (error.message?.includes("fetch") || error.code === "ETIMEDOUT") {
-       throw new Error("Erro de comunicação com o servidor. O arquivo pode ser grande demais.");
-    }
-
-    // If it's already our custom error, rethrow it
     if (error.message && (error.message.includes("PDF") || error.message.includes("mecanismo"))) {
       throw error;
     }
@@ -99,27 +119,37 @@ async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
   }
 }
 
-export const importEbookFromPdf = createServerFn({ method: "POST" })
+export const importEbookFromFile = createServerFn({ method: "POST" })
   .validator((data: unknown) => z.object({
     ebook_id: z.string().uuid(),
-    file_base64: z.string(), 
+    file_base64: z.string(),
+    file_name: z.string().optional(),
+    mime_type: z.string().optional(),
   }).parse(data))
   .handler(async ({ data }) => {
     try {
-      // Basic validation of base64 size to fail early if too large (e.g. > 60MB)
-      // Base64 is roughly 1.37x the original file size. 85MB base64 is ~62MB file.
       if (data.file_base64.length > 85 * 1024 * 1024) {
-        throw new Error("LIMITE_EXCEDIDO: O arquivo PDF excede o limite de 60MB para processamento automático. Tente dividir o PDF em partes menores.");
+        throw new Error("LIMITE_EXCEDIDO: O arquivo excede o limite de 60MB para processamento automático.");
       }
 
-
-      const buffer = Buffer.from(data.file_base64.split(',')[1] || data.file_base64, 'base64');
+      const base64Data = data.file_base64.split(',')[1] || data.file_base64;
+      const buffer = Buffer.from(base64Data, 'base64');
       
-      const processedSections = await processPdfContent(buffer);
-
+      const fileName = data.file_name?.toLowerCase() || '';
+      const mimeType = data.mime_type?.toLowerCase() || '';
       
+      let processedSections: ProcessedSection[] = [];
+      
+      if (mimeType.includes('pdf') || fileName.endsWith('.pdf')) {
+        processedSections = await processPdfContent(buffer);
+      } else if (mimeType.includes('word') || mimeType.includes('officedocument') || fileName.endsWith('.docx')) {
+        processedSections = await processDocxContent(buffer);
+      } else {
+        throw new Error("Formato de arquivo não suportado. Use PDF ou DOCX.");
+      }
+
       if (processedSections.length === 0) {
-        throw new Error("Nenhum conteúdo estruturado encontrado no PDF.");
+        throw new Error("Nenhum conteúdo estruturado encontrado no arquivo.");
       }
 
       const { data: module, error: moduleError } = await supabase
@@ -142,7 +172,6 @@ export const importEbookFromPdf = createServerFn({ method: "POST" })
         order_index: section.order_index
       }));
 
-      // Insert in chunks if there are many chapters
       const chunkSize = 20;
       for (let i = 0; i < chaptersToInsert.length; i += chunkSize) {
         const chunk = chaptersToInsert.slice(i, i + chunkSize);
@@ -157,11 +186,13 @@ export const importEbookFromPdf = createServerFn({ method: "POST" })
         chapters_count: processedSections.length 
       };
     } catch (err: any) {
-      console.error("Server function error [importEbookFromPdf]:", err);
-      // Ensure the error is clean and doesn't contain the HTML body if it leaked here
+      console.error("Server function error [importEbookFromFile]:", err);
       const cleanMessage = err.message?.includes("<!doctype html>") 
-        ? "Erro de infraestrutura (timeout). Tente um arquivo menor." 
+        ? "Erro de infraestrutura. Tente um arquivo menor." 
         : err.message;
       throw new Error(cleanMessage || "Erro interno no servidor");
     }
   });
+
+// Keep alias for backward compatibility
+export const importEbookFromPdf = importEbookFromFile;
