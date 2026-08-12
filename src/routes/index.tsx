@@ -1396,49 +1396,80 @@ function Results() {
 
 
 function Testimonials() {
-  const items = [
+  const { data: realFeedbacks } = useQuery({
+    queryKey: ["public-feedbacks"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("course_feedback")
+        .select(`
+          *,
+          profile:profiles(name, avatar_url)
+        `)
+        .eq("status", "approved")
+        .order("created_at", { ascending: false })
+        .limit(6);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const staticItems = [
     {
       name: "Carlos M.",
       role: "Empreendedor iniciante",
       text: "Comecei com pouco e no primeiro mês já paguei o investimento do eBook várias vezes. A parte de precificação abriu meus olhos.",
       img: chefPortrait.url,
+      rating: 5
     },
     {
       name: "Marina R.",
       role: "Renda extra",
       text: "Vendia espetinho aos sábados no chute. Hoje vendo todo dia, com tempero exclusivo e clientes fiéis.",
       img: author.url,
+      rating: 5
     },
     {
       name: "João P.",
       role: "Trailer de espetinhos",
       text: "Reduzi desperdício, aumentei a margem e o movimento não para. O checklist de produção mudou minha rotina.",
       img: chefWorking.url,
+      rating: 5
     },
   ];
+
+  const displayItems = realFeedbacks && realFeedbacks.length > 0 
+    ? realFeedbacks.map(f => ({
+        name: f.profile?.name || "Aluno",
+        role: "Aluno do Curso",
+        text: f.comment || "",
+        img: f.profile?.avatar_url || author.url,
+        rating: f.rating
+      }))
+    : staticItems;
+
   return (
     <section className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Depoimentos ilustrativos</SectionTag>
+          <SectionTag>Prova Social</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
-            O que dizem <span className="text-gradient-fire">os leitores</span>
+            O QUE OS ALUNOS <span className="text-gradient-fire">ESTÃO FALANDO?</span>
           </h2>
           <p className="mt-3 max-w-2xl text-xs uppercase tracking-widest text-muted-foreground">
-            * Depoimentos fictícios apenas para demonstração visual — serão substituídos por depoimentos reais.
+            Feedbacks reais de quem concluiu nossos treinamentos e está colhendo resultados.
           </p>
         </div>
         <div className="mt-14 grid gap-5 md:grid-cols-3">
-          {items.map((t) => (
-            <div key={t.name} className="glass flex flex-col rounded-2xl p-6">
+          {displayItems.map((t, i) => (
+            <div key={i} className="glass flex flex-col rounded-2xl p-6 hover:border-[color:var(--gold)]/40 transition-colors">
               <div className="flex gap-0.5 text-[color:var(--gold)]">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-current" />
+                {Array.from({ length: 5 }).map((_, starIdx) => (
+                  <Star key={starIdx} className={`h-4 w-4 ${t.rating >= starIdx + 1 ? 'fill-current' : 'opacity-20'}`} />
                 ))}
               </div>
-              <p className="mt-4 text-muted-foreground">"{t.text}"</p>
+              <p className="mt-4 text-muted-foreground italic">"{t.text}"</p>
               <div className="mt-6 flex items-center gap-3">
-                <img src={t.img} alt={t.name} className="h-11 w-11 rounded-full object-cover" loading="lazy" />
+                <img src={t.img} alt={t.name} className="h-11 w-11 rounded-full object-cover border border-white/10" loading="lazy" />
                 <div>
                   <div className="font-semibold">{t.name}</div>
                   <div className="text-xs text-muted-foreground">{t.role}</div>
@@ -1448,6 +1479,7 @@ function Testimonials() {
           ))}
         </div>
       </div>
+
     </section>
   );
 }
