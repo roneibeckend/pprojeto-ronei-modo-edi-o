@@ -966,6 +966,8 @@ function SortableChapterItem({ chapter, isActive, onClick }: {
       </button>
     </div>
   );
+}
+
 function SEOTooltip({ type, content, keywords }: { type: 'title' | 'description' | 'keywords', content: string, keywords?: string }) {
   const [suggestions, setSuggestions] = useState<any>(null);
   const [show, setShow] = useState(false);
