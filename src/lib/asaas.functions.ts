@@ -76,7 +76,9 @@ export const verifyAsaasPayment = createServerFn({ method: "POST" })
         productType: data.productType,
         productId: data.productId,
         userId: context.userId,
+        userEmail: (context.claims as any)?.email ?? null,
       });
+
 
       if (!payment) {
         return { confirmed: false, message: "Nenhum pagamento confirmado encontrado ainda." };
