@@ -186,9 +186,11 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
         if (chapterError) throw new Error("Erro ao inserir capítulos: " + chapterError.message);
       }
 
+      const duration = Date.now() - startTime;
       return { 
         success: true, 
-        chapters_count: processedSections.length 
+        chapters_count: processedSections.length,
+        duration_ms: duration
       };
     } catch (err: any) {
       console.error("Server function error [importEbookFromFile]:", err);
