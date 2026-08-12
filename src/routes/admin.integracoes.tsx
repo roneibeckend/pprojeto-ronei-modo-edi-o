@@ -159,7 +159,7 @@ function IntegrationsPage() {
           category: selectedItem.category,
           credentials: selectedItem.credentials,
           settings: selectedItem.settings,
-          environment: (selectedItem.settings?.testMode === true || (selectedItem.settings?.testMode as unknown as string) === 'true') ? 'sandbox' : 'production'
+          environment: (selectedItem.settings?.testMode === true || String(selectedItem.settings?.testMode) === 'true') ? 'sandbox' : 'production'
         }
       });
       setTestResult(result);
