@@ -2,9 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
+// Tipagem genérica para contornar problemas de tipagem até o supabase ser atualizado
 export const getEmailTemplates = createServerFn({ method: "GET" })
   .handler(async () => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('email_templates')
       .select('*')
       .order('name', { ascending: true });
@@ -24,7 +25,7 @@ export const saveEmailTemplate = createServerFn({ method: "POST" })
     variables: z.array(z.string()).default([])
   }).parse(data))
   .handler(async ({ data }) => {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('email_templates')
       .upsert({
         ...data,
@@ -38,7 +39,7 @@ export const saveEmailTemplate = createServerFn({ method: "POST" })
 export const deleteEmailTemplate = createServerFn({ method: "POST" })
   .validator((data: unknown) => z.object({ id: z.string() }).parse(data))
   .handler(async ({ data }) => {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('email_templates')
       .delete()
       .eq('id', data.id);
