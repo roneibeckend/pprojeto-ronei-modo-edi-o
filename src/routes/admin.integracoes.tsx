@@ -675,7 +675,10 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
           <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
-            Configuração Resend
+            Identidade
+          </TabsTrigger>
+          <TabsTrigger value="resend" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+            API Key (Resend)
           </TabsTrigger>
           <TabsTrigger value="test" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
             Teste de Envio
