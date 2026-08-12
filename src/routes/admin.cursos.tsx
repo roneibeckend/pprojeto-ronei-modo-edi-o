@@ -388,6 +388,33 @@ function AdminCursosPage() {
                           <option value="advanced">Avançado</option>
                         </select>
                       </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Tipo de Pagamento</label>
+                        <select 
+                          value={editingItem?.payment_type || "unique"} 
+                          onChange={e => setEditingItem({...editingItem, payment_type: e.target.value})}
+                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] appearance-none cursor-pointer"
+                        >
+                          <option value="unique">Pagamento Único</option>
+                          <option value="recurring">Pagamento Recorrente</option>
+                        </select>
+                      </div>
+
+                      {editingItem?.payment_type === 'recurring' && (
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Dias úteis para vencimento</label>
+                          <input 
+                            type="number"
+                            required
+                            min="1"
+                            step="1"
+                            value={editingItem?.due_days || 3} 
+                            onChange={e => setEditingItem({...editingItem, due_days: parseInt(e.target.value) || 1})} 
+                            className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
+                          />
+                        </div>
+                      )}
                     </div>
 
                     <div className="space-y-4">

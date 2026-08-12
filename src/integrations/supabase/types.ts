@@ -382,12 +382,14 @@ export type Database = {
           cover_url: string | null
           created_at: string
           description: string | null
+          due_days: number | null
           id: string
           intro_video_url: string | null
           is_ai_generated: boolean | null
           is_locked: boolean | null
           level: string | null
           order_index: number | null
+          payment_type: string | null
           price: number | null
           slug: string | null
           status: string | null
@@ -401,12 +403,14 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          due_days?: number | null
           id: string
           intro_video_url?: string | null
           is_ai_generated?: boolean | null
           is_locked?: boolean | null
           level?: string | null
           order_index?: number | null
+          payment_type?: string | null
           price?: number | null
           slug?: string | null
           status?: string | null
@@ -420,12 +424,14 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          due_days?: number | null
           id?: string
           intro_video_url?: string | null
           is_ai_generated?: boolean | null
           is_locked?: boolean | null
           level?: string | null
           order_index?: number | null
+          payment_type?: string | null
           price?: number | null
           slug?: string | null
           status?: string | null
@@ -593,12 +599,14 @@ export type Database = {
           cover_url: string | null
           created_at: string | null
           description: string | null
+          due_days: number | null
           id: string
           is_ai_generated: boolean | null
           is_locked: boolean | null
           opening_video_url: string | null
           original_price: number | null
           pages_count: number | null
+          payment_type: string | null
           price: number | null
           subtitle: string | null
           title: string
@@ -612,12 +620,14 @@ export type Database = {
           cover_url?: string | null
           created_at?: string | null
           description?: string | null
+          due_days?: number | null
           id?: string
           is_ai_generated?: boolean | null
           is_locked?: boolean | null
           opening_video_url?: string | null
           original_price?: number | null
           pages_count?: number | null
+          payment_type?: string | null
           price?: number | null
           subtitle?: string | null
           title: string
@@ -631,12 +641,14 @@ export type Database = {
           cover_url?: string | null
           created_at?: string | null
           description?: string | null
+          due_days?: number | null
           id?: string
           is_ai_generated?: boolean | null
           is_locked?: boolean | null
           opening_video_url?: string | null
           original_price?: number | null
           pages_count?: number | null
+          payment_type?: string | null
           price?: number | null
           subtitle?: string | null
           title?: string
