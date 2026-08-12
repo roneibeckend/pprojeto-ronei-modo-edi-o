@@ -15,6 +15,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { useProgress } from "@/hooks/use-progress";
 import { CourseCardSkeleton, Skeleton } from "@/components/ui/skeleton";
+import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
+import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 
 export const Route = createFileRoute("/app/cursos/")({
   head: () => ({ meta: [{ title: "Meus cursos — Espetinho na Veia" }] }),
@@ -25,19 +27,44 @@ function CoursesPage() {
   const { courseEnrollments, ebookEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
   const { startedCount, finishedCount, isLoading: isLoadingProgress } = useProgress();
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [offerContext, setOfferContext] = useState<{ item: any; type: 'course' | 'ebook' } | null>(null);
+  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
 
   const handlePurchase = async (item: any, type: 'course' | 'ebook') => {
+    if (isOfferEnabled) {
+      setOfferContext({ item, type });
+      return;
+    }
+
+    await executeCheckout(item, type, []);
+  };
+
+  const executeCheckout = async (item: any, type: 'course' | 'ebook', additionalItems: any[]) => {
     try {
       setProcessingId(item.id);
-      const result = await createPaymentLink({
-        data: {
+      
+      const products = [
+        {
           productId: item.id,
           productType: type,
           title: item.title,
           description: item.description,
           value: item.price || 0,
+        },
+        ...additionalItems.map(off => ({
+          productId: off.id,
+          productType: off.type,
+          title: off.title,
+          description: off.description,
+          value: (off.price || 0) * 0.85,
+        }))
+      ];
+
+      const result = await createPaymentLink({
+        data: {
+          products,
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: item.payment_type || 'unique',
           dueDays: item.due_days || 3,
@@ -52,6 +79,7 @@ function CoursesPage() {
       toast.error(error.message || "Erro ao gerar link de pagamento.");
     } finally {
       setProcessingId(null);
+      setOfferContext(null);
     }
   };
   
@@ -110,6 +138,13 @@ function CoursesPage() {
 
   return (
     <div className="pb-10">
+      <PostPurchaseOffer
+        isOpen={!!offerContext}
+        onClose={() => setOfferContext(null)}
+        onProceedWithOffers={(selected) => offerContext && executeCheckout(offerContext.item, offerContext.type, selected)}
+        onProceedWithoutOffers={() => offerContext && executeCheckout(offerContext.item, offerContext.type, [])}
+        originalProductId={offerContext?.item?.id || ""}
+      />
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-8">
         <PageHeader
           title="Meus cursos"

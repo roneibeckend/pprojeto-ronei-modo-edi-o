@@ -2,7 +2,6 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X, Play } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import { PageHeader } from "@/components/platform/Shell";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +13,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
+import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
+import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
   head: () => ({
@@ -43,6 +44,8 @@ function EbookReaderPage() {
   const { isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
   const { isChapterCompleted, completeChapter } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showOffer, setShowOffer] = useState(false);
+  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
   const [showOpeningVideo, setShowOpeningVideo] = useState(false);
   const [showIntroVideo, setShowIntroVideo] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
@@ -92,15 +95,37 @@ function EbookReaderPage() {
   }, [activeChapterId, activeChapter, ebook.id, completeChapter]);
 
   const handlePurchase = async () => {
+    if (isOfferEnabled) {
+      setShowOffer(true);
+      return;
+    }
+    await executeCheckout([]);
+  };
+
+  const executeCheckout = async (additionalItems: any[]) => {
     try {
       setIsProcessing(true);
-      const result = await createPaymentLink({
-        data: {
+      
+      const products = [
+        {
           productId: ebook.id,
-          productType: 'ebook',
+          productType: 'ebook' as const,
           title: ebook.title,
           description: ebook.description,
           value: ebook.price || 0,
+        },
+        ...additionalItems.map(off => ({
+          productId: off.id,
+          productType: off.type,
+          title: off.title,
+          description: off.description,
+          value: (off.price || 0) * 0.85,
+        }))
+      ];
+
+      const result = await createPaymentLink({
+        data: {
+          products,
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: ebook.payment_type || 'unique',
           dueDays: ebook.due_days || 3,
@@ -115,6 +140,7 @@ function EbookReaderPage() {
       toast.error(error.message || "Erro ao gerar link de pagamento.");
     } finally {
       setIsProcessing(false);
+      setShowOffer(false);
     }
   };
 
@@ -147,6 +173,13 @@ function EbookReaderPage() {
   if (!hasAccess) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
+        <PostPurchaseOffer
+          isOpen={showOffer}
+          onClose={() => setShowOffer(false)}
+          onProceedWithOffers={(selected) => executeCheckout(selected)}
+          onProceedWithoutOffers={() => executeCheckout([])}
+          originalProductId={ebook.id}
+        />
         <div className="mb-6 rounded-full bg-white/5 p-8 text-gold">
           <Lock className="h-16 w-16" />
         </div>

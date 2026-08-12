@@ -11,6 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { CourseCardSkeleton } from "@/components/ui/skeleton";
+import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
+import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({
@@ -101,6 +103,8 @@ function Dashboard() {
 
 function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boolean }) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showOffer, setShowOffer] = useState(false);
+  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
   
@@ -108,15 +112,38 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
     e.preventDefault();
     e.stopPropagation();
     
+    if (isOfferEnabled) {
+      setShowOffer(true);
+      return;
+    }
+
+    await executeCheckout([]);
+  };
+
+  const executeCheckout = async (additionalItems: any[]) => {
     try {
       setIsProcessing(true);
-      const result = await createPaymentLink({
-        data: {
+      
+      const products = [
+        {
           productId: item.id,
           productType: item.type,
           title: item.title,
           description: item.description,
           value: item.price || 0,
+        },
+        ...additionalItems.map(off => ({
+          productId: off.id,
+          productType: off.type,
+          title: off.title,
+          description: off.description,
+          value: (off.price || 0) * 0.85, // 15% discount
+        }))
+      ];
+
+      const result = await createPaymentLink({
+        data: {
+          products,
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: item.payment_type || 'unique',
           dueDays: item.due_days || 3,
@@ -131,6 +158,7 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
       toast.error(error.message || "Erro ao gerar link de pagamento.");
     } finally {
       setIsProcessing(false);
+      setShowOffer(false);
     }
   };
 
@@ -139,7 +167,15 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
   const linkParams = item.type === 'course' ? { courseId: item.id } : { ebookId: item.id };
   
   return (
-    <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"}`}>
+    <>
+      <PostPurchaseOffer
+        isOpen={showOffer}
+        onClose={() => setShowOffer(false)}
+        onProceedWithOffers={(selected) => executeCheckout(selected)}
+        onProceedWithoutOffers={() => executeCheckout([])}
+        originalProductId={item.id}
+      />
+      <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"}`}>
       <div className="relative aspect-video bg-muted/20">
         <img 
           src={item.cover_url || IMG.hero} 
@@ -202,6 +238,7 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
         )}
       </div>
     </article>
+    </>
   );
 }
 

@@ -13,6 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useProgress } from "@/hooks/use-progress";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { FeedbackModal } from "@/components/platform/FeedbackModal";
+import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
+import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 
 
 const VideoPlayer = lazy(() => import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer })));
@@ -52,6 +54,8 @@ function CoursePage() {
   const { isEnrolledInCourse, isLoading: isLoadingEnrollments } = useEnrollments();
   const { isLessonCompleted, toggleLessonProgress, isTogglingLesson } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showOffer, setShowOffer] = useState(false);
+  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
@@ -59,15 +63,37 @@ function CoursePage() {
 
 
   const handlePurchase = async () => {
+    if (isOfferEnabled) {
+      setShowOffer(true);
+      return;
+    }
+    await executeCheckout([]);
+  };
+
+  const executeCheckout = async (additionalItems: any[]) => {
     try {
       setIsProcessing(true);
-      const result = await createPaymentLink({
-        data: {
+      
+      const products = [
+        {
           productId: course.id,
-          productType: 'course',
+          productType: 'course' as const,
           title: course.title,
           description: course.description,
           value: course.price || 0,
+        },
+        ...additionalItems.map(off => ({
+          productId: off.id,
+          productType: off.type,
+          title: off.title,
+          description: off.description,
+          value: (off.price || 0) * 0.85,
+        }))
+      ];
+
+      const result = await createPaymentLink({
+        data: {
+          products,
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: course.payment_type || 'unique',
           dueDays: course.due_days || 3,
@@ -82,6 +108,7 @@ function CoursePage() {
       toast.error(error.message || "Erro ao gerar link de pagamento.");
     } finally {
       setIsProcessing(false);
+      setShowOffer(false);
     }
   };
 
@@ -130,6 +157,13 @@ function CoursePage() {
   if (!isLoadingEnrollments && !hasAccess) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
+        <PostPurchaseOffer
+          isOpen={showOffer}
+          onClose={() => setShowOffer(false)}
+          onProceedWithOffers={(selected) => executeCheckout(selected)}
+          onProceedWithoutOffers={() => executeCheckout([])}
+          originalProductId={course.id}
+        />
         <div className="mb-6 rounded-full bg-white/5 p-8 text-gold">
           <Lock className="h-16 w-16" />
         </div>
