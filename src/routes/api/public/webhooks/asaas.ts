@@ -41,42 +41,26 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
           }
 
           // Se for pagamento confirmado ou recebido
-          if (['PAYMENT_RECEIVED', 'PAYMENT_CONFIRMED'].includes(body.event)) {
-            const externalRef = body.payment?.externalReference; // Formato "type:id" ou "type:id:ref_CODE"
-            if (externalRef && externalRef.includes(':')) {
-              const parts = externalRef.split(':');
-              const productType = parts[0];
-              const productId = parts[1];
-              const affiliatePart = parts.find((p: string) => p.startsWith('ref_'));
-              const affiliateCode = affiliatePart ? affiliatePart.replace('ref_', '') : null;
-              
+          if (['PAYMENT_RECEIVED', 'PAYMENT_CONFIRMED', 'PAYMENT_APPROVED_BY_RISK_ANALYSIS'].includes(body.event)) {
+            const externalRef = body.payment?.externalReference; // "type:id[:u_userId][:ref_CODE]"
+            const parsed = parseExternalReference(externalRef);
+            if (parsed) {
+              const { productType, productId, affiliateCode } = parsed;
               const customerEmail = body.payment?.customerEmail;
               const amount = body.value || body.payment?.value;
 
-              if (customerEmail) {
-                const { data: profile } = await supabaseAdmin
-                  .from('profiles')
-                  .select('id')
-                  .eq('email', customerEmail)
-                  .single();
+              // 1) Preferimos o id do usuário embutido na referência externa
+              let userId: string | null = parsed.userId;
 
-                if (profile) {
-                  const userId = profile.id;
+              // 2) Fallback: resolver pelo e-mail (payload ou API de clientes do Asaas)
+              if (!userId) {
+                userId = await resolveUserFromPayment(body.payment, baseUrl, apiKeyForLookup);
+              }
 
-                  // Lógica de Matrícula (Cursos ou Ebooks)
-                  if (productType === 'course') {
-                    await supabaseAdmin.from('course_enrollments').upsert({
-                      user_id: userId,
-                      course_id: productId,
-                    }, { onConflict: 'user_id,course_id' });
-                    console.log(`[Webhook Asaas] Matrícula em curso realizada: ${productId} para ${customerEmail}`);
-                  } else if (productType === 'ebook') {
-                    await supabaseAdmin.from('ebook_enrollments').upsert({
-                      user_id: userId,
-                      ebook_id: productId,
-                    }, { onConflict: 'user_id,ebook_id' });
-                    console.log(`[Webhook Asaas] Matrícula em ebook realizada: ${productId} para ${customerEmail}`);
-                  }
+              if (userId) {
+                const granted = await grantAccess(productType!, productId!, userId);
+                console.log(`[Webhook Asaas] Acesso ${granted ? 'liberado' : 'NÃO liberado'}: ${productType}/${productId} -> ${userId}`);
+
 
                   // Processar Comissão de Afiliado
                   if (affiliateCode) {
