@@ -5,6 +5,10 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        // Enviar resposta 200 OK imediatamente para evitar "webhook interrompido" por timeout
+        // No TanStack Start handlers, precisamos processar o corpo antes de retornar, 
+        // mas vamos garantir que a lógica seja rápida e segura.
+        
         try {
           const body = await request.json();
           const token = request.headers.get('asaas-access-token');
@@ -17,17 +21,22 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
           });
 
           // Buscar integração para validar token
-          const { data: integration } = await supabaseAdmin
+          const { data: integration, error: intError } = await supabaseAdmin
             .from('integrations')
             .select('credentials')
             .eq('category', 'asaas')
             .single();
 
+          if (intError) {
+            console.error('[Webhook Asaas] Erro ao buscar credenciais:', intError);
+          }
+
           const credentials = integration?.credentials as Record<string, any>;
           const expectedToken = credentials?.webhookToken || credentials?.apiKey;
           
           if (!expectedToken || token !== expectedToken) {
-            console.error('[Webhook Asaas] Token de acesso inválido ou ausente');
+            console.error('[Webhook Asaas] Token de acesso inválido ou ausente. Recebido:', token, 'Esperado:', expectedToken ? '***' : 'NENHUM');
+            // Retornamos 401 apenas se o token for explicitamente errado para avisar o Asaas
             return new Response('Unauthorized', { status: 401 });
           }
 
@@ -124,13 +133,19 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             }
           }
 
-          return new Response(JSON.stringify({ received: true }), {
+          return new Response(JSON.stringify({ received: true, event: body.event }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
           });
         } catch (error) {
-          console.error('[Webhook Asaas] Erro:', error);
-          return new Response('Error processing webhook', { status: 500 });
+          console.error('[Webhook Asaas] Erro crítico no processamento:', error);
+          // Retornamos 200 mesmo em erro de processamento interno para que o Asaas não fique tentando 
+          // enviar o mesmo webhook problemático infinitamente, a menos que queiramos o retry.
+          // Como o Asaas marca como "interrompido" após falhas seguidas, 200 é mais seguro.
+          return new Response(JSON.stringify({ error: 'Internal logic failure' }), { 
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
         }
       }
     }
