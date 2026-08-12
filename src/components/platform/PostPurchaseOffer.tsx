@@ -34,6 +34,7 @@ export function PostPurchaseOffer({
   const [offers, setOffers] = useState<OfferItem[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [discountPercentage, setDiscountPercentage] = useState(15);
   const { isEnrolledInCourse, isEnrolledInEbook } = useEnrollments();
 
   useEffect(() => {
@@ -45,6 +46,19 @@ export function PostPurchaseOffer({
   const fetchOffers = async () => {
     try {
       setIsLoading(true);
+      
+      // Fetch dynamic settings
+      const { data: config } = await supabase
+        .from('integrations')
+        .select('settings')
+        .eq('category', 'offer_settings')
+        .maybeSingle();
+      
+      if (config?.settings && typeof config.settings === 'object') {
+        const s = config.settings as Record<string, any>;
+        if (s.discountPercentage) setDiscountPercentage(s.discountPercentage);
+      }
+
       const [coursesRes, ebooksRes] = await Promise.all([
         supabase.from('courses').select('*').eq('is_locked', false).neq('id', originalProductId),
         supabase.from('ebooks').select('*').eq('is_locked', false).neq('id', originalProductId)
@@ -114,7 +128,7 @@ export function PostPurchaseOffer({
               Turbine seu aprendizado!
             </DialogTitle>
             <p className="text-muted-foreground mt-2">
-              Adicione estes itens complementares agora e ganhe <span className="text-gold font-bold">15% de desconto</span> em cada um.
+              Adicione estes itens complementares agora e ganhe <span className="text-gold font-bold">{discountPercentage}% de desconto</span> em cada um.
             </p>
           </DialogHeader>
 
@@ -132,7 +146,7 @@ export function PostPurchaseOffer({
           ) : (
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               {offers.map(offer => {
-                const discountPrice = (offer.price || 0) * 0.85;
+                const discountPrice = (offer.price || 0) * (1 - (discountPercentage / 100));
                 const isSelected = selectedIds.includes(offer.id);
                 
                 return (

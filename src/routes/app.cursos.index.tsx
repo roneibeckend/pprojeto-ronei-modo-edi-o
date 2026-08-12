@@ -28,12 +28,22 @@ function CoursesPage() {
   const { startedCount, finishedCount, isLoading: isLoadingProgress } = useProgress();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [offerContext, setOfferContext] = useState<{ item: any; type: 'course' | 'ebook' } | null>(null);
-  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
+  const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
+
+  useState(() => {
+    syncWithDatabase();
+  });
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
 
   const handlePurchase = async (item: any, type: 'course' | 'ebook') => {
     if (isOfferEnabled) {
+      // Sync toggle state just in case
+      const { data } = await supabase.from('integrations').select('status').eq('category', 'offer_settings').maybeSingle();
+      if (data && data.status === false) {
+        await executeCheckout(item, type, []);
+        return;
+      }
       setOfferContext({ item, type });
       return;
     }
@@ -58,9 +68,25 @@ function CoursesPage() {
           productType: off.type,
           title: off.title,
           description: off.description,
-          value: (off.price || 0) * 0.85,
+          value: (off.price || 0) * (1 - (15 / 100)), // We'll assume default 15 if not fetched, but PostPurchaseOffer handles its own display
         }))
       ];
+
+      // To be strictly correct, we should fetch the current discount here too, 
+      // but PostPurchaseOffer component is what passes 'additionalItems' 
+      // actually, PostPurchaseOffer returns OfferItem[] which doesn't have the discounted price.
+      // So we must fetch the discount here.
+      
+      const { data: config } = await supabase.from('integrations').select('settings').eq('category', 'offer_settings').maybeSingle();
+      const settings = config?.settings as any;
+      const discount = settings?.discountPercentage || 15;
+
+      products.forEach((p, i) => {
+        if (i > 0) { // skip the original product
+          const originalItem = additionalItems[i-1];
+          p.value = (originalItem.price || 0) * (1 - (discount / 100));
+        }
+      });
 
       const result = await createPaymentLink({
         data: {
