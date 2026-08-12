@@ -91,10 +91,8 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                         const commissionRate = affiliate.commission_rate || 30;
                         const commissionAmount = (amount * commissionRate) / 100;
 
-                        await supabaseAdmin.from('affiliate_sales').insert({
+                        const saleData: any = {
                           affiliate_id: affiliateId,
-                          course_id: productType === 'course' ? productId : null,
-                          ebook_id: productType === 'ebook' ? productId : null,
                           amount: amount,
                           commission: commissionAmount,
                           status: 'pending',
@@ -102,7 +100,13 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                             payment_id: body.payment?.id,
                             customer_email: customerEmail 
                           }
-                        });
+                        };
+
+                        if (productType === 'course') {
+                          saleData.course_id = productId;
+                        }
+
+                        await supabaseAdmin.from('affiliate_sales').insert(saleData);
 
                         // Incrementar ganhos totais e saldo
                         await supabaseAdmin.rpc('increment_affiliate_earnings', {
