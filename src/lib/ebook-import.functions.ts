@@ -151,6 +151,8 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
         throw new Error("Formato de arquivo não suportado. Use PDF ou DOCX.");
       }
 
+      console.log(`[importEbookFromFile] Conteúdo extraído: ${processedSections.length} seções em ${Date.now() - startTime}ms`);
+
       if (processedSections.length === 0) {
         throw new Error("Nenhum conteúdo estruturado encontrado no arquivo.");
       }
