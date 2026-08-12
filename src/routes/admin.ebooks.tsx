@@ -48,6 +48,24 @@ import { importEbookFromFile } from "@/lib/ebook-import.functions";
 import { fixEbookVisibility } from "@/lib/ebook-visibility-fix.functions";
 import { reorderChapter } from "@/lib/ebook-reorder.functions";
 import { getSEOSuggestions } from "@/lib/seo-ebook.functions";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 
 export const Route = createFileRoute("/admin/ebooks")({
   head: () => ({ meta: [{ title: "Gestão de E-books · Admin" }] }),
@@ -714,60 +732,19 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
                 </div>
               </div>
               <div className="pl-4 space-y-1">
-                {module.chapters?.sort((a: any, b: any) => a.order_index - b.order_index).map((chapter: any, index: number) => (
-                  <div key={chapter.id} className="flex items-center gap-1 group/item">
-                    <button
-                      onClick={() => setEditingChapter(chapter)}
-                      className={cn(
-                        "flex-1 flex items-center justify-between px-3 py-2 rounded-md text-[11px] transition-all",
-                        editingChapter?.id === chapter.id ? "bg-[#ff6a00]/10 text-[#ff6a00] font-bold" : "text-white/40 hover:text-white hover:bg-white/5"
-                      )}
-                    >
-                      <span className="truncate">{chapter.title}</span>
-                      <div className="flex items-center gap-2">
-                        {chapter.video_url && <Play className="h-2.5 w-2.5" />}
-                        <Edit3 className="h-3 w-3 opacity-0 group-hover/item:opacity-100" />
-                      </div>
-                    </button>
-                    
-                    <div className="flex flex-col opacity-0 group-hover/item:opacity-100 transition-opacity">
-                      {index > 0 && (
-                        <button 
-                          onClick={async (e) => {
-                            e.stopPropagation();
-                            try {
-                              await reorderChapter({ data: { chapterId: chapter.id, newOrderIndex: index - 1, moduleId: module.id } });
-                              fetchContent();
-                            } catch (err: any) {
-                              toast.error(err.message);
-                            }
-                          }}
-                          className="p-0.5 hover:text-[#ff6a00] text-white/20"
-                          title="Mover para cima"
-                        >
-                          <ChevronUp className="h-3 w-3" />
-                        </button>
-                      )}
-                      {index < module.chapters.length - 1 && (
-                        <button 
-                          onClick={async (e) => {
-                            e.stopPropagation();
-                            try {
-                              await reorderChapter({ data: { chapterId: chapter.id, newOrderIndex: index + 1, moduleId: module.id } });
-                              fetchContent();
-                            } catch (err: any) {
-                              toast.error(err.message);
-                            }
-                          }}
-                          className="p-0.5 hover:text-[#ff6a00] text-white/20"
-                          title="Mover para baixo"
-                        >
-                          <ChevronDown className="h-3 w-3" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                <ModuleChapters 
+                  module={module} 
+                  editingChapterId={editingChapter?.id} 
+                  onEdit={(chapter) => setEditingChapter(chapter)} 
+                  onReorder={async (chapterId, newIndex) => {
+                    try {
+                      await reorderChapter({ data: { chapterId, newOrderIndex: newIndex, moduleId: module.id } });
+                      fetchContent();
+                    } catch (err: any) {
+                      toast.error(err.message);
+                    }
+                  }}
+                />
               </div>
             </div>
           ))}
@@ -878,7 +855,118 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
   );
 }
 
-function SEOTooltip({ type, content, keywords }: { type: 'title' | 'description' | 'keywords', content: string, keywords?: string }) {
+function ModuleChapters({ module, editingChapterId, onEdit, onReorder }: { 
+  module: any, 
+  editingChapterId?: string, 
+  onEdit: (chapter: any) => void,
+  onReorder: (chapterId: string, newIndex: number) => Promise<void>
+}) {
+  const [chapters, setChapters] = useState(module.chapters?.sort((a: any, b: any) => a.order_index - b.order_index) || []);
+  
+  useEffect(() => {
+    setChapters(module.chapters?.sort((a: any, b: any) => a.order_index - b.order_index) || []);
+  }, [module.chapters]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = chapters.findIndex((c: any) => c.id === active.id);
+      const newIndex = chapters.findIndex((c: any) => c.id === over.id);
+
+      const newChapters = arrayMove(chapters, oldIndex, newIndex);
+      setChapters(newChapters);
+      onReorder(active.id as string, newIndex);
+    }
+  }
+
+  return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+      modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+    >
+      <SortableContext
+        items={chapters.map((c: any) => c.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        <div className="space-y-1">
+          {chapters.map((chapter: any) => (
+            <SortableChapterItem 
+              key={chapter.id} 
+              chapter={chapter} 
+              isActive={editingChapterId === chapter.id}
+              onClick={() => onEdit(chapter)}
+            />
+          ))}
+        </div>
+      </SortableContext>
+    </DndContext>
+  );
+}
+
+function SortableChapterItem({ chapter, isActive, onClick }: { 
+  chapter: any, 
+  isActive: boolean,
+  onClick: () => void 
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: chapter.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : undefined,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style}
+      className={cn(
+        "flex items-center gap-1 group/item",
+        isDragging && "shadow-lg border-[#ff6a00]/50"
+      )}
+    >
+      <div 
+        {...attributes} 
+        {...listeners}
+        className="p-1 text-white/10 hover:text-white/40 cursor-grab active:cursor-grabbing"
+      >
+        <GripVertical className="h-3 w-3" />
+      </div>
+      
+      <button
+        onClick={onClick}
+        className={cn(
+          "flex-1 flex items-center justify-between px-3 py-2 rounded-md text-[11px] transition-all",
+          isActive ? "bg-[#ff6a00]/10 text-[#ff6a00] font-bold" : "text-white/40 hover:text-white hover:bg-white/5"
+        )}
+      >
+        <span className="truncate">{chapter.title}</span>
+        <div className="flex items-center gap-2">
+          {chapter.video_url && <Play className="h-2.5 w-2.5" />}
+          <Edit3 className="h-3 w-3 opacity-0 group-hover/item:opacity-100" />
+        </div>
+      </button>
+    </div>
+  );
+}
   const [suggestions, setSuggestions] = useState<any>(null);
   const [show, setShow] = useState(false);
 
