@@ -264,6 +264,7 @@ function IntegrationsPage() {
         {/* Sidebar List */}
         <div className="lg:col-span-4 space-y-4">
           {activeCategory === 'webhooks' ? (
+
              <Card className="bg-[#111] border-white/5">
                <CardHeader className="pb-4">
                  <div className="flex items-center justify-between">
