@@ -212,7 +212,7 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
       }
 
       if (errorMessage.includes("<!doctype html>") || errorMessage.includes("This page didn't load") || errorMessage.includes("INFRA_ERROR_HTML")) {
-        throw new Error("Ocorreu uma instabilidade na infraestrutura ao tentar processar o arquivo. Isso pode ser causado por um arquivo muito complexo. Tente dividir o arquivo em partes menores (ex: 20-30 páginas por vez).");
+        throw new Error("Ocorreu uma instabilidade na infraestrutura ao tentar processar o arquivo. Isso pode ser causado por um arquivo muito complexo ou denso (muitas imagens/gráficos). Tente simplificar o conteúdo ou dividir o arquivo em partes ainda menores.");
       }
 
       const cleanMessage = errorMessage;
