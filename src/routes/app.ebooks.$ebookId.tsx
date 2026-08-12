@@ -45,7 +45,6 @@ function EbookReaderPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOpeningVideo, setShowOpeningVideo] = useState(false);
   const [showIntroVideo, setShowIntroVideo] = useState(false);
-  const [isPlayerMinimized, setIsPlayerMinimized] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
 
@@ -54,15 +53,12 @@ function EbookReaderPage() {
       const hasSeen = localStorage.getItem(`ebook_opening_${ebook.id}`);
       if (!hasSeen) {
         setShowOpeningVideo(true);
-      } else {
-        setIsPlayerMinimized(true);
       }
     }
   }, [ebook.id, ebook.opening_video_url]);
 
   const markVideoAsSeen = () => {
     setShowOpeningVideo(false);
-    setIsPlayerMinimized(true);
     localStorage.setItem(`ebook_opening_${ebook.id}`, 'true');
   };
 
@@ -203,7 +199,6 @@ function EbookReaderPage() {
                 onClick={() => {
                   if (showOpeningVideo) markVideoAsSeen();
                   setShowIntroVideo(false);
-                  setIsPlayerMinimized(true);
                 }}
                 className="absolute -top-12 right-0 flex items-center gap-2 text-white/60 hover:text-white transition-colors"
               >
@@ -234,7 +229,6 @@ function EbookReaderPage() {
                   onClick={() => {
                     if (showOpeningVideo) markVideoAsSeen();
                     setShowIntroVideo(false);
-                    setIsPlayerMinimized(true);
                   }}
                   className="btn-fire px-10 py-4 font-black text-lg shadow-2xl shadow-fire/30 flex items-center gap-3"
                 >
@@ -247,50 +241,6 @@ function EbookReaderPage() {
         )}
       </AnimatePresence>
 
-      {/* Mini Player Fixo */}
-      <AnimatePresence>
-        {isPlayerMinimized && ebook.opening_video_url && !showOpeningVideo && !showIntroVideo && (
-          <motion.div
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            className="fixed bottom-6 right-6 z-[90] w-64 sm:w-80 group"
-          >
-            <div className="relative glass rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/80 backdrop-blur-xl">
-              <button 
-                onClick={() => setIsPlayerMinimized(false)}
-                className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 text-white/60 hover:text-white hover:bg-black/80 transition-all opacity-0 group-hover:opacity-100"
-              >
-                <X className="h-4 w-4" />
-              </button>
-              
-              <div 
-                className="relative aspect-video w-full cursor-pointer overflow-hidden group/player"
-                onClick={() => setShowIntroVideo(true)}
-              >
-                <iframe
-                  src={ebook.opening_video_url.includes('youtube.com') || ebook.opening_video_url.includes('youtu.be')
-                    ? (ebook.opening_video_url.includes('watch?v=') ? ebook.opening_video_url.replace('watch?v=', 'embed/').split('&')[0] : `https://www.youtube.com/embed/${ebook.opening_video_url.split('youtu.be/')[1].split('?')[0]}`)
-                    : ebook.opening_video_url.includes('drive.google.com')
-                    ? (ebook.opening_video_url.includes('/preview') ? ebook.opening_video_url : `https://drive.google.com/file/d/${(ebook.opening_video_url.match(/\/file\/d\/([^\/]+)/) || ebook.opening_video_url.match(/id=([^&]+)/))?.[1]}/preview`)
-                    : ebook.opening_video_url}
-                  className="h-full w-full pointer-events-none"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/player:opacity-100 transition-opacity">
-                  <div className="h-12 w-12 rounded-full bg-fire flex items-center justify-center shadow-lg shadow-fire/40">
-                    <Play className="h-6 w-6 fill-current text-white ml-1" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-3">
-                <h4 className="text-xs font-bold text-white truncate">{ebook.title}</h4>
-                <p className="text-[10px] text-fire uppercase tracking-widest font-bold">Vídeo de Introdução</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_300px] max-w-full overflow-x-hidden">
         {/* Reader Area */}
