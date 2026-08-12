@@ -324,7 +324,7 @@ function IntegrationsPage() {
 
         {/* Detail Panel */}
         <div className="lg:col-span-8">
-          {activeCategory === 'email' ? <EmailIntegrationPanel /> : selectedItem ? (
+          {activeCategory === 'email' ? <EmailIntegrationPanel /> : activeCategory === 'offers' ? <OffersIntegrationPanel /> : selectedItem ? (
             <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
               <Tabs defaultValue="config" className="w-full">
                 <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
