@@ -349,7 +349,6 @@ function EbookReaderPage() {
                   <button
                     onClick={() => {
                       setShowIntroVideo(true);
-                      setIsPlayerMinimized(false);
                     }}
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm transition-all bg-fire/5 border border-fire/10 text-fire hover:bg-fire/10 group"
                   >
