@@ -246,6 +246,13 @@ function IntegrationsPage() {
           >
             <Zap className="h-3.5 w-3.5" /> Webhooks
           </Button>
+          <Button 
+            variant="ghost"
+            onClick={() => { setActiveCategory('offers'); setSelectedItem(null); }}
+            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'offers' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+          >
+            <Percent className="h-3.5 w-3.5" /> Ofertas
+          </Button>
         </div>
       </div>
 
