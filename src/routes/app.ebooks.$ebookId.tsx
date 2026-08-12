@@ -470,6 +470,15 @@ function EbookReaderPage() {
 
         </aside>
       </div>
+      <FeedbackModal
+        ebookId={ebook.id}
+        itemTitle={ebook.title}
+        isOpen={showFeedbackModal}
+        onClose={() => {
+          setShowFeedbackModal(false);
+          setHasSubmittedFeedback(true);
+        }}
+      />
     </div>
   );
 }
