@@ -704,16 +704,8 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
               </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
-              {!integrations?.find((i: Integration) => i.category === 'resend' && i.status) && (
-                <Alert className="bg-amber-500/10 border-amber-500/20 mb-4">
-                  <AlertCircle className="h-4 w-4 text-amber-500" />
-                  <AlertTitle className="text-xs font-bold uppercase tracking-widest text-amber-500">Credenciais Necessárias</AlertTitle>
-                  <AlertDescription className="text-[10px] text-white/50">
-                    A API do Resend não foi configurada ou não está ativa na aba "E-mail" (Resend). 
-                    Por favor, adicione sua API Key lá primeiro selecionando "E-mail" no menu superior.
-                  </AlertDescription>
-                </Alert>
-              )}
+              {/* Alerta removido - chave agora centralizada aqui */}
+
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
