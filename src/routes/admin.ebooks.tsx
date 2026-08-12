@@ -315,6 +315,9 @@ function AdminEbooksPage() {
                 <TabsTrigger value="info" className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Info className="h-4 w-4" /> Informações
                 </TabsTrigger>
+                <TabsTrigger value="checkpoints" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
+                  <Flag className="h-4 w-4" /> Checkpoints
+                </TabsTrigger>
                 <TabsTrigger value="content" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Layout className="h-4 w-4" /> Capítulos
                 </TabsTrigger>
