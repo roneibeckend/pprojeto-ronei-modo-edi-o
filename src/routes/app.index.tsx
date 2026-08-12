@@ -73,7 +73,7 @@ function Dashboard() {
           <Link to="/app/cursos" className="text-sm font-medium text-gold hover:underline">Ver todos</Link>
         </div>
         
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
           {showcaseItems
             ?.map(item => ({
               ...item,
@@ -168,9 +168,9 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
         )}
       </div>
 
-      <div className="p-5">
-        <h3 className="font-display text-lg font-bold line-clamp-1">{item.title}</h3>
-        <p className="mt-1 line-clamp-2 text-sm text-muted-foreground min-h-[40px]">{item.description}</p>
+      <div className="p-4 sm:p-5">
+        <h3 className="font-display text-base sm:text-lg font-bold line-clamp-1">{item.title}</h3>
+        <p className="mt-1 line-clamp-2 text-xs sm:text-sm text-muted-foreground min-h-[32px] sm:min-h-[40px]">{item.description}</p>
         
         {isLocked ? (
           <div className="mt-4">
