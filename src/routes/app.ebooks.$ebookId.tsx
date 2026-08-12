@@ -51,11 +51,11 @@ function EbookReaderPage() {
 
   useEffect(() => {
     if (ebook?.opening_video_url) {
-      // Check if user has already seen it or if it's the first visit
       const hasSeen = localStorage.getItem(`ebook_opening_${ebook.id}`);
       if (!hasSeen) {
         setShowOpeningVideo(true);
-        // We set it to true after the first full watch or manual skip
+      } else {
+        setIsPlayerMinimized(true);
       }
     }
   }, [ebook.id, ebook.opening_video_url]);
