@@ -84,7 +84,7 @@ export function AsaasPaymentModal() {
             <ShoppingBag className="h-5 w-5 text-fire" />
             {status === 'confirmed' ? 'Pagamento Confirmado' : `Checkout: ${title}`}
           </DialogTitle>
-          {status === 'idle' && (
+          {status !== 'confirmed' && (
             <a 
               href={paymentUrl || '#'} 
               target="_blank" 
@@ -150,13 +150,19 @@ export function AsaasPaymentModal() {
                 {iframeError && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-background z-20 p-6 text-center">
                     <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-                    <h3 className="text-lg font-bold mb-2">Erro de Conexão</h3>
+                    <h3 className="text-lg font-bold mb-2">Erro de Carregamento</h3>
                     <p className="text-sm text-muted-foreground mb-6">
-                      Não foi possível carregar o checkout do Asaas. Isso pode ocorrer devido a bloqueios de rede ou configurações de segurança do navegador.
+                      Não foi possível exibir o checkout de forma integrada. Isso pode ocorrer por restrições de segurança do seu navegador ou rede.
                     </p>
                     <div className="flex gap-3">
-                      <button onClick={handleRetry} className="btn-ghost-fire text-xs">Tentar Carregar Novamente</button>
-                      <a href={paymentUrl || '#'} target="_blank" rel="noopener noreferrer" className="btn-fire text-xs flex items-center gap-2">
+                      <button onClick={handleRetry} className="btn-ghost-fire text-xs">Tentar Novamente</button>
+                      <a 
+                        href={paymentUrl || '#'} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="btn-fire text-xs flex items-center gap-2"
+                        onClick={() => closePayment()}
+                      >
                         Pagar em Nova Aba <ExternalLink className="h-3 w-3" />
                       </a>
                     </div>
@@ -177,6 +183,7 @@ export function AsaasPaymentModal() {
                     }}
                     title="Asaas Checkout"
                     allow="payment"
+                    referrerPolicy="no-referrer-when-downgrade"
                   />
                 )}
                 
