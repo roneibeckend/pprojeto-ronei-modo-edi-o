@@ -46,6 +46,19 @@ export function PostPurchaseOffer({
   const fetchOffers = async () => {
     try {
       setIsLoading(true);
+      
+      // Fetch dynamic settings
+      const { data: config } = await supabase
+        .from('integrations')
+        .select('settings')
+        .eq('category', 'offer_settings')
+        .maybeSingle();
+      
+      if (config?.settings && typeof config.settings === 'object') {
+        const s = config.settings as Record<string, any>;
+        if (s.discountPercentage) setDiscountPercentage(s.discountPercentage);
+      }
+
       const [coursesRes, ebooksRes] = await Promise.all([
         supabase.from('courses').select('*').eq('is_locked', false).neq('id', originalProductId),
         supabase.from('ebooks').select('*').eq('is_locked', false).neq('id', originalProductId)
