@@ -11,11 +11,23 @@ import {
   Loader2,
   BookOpen,
   Trophy,
-  History
+  History,
+  ShieldAlert,
+  Plus
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/platform/Shell";
+import { useServerFn } from "@tanstack/react-start";
+import { manualConfirmEnrollment } from "@/lib/enrollment-admin.functions";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger,
+  DialogFooter
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/admin/alunos/$studentId")({
   head: () => ({ meta: [{ title: "Perfil do Aluno · Admin" }] }),
@@ -32,10 +44,59 @@ function AdminStudentProfilePage() {
     lessonsWatched: 0,
     totalSpent: 0
   });
+  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
+  const [availableProducts, setAvailableProducts] = useState<{courses: any[], ebooks: any[]}>({ courses: [], ebooks: [] });
+  const [manualLoading, setManualLoading] = useState(false);
+  const [manualData, setManualData] = useState({ productId: '', productType: 'course' as 'course' | 'ebook', notes: '' });
+
+  const manualConfirmFn = useServerFn(manualConfirmEnrollment);
 
   useEffect(() => {
     fetchStudentData();
+    fetchAvailableProducts();
   }, [studentId]);
+
+  async function fetchAvailableProducts() {
+    try {
+      const [{ data: courses }, { data: ebooks }] = await Promise.all([
+        supabase.from('courses').select('id, title').eq('status', 'active'),
+        supabase.from('ebooks').select('id, title')
+      ]);
+      setAvailableProducts({ 
+        courses: courses || [], 
+        ebooks: ebooks || [] 
+      });
+    } catch (error) {
+      console.error("Erro ao carregar produtos:", error);
+    }
+  }
+
+  const handleManualConfirm = async () => {
+    if (!manualData.productId) {
+      toast.error("Selecione um produto.");
+      return;
+    }
+
+    try {
+      setManualLoading(true);
+      await manualConfirmFn({
+        data: {
+          studentId,
+          productId: manualData.productId,
+          productType: manualData.productType,
+          notes: manualData.notes
+        }
+      });
+      
+      toast.success("Pagamento confirmado e acesso liberado manualmente!");
+      setIsManualModalOpen(false);
+      fetchStudentData(); // Refresh list
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao realizar confirmação manual.");
+    } finally {
+      setManualLoading(false);
+    }
+  };
 
   async function fetchStudentData() {
     try {
@@ -56,16 +117,18 @@ function AdminStudentProfilePage() {
         .from('course_lessons')
         .select('id, module_id, course_modules!inner(course_id)');
 
-      // Fetch enrollments and associated courses
-      const { data: enrollData, error: enrollError } = await supabase
-        .from('course_enrollments')
-        .select(`
-          *,
-          course:courses(id, title, cover_url)
-        `)
-        .eq('user_id', studentId);
+      // Fetch enrollments (courses and ebooks)
+      const [{ data: courseEnrollData, error: courseEnrollError }, { data: ebookEnrollData, error: ebookEnrollError }] = await Promise.all([
+        supabase.from('course_enrollments')
+          .select(`*, course:courses(id, title, cover_url)`)
+          .eq('user_id', studentId),
+        supabase.from('ebook_enrollments')
+          .select(`*, ebook:ebooks(id, title, cover_url)`)
+          .eq('user_id', studentId)
+      ]);
 
-      if (enrollError) throw enrollError;
+      if (courseEnrollError) throw courseEnrollError;
+      if (ebookEnrollError) throw ebookEnrollError;
 
       // Fetch progress status
       const { data: progressData } = await supabase
@@ -76,8 +139,8 @@ function AdminStudentProfilePage() {
 
       const completedLessonIds = new Set(progressData?.map(p => p.lesson_id) || []);
 
-      // Calculate progress per enrollment
-      const enrollmentsWithProgress = (enrollData || []).map(enroll => {
+      // Calculate progress per course enrollment
+      const courseEnrollmentsWithProgress = (courseEnrollData || []).map(enroll => {
         const courseLessons = allLessons?.filter(l => (l.course_modules as any).course_id === enroll.course_id) || [];
         const total = courseLessons.length;
         const completed = courseLessons.filter(l => completedLessonIds.has(l.id)).length;
@@ -85,14 +148,26 @@ function AdminStudentProfilePage() {
         
         return {
           ...enroll,
-          progress: percent
+          type: 'course',
+          progress: percent,
+          title: enroll.course?.title,
+          cover: enroll.course?.cover_url
         };
       });
 
-      setEnrollments(enrollmentsWithProgress);
+      const ebookEnrollmentsFormatted = (ebookEnrollData || []).map(enroll => ({
+        ...enroll,
+        type: 'ebook',
+        progress: 100, // Ebooks don't have linear progress tracked this way yet or are just unlocked
+        title: enroll.ebook?.title,
+        cover: enroll.ebook?.cover_url
+      }));
+
+      const allEnrollments = [...courseEnrollmentsWithProgress, ...ebookEnrollmentsFormatted];
+      setEnrollments(allEnrollments);
 
       setStats({
-        coursesCompleted: enrollmentsWithProgress.filter(e => e.progress === 100).length,
+        coursesCompleted: allEnrollments.filter(e => e.progress === 100).length,
         lessonsWatched: completedLessonIds.size,
         totalSpent: 0 
       });
@@ -196,14 +271,87 @@ function AdminStudentProfilePage() {
         {/* Main Content: Courses and Activity */}
         <div className="space-y-8">
           <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#ff6a00]/10 text-[#ff6a00]">
-                <BookOpen className="h-5 w-5" />
+            <div className="mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#ff6a00]/10 text-[#ff6a00]">
+                  <BookOpen className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display text-xl font-bold text-white">Conteúdos Ativos</h3>
+                  <p className="text-sm text-white/40">Cursos e E-books que o aluno possui acesso.</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-display text-xl font-bold text-white">Cursos Matriculados</h3>
-                <p className="text-sm text-white/40">Visão geral do progresso acadêmico do aluno.</p>
-              </div>
+
+              <Dialog open={isManualModalOpen} onOpenChange={setIsManualModalOpen}>
+                <DialogTrigger asChild>
+                  <button className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-bold uppercase tracking-widest transition border border-white/5">
+                    <ShieldAlert className="w-4 h-4 text-[#ff6a00]" />
+                    Liberar Manualmente
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="bg-[#0e0e0e] border-white/10 text-white">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl font-bold">Confirmação Manual de Pagamento</DialogTitle>
+                    <p className="text-sm text-white/40 mt-2">
+                      Use esta ferramenta apenas se o gateway falhou. A ação será registrada para auditoria.
+                    </p>
+                  </DialogHeader>
+                  
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Tipo de Conteúdo</label>
+                      <select 
+                        value={manualData.productType}
+                        onChange={(e) => setManualData({ ...manualData, productType: e.target.value as any, productId: '' })}
+                        className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                      >
+                        <option value="course" className="bg-[#0e0e0e]">Curso</option>
+                        <option value="ebook" className="bg-[#0e0e0e]">E-book</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Produto</label>
+                      <select 
+                        value={manualData.productId}
+                        onChange={(e) => setManualData({ ...manualData, productId: e.target.value })}
+                        className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                      >
+                        <option value="" className="bg-[#0e0e0e]">Selecione um produto...</option>
+                        {(manualData.productType === 'course' ? availableProducts.courses : availableProducts.ebooks).map(p => (
+                          <option key={p.id} value={p.id} className="bg-[#0e0e0e]">{p.title}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Observações / Motivo</label>
+                      <textarea 
+                        value={manualData.notes}
+                        onChange={(e) => setManualData({ ...manualData, notes: e.target.value })}
+                        placeholder="Ex: Falha no webhook do Asaas, comprovante enviado via WhatsApp."
+                        className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] min-h-[100px] resize-none"
+                      />
+                    </div>
+                  </div>
+
+                  <DialogFooter className="gap-2 sm:gap-0">
+                    <button 
+                      onClick={() => setIsManualModalOpen(false)}
+                      className="flex-1 py-3 rounded-xl bg-white/5 font-bold hover:bg-white/10 transition uppercase tracking-widest text-[10px]"
+                    >
+                      Cancelar
+                    </button>
+                    <button 
+                      onClick={handleManualConfirm}
+                      disabled={manualLoading}
+                      className="flex-1 py-3 rounded-xl bg-[#ff6a00] text-black font-bold disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] transition uppercase tracking-widest text-[10px]"
+                    >
+                      {manualLoading ? "Confirmando..." : "Confirmar Pagamento"}
+                    </button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="grid gap-4">
@@ -213,15 +361,18 @@ function AdminStudentProfilePage() {
                   // We need to fetch this in fetchStudentData or calculate here if we had all lessons
                   // For now, let's use a placeholder or enhance fetchStudentData
                   return (
-                    <div key={enrollment.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition">
+                    <div key={enrollment.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition relative group">
+                      <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-white/5 text-[8px] font-bold uppercase tracking-widest text-white/40">
+                        {enrollment.type === 'course' ? 'Curso' : 'E-book'}
+                      </div>
                       <img 
-                        src={enrollment.course?.cover_url || "/placeholder.svg"} 
-                        alt={enrollment.course?.title}
+                        src={enrollment.cover || "/placeholder.svg"} 
+                        alt={enrollment.title}
                         className="w-16 h-16 rounded-lg object-cover bg-white/5"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-bold text-sm truncate">{enrollment.course?.title}</h4>
+                          <h4 className="font-bold text-sm truncate pr-16">{enrollment.title}</h4>
                           <span className="text-[10px] font-bold text-[#ff6a00] uppercase tracking-widest">
                             {enrollment.progress || 0}% Concluído
                           </span>
