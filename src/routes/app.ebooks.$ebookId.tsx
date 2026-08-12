@@ -302,6 +302,7 @@ function EbookReaderPage() {
                   <div className="max-w-4xl mx-auto py-4 sm:py-8 px-0 sm:px-4">
                     <div className="relative aspect-video w-full rounded-none sm:rounded-2xl overflow-hidden shadow-2xl border-y sm:border border-white/10 bg-black/60 group">
                       <iframe
+                        key={activeChapter.video_url}
                         src={activeChapter.video_url.includes('youtube.com') || activeChapter.video_url.includes('youtu.be')
                           ? (activeChapter.video_url.includes('watch?v=') ? activeChapter.video_url.replace('watch?v=', 'embed/').split('&')[0] : `https://www.youtube.com/embed/${activeChapter.video_url.split('youtu.be/')[1].split('?')[0]}`)
                           : activeChapter.video_url.includes('drive.google.com')
