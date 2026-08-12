@@ -26,15 +26,24 @@ export const manualConfirmEnrollment = createServerFn({ method: "POST" })
     }
 
     // 2. Check if already enrolled
-    const table = data.productType === 'course' ? 'course_enrollments' : 'ebook_enrollments';
-    const idColumn = data.productType === 'course' ? 'course_id' : 'ebook_id';
-    
-    const { data: existing } = await supabaseAdmin
-      .from(table)
-      .select('id')
-      .eq('user_id', data.studentId)
-      .eq(idColumn, data.productId)
-      .maybeSingle();
+    let existing;
+    if (data.productType === 'course') {
+      const { data: found } = await supabaseAdmin
+        .from('course_enrollments')
+        .select('id')
+        .eq('user_id', data.studentId)
+        .eq('course_id', data.productId)
+        .maybeSingle();
+      existing = found;
+    } else {
+      const { data: found } = await supabaseAdmin
+        .from('ebook_enrollments')
+        .select('id')
+        .eq('user_id', data.studentId)
+        .eq('ebook_id', data.productId)
+        .maybeSingle();
+      existing = found;
+    }
 
     if (existing) {
       throw new Error("O aluno já possui acesso a este conteúdo.");
