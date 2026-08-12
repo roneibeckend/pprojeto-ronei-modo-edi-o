@@ -159,7 +159,7 @@ function IntegrationsPage() {
           category: selectedItem.category,
           credentials: selectedItem.credentials,
           settings: selectedItem.settings,
-          environment: selectedItem.settings?.environment || 'sandbox'
+          environment: (selectedItem.settings?.testMode === true || selectedItem.settings?.testMode === 'true') ? 'sandbox' : 'production'
         }
       });
       setTestResult(result);
@@ -379,13 +379,23 @@ function IntegrationsPage() {
                           {Object.keys(selectedItem.settings).map((key) => (
                             <div key={key} className="space-y-2">
                               <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
-                              {key === 'environment' ? (
+                              {key === 'environment' || key === 'testMode' ? (
                                 <select 
-                                  value={selectedItem.settings[key]}
-                                  onChange={(e) => setSelectedItem({
-                                    ...selectedItem,
-                                    settings: { ...selectedItem.settings, [key]: e.target.value }
-                                  })}
+                                  value={key === 'testMode' ? (selectedItem.settings[key] === true || selectedItem.settings[key] === 'true' ? 'sandbox' : 'production') : selectedItem.settings[key]}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (key === 'testMode') {
+                                      setSelectedItem({
+                                        ...selectedItem,
+                                        settings: { ...selectedItem.settings, [key]: val === 'sandbox' }
+                                      });
+                                    } else {
+                                      setSelectedItem({
+                                        ...selectedItem,
+                                        settings: { ...selectedItem.settings, [key]: val }
+                                      });
+                                    }
+                                  }}
                                   className="w-full bg-black/40 border border-white/10 rounded-lg h-11 px-3 text-sm focus:border-[#ff6a00] outline-none appearance-none cursor-pointer"
                                 >
                                   <option value="sandbox">Sandbox (Teste)</option>
