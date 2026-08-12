@@ -19,7 +19,7 @@ export const usePostPurchaseOfferStore = create<PostPurchaseOfferState>((set) =>
         .maybeSingle();
       
       if (!error && data) {
-        set({ isEnabled: data.status });
+        set({ isEnabled: data.status ?? true });
       }
     } catch (err) {
       console.error('Failed to sync offer settings:', err);
