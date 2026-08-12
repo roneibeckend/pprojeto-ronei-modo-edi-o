@@ -25,7 +25,31 @@ export function VideoPlayer({
   const [showControls, setShowControls] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
 
+  const isYouTube = src.includes('youtube.com') || src.includes('youtu.be');
+  
+  const getEmbedUrl = (url: string) => {
+    if (!url) return '';
+    if (url.includes('youtube.com/embed/')) return url;
+    
+    let videoId = '';
+    if (url.includes('youtube.com/watch?v=')) {
+      videoId = url.split('v=')[1].split('&')[0];
+    } else if (url.includes('youtu.be/')) {
+      videoId = url.split('youtu.be/')[1].split('?')[0];
+    }
+    
+    if (videoId) {
+      return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+    }
+    return url;
+  };
+
   useEffect(() => {
+    if (isYouTube) {
+      setIsLoading(false);
+      return;
+    }
+
     const video = videoRef.current;
     if (!video) return;
 
@@ -44,7 +68,7 @@ export function VideoPlayer({
     return () => {
       video.removeEventListener('timeupdate', handleTimeUpdate);
     };
-  }, [videoId, onProgress]);
+  }, [videoId, onProgress, isYouTube]);
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -56,6 +80,19 @@ export function VideoPlayer({
       setIsPlaying(!isPlaying);
     }
   };
+
+  if (isYouTube) {
+    return (
+      <div className={cn("relative aspect-video bg-black rounded-xl overflow-hidden glass", className)}>
+        <iframe
+          src={getEmbedUrl(src)}
+          className="w-full h-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
 
   return (
     <div 
