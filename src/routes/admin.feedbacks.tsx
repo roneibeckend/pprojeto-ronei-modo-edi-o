@@ -15,6 +15,8 @@ export const Route = createFileRoute("/admin/feedbacks")({
 function AdminFeedbacksPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("pending");
+  const [replyText, setReplyText] = useState("");
+  const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const { data: feedbacks, isLoading } = useQuery({
