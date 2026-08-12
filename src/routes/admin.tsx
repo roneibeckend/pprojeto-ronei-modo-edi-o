@@ -19,7 +19,8 @@ import {
   FileText,
   Wallet,
   TrendingUp,
-  Menu
+  Menu,
+  Star
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -63,7 +64,9 @@ function AdminRootLayout() {
     { to: "/admin/ao-vivo", label: "Ao Vivo", icon: Clapperboard },
     
     { to: "/admin/alunos", label: "Alunos", icon: Users },
+    { to: "/admin/feedbacks", label: "Feedbacks", icon: Star },
     { to: "/admin/suporte", label: "Suporte", icon: HelpCircle },
+
     { to: "/admin/integracoes", label: "Integrações", icon: Settings },
     { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },

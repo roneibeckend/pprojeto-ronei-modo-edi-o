@@ -25,8 +25,9 @@ function AdminFeedbacksPage() {
         .select(`
           *,
           course:courses(title),
-          profile:profiles(full_name, avatar_url, email)
+          profile:profiles(name, avatar_url, email)
         `)
+
         .order("created_at", { ascending: false });
 
       if (statusFilter !== "all") {
@@ -39,9 +40,10 @@ function AdminFeedbacksPage() {
       if (searchTerm) {
         return data.filter(f => 
           f.course?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          f.profile?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          f.profile?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           f.comment?.toLowerCase().includes(searchTerm.toLowerCase())
         );
+
       }
       
       return data;
@@ -146,8 +148,9 @@ function AdminFeedbacksPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="font-bold text-sm truncate text-white">
-                      {feedback.profile?.full_name || "Aluno sem nome"}
+                      {feedback.profile?.name || "Aluno sem nome"}
                     </p>
+
                     <p className="text-xs text-white/40 truncate">
                       {feedback.profile?.email}
                     </p>
