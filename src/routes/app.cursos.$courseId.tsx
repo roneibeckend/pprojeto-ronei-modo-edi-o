@@ -438,7 +438,7 @@ function CoursePage() {
 
       <FeedbackModal
         courseId={course.id}
-        courseTitle={course.title}
+        itemTitle={course.title}
         isOpen={showFeedbackModal}
         onClose={() => {
           setShowFeedbackModal(false);
