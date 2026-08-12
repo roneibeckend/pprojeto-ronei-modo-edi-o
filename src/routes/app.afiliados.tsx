@@ -161,8 +161,8 @@ function AffiliateLayout() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-display font-black text-white">Painel do Afiliado</h1>
-          <p className="text-muted-foreground">Gerencie suas vendas e comissões.</p>
+          <h1 className="text-3xl font-display font-black text-white break-words">Painel do Afiliado</h1>
+          <p className="text-muted-foreground break-words">Gerencie suas vendas e comissões.</p>
         </div>
         <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/5">
           <div>
