@@ -223,7 +223,7 @@ function EbookReaderPage() {
         )}
       </AnimatePresence>
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
+      <div className="grid gap-8 lg:grid-cols-[1fr_300px] max-w-full overflow-x-hidden">
         {/* Reader Area */}
         <div className="min-w-0">
           <AnimatePresence mode="wait">
