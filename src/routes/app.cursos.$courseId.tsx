@@ -16,6 +16,7 @@ import { FeedbackModal } from "@/components/platform/FeedbackModal";
 import { FeedbackSummary } from "@/components/platform/FeedbackSummary";
 import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
+import { motion } from "framer-motion";
 
 
 const VideoPlayer = lazy(() => import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer })));
