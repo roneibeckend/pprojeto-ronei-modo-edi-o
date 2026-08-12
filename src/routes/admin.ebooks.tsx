@@ -44,6 +44,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { importEbookFromFile } from "@/lib/ebook-import.functions";
 import { fixEbookVisibility } from "@/lib/ebook-visibility-fix.functions";
 import { reorderChapter } from "@/lib/ebook-reorder.functions";
+import { getSEOSuggestions } from "@/lib/seo-ebook.functions";
 
 export const Route = createFileRoute("/admin/ebooks")({
   head: () => ({ meta: [{ title: "Gestão de E-books · Admin" }] }),
