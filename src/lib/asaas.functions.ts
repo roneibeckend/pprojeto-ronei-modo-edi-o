@@ -33,15 +33,29 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
     const settings = (integration.settings || {}) as Record<string, any>;
     const apiKey = credentials.apiKey;
     
-    // O banco de dados usa testMode (boolean) em vez de environment (string)
-    const isTestMode = settings.testMode === true || settings.testMode === 'true' || settings.environment === 'sandbox';
-    const baseUrl = isTestMode ? ASAAS_SANDBOX_URL : ASAAS_PRODUCTION_URL;
-    
-    console.log(`[Asaas] Usando ambiente: ${isTestMode ? 'SANDBOX' : 'PRODUCTION'} | URL: ${baseUrl}`);
-
     if (!apiKey) {
       throw new Error("Chave de API do Asaas ausente nas configurações.");
     }
+
+    // O banco de dados usa testMode (boolean) em vez de environment (string)
+    // Forçar ambiente baseado no prefixo da chave se possível para evitar erros de configuração
+    const isProdKey = apiKey.startsWith('$aact_prod_');
+    const isSandboxKey = apiKey.startsWith('$aact_test_');
+    
+    let isTestMode = settings.testMode === true || settings.testMode === 'true' || settings.environment === 'sandbox';
+    
+    // Auto-correção: Se a chave for de produção mas estiver em testMode, avisar ou corrigir
+    if (isProdKey && isTestMode) {
+      console.warn("[Asaas] Chave de PRODUÇÃO detectada em ambiente de TESTE. Forçando PRODUÇÃO.");
+      isTestMode = false;
+    } else if (isSandboxKey && !isTestMode) {
+      console.warn("[Asaas] Chave de SANDBOX detectada em ambiente de PRODUÇÃO. Forçando SANDBOX.");
+      isTestMode = true;
+    }
+
+    const baseUrl = isTestMode ? ASAAS_SANDBOX_URL : ASAAS_PRODUCTION_URL;
+    
+    console.log(`[Asaas] Usando ambiente: ${isTestMode ? 'SANDBOX' : 'PRODUCTION'} | URL: ${baseUrl}`);
 
     // 2. Criar Link de Pagamento no Asaas
     // Referência: https://docs.asaas.com/reference/criar-um-link-de-pagamento

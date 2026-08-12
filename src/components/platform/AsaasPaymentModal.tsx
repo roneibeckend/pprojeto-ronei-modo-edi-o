@@ -15,6 +15,7 @@ export function AsaasPaymentModal() {
   const { isOpen, paymentUrl, title, productId, productType, status, closePayment, setStatus } = usePaymentModal();
   const { isEnrolledInCourse, isEnrolledInEbook } = useEnrollments();
   const [iframeLoading, setIframeLoading] = React.useState(true);
+  const [iframeError, setIframeError] = React.useState(false);
   const navigate = useNavigate();
 
   // Polling para verificar se o pagamento foi liberado
@@ -65,12 +66,14 @@ export function AsaasPaymentModal() {
   React.useEffect(() => {
     if (isOpen) {
       setIframeLoading(true);
+      setIframeError(false);
     }
   }, [isOpen, paymentUrl]);
 
   const handleRetry = () => {
     setStatus('idle');
     setIframeLoading(true);
+    setIframeError(false);
   };
 
   return (
@@ -135,7 +138,7 @@ export function AsaasPaymentModal() {
                 </button>
               </motion.div>
             ) : (
-              <motion.div key="iframe" className="w-full h-full">
+              <motion.div key="iframe" className="w-full h-full relative">
                 {iframeLoading && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/90 backdrop-blur-sm z-10">
                     <Loader2 className="h-10 w-10 animate-spin text-fire mb-4" />
@@ -143,11 +146,35 @@ export function AsaasPaymentModal() {
                     <p className="text-sm text-muted-foreground mt-2">Aguarde um instante enquanto conectamos com o Asaas</p>
                   </div>
                 )}
-                {paymentUrl && (
+                
+                {iframeError && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background z-20 p-6 text-center">
+                    <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
+                    <h3 className="text-lg font-bold mb-2">Erro de Conexão</h3>
+                    <p className="text-sm text-muted-foreground mb-6">
+                      Não foi possível carregar o checkout do Asaas. Isso pode ocorrer devido a bloqueios de rede ou configurações de segurança do navegador.
+                    </p>
+                    <div className="flex gap-3">
+                      <button onClick={handleRetry} className="btn-ghost-fire text-xs">Tentar Carregar Novamente</button>
+                      <a href={paymentUrl || '#'} target="_blank" rel="noopener noreferrer" className="btn-fire text-xs flex items-center gap-2">
+                        Pagar em Nova Aba <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {paymentUrl && !iframeError && (
                   <iframe
                     src={paymentUrl}
                     className="w-full h-full border-none"
-                    onLoad={() => setIframeLoading(false)}
+                    onLoad={() => {
+                      setIframeLoading(false);
+                      setIframeError(false);
+                    }}
+                    onError={() => {
+                      setIframeLoading(false);
+                      setIframeError(true);
+                    }}
                     title="Asaas Checkout"
                     allow="payment"
                   />
