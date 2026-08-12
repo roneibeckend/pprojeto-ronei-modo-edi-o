@@ -692,7 +692,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
               </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
-              {!integrations?.find(i => i.category === 'resend' && i.status) && (
+              {!integrations?.find((i: Integration) => i.category === 'resend' && i.status) && (
                 <Alert className="bg-amber-500/10 border-amber-500/20 mb-4">
                   <AlertCircle className="h-4 w-4 text-amber-500" />
                   <AlertTitle className="text-xs font-bold uppercase tracking-widest text-amber-500">Credenciais Necessárias</AlertTitle>
