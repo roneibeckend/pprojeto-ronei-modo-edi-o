@@ -694,25 +694,25 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
               </div>
             </div>
 
-            <div className="flex flex-col gap-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-4 md:col-span-1">
+            <div className="flex flex-col gap-6 flex-1 min-h-0">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                <div className="space-y-3 md:col-span-1">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do Capítulo</label>
                     <input 
                       value={editingChapter.title}
                       onChange={e => setEditingChapter({...editingChapter, title: e.target.value})}
-                      className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                      className="w-full bg-black/40 border border-white/10 p-2.5 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Ordem</label>
                       <input 
                         type="number"
                         value={editingChapter.order_index}
                         onChange={e => setEditingChapter({...editingChapter, order_index: parseInt(e.target.value)})}
-                        className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                        className="w-full bg-black/40 border border-white/10 p-2.5 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -721,41 +721,44 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
                         type="number"
                         value={editingChapter.reading_minutes || 0}
                         onChange={e => setEditingChapter({...editingChapter, reading_minutes: parseInt(e.target.value)})}
-                        className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                        className="w-full bg-black/40 border border-white/10 p-2.5 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="md:col-span-2 space-y-4">
-                  <VideoUpload 
-                    value={editingChapter.video_url || ""}
-                    onChange={url => setEditingChapter({...editingChapter, video_url: url})}
-                    label="Vídeo do Capítulo"
-                    description="Vídeo centralizado no capítulo."
-                  />
-                  
-                  {editingChapter.video_url && (
-                    <div className="aspect-video w-full max-w-[300px] rounded-xl overflow-hidden bg-black border border-white/5">
-                      <iframe 
-                        src={editingChapter.video_url.includes('youtube.com') 
-                          ? editingChapter.video_url.replace('watch?v=', 'embed/') 
-                          : editingChapter.video_url} 
-                        className="w-full h-full"
-                        allowFullScreen
+                <div className="md:col-span-3">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1">
+                      <VideoUpload 
+                        value={editingChapter.video_url || ""}
+                        onChange={url => setEditingChapter({...editingChapter, video_url: url})}
+                        label="Vídeo do Capítulo"
+                        description="Opcional: Vídeo centralizado no capítulo."
                       />
                     </div>
-                  )}
+                    {editingChapter.video_url && (
+                      <div className="aspect-video w-full max-w-[200px] rounded-xl overflow-hidden bg-black border border-white/5 shrink-0 self-end">
+                        <iframe 
+                          src={editingChapter.video_url.includes('youtube.com') 
+                            ? editingChapter.video_url.replace('watch?v=', 'embed/') 
+                            : editingChapter.video_url} 
+                          className="w-full h-full"
+                          allowFullScreen
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-1.5 flex-1 flex flex-col min-h-[600px]">
+              <div className="space-y-1.5 flex-1 flex flex-col min-h-[500px] lg:min-h-[65vh]">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do Capítulo (HTML ou Markdown)</label>
                 <textarea 
                   value={editingChapter.content || ""}
                   onChange={e => setEditingChapter({...editingChapter, content: e.target.value})}
                   placeholder="Escreva aqui o conteúdo do capítulo..."
-                  className="flex-1 w-full bg-black/40 border border-white/10 p-6 rounded-xl text-base font-sans leading-relaxed outline-none focus:border-[#ff6a00] resize-none"
+                  className="flex-1 w-full bg-black/20 border border-white/10 p-6 rounded-xl text-base font-sans leading-relaxed outline-none focus:border-[#ff6a00] resize-none overflow-y-auto"
                 />
               </div>
             </div>
