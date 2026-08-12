@@ -127,7 +127,10 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
     mime_type: z.string().optional(),
   }).parse(data))
   .handler(async ({ data }) => {
+    const startTime = Date.now();
     try {
+      console.log(`[importEbookFromFile] Iniciando processamento de ${data.file_name || 'arquivo'} (${data.file_base64.length} bytes base64)`);
+      
       if (data.file_base64.length > 85 * 1024 * 1024) {
         throw new Error("LIMITE_EXCEDIDO: O arquivo excede o limite de 60MB para processamento automático.");
       }
