@@ -45,6 +45,7 @@ function EbookReaderPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOpeningVideo, setShowOpeningVideo] = useState(false);
   const [showIntroVideo, setShowIntroVideo] = useState(false);
+  const [isPlayerMinimized, setIsPlayerMinimized] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
 
