@@ -551,7 +551,7 @@ function SupportPage() {
                   }}
                   className="group flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.02] p-4 text-left transition hover:border-[#ff6a00]/30 hover:bg-[#ff6a00]/5"
                 >
-                  <span className="text-sm font-medium text-white/60 group-hover:text-white transition line-clamp-2">
+                  <span className="text-sm font-medium text-white/60 group-hover:text-white transition whitespace-normal">
                     {q.q}
                   </span>
                   <ChevronRight className="h-4 w-4 shrink-0 text-white/10 group-hover:text-[#ff6a00] transition" />
