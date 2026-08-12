@@ -94,10 +94,15 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
+  * { 
+    border-color: var(--color-border);
+    box-sizing: border-box;
+  }
   html { 
     scroll-behavior: smooth;
     height: -webkit-fill-available;
+    overflow-x: hidden;
+    width: 100vw;
   }
   body {
     background-color: var(--color-background);
@@ -112,9 +117,9 @@
     min-height: 100dvh;
     overflow-x: hidden;
     width: 100%;
+    position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Melhora o scroll em mobile */
     overscroll-behavior-y: none;
   }
   h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.005em; }
