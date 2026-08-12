@@ -67,7 +67,7 @@ function EbookReaderPage() {
   
   useEffect(() => {
     const lastRead = localStorage.getItem(`ebook_last_read_${ebook.id}`);
-    if (lastRead && chapters.some(c => c.id === lastRead)) {
+    if (lastRead && chapters.some((c: any) => c.id === lastRead)) {
       setActiveChapterId(lastRead);
     } else if (chapters.length > 0) {
       setActiveChapterId(chapters[0].id);
