@@ -27,6 +27,7 @@ function AdminFeedbacksPage() {
         .select(`
           *,
           course:courses(title),
+          ebook:ebooks(title),
           profile:profiles(name, avatar_url, email)
         `)
 
