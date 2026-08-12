@@ -180,7 +180,7 @@ function CertCard({ cert, onPreview, onDownload }: { cert: any; onPreview: () =>
       {/* Meta */}
       <div className="p-4">
         <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#ff6a00]">Certificado oficial</div>
-        <h3 className="mt-1 line-clamp-2 font-display text-lg font-bold text-white">{cert.course}</h3>
+        <h3 className="mt-1 line-clamp-2 font-display text-lg font-bold text-white whitespace-normal">{cert.course}</h3>
         <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-white/5 pt-3 text-[11px]">
           <div>
             <dt className="text-white/40">Carga horária</dt>
@@ -249,7 +249,7 @@ function MiniCertificate({ cert, locked }: { cert: any; locked: boolean }) {
         </div>
         <div className="mt-2 font-display text-[10px] font-bold uppercase tracking-[0.18em] text-black/70">Certificado de Conclusão</div>
         <div className="mt-1 font-display text-lg font-extrabold uppercase text-black">{student.name}</div>
-        <div className="mt-1.5 max-w-[85%] line-clamp-1 text-[9px] font-medium text-black/60">{cert.course}</div>
+        <div className="mt-1.5 max-w-[85%] whitespace-normal text-[9px] font-medium text-black/60">{cert.course}</div>
         {!locked && (
           <div className="mt-2 flex items-center gap-2 text-[7px] font-mono uppercase tracking-widest text-black/40">
             <span>Cód: {cert.code}</span>
