@@ -305,14 +305,14 @@ function EbookReaderPage() {
                 <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Apresentação</p>
               </div>
  
-              <div className="relative aspect-[9/16] h-[70vh] max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black">
+              <div className="relative aspect-[9/16] h-[70vh] w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black">
                 <iframe
                   src={ebook.opening_video_url.includes('youtube.com') || ebook.opening_video_url.includes('youtu.be')
                     ? (ebook.opening_video_url.includes('watch?v=') ? ebook.opening_video_url.replace('watch?v=', 'embed/').split('&')[0] : `https://www.youtube.com/embed/${ebook.opening_video_url.split('youtu.be/')[1].split('?')[0]}`) + "?autoplay=1"
                     : ebook.opening_video_url.includes('drive.google.com')
                     ? (ebook.opening_video_url.includes('/preview') ? ebook.opening_video_url : `https://drive.google.com/file/d/${(ebook.opening_video_url.match(/\/file\/d\/([^\/]+)/) || ebook.opening_video_url.match(/id=([^&]+)/))?.[1]}/preview`) + "?autoplay=1"
                     : ebook.opening_video_url + "?autoplay=1"}
-                  className="h-full w-full"
+                  className="absolute inset-0 h-full w-full object-cover"
                   allow="autoplay; fullscreen"
                   allowFullScreen
                 />
