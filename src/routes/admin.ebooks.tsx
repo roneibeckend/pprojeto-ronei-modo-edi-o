@@ -694,25 +694,25 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
               </div>
             </div>
 
-            <div className="flex flex-col gap-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-4 md:col-span-1">
+            <div className="flex flex-col gap-6 flex-1 min-h-0">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                <div className="space-y-3 md:col-span-1">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do Capítulo</label>
                     <input 
                       value={editingChapter.title}
                       onChange={e => setEditingChapter({...editingChapter, title: e.target.value})}
-                      className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                      className="w-full bg-black/40 border border-white/10 p-2.5 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Ordem</label>
                       <input 
                         type="number"
                         value={editingChapter.order_index}
                         onChange={e => setEditingChapter({...editingChapter, order_index: parseInt(e.target.value)})}
-                        className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                        className="w-full bg-black/40 border border-white/10 p-2.5 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -721,13 +721,13 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
                         type="number"
                         value={editingChapter.reading_minutes || 0}
                         onChange={e => setEditingChapter({...editingChapter, reading_minutes: parseInt(e.target.value)})}
-                        className="w-full bg-black/40 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
+                        className="w-full bg-black/40 border border-white/10 p-2.5 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="md:col-span-2 space-y-4">
+                <div className="md:col-span-3">
                   <VideoUpload 
                     value={editingChapter.video_url || ""}
                     onChange={url => setEditingChapter({...editingChapter, video_url: url})}
