@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { sendEmail } from '@/lib/resend.functions';
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import {
   asaasHeaders,
