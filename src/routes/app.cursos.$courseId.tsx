@@ -228,7 +228,12 @@ function CoursePage() {
                 <div className="font-display text-lg font-bold">{active.title}</div>
               </div>
               <button 
-                onClick={() => toggleLessonProgress({ lessonId: active.id, completed: !isLessonCompleted(active.id) })}
+                onClick={() => toggleLessonProgress({ 
+                  lessonId: active.id, 
+                  completed: !isLessonCompleted(active.id),
+                  moduleId: active.module_id,
+                  courseId: course.id
+                })}
                 disabled={isTogglingLesson}
                 className={`btn-fire text-sm touch-target flex items-center gap-2 ${isLessonCompleted(active.id) ? 'bg-green-600 shadow-green-600/20' : ''}`}
               >
