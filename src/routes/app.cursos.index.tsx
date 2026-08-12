@@ -108,12 +108,12 @@ function CoursesPage() {
 
   return (
     <div className="pb-10">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-8">
         <PageHeader
           title="Meus cursos"
           subtitle="Gerencie seus treinamentos e descubra novos conteúdos."
         />
-        <Link to="/app/cursos/preview" className="btn-ghost-fire text-sm w-full sm:w-auto">
+        <Link to="/app/cursos/preview" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto mt-2 sm:mt-0 py-3 sm:py-4 h-12 sm:h-auto">
           <Sparkles className="h-4 w-4" /> Ver previews interativas
         </Link>
       </div>
@@ -132,7 +132,7 @@ function CoursesPage() {
         </h2>
         
         {(ownedCourses.length > 0 || ownedEbooks.length > 0) ? (
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 sm:gap-6">
             {/* Renderizar Cursos */}
             {ownedCourses.map((c) => (
               <article key={c.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30">
@@ -156,14 +156,14 @@ function CoursesPage() {
                   )}
                 </div>
                 
-                <div className="p-5">
-                  <h3 className="font-display text-lg font-bold leading-tight">{c.title}</h3>
-                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{c.description}</p>
+                <div className="p-4 sm:p-5">
+                  <h3 className="font-display text-base sm:text-lg font-bold leading-tight">{c.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-xs sm:text-sm text-muted-foreground">{c.description}</p>
                   
                   <Link
                     to="/app/cursos/$courseId"
                     params={{ courseId: c.id }}
-                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold bg-fire text-white shadow-lg shadow-fire/20 hover:brightness-110 transition-all"
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-xs sm:text-sm font-bold bg-fire text-white shadow-lg shadow-fire/20 hover:brightness-110 transition-all"
                   >
                     <Play className="h-4 w-4 fill-current" /> 
                     Acessar curso

@@ -43,7 +43,7 @@ function ProfilePage() {
       <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
         {/* Sidebar Info */}
         <aside className="space-y-6">
-          <section className="glass overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02]">
+          <section className="glass overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] shadow-sm">
             <div className="h-24 bg-gradient-to-br from-[#ff6a00] to-[#ff9500] opacity-20" />
             <div className="relative -mt-12 flex flex-col items-center p-6 text-center">
               <div className="relative group">
@@ -109,7 +109,7 @@ function ProfilePage() {
               <button className="btn-fire w-full sm:w-auto px-6 py-3 sm:py-2 text-sm font-bold uppercase tracking-widest">Salvar</button>
             </div>
             
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
               <Field label="Nome completo" defaultValue={student.name} icon={User} />
               <Field label="Seu e-mail" defaultValue={student.email} type="email" icon={Mail} />
               <Field label="WhatsApp / Telefone" defaultValue={student.phone} icon={Phone} />
@@ -131,7 +131,7 @@ function ProfilePage() {
 
             <div className="mt-6 overflow-hidden rounded-xl border border-white/5">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm min-w-[600px] md:min-w-0">
+                <table className="w-full text-left text-sm min-w-[500px] md:min-w-0">
                   <thead>
                     <tr className="bg-white/5 text-[10px] font-bold uppercase tracking-widest text-white/40">
                       <th className="px-6 py-4">ID do Pedido</th>

@@ -168,12 +168,12 @@ function EbookReaderPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-0 pb-20 sm:px-4">
-      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between mb-8 sm:px-0">
+      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 sm:px-0">
         <PageHeader
           title={ebook.title}
           subtitle={ebook.subtitle || "E-book Exclusivo"}
         />
-        <Link to="/app/cursos" className="btn-ghost-fire text-sm w-full sm:w-auto">← Meus Conteúdos</Link>
+        <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4">← Meus Conteúdos</Link>
       </div>
 
       <AnimatePresence>
@@ -252,8 +252,8 @@ function EbookReaderPage() {
               )}
 
               <div className="p-6 md:p-12 mt-4">
-                <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <h1 className="font-display text-3xl font-black tracking-tight md:text-4xl">
+                <div className="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <h1 className="font-display text-2xl font-black tracking-tight sm:text-3xl md:text-4xl">
                     {activeChapter?.title}
                   </h1>
                   {activeChapter?.reading_minutes && (
@@ -263,7 +263,7 @@ function EbookReaderPage() {
                   )}
                 </div>
 
-                <div className="prose prose-invert max-w-4xl mx-auto prose-p:text-muted-foreground prose-headings:text-foreground prose-p:leading-relaxed prose-p:text-lg">
+                <div className="prose prose-invert max-w-4xl mx-auto prose-p:text-muted-foreground prose-headings:text-foreground prose-p:leading-relaxed prose-p:text-base sm:text-lg">
                   {activeChapter?.content ? (
                     <div className="text-center md:text-left leading-relaxed text-lg text-white/80" dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
                   ) : (

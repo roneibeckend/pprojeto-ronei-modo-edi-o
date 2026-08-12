@@ -200,12 +200,12 @@ function CoursePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-0 sm:px-4">
-      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between mb-8 sm:px-0">
+      <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 sm:px-0">
         <PageHeader
           title={course.title}
           subtitle={`Professor: ${course.teacher_name || "Equipe Espetinho na Veia"}`}
         />
-        <Link to="/app/cursos" className="btn-ghost-fire text-sm w-full sm:w-auto">← Todos os cursos</Link>
+        <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4">← Todos os cursos</Link>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
@@ -222,10 +222,10 @@ function CoursePage() {
               />
             </Suspense>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 p-5 glass border-t-0 rounded-t-none">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5 glass border-t-0 rounded-t-none">
               <div className="min-w-0">
-                <div className="text-xs uppercase tracking-widest text-muted-foreground">Aula atual</div>
-                <div className="font-display text-lg font-bold">{active.title}</div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Aula atual</div>
+                <div className="font-display text-base sm:text-lg font-bold truncate">{active.title}</div>
               </div>
               <button 
                 onClick={() => toggleLessonProgress({ 
@@ -235,7 +235,7 @@ function CoursePage() {
                   courseId: course.id
                 })}
                 disabled={isTogglingLesson}
-                className={`btn-fire text-sm touch-target flex items-center gap-2 ${isLessonCompleted(active.id) ? 'bg-green-600 shadow-green-600/20' : ''}`}
+                className={`btn-fire text-xs sm:text-sm touch-target flex items-center justify-center gap-2 w-full sm:w-auto py-3 sm:py-4 h-12 sm:h-auto ${isLessonCompleted(active.id) ? 'bg-green-600 shadow-green-600/20' : ''}`}
               >
                 {isTogglingLesson ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -249,18 +249,18 @@ function CoursePage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-0">
+          <div className="flex items-center justify-between gap-3 px-4 sm:px-0">
             <button
               disabled={!prev}
               onClick={() => prev && setActiveId(prev.id)}
-              className="btn-ghost-fire text-sm disabled:opacity-40"
+              className="btn-ghost-fire text-xs sm:text-sm disabled:opacity-40 flex-1 sm:flex-none h-10 sm:h-auto"
             >
               <ChevronLeft className="h-4 w-4" /> Aula anterior
             </button>
             <button
               disabled={!next}
               onClick={() => next && setActiveId(next.id)}
-              className="btn-ghost-fire text-sm disabled:opacity-40"
+              className="btn-ghost-fire text-xs sm:text-sm disabled:opacity-40 flex-1 sm:flex-none h-10 sm:h-auto"
             >
               Próxima aula <ChevronRight className="h-4 w-4" />
             </button>
