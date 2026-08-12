@@ -800,8 +800,11 @@ export type Database = {
           from_name: string
           id: string
           is_enabled: boolean | null
+          last_validation_at: string | null
           reply_to: string | null
           updated_at: string | null
+          validation_error: string | null
+          validation_status: string | null
         }
         Insert: {
           created_at?: string | null
@@ -809,8 +812,11 @@ export type Database = {
           from_name?: string
           id?: string
           is_enabled?: boolean | null
+          last_validation_at?: string | null
           reply_to?: string | null
           updated_at?: string | null
+          validation_error?: string | null
+          validation_status?: string | null
         }
         Update: {
           created_at?: string | null
@@ -818,8 +824,47 @@ export type Database = {
           from_name?: string
           id?: string
           is_enabled?: boolean | null
+          last_validation_at?: string | null
           reply_to?: string | null
           updated_at?: string | null
+          validation_error?: string | null
+          validation_status?: string | null
+        }
+        Relationships: []
+      }
+      email_templates: {
+        Row: {
+          content_html: string
+          content_text: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          subject: string
+          updated_at: string | null
+          variables: Json | null
+        }
+        Insert: {
+          content_html: string
+          content_text?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          subject: string
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Update: {
+          content_html?: string
+          content_text?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          subject?: string
+          updated_at?: string | null
+          variables?: Json | null
         }
         Relationships: []
       }
