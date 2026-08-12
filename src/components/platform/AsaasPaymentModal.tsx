@@ -132,12 +132,22 @@ export function AsaasPaymentModal() {
                 <ExternalLink className="h-4 w-4" />
               </button>
 
+              <button
+                onClick={handleVerifyNow}
+                disabled={checking}
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold transition hover:bg-white/10 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {checking ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                {checking ? 'Verificando pagamento...' : 'Já paguei — verificar agora'}
+              </button>
+
               {opened && (
                 <div className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                   <Loader2 className="h-3.5 w-3.5 animate-spin text-fire" />
                   Aguardando confirmação do pagamento
                 </div>
               )}
+
             </motion.div>
           )}
         </AnimatePresence>
