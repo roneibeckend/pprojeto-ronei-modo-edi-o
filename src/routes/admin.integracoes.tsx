@@ -27,7 +27,10 @@ import {
   Mail,
   History,
   SendHorizontal,
-  BellRing
+  BellRing,
+  Percent,
+  ToggleLeft,
+  ToggleRight
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
