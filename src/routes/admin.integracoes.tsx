@@ -915,10 +915,10 @@ function OffersIntegrationPanel() {
 
   const saveOfferSettings = async (updates: { status?: boolean, discount?: number }) => {
     try {
-      const settings = offerSettings?.settings || {};
+      const existingSettings = offerSettings?.settings as Record<string, any> || {};
       const newSettings = {
-        ...settings,
-        discountPercentage: updates.discount !== undefined ? updates.discount : (settings.discountPercentage || 15)
+        ...existingSettings,
+        discountPercentage: updates.discount !== undefined ? updates.discount : (existingSettings.discountPercentage || 15)
       };
 
       const { error } = await supabase
