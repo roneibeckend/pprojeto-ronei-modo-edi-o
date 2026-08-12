@@ -391,15 +391,18 @@ function EbookReaderPage() {
               {ebook.opening_video_url && (
                 <div className="mb-4">
                   <button
-                    onClick={() => setShowOpeningVideo(true)}
+                    onClick={() => {
+                      setShowIntroVideo(true);
+                      setIsPlayerMinimized(false);
+                    }}
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm transition-all bg-fire/5 border border-fire/10 text-fire hover:bg-fire/10 group"
                   >
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-fire/20 text-fire group-hover:scale-110 transition-transform">
                       <Play className="h-4 w-4 fill-current" />
                     </div>
                     <div>
-                      <div className="font-bold">Vídeo de Abertura</div>
-                      <div className="text-[10px] opacity-60 uppercase tracking-widest">Introdução do Autor</div>
+                      <div className="font-bold">Vídeo de Apresentação</div>
+                      <div className="text-[10px] opacity-60 uppercase tracking-widest">Introdução Fixa</div>
                     </div>
                   </button>
                 </div>
