@@ -62,6 +62,8 @@ function CoursePage() {
           description: course.description,
           value: course.price || 0,
           affiliateRef: getAffiliateRef() || undefined,
+          paymentType: course.payment_type || 'unique',
+          dueDays: course.due_days || 3,
         }
       });
       

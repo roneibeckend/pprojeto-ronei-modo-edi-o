@@ -87,6 +87,8 @@ function EbookReaderPage() {
           description: ebook.description,
           value: ebook.price || 0,
           affiliateRef: getAffiliateRef() || undefined,
+          paymentType: ebook.payment_type || 'unique',
+          dueDays: ebook.due_days || 3,
         }
       });
       
