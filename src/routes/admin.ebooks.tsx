@@ -147,7 +147,8 @@ function AdminEbooksPage() {
               price: 0,
               is_locked: false,
               category: "",
-              cover_url: ""
+              cover_url: "",
+              payment_type: "unique"
             }); 
             setIsModalOpen(true); 
           }}
