@@ -6,35 +6,40 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2, ExternalLink, CheckCircle2, ShoppingBag, ArrowRight, ShieldCheck } from "lucide-react";
+import { Loader2, ExternalLink, CheckCircle2, ShoppingBag, ArrowRight, ShieldCheck, RefreshCw } from "lucide-react";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { verifyAsaasPayment } from "@/lib/asaas.functions";
+import { toast } from "sonner";
 
 export function AsaasPaymentModal() {
   const { isOpen, paymentUrl, title, productId, productType, status, closePayment, setStatus } = usePaymentModal();
-  const { isEnrolledInCourse, isEnrolledInEbook } = useEnrollments();
+  const { isEnrolledInCourse, isEnrolledInEbook, refetchEnrollments } = useEnrollments();
   const [opened, setOpened] = React.useState(false);
+  const [checking, setChecking] = React.useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
     if (isOpen) setOpened(false);
   }, [isOpen, paymentUrl]);
 
-  // Polling: detecta a liberação do acesso assim que o webhook confirma o pagamento
+  // Polling: revalida as matrículas e confirma automaticamente após o webhook
   React.useEffect(() => {
     if (!isOpen || !productId || !productType || status === 'confirmed') return;
 
-    const interval = window.setInterval(() => {
+    const check = async () => {
+      await refetchEnrollments();
       const isEnrolled = productType === 'course'
         ? isEnrolledInCourse(productId)
         : isEnrolledInEbook(productId);
       if (isEnrolled) setStatus('confirmed');
-    }, 3000);
+    };
 
+    const interval = window.setInterval(check, 4000);
     return () => clearInterval(interval);
-  }, [isOpen, productId, productType, status, isEnrolledInCourse, isEnrolledInEbook, setStatus]);
+  }, [isOpen, productId, productType, status, isEnrolledInCourse, isEnrolledInEbook, setStatus, refetchEnrollments]);
 
   // Redirecionamento automático após confirmação
   React.useEffect(() => {
@@ -52,6 +57,27 @@ export function AsaasPaymentModal() {
     window.open(paymentUrl, '_blank', 'noopener,noreferrer');
     setOpened(true);
   };
+
+  // Verificação manual: consulta o Asaas diretamente (caso o webhook falhe)
+  const handleVerifyNow = async () => {
+    if (!productId || !productType) return;
+    setChecking(true);
+    try {
+      const result = await verifyAsaasPayment({ data: { productId, productType } });
+      await refetchEnrollments();
+      if (result.confirmed) {
+        setStatus('confirmed');
+        toast.success("Pagamento confirmado! Acesso liberado.");
+      } else {
+        toast.info(result.message || "Ainda não localizamos a confirmação do pagamento.");
+      }
+    } catch (error: any) {
+      toast.error(error?.message || "Não foi possível verificar o pagamento agora.");
+    } finally {
+      setChecking(false);
+    }
+  };
+
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closePayment()}>
