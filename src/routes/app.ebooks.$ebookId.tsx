@@ -13,6 +13,7 @@ import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePaymentModal } from "@/components/platform/AsaasPaymentModal";
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
   head: () => ({
@@ -44,6 +45,7 @@ function EbookReaderPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOpeningVideo, setShowOpeningVideo] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
+  const { openPayment } = usePaymentModal();
 
   useEffect(() => {
     if (ebook?.opening_video_url) {
@@ -93,7 +95,7 @@ function EbookReaderPage() {
       });
       
       if (result.url) {
-        window.location.href = result.url;
+        openPayment(result.url, ebook.title);
       }
     } catch (error: any) {
       console.error("Erro ao processar compra:", error);

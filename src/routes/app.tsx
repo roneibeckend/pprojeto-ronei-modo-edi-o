@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Shell } from "@/components/platform/Shell";
 import { supabase } from "@/integrations/supabase/client";
+import { AsaasPaymentModal } from "@/components/platform/AsaasPaymentModal";
 
 export const Route = createFileRoute("/app")({
   ssr: false,
@@ -58,8 +59,11 @@ function AppGate() {
   }
 
   return (
-    <Shell>
-      <Outlet />
-    </Shell>
+    <>
+      <Shell>
+        <Outlet />
+      </Shell>
+      <AsaasPaymentModal />
+    </>
   );
 }

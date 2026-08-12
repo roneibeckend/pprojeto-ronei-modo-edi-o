@@ -1,5 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Play, Sparkles, Lock, ShoppingCart } from "lucide-react";
+import { Play, Sparkles, Lock, ShoppingCart, Loader2 } from "lucide-react";
+import { usePaymentModal } from "@/components/platform/AsaasPaymentModal";
+import { createAsaasPaymentLink } from "@/lib/asaas.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
+import { toast } from "sonner";
+import { useState } from "react";
 import { PageHeader } from "@/components/platform/Shell";
 import { ProgressSummary } from "@/components/platform/ProgressSummary";
 import { IMG } from "@/lib/platform-data";
@@ -16,6 +22,36 @@ export const Route = createFileRoute("/app/cursos/")({
 
 function CoursesPage() {
   const { courseEnrollments, ebookEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const createPaymentLink = useServerFn(createAsaasPaymentLink);
+  const { openPayment } = usePaymentModal();
+
+  const handlePurchase = async (item: any, type: 'course' | 'ebook') => {
+    try {
+      setProcessingId(item.id);
+      const result = await createPaymentLink({
+        data: {
+          productId: item.id,
+          productType: type,
+          title: item.title,
+          description: item.description,
+          value: item.price || 0,
+          affiliateRef: getAffiliateRef() || undefined,
+          paymentType: item.payment_type || 'unique',
+          dueDays: item.due_days || 3,
+        }
+      });
+      
+      if (result.url) {
+        openPayment(result.url, item.title);
+      }
+    } catch (error: any) {
+      console.error("Erro ao processar compra:", error);
+      toast.error(error.message || "Erro ao gerar link de pagamento.");
+    } finally {
+      setProcessingId(null);
+    }
+  };
   
   const { data: dbCourses, isLoading: isLoadingCourses } = useQuery({
     queryKey: ["courses"],
@@ -215,13 +251,14 @@ function CoursesPage() {
                       </div>
                     </div>
                   </div>
-                  <Link 
-                    to="/app/cursos/$courseId" 
-                    params={{ courseId: c.id }}
-                    className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10"
+                  <button 
+                    onClick={() => handlePurchase(c, 'course')}
+                    disabled={processingId === c.id}
+                    className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10 disabled:opacity-50"
                   >
-                    <ShoppingCart className="h-4 w-4" /> Comprar e Liberar
-                  </Link>
+                    {processingId === c.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-4 w-4" />}
+                    {processingId === c.id ? "Processando..." : "Comprar e Liberar"}
+                  </button>
                 </div>
               </article>
             ))}
@@ -269,13 +306,14 @@ function CoursesPage() {
                       </div>
                     </div>
                   </div>
-                  <Link 
-                    to="/app/ebooks/$ebookId" 
-                    params={{ ebookId: e.id }}
-                    className="btn-ghost-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg"
+                  <button 
+                    onClick={() => handlePurchase(e, 'ebook')}
+                    disabled={processingId === e.id}
+                    className="btn-ghost-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg disabled:opacity-50"
                   >
-                    <ShoppingCart className="h-4 w-4" /> Comprar e Liberar
-                  </Link>
+                    {processingId === e.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-4 w-4" />}
+                    {processingId === e.id ? "Processando..." : "Comprar e Liberar"}
+                  </button>
                 </div>
               </article>
             ))}
