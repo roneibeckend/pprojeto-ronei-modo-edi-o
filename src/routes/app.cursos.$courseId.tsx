@@ -229,13 +229,14 @@ function CoursePage() {
       localStorage.setItem(`course_last_watched_${course.id}`, activeId);
     }
   }, [activeId, course.id]);
-10: 
-11:   // Scroll to top when lesson changes
-12:   useEffect(() => {
-13:     if (activeId) {
-14:       window.scrollTo({ top: 0, behavior: 'smooth' });
-15:     }
-16:   }, [activeId]);
+
+  // Scroll to top when lesson changes
+  useEffect(() => {
+    if (activeId) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeId]);
+
 
 
   const [tab, setTab] = useState<"materiais" | "anotacoes">("materiais");
