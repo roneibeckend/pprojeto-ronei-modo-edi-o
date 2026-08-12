@@ -112,6 +112,32 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                     }, { onConflict: 'external_id' });
                     
                     console.log(`[Webhook Asaas] Pagamento registrado: R$ ${netAmount.toFixed(2)} (Líquido)`);
+                    
+                    // --- ENVIO DE EMAIL DE BOAS VINDAS ---
+                    if (customerEmail && granted) {
+                      try {
+                        const { data: profile } = await supabaseAdmin
+                          .from('profiles')
+                          .select('name')
+                          .eq('id', userId)
+                          .maybeSingle();
+
+                        await sendEmail({
+                          to: customerEmail,
+                          template: 'acesso_liberado_produto',
+                          data: {
+                            userName: profile?.name || 'Cliente',
+                            productName: productType === 'course' ? 'seu Curso' : 'seu E-book',
+                            productType: productType,
+                            productId: productId,
+                            subject: 'Acesso Liberado! 🚀 Seu conteúdo já está disponível'
+                          }
+                        });
+                        console.log(`[Webhook Asaas] Email de acesso enviado para ${customerEmail}`);
+                      } catch (emailErr) {
+                        console.error('[Webhook Asaas] Erro ao enviar email de boas-vindas:', emailErr);
+                      }
+                    }
                   }
                 } catch (e) {
                   console.error('[Webhook Asaas] Erro ao registrar pagamento:', e);
