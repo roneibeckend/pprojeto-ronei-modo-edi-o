@@ -316,7 +316,7 @@ function CoursePage() {
                       setActiveId(m.lessons[0].id);
                     }
                   }}
-                  className="w-full text-left px-2 pb-2 text-sm font-semibold hover:text-fire transition-colors"
+                  className="w-full text-left px-2 pb-2 text-sm font-semibold hover:text-fire transition-colors break-words"
                 >
                   {m.title}
                 </button>
