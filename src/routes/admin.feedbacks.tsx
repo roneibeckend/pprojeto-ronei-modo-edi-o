@@ -71,6 +71,25 @@ function AdminFeedbacksPage() {
     }
   });
 
+  const replyMutation = useMutation({
+    mutationFn: async ({ id, admin_reply }: { id: string, admin_reply: string }) => {
+      const { error } = await supabase
+        .from("course_feedback")
+        .update({ admin_reply, updated_at: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-feedbacks"] });
+      toast.success("Resposta enviada com sucesso!");
+      setActiveReplyId(null);
+      setReplyText("");
+    },
+    onError: (error: any) => {
+      toast.error("Erro ao enviar resposta: " + error.message);
+    }
+  });
+
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
