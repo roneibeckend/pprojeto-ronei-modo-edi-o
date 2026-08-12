@@ -17,11 +17,12 @@ DECLARE
     v_item_title TEXT;
     v_total_items INTEGER;
     v_completed_items INTEGER;
+    v_notification_id UUID;
 BEGIN
     v_user_id := NEW.user_id;
     v_item_id := NEW.item_id;
     v_item_type := NEW.item_type;
-    v_last_milestone := COALESCE(NEW.last_milestone, 0);
+    v_last_milestone := COALESCE(OLD.last_milestone, 0);
 
     -- Calcula a porcentagem atual baseada no tipo
     IF v_item_type = 'ebook' THEN
@@ -49,19 +50,31 @@ BEGIN
         -- Marcos: 25%, 50%, 75%, 100%
         IF v_current_percent >= 100 AND v_last_milestone < 100 THEN
             INSERT INTO public.notifications (title, message, type, target_type)
-            VALUES ('Conclusão Incrível!', 'Parabéns! Você concluiu 100% do conteúdo: ' || v_item_title, 'general', 'segmented');
+            VALUES ('Conclusão Incrível!', 'Parabéns! Você concluiu 100% do conteúdo: ' || v_item_title, 'general', 'segmented')
+            RETURNING id INTO v_notification_id;
+            
+            INSERT INTO public.user_notifications (user_id, notification_id) VALUES (v_user_id, v_notification_id);
             NEW.last_milestone := 100;
         ELSIF v_current_percent >= 75 AND v_last_milestone < 75 THEN
             INSERT INTO public.notifications (title, message, type, target_type)
-            VALUES ('Quase lá!', 'Você já completou 75% de ' || v_item_title || '. Continue assim!', 'general', 'segmented');
+            VALUES ('Quase lá!', 'Você já completou 75% de ' || v_item_title || '. Continue assim!', 'general', 'segmented')
+            RETURNING id INTO v_notification_id;
+            
+            INSERT INTO public.user_notifications (user_id, notification_id) VALUES (v_user_id, v_notification_id);
             NEW.last_milestone := 75;
         ELSIF v_current_percent >= 50 AND v_last_milestone < 50 THEN
             INSERT INTO public.notifications (title, message, type, target_type)
-            VALUES ('Metade do caminho!', 'Você atingiu 50% de ' || v_item_title || '. Ótimo progresso!', 'general', 'segmented');
+            VALUES ('Metade do caminho!', 'Você atingiu 50% de ' || v_item_title || '. Ótimo progresso!', 'general', 'segmented')
+            RETURNING id INTO v_notification_id;
+            
+            INSERT INTO public.user_notifications (user_id, notification_id) VALUES (v_user_id, v_notification_id);
             NEW.last_milestone := 50;
         ELSIF v_current_percent >= 25 AND v_last_milestone < 25 THEN
             INSERT INTO public.notifications (title, message, type, target_type)
-            VALUES ('Bom começo!', 'Você completou os primeiros 25% de ' || v_item_title, 'general', 'segmented');
+            VALUES ('Bom começo!', 'Você completou os primeiros 25% de ' || v_item_title, 'general', 'segmented')
+            RETURNING id INTO v_notification_id;
+            
+            INSERT INTO public.user_notifications (user_id, notification_id) VALUES (v_user_id, v_notification_id);
             NEW.last_milestone := 25;
         END IF;
     END IF;
@@ -77,7 +90,3 @@ BEFORE UPDATE ON public.progress_tracking
 FOR EACH ROW
 WHEN (NEW.item_type IN ('course', 'ebook'))
 EXECUTE FUNCTION public.check_progress_milestones();
-
--- Grants
-GRANT ALL ON public.notifications TO authenticated;
-GRANT ALL ON public.notifications TO service_role;

@@ -160,7 +160,22 @@ function CoursePage() {
 
   // Lógica normal do curso
   // const flat defined above
-  const [activeId, setActiveId] = useState<string | undefined>(flat[0]?.id);
+  const [activeId, setActiveId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    const lastWatched = localStorage.getItem(`course_last_watched_${course.id}`);
+    if (lastWatched && flat.some((l: any) => l.id === lastWatched)) {
+      setActiveId(lastWatched);
+    } else if (flat.length > 0) {
+      setActiveId(flat[0].id);
+    }
+  }, [course.id, flat]);
+
+  useEffect(() => {
+    if (activeId) {
+      localStorage.setItem(`course_last_watched_${course.id}`, activeId);
+    }
+  }, [activeId, course.id]);
 
   const [tab, setTab] = useState<"materiais" | "anotacoes">("materiais");
   const [note, setNote] = useState("");
