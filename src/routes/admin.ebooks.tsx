@@ -398,7 +398,7 @@ function AdminEbooksPage() {
                 </form>
               </TabsContent>
 
-              <TabsContent value="content" className="flex-1 mt-0">
+              <TabsContent value="content" className="flex-1 mt-0 outline-none">
                 {editingItem?.id && <EbookContentEditor ebookId={editingItem.id} />}
               </TabsContent>
             </Tabs>
