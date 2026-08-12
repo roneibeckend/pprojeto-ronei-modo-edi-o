@@ -539,7 +539,7 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
           const errorMessage = err.message || "Erro desconhecido";
           
           if (errorMessage.includes("LIMITE_EXCEDIDO")) {
-             toast.error("O arquivo é muito grande para ser processado automaticamente (limite de 10MB). Por favor, divida o PDF em arquivos menores.", {
+             toast.error("O arquivo é muito grande para ser processado automaticamente (limite de 60MB). Por favor, divida o PDF em arquivos menores.", {
                duration: 8000
              });
           } else if (errorMessage.includes("TIMEOUT_PDF_INFRA") || errorMessage.includes("demorou muito")) {
@@ -550,13 +550,14 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
               errorMessage.includes("instabilidade na infraestrutura") || 
               errorMessage.includes("This page didn't load") ||
               errorMessage.includes("INFRA_ERROR_HTML")) {
-             toast.error("Falha Técnica Temporária: O servidor de processamento encontrou uma instabilidade. Isso é comum com PDFs densos. Tente novamente em instantes com um arquivo mais simples.", {
+             toast.error("Falha Técnica Temporária: O servidor de processamento encontrou uma instabilidade. Isso é comum com PDFs densos ou próximos ao limite de 60MB. Tente novamente em instantes.", {
                duration: 8000
              });
           } else {
              toast.error("Não foi possível importar o PDF: " + errorMessage);
           }
         }
+
 
       };
       reader.readAsDataURL(file);
