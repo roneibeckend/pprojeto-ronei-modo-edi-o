@@ -25,7 +25,10 @@ import {
   Play,
   FileUp,
   ShieldCheck,
-  ChevronUp
+  ChevronUp,
+  AlertCircle,
+  CheckCircle2,
+  HelpCircle
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -44,6 +47,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { importEbookFromFile } from "@/lib/ebook-import.functions";
 import { fixEbookVisibility } from "@/lib/ebook-visibility-fix.functions";
 import { reorderChapter } from "@/lib/ebook-reorder.functions";
+import { getSEOSuggestions } from "@/lib/seo-ebook.functions";
 
 export const Route = createFileRoute("/admin/ebooks")({
   head: () => ({ meta: [{ title: "Gestão de E-books · Admin" }] }),
@@ -301,17 +305,30 @@ function AdminEbooksPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do E-book</label>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do E-book</label>
+                          {editingItem?.title && (
+                            <SEOTooltip 
+                              type="title" 
+                              content={editingItem.title} 
+                              keywords={editingItem.keywords} 
+                            />
+                          )}
+                        </div>
                         <input 
                           required 
                           value={editingItem?.title || ""} 
                           onChange={e => setEditingItem({...editingItem, title: e.target.value})} 
-                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
+                          className={cn(
+                            "w-full bg-white/5 border p-3 rounded-lg text-sm outline-none transition-colors",
+                            editingItem?.title?.length >= 40 && editingItem?.title?.length <= 60 ? "border-green-500/30 focus:border-green-500" : 
+                            editingItem?.title?.length > 0 ? "border-yellow-500/30 focus:border-yellow-500" : "border-white/10 focus:border-[#ff6a00]"
+                          )}
                         />
                       </div>
                       
-                      <div className="space-y-1.5">
+                      <div className="space-y-2">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Subtítulo</label>
                         <input 
                           value={editingItem?.subtitle || ""} 
@@ -320,13 +337,49 @@ function AdminEbooksPage() {
                         />
                       </div>
 
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição</label>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição SEO (Meta Description)</label>
+                          {editingItem?.description && (
+                            <SEOTooltip 
+                              type="description" 
+                              content={editingItem.description} 
+                              keywords={editingItem.keywords} 
+                            />
+                          )}
+                        </div>
                         <textarea 
                           value={editingItem?.description || ""} 
                           onChange={e => setEditingItem({...editingItem, description: e.target.value})} 
                           rows={4}
-                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors resize-none" 
+                          placeholder="Breve resumo para motores de busca (120-160 caracteres)."
+                          className={cn(
+                            "w-full bg-white/5 border p-3 rounded-lg text-sm outline-none transition-colors resize-none",
+                            editingItem?.description?.length >= 120 && editingItem?.description?.length <= 160 ? "border-green-500/30 focus:border-green-500" : 
+                            editingItem?.description?.length > 0 ? "border-yellow-500/30 focus:border-yellow-500" : "border-white/10 focus:border-[#ff6a00]"
+                          )}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Palavras-chave (separadas por vírgula)</label>
+                          {editingItem?.keywords && (
+                            <SEOTooltip 
+                              type="keywords" 
+                              content={editingItem.keywords} 
+                            />
+                          )}
+                        </div>
+                        <input 
+                          value={editingItem?.keywords || ""} 
+                          onChange={e => setEditingItem({...editingItem, keywords: e.target.value})} 
+                          placeholder="ex: churrasco, espetinho, receitas, gourmet"
+                          className={cn(
+                            "w-full bg-white/5 border p-3 rounded-lg text-sm outline-none transition-colors",
+                            editingItem?.keywords?.split(',').filter((k: string) => k.trim()).length >= 5 ? "border-green-500/30 focus:border-green-500" : 
+                            editingItem?.keywords?.length > 0 ? "border-yellow-500/30 focus:border-yellow-500" : "border-white/10 focus:border-[#ff6a00]"
+                          )}
                         />
                       </div>
                     </div>
@@ -810,6 +863,70 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function SEOTooltip({ type, content, keywords }: { type: 'title' | 'description' | 'keywords', content: string, keywords?: string }) {
+  const [suggestions, setSuggestions] = useState<any>(null);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      const result = await getSEOSuggestions({ 
+        data: { 
+          title: type === 'title' ? content : undefined,
+          description: type === 'description' ? content : undefined,
+          keywords: type === 'keywords' ? content : keywords
+        } 
+      });
+      setSuggestions(result[type]);
+    };
+    if (content) fetchSuggestions();
+  }, [content, keywords, type]);
+
+  if (!suggestions || suggestions.suggestions.length === 0) {
+    if (suggestions?.score === 'optimal') {
+      return (
+        <div className="flex items-center gap-1 text-[10px] text-green-500 font-bold uppercase tracking-tighter">
+          <CheckCircle2 className="h-3 w-3" /> SEO Otimizado
+        </div>
+      );
+    }
+    return null;
+  }
+
+  return (
+    <div className="relative group">
+      <button 
+        type="button"
+        onMouseEnter={() => setShow(true)}
+        onMouseLeave={() => setShow(false)}
+        className={cn(
+          "flex items-center gap-1 text-[10px] font-bold uppercase tracking-tighter transition-colors",
+          suggestions.score === 'optimal' ? "text-green-500" : "text-yellow-500"
+        )}
+      >
+        <AlertCircle className="h-3 w-3" /> 
+        {suggestions.score === 'optimal' ? 'SEO Otimizado' : 'Sugestões de SEO'}
+      </button>
+
+      {show && (
+        <div className="absolute right-0 bottom-full mb-2 w-64 p-3 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-[100] animate-in fade-in slide-in-from-bottom-1">
+          <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/5">
+            <HelpCircle className="h-4 w-4 text-[#ff6a00]" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Análise de SEO</span>
+          </div>
+          <ul className="space-y-2">
+            {suggestions.suggestions.map((s: string, i: number) => (
+              <li key={i} className="text-[11px] text-white/80 leading-relaxed flex gap-2">
+                <span className="text-[#ff6a00] shrink-0">•</span>
+                {s}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
