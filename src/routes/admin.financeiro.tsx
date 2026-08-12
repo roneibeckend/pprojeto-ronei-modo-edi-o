@@ -380,6 +380,40 @@ function FinancePage() {
                       className="max-w-[150px] bg-black border border-white/10 rounded-sm px-2 py-1 text-[10px] text-white outline-none focus:border-orange-500"
                     >
                       <option value="">Vincular Usuário</option>
+                      {users?.map((u) => (
+                        <option key={u.id} value={u.id}>
+                          {u.name || u.email}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-20">
+                        <input
+                          type="number"
+                          value={p.percent}
+                          onChange={(e) => updatePartner(p.id, { percent: parseFloat(e.target.value) || 0 })}
+                          className="w-full rounded-sm bg-black/60 px-2 py-1 text-center font-display font-extrabold text-white outline-none focus:bg-black text-[16px]"
+                        />
+                        <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-[10px] text-white/40">%</span>
+                      </div>
+                      <div className="flex flex-col items-start ml-4">
+                        <span className="text-[10px] uppercase font-black text-white/20 mb-1">Lucro Individual</span>
+                        <div className="px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-display font-black text-sm">
+                          {brl(share)}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => removePartner(p.id)}
+                      className="p-1 text-white/20 transition hover:text-red-400"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                      <option value="">Vincular Usuário</option>
                       {users?.map(u => (
                         <option key={u.id} value={u.id}>
                           {u.name || u.email}
