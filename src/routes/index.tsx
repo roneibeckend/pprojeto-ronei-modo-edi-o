@@ -2,8 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";<span className="
 import { useEffect, useRef, useState, type JSX } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useQuery } from "@tanstack/react-query";
 import { trackEvent, trackInitiateCheckout } from "@/lib/pixel";
 import { supabase } from "@/integrations/supabase/client";
+
 import {
   Flame,
   Check,
@@ -1438,7 +1440,7 @@ function Testimonials() {
   ];
 
   const displayItems = realFeedbacks && realFeedbacks.length > 0 
-    ? realFeedbacks.map(f => ({
+    ? realFeedbacks.map((f: any) => ({
         name: f.profile?.name || "Aluno",
         role: "Aluno do Curso",
         text: f.comment || "",
@@ -1446,6 +1448,7 @@ function Testimonials() {
         rating: f.rating
       }))
     : staticItems;
+
 
   return (
     <section className="relative py-14 sm:py-20">
@@ -1460,7 +1463,8 @@ function Testimonials() {
           </p>
         </div>
         <div className="mt-14 grid gap-5 md:grid-cols-3">
-          {displayItems.map((t, i) => (
+          {displayItems.map((t: any, i: number) => (
+
             <div key={i} className="glass flex flex-col rounded-2xl p-6 hover:border-[color:var(--gold)]/40 transition-colors">
               <div className="flex gap-0.5 text-[color:var(--gold)]">
                 {Array.from({ length: 5 }).map((_, starIdx) => (
