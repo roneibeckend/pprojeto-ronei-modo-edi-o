@@ -5,7 +5,13 @@ import * as pdf from "pdf-parse";
 
 // Using require for pdf-parse if default import fails or to handle type mismatch
 // @ts-ignore
-const pdfParser = pdf.default || pdf;
+let pdfParser: any;
+try {
+  // @ts-ignore
+  pdfParser = pdf.default || pdf;
+} catch (e) {
+  console.error("Critical: Failed to initialize pdf-parse", e);
+}
 
 interface ProcessedSection {
   title: string;
@@ -16,8 +22,11 @@ interface ProcessedSection {
 async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
   let rawText = "";
   try {
+    if (!pdfParser) {
+      throw new Error("O mecanismo de processamento de PDF não foi inicializado corretamente.");
+    }
     const data = await pdfParser(buffer);
-    rawText = data.text;
+    rawText = data?.text || "";
     
     // Check if the content is an HTML error page
     if (rawText.includes("<!doctype html>") || rawText.includes("<html") || rawText.includes("This page didn't load")) {
@@ -47,8 +56,19 @@ async function processPdfContent(buffer: Buffer): Promise<ProcessedSection[]> {
         };
       });
   } catch (error: any) {
+    // Se for erro de timeout ou rede (comum em Cloudflare Workers)
+    if (error.message?.includes("fetch") || error.code === "ETIMEDOUT") {
+       throw new Error("O servidor demorou muito para responder. Tente um arquivo PDF menor.");
+    }
+
+    // Se o erro contém o HTML de falha de infraestrutura
+    if (error.message?.includes("<!doctype html>") || error.message?.includes("This page didn't load")) {
+       console.error("Infra error detected in exception:", error.message);
+       throw new Error("Ocorreu uma instabilidade na infraestrutura de processamento. Por favor, tente novamente em alguns instantes.");
+    }
+
     // If it's already our custom error, rethrow it
-    if (error.message && error.message.includes("O serviço de PDF")) {
+    if (error.message && (error.message.includes("O serviço de PDF") || error.message.includes("mecanismo"))) {
       throw error;
     }
     console.error("Error parsing PDF:", error);
