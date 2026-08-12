@@ -375,8 +375,9 @@ function CoursePage() {
                   {m.video_url && (
                     <div className="px-2">
                       <div className="relative aspect-video rounded-lg overflow-hidden glass border border-white/5">
-                        <Suspense fallback={<Skeleton className="w-full h-full" />}>
+                        <Suspense fallback={<div className="w-full h-full bg-white/5 animate-pulse" />}>
                           <VideoPlayer
+                            key={`module-${m.id}`}
                             videoId={`module-${m.id}`}
                             src={m.video_url}
                             title={`Intro: ${m.title}`}
