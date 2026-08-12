@@ -556,7 +556,7 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
               errorMessage.includes("instabilidade na infraestrutura") || 
               errorMessage.includes("This page didn't load") ||
               errorMessage.includes("INFRA_ERROR_HTML")) {
-             toast.error("Instabilidade no Processamento: O servidor encontrou uma dificuldade com a densidade deste arquivo. Sugerimos dividir o arquivo em partes menores (ex: 20-30 páginas por vez) e importar cada parte separadamente.", {
+             toast.error("Instabilidade no Processamento: O servidor encontrou uma dificuldade com a densidade deste arquivo. Se o arquivo for pequeno (menos de 30 páginas), tente simplificar o conteúdo (remover imagens pesadas) ou converter o formato. Se for grande, divida-o em partes menores.", {
                duration: 10000
              });
           } else {
