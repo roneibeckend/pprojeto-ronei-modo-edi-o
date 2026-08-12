@@ -13,6 +13,8 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
     description: z.string().optional(),
     value: z.number(),
     affiliateRef: z.string().optional(),
+    paymentType: z.enum(['unique', 'recurring']).optional(),
+    dueDays: z.number().optional(),
   }).parse(data))
   .handler(async ({ data }) => {
     // 1. Buscar credenciais do Asaas
@@ -57,9 +59,9 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
           description: data.description || `Acesso ao ${data.productType === 'course' ? 'Curso' : 'E-book'}: ${data.title}`,
           value: data.value,
           billingType: 'UNDEFINED', // Permite que o cliente escolha (Boleto, Cartão, Pix)
-          chargeType: 'DETACHED',
+          chargeType: data.paymentType === 'recurring' ? 'RECURRENT' : 'DETACHED',
+          dueDateLimitDays: data.dueDays || 3,
           endDate: null,
-          maxInstallmentCount: 1,
           notificationEnabled: true,
           externalReference: `${data.productType}:${data.productId}${data.affiliateRef ? `:ref_${data.affiliateRef}` : ''}`
         })
