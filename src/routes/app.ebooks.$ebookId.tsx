@@ -103,8 +103,16 @@ function EbookReaderPage() {
         ebookId: ebook.id,
         moduleId: activeChapter.module_id
       });
+
+      // Show feedback modal if finished
+      if (!hasSubmittedFeedback) {
+        const completedCount = chapters.filter(c => isChapterCompleted(c.id)).length;
+        if (completedCount >= chapters.length && chapters.length > 0) {
+          setShowFeedbackModal(true);
+        }
+      }
     }
-  }, [activeChapterId, activeChapter, ebook.id, completeChapter]);
+  }, [activeChapterId, activeChapter, ebook.id, completeChapter, chapters.length, isChapterCompleted]);
 
   const handlePurchase = async () => {
     if (isOfferEnabled) {
