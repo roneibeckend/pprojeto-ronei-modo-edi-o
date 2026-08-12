@@ -46,6 +46,7 @@ interface Module {
   id: string;
   title: string;
   description: string | null;
+  video_url: string | null;
   order_index: number;
 }
 
@@ -95,6 +96,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
         id: m.id,
         title: m.title,
         description: m.description,
+        video_url: m.video_url,
         order_index: m.order_index || 0
       })) || []);
 
@@ -175,7 +177,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-bold">Conteúdo do Curso</h3>
         <button 
-          onClick={() => setEditingModule({ id: crypto.randomUUID(), title: "", description: "", order_index: modules.length })}
+          onClick={() => setEditingModule({ id: crypto.randomUUID(), title: "", description: "", video_url: "", order_index: modules.length })}
           className="flex items-center gap-2 bg-[#ff6a00] px-4 py-2 rounded-lg text-xs font-bold text-black hover:bg-[#ff8c33] transition-colors"
         >
           <Plus className="h-4 w-4" /> Adicionar Módulo
@@ -233,6 +235,14 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
                 onChange={e => setEditingModule({...editingModule, title: e.target.value})}
                 className="w-full bg-white/5 border border-white/10 p-3 rounded-lg outline-none focus:border-[#ff6a00]" 
               />
+              <div className="space-y-1">
+                <VideoUpload 
+                  value={editingModule.video_url || ""} 
+                  onChange={url => setEditingModule({...editingModule, video_url: url})}
+                  bucket="course-assets"
+                  label="Vídeo de Demonstração do Módulo"
+                />
+              </div>
               <textarea 
                 placeholder="Descrição (opcional)"
                 value={editingModule.description || ""} 
