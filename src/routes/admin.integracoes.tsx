@@ -263,7 +263,33 @@ function IntegrationsPage() {
       <div className="grid gap-8 grid-cols-1 lg:grid-cols-12">
         {/* Sidebar List */}
         <div className="lg:col-span-4 space-y-4">
-          {activeCategory === 'webhooks' ? (
+          {activeCategory === 'email' ? (
+            <Card className="bg-[#111] border-white/5">
+              <CardHeader>
+                <CardTitle className="text-sm font-bold uppercase tracking-widest flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-[#ff6a00]" /> Servidores
+                </CardTitle>
+                <CardDescription className="text-[10px] text-white/40">Configuração de disparo transacional.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="p-4 rounded-xl bg-[#ff6a00]/10 border border-[#ff6a00] shadow-[0_0_20px_rgba(255,106,0,0.05)]">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="p-2 rounded-lg bg-[#ff6a00] text-black">
+                      <Mail className="h-4 w-4" />
+                    </div>
+                    <Badge variant="outline" className="text-[8px] uppercase tracking-widest border-none text-emerald-400 bg-emerald-400/10">
+                      ✅ Conectado
+                    </Badge>
+                  </div>
+                  <h4 className="font-bold text-sm text-white uppercase tracking-tight">Resend (API)</h4>
+                  <div className="flex items-center justify-between mt-4">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-white/20">Principal</span>
+                    <ChevronRight className="h-3 w-3 text-[#ff6a00]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : activeCategory === 'webhooks' ? (
 
              <Card className="bg-[#111] border-white/5">
                <CardHeader className="pb-4">
