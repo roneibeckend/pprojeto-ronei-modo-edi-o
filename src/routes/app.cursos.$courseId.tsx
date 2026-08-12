@@ -55,7 +55,11 @@ function CoursePage() {
   const { isLessonCompleted, toggleLessonProgress, isTogglingLesson } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
-  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
+  const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
+
+  useState(() => {
+    syncWithDatabase();
+  });
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);

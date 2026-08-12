@@ -45,7 +45,11 @@ function EbookReaderPage() {
   const { isChapterCompleted, completeChapter } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
-  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
+  const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
+
+  useState(() => {
+    syncWithDatabase();
+  });
   const [showOpeningVideo, setShowOpeningVideo] = useState(false);
   const [showIntroVideo, setShowIntroVideo] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
