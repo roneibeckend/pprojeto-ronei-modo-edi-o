@@ -23,7 +23,8 @@ import {
   Save,
   SendHorizontal,
   Play,
-  FileUp
+  FileUp,
+  ShieldCheck
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -39,6 +40,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { importEbookFromFile } from "@/lib/ebook-import.functions";
+import { fixEbookVisibility } from "@/lib/ebook-visibility-fix.functions";
 
 export const Route = createFileRoute("/admin/ebooks")({
   head: () => ({ meta: [{ title: "Gestão de E-books · Admin" }] }),
@@ -221,6 +223,21 @@ function AdminEbooksPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-1">
+                      <button 
+                        onClick={async () => {
+                          try {
+                            await fixEbookVisibility({ data: { ebook_id: ebook.id, user_email: 'newdroidsk8@gmail.com' } });
+                            toast.success("Visibilidade corrigida!");
+                            fetchData();
+                          } catch (err: any) {
+                            toast.error("Erro ao corrigir: " + err.message);
+                          }
+                        }}
+                        className="p-2 text-white/40 hover:text-gold transition-colors"
+                        title="Corrigir Visibilidade"
+                      >
+                        <ShieldCheck className="h-4 w-4" />
+                      </button>
                       <button 
                         onClick={() => { setEditingItem(ebook); setIsModalOpen(true); }}
                         className="p-2 text-white/40 hover:text-white transition-colors"
