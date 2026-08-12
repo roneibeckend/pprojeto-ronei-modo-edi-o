@@ -728,34 +728,37 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
                 </div>
 
                 <div className="md:col-span-3">
-                  <VideoUpload 
-                    value={editingChapter.video_url || ""}
-                    onChange={url => setEditingChapter({...editingChapter, video_url: url})}
-                    label="Vídeo do Capítulo"
-                    description="Vídeo centralizado no capítulo."
-                  />
-                  
-                  {editingChapter.video_url && (
-                    <div className="aspect-video w-full max-w-[300px] rounded-xl overflow-hidden bg-black border border-white/5">
-                      <iframe 
-                        src={editingChapter.video_url.includes('youtube.com') 
-                          ? editingChapter.video_url.replace('watch?v=', 'embed/') 
-                          : editingChapter.video_url} 
-                        className="w-full h-full"
-                        allowFullScreen
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1">
+                      <VideoUpload 
+                        value={editingChapter.video_url || ""}
+                        onChange={url => setEditingChapter({...editingChapter, video_url: url})}
+                        label="Vídeo do Capítulo"
+                        description="Opcional: Vídeo centralizado no capítulo."
                       />
                     </div>
-                  )}
+                    {editingChapter.video_url && (
+                      <div className="aspect-video w-full max-w-[200px] rounded-xl overflow-hidden bg-black border border-white/5 shrink-0 self-end">
+                        <iframe 
+                          src={editingChapter.video_url.includes('youtube.com') 
+                            ? editingChapter.video_url.replace('watch?v=', 'embed/') 
+                            : editingChapter.video_url} 
+                          className="w-full h-full"
+                          allowFullScreen
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-1.5 flex-1 flex flex-col min-h-[600px]">
+              <div className="space-y-1.5 flex-1 flex flex-col min-h-[500px] lg:min-h-[65vh]">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do Capítulo (HTML ou Markdown)</label>
                 <textarea 
                   value={editingChapter.content || ""}
                   onChange={e => setEditingChapter({...editingChapter, content: e.target.value})}
                   placeholder="Escreva aqui o conteúdo do capítulo..."
-                  className="flex-1 w-full bg-black/40 border border-white/10 p-6 rounded-xl text-base font-sans leading-relaxed outline-none focus:border-[#ff6a00] resize-none"
+                  className="flex-1 w-full bg-black/20 border border-white/10 p-6 rounded-xl text-base font-sans leading-relaxed outline-none focus:border-[#ff6a00] resize-none overflow-y-auto"
                 />
               </div>
             </div>
