@@ -83,7 +83,7 @@ export function VideoPlayer({
     return () => {
       video.removeEventListener('timeupdate', handleTimeUpdate);
     };
-  }, [videoId, onProgress, isYouTube]);
+  }, [videoId, onProgress, isYouTube, isGoogleDrive]);
 
   const togglePlay = () => {
     if (videoRef.current) {
