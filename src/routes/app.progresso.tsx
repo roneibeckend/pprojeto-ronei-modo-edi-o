@@ -103,7 +103,7 @@ function RankingPage() {
               <div className="absolute -bottom-2 left-1/2 grid h-8 w-8 -translate-x-1/2 place-items-center rounded-full bg-slate-400 font-bold text-slate-900">2</div>
             </div>
             <div className="text-center">
-              <div className="font-bold truncate max-w-[150px]">{top3[1].name}</div>
+              <div className="font-bold whitespace-normal">{top3[1].name}</div>
               <div className="text-sm text-slate-400">{top3[1].total_points} pts</div>
             </div>
             <div className="mt-4 hidden h-24 w-full rounded-t-2xl bg-slate-400/10 sm:block" />
@@ -123,7 +123,7 @@ function RankingPage() {
               <div className="absolute -bottom-2 left-1/2 grid h-10 w-10 -translate-x-1/2 place-items-center rounded-full bg-yellow-500 font-bold text-yellow-950">1</div>
             </div>
             <div className="text-center">
-              <div className="font-black text-lg truncate max-w-[200px]">{top3[0].name}</div>
+              <div className="font-black text-lg whitespace-normal">{top3[0].name}</div>
               <div className="text-sm text-yellow-500 font-bold">{top3[0].total_points} pts</div>
             </div>
             <div className="mt-4 hidden h-32 w-full rounded-t-2xl bg-yellow-500/10 sm:block" />
@@ -143,7 +143,7 @@ function RankingPage() {
               <div className="absolute -bottom-2 left-1/2 grid h-7 w-7 -translate-x-1/2 place-items-center rounded-full bg-amber-700 font-bold text-amber-100">3</div>
             </div>
             <div className="text-center">
-              <div className="font-bold truncate max-w-[150px]">{top3[2].name}</div>
+              <div className="font-bold whitespace-normal">{top3[2].name}</div>
               <div className="text-sm text-amber-700">{top3[2].total_points} pts</div>
             </div>
             <div className="mt-4 hidden h-16 w-full rounded-t-2xl bg-amber-700/10 sm:block" />
