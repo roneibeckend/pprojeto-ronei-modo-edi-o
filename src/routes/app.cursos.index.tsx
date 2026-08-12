@@ -13,6 +13,7 @@ import { IMG } from "@/lib/platform-data";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
+import { useProgress } from "@/hooks/use-progress";
 import { CourseCardSkeleton, Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/app/cursos/")({
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/app/cursos/")({
 
 function CoursesPage() {
   const { courseEnrollments, ebookEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
+  const { startedCount, finishedCount, isLoading: isLoadingProgress } = useProgress();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
@@ -71,7 +73,7 @@ function CoursesPage() {
     },
   });
 
-  if (isLoadingCourses || isLoadingEnrollments || isLoadingEbooks) {
+  if (isLoadingCourses || isLoadingEnrollments || isLoadingEbooks || isLoadingProgress) {
     return (
       <div className="pb-10 space-y-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
@@ -120,8 +122,8 @@ function CoursesPage() {
 
       <ProgressSummary 
         totalProgress={totalProgress}
-        startedCount={0}
-        finishedCount={0}
+        startedCount={startedCount}
+        finishedCount={finishedCount}
         streak={0}
       />
 

@@ -198,6 +198,29 @@ export function useProgress() {
     }
   });
 
+  const { data: globalProgressTracking, isLoading: isLoadingGlobalProgress } = useQuery({
+    queryKey: ["global-progress-tracking", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from("progress_tracking")
+        .select("*")
+        .eq("user_id", user.id);
+      
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!user?.id,
+  });
+
+  const startedCount = globalProgressTracking?.filter(t => 
+    (t.item_type === 'course' || t.item_type === 'ebook') && !!t.started_at
+  ).length || 0;
+
+  const finishedCount = globalProgressTracking?.filter(t => 
+    (t.item_type === 'course' || t.item_type === 'ebook') && !!t.completed_at
+  ).length || 0;
+
   return {
     // Cursos
     lessonProgress: lessonProgress || [],
@@ -210,6 +233,9 @@ export function useProgress() {
     isChapterCompleted: (chapterId: string) => ebookProgress?.some(p => p.chapter_id === chapterId && !!p.completed_at) || false,
     completeChapter: completeChapterMutation.mutate,
 
-    isLoading: isLoadingLessonProgress || isLoadingEbookProgress
+    // Global
+    startedCount,
+    finishedCount,
+    isLoading: isLoadingLessonProgress || isLoadingEbookProgress || isLoadingGlobalProgress
   };
 }
