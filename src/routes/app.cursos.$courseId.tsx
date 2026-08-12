@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useProgress } from "@/hooks/use-progress";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { FeedbackModal } from "@/components/platform/FeedbackModal";
+import { FeedbackSummary } from "@/components/platform/FeedbackSummary";
 import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 
