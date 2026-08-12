@@ -265,7 +265,7 @@ function EbookReaderPage() {
 
                 <div className="prose prose-invert w-full max-w-full prose-p:text-muted-foreground prose-headings:text-foreground prose-p:leading-relaxed prose-p:text-base sm:text-lg overflow-x-hidden">
                   {activeChapter?.content ? (
-                    <div className="text-center md:text-left leading-relaxed text-lg text-white/80 break-words [&_img]:max-w-full [&_img]:h-auto [&_table]:block [&_table]:overflow-x-auto [&_table]:w-full [&_p]:min-h-[1.5em] [&_p]:mb-4" style={{ lineBreak: 'anywhere' }} dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
+                    <div className="text-center md:text-left leading-relaxed text-lg text-white/80 break-words [&_img]:max-w-full [&_img]:h-auto [&_table]:block [&_table]:overflow-x-auto [&_table]:w-full [&_p]:min-h-[1.5em] [&_p]:mb-4" dangerouslySetInnerHTML={{ __html: activeChapter.content }} />
                   ) : (
                     <p className="italic opacity-50">Conteúdo em breve...</p>
                   )}
