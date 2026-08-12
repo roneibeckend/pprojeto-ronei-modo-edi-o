@@ -36,6 +36,42 @@ export async function getResendConfig() {
   };
 }
 
+export async function validateResendSender(apiKey: string, email: string) {
+  try {
+    const domain = email.split('@')[1];
+    const response = await fetch(`https://api.resend.com/domains`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro API Resend: ${response.status}`);
+    }
+
+    const { data } = await response.json();
+    const foundDomain = (data || []).find((d: any) => d.name === domain);
+
+    if (foundDomain) {
+      return {
+        status: foundDomain.status === 'verified' ? 'verified' : 'pending',
+        error: foundDomain.status !== 'verified' ? 'Domínio encontrado mas não verificado no Resend.' : null
+      };
+    }
+
+    return {
+      status: 'not_found',
+      error: 'Domínio não configurado no seu painel Resend.'
+    };
+  } catch (error: any) {
+    return {
+      status: 'error',
+      error: error.message
+    };
+  }
+}
+
 export async function sendResendEmail(params: {
   to: string | string[];
   subject: string;
@@ -73,11 +109,11 @@ export async function sendResendEmail(params: {
       throw new Error(data.message || `Erro ${response.status} ao enviar email via Resend`);
     }
 
-    // Log the email attempt in a central table if it exists
+    // Log the email attempt in a central table
     try {
       await supabaseAdmin.from('email_logs').insert({
         recipient_email: Array.isArray(params.to) ? params.to.join(', ') : params.to,
-        template_name: params.subject, // We use subject as template name if not provided
+        template_name: params.subject,
         status: 'sent',
         provider_message_id: data.id,
         payload: { tags: params.tags } as any

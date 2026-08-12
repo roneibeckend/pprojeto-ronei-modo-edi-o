@@ -79,6 +79,28 @@ export const getEmailSettings = createServerFn({ method: "GET" })
     return data;
   });
 
+export const validateSender = createServerFn({ method: "POST" })
+  .validator((data: unknown) => z.object({
+    apiKey: z.string(),
+    email: z.string().email()
+  }).parse(data))
+  .handler(async ({ data }) => {
+    const { validateResendSender } = await import("./resend.server");
+    const result = await validateResendSender(data.apiKey, data.email);
+    
+    // Update settings with validation result
+    const { data: settings } = await supabase.from('email_settings').select('id').single();
+    if (settings) {
+      await supabase.from('email_settings').update({
+        validation_status: result.status,
+        last_validation_at: new Date().toISOString(),
+        validation_error: result.error
+      }).eq('id', settings.id);
+    }
+    
+    return result;
+  });
+
 export const updateEmailSettings = createServerFn({ method: "POST" })
   .validator((data: unknown) => z.object({
     from_name: z.string().min(2),
@@ -93,5 +115,23 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
       .eq('id', (await getEmailSettings()).id);
 
     if (error) throw new Error(error.message);
+    
+    // Trigger validation if possible
+    try {
+      const { getResendConfig } = await import("./resend.server");
+      const config = await getResendConfig();
+      if (config.apiKey) {
+        const { validateResendSender } = await import("./resend.server");
+        const result = await validateResendSender(config.apiKey, data.from_email);
+        await supabase.from('email_settings').update({
+          validation_status: result.status,
+          last_validation_at: new Date().toISOString(),
+          validation_error: result.error
+        }).eq('id', (await getEmailSettings()).id);
+      }
+    } catch (e) {
+      console.warn("Could not auto-validate sender:", e);
+    }
+
     return { success: true };
   });
