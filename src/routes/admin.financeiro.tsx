@@ -16,6 +16,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { distributeProfits } from "@/lib/payouts.functions";
+import { getFinancialSummary } from "@/lib/finance.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/financeiro")({
@@ -37,17 +38,23 @@ function FinancePage() {
   const [costs, setCosts] = useState<Cost[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
 
+  const fetchFinancialSummary = useServerFn(getFinancialSummary);
+
   // Fetch initial data
   const { isLoading } = useQuery({
     queryKey: ["financial-config"],
     queryFn: async () => {
-      const [settingsRes, costsRes, partnersRes] = await Promise.all([
+      const [settingsRes, costsRes, partnersRes, autoRevenue] = await Promise.all([
         supabase.from("financial_settings").select("*").single(),
         supabase.from("financial_costs").select("*").order("created_at"),
-        supabase.from("financial_partners").select("*").order("created_at")
+        supabase.from("financial_partners").select("*").order("created_at"),
+        fetchFinancialSummary()
       ]);
 
-      if (settingsRes.data) setRevenue(Number(settingsRes.data.manual_revenue));
+      if (settingsRes.data) {
+        // Se temos receita automatizada, usamos ela, caso contrário o manual
+        setRevenue(autoRevenue.totalNetRevenue || Number(settingsRes.data.manual_revenue));
+      }
       if (costsRes.data) setCosts(costsRes.data.map(c => ({ id: c.id, label: c.label, value: Number(c.value) })));
       if (partnersRes.data) setPartners(partnersRes.data.map(p => ({ 
         id: p.id, 
@@ -232,32 +239,36 @@ function FinancePage() {
         {/* Coluna 1: Receita e Profit Table */}
         <div className="space-y-6 text-left lg:col-span-1">
           <section className="border border-white/5 bg-black/40 p-6">
-            <div className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-              <Calculator className="h-4 w-4" style={{ color: ORANGE }} /> Ajustar Receita
+            <div className="mb-4 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+              <div className="flex items-center gap-2">
+                <Calculator className="h-4 w-4" style={{ color: ORANGE }} /> Receita Automatizada
+              </div>
+              <div className="flex items-center gap-1 text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full lowercase tracking-normal font-normal">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                sincronizado Asaas
+              </div>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-[10px] uppercase font-bold text-white/30 mb-2">Valor da Receita (BRL)</label>
-                <div className="relative">
+                <label className="block text-[10px] uppercase font-bold text-white/30 mb-2">Valor da Receita (Líquida Asaas)</label>
+                <div className="relative group">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-bold">R$</span>
                   <input
                     type="number"
                     value={revenue}
-                    onChange={(e) => setRevenue(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-sm border border-white/10 bg-black pl-11 pr-4 py-3 font-display text-xl sm:text-2xl font-extrabold text-emerald-400 outline-none transition focus:border-[color:var(--orange)] text-[16px]"
-                    style={{ ["--orange" as any]: ORANGE }}
+                    readOnly
+                    className="w-full rounded-sm border border-white/5 bg-white/[0.02] pl-11 pr-4 py-3 font-display text-xl sm:text-2xl font-extrabold text-emerald-400 outline-none cursor-not-allowed opacity-80"
                   />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 rounded-sm">
+                    <span className="text-[9px] text-white/60 uppercase font-black">Preenchido Automaticamente</span>
+                  </div>
                 </div>
               </div>
 
               <div className="rounded-sm bg-white/[0.03] p-4 space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-white/50">Receita Bruta</span>
+                  <span className="text-white/50">Receita Líquida Real</span>
                   <span className="font-bold text-white">{brl(revenue)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-white/50">Impostos / Taxas (Est.)</span>
-                  <span className="font-bold text-red-400/70">− {brl(revenue * 0.1)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-white/50">Custos Operacionais</span>
