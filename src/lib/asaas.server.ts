@@ -145,19 +145,42 @@ export async function findConfirmedPayment(params: {
   productType: string;
   productId: string;
   userId: string;
+  userEmail?: string | null;
 }) {
   const { apiKey, baseUrl } = await getAsaasConfig();
-  const prefix = `${params.productType}:${params.productId}:u_${params.userId}`;
+  const strictPrefix = `${params.productType}:${params.productId}:u_${params.userId}`;
+  const legacyPrefix = `${params.productType}:${params.productId}`;
+  const email = params.userEmail?.toLowerCase() || null;
 
   for (const status of ["RECEIVED", "CONFIRMED", "RECEIVED_IN_CASH"]) {
-    const url = `${baseUrl}/payments?status=${status}&limit=100`;
-    const res = await fetch(url, { headers: asaasHeaders(apiKey) });
+    const res = await fetch(`${baseUrl}/payments?status=${status}&limit=100`, {
+      headers: asaasHeaders(apiKey),
+    });
     if (!res.ok) continue;
     const json = await res.json();
-    const match = (json?.data || []).find((p: any) =>
-      typeof p.externalReference === "string" && p.externalReference.startsWith(prefix),
+    const payments: any[] = json?.data || [];
+
+    const strict = payments.find(
+      (p) => typeof p.externalReference === "string" && p.externalReference.startsWith(strictPrefix),
     );
-    if (match) return match;
+    if (strict) return strict;
+
+    // Compatibilidade com links antigos (sem o id do usuário na referência):
+    // valida a titularidade pelo e-mail do cliente no Asaas.
+    if (email) {
+      const legacyCandidates = payments.filter(
+        (p) =>
+          typeof p.externalReference === "string" &&
+          p.externalReference.startsWith(legacyPrefix) &&
+          !p.externalReference.includes(":u_"),
+      );
+
+      for (const candidate of legacyCandidates) {
+        const ownerId = await resolveUserFromPayment(candidate, baseUrl, apiKey);
+        if (ownerId === params.userId) return candidate;
+      }
+    }
   }
   return null;
 }
+
