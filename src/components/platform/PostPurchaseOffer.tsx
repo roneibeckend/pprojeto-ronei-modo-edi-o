@@ -13,7 +13,7 @@ interface OfferItem {
   description: string;
   price: number;
   type: 'course' | 'ebook';
-  cover_url?: string;
+  cover_url?: string | null;
 }
 
 interface PostPurchaseOfferProps {
