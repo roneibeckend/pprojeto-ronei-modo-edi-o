@@ -963,6 +963,16 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
   const testConnectionFn = useServerFn(testIntegrationConnection);
   const saveIntegrationFn = useServerFn(saveIntegration);
 
+  const validateMutation = useMutation({
+    mutationFn: validateSender,
+    onSuccess: (res) => {
+      if (res.status === 'verified') toast.success("Remetente validado no Resend!");
+      else if (res.status === 'pending') toast.warning("Domínio pendente de verificação DNS.");
+      else toast.error(res.error || "Domínio não encontrado no Resend.");
+      queryClient.invalidateQueries({ queryKey: ['email_settings'] });
+    }
+  });
+
   useEffect(() => {
     if (initialIntegration) {
       setIntegration(JSON.parse(JSON.stringify(initialIntegration)));
@@ -970,7 +980,7 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
       setIntegration({
         id: '',
         name: 'Resend',
-        type: 'ia' as any, // category logic in functions handles it
+        type: 'ia' as any,
         category: 'resend',
         status: false,
         credentials: { apiKey: '' },
@@ -985,10 +995,22 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
       await saveIntegrationFn({ 
         data: {
           ...integration,
-          type: 'ia' as any // Backend expects this for integrations table
+          type: 'ia' as any
         }
       });
       toast.success("API Key do Resend salva com sucesso.");
+      
+      // Auto-validate after save if we have the identity email
+      const { data: settings } = await getEmailSettings();
+      if (settings?.from_email && integration.credentials.apiKey) {
+        validateMutation.mutate({ 
+          data: { 
+            apiKey: integration.credentials.apiKey, 
+            email: settings.from_email 
+          } 
+        });
+      }
+      
       queryClient.invalidateQueries({ queryKey: ['resend_integration'] });
     } catch (err: any) {
       toast.error("Erro ao salvar: " + err.message);
