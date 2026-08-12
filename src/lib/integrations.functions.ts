@@ -15,7 +15,8 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
     environment: z.string().default('sandbox')
   }).parse(data))
   .handler(async ({ data }) => {
-    const { category, credentials, environment } = data;
+    const { category, credentials, settings } = data;
+    const environment = (String(settings?.testMode) === 'true' || settings?.environment === 'sandbox') ? 'sandbox' : 'production';
     const startTime = Date.now();
     let status = 'success';
     let message = 'Conexão estabelecida com sucesso.';
