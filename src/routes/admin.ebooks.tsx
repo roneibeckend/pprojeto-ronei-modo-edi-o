@@ -866,3 +866,67 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
     </div>
   );
 }
+
+function SEOTooltip({ type, content, keywords }: { type: 'title' | 'description' | 'keywords', content: string, keywords?: string }) {
+  const [suggestions, setSuggestions] = useState<any>(null);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      const result = await getSEOSuggestions({ 
+        data: { 
+          title: type === 'title' ? content : undefined,
+          description: type === 'description' ? content : undefined,
+          keywords: type === 'keywords' ? content : keywords
+        } 
+      });
+      setSuggestions(result[type]);
+    };
+    if (content) fetchSuggestions();
+  }, [content, keywords, type]);
+
+  if (!suggestions || suggestions.suggestions.length === 0) {
+    if (suggestions?.score === 'optimal') {
+      return (
+        <div className="flex items-center gap-1 text-[10px] text-green-500 font-bold uppercase tracking-tighter">
+          <CheckCircle2 className="h-3 w-3" /> SEO Otimizado
+        </div>
+      );
+    }
+    return null;
+  }
+
+  return (
+    <div className="relative group">
+      <button 
+        type="button"
+        onMouseEnter={() => setShow(true)}
+        onMouseLeave={() => setShow(false)}
+        className={cn(
+          "flex items-center gap-1 text-[10px] font-bold uppercase tracking-tighter transition-colors",
+          suggestions.score === 'optimal' ? "text-green-500" : "text-yellow-500"
+        )}
+      >
+        <AlertCircle className="h-3 w-3" /> 
+        {suggestions.score === 'optimal' ? 'SEO Otimizado' : 'Sugestões de SEO'}
+      </button>
+
+      {show && (
+        <div className="absolute right-0 bottom-full mb-2 w-64 p-3 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-[100] animate-in fade-in slide-in-from-bottom-1">
+          <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/5">
+            <HelpCircle className="h-4 w-4 text-[#ff6a00]" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Análise de SEO</span>
+          </div>
+          <ul className="space-y-2">
+            {suggestions.suggestions.map((s: string, i: number) => (
+              <li key={i} className="text-[11px] text-white/80 leading-relaxed flex gap-2">
+                <span className="text-[#ff6a00] shrink-0">•</span>
+                {s}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
