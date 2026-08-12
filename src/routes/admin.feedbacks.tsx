@@ -192,7 +192,7 @@ function AdminFeedbacksPage() {
                       ))}
                     </div>
                     <span className="text-xs font-bold uppercase tracking-widest text-[#ff6a00]">
-                      {feedback.course?.title}
+                      {feedback.course?.title || feedback.ebook?.title}
                     </span>
                     <span className="text-xs text-white/20">
                       {format(new Date(feedback.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
