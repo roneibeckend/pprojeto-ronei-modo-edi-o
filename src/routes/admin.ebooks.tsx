@@ -535,9 +535,13 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
           toast.success(`PDF importado com sucesso! ${result.chapters_count} capítulos criados.`);
           fetchContent();
         } catch (err: any) {
+          console.error("PDF Import Failure:", err);
           const errorMessage = err.message || "Erro desconhecido";
-          if (errorMessage.includes("página de erro técnica")) {
-             toast.error("Erro no Processamento: Ocorreu uma falha técnica no serviço de PDF. Por favor, tente novamente em instantes ou contate o suporte.");
+          
+          if (errorMessage.includes("página de erro técnica") || errorMessage.includes("instabilidade na infraestrutura")) {
+             toast.error("Erro de Infraestrutura: O serviço de processamento está temporariamente instável. Tente novamente em instantes.");
+          } else if (errorMessage.includes("demorou muito")) {
+             toast.error("Erro de Limite: O arquivo é muito grande para o processamento atual. Tente dividir o PDF.");
           } else {
              toast.error("Erro no processamento do PDF: " + errorMessage);
           }
