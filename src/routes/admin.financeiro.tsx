@@ -413,48 +413,6 @@ function FinancePage() {
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
-                      <option value="">Vincular Usuário</option>
-                      {users?.map(u => (
-                        <option key={u.id} value={u.id}>
-                          {u.name || u.email}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="flex items-center gap-2">
-                      <div className="relative w-16">
-                         <input
-                          type="number"
-                          value={p.percent}
-                          onChange={(e) => updatePartner(p.id, { percent: parseFloat(e.target.value) || 0 })}
-                          className="w-full rounded-sm bg-black px-2 py-1 text-right text-xs font-bold text-white outline-none"
-                        />
-                        <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-white/30">%</span>
-                      </div>
-                      <button
-                        onClick={() => removePartner(p.id)}
-                        className="ml-4 p-1 text-white/20 transition hover:text-red-400"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-end justify-between">
-                    <div className="flex-1 max-w-[120px]">
-                      <div className="h-1 w-full bg-white/5">
-                        <div
-                          className="h-full bg-[color:var(--orange)] transition-all duration-700"
-                          style={{ width: `${Math.min(100, p.percent)}%` }}
-                        />
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-0.5">Participação</div>
-                      <div className={`text-sm font-display font-extrabold ${share >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                        {brl(share)}
-                      </div>
-                    </div>
-                  </div>
                 </div>
               );
             })}
