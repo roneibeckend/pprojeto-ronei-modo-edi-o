@@ -620,7 +620,7 @@ function IntegrationsPage() {
   );
 }
 
-function EmailIntegrationPanel() {
+function EmailIntegrationPanel({ integrations }: { integrations: Integration[] | undefined }) {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('config');
   const [isSendingTest, setIsSendingTest] = useState(false);
