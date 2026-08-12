@@ -15,7 +15,8 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
     environment: z.string().default('sandbox')
   }).parse(data))
   .handler(async ({ data }) => {
-    const { category, credentials, environment } = data;
+    const { category, credentials, settings } = data;
+    const environment = (String(settings?.testMode) === 'true' || settings?.environment === 'sandbox') ? 'sandbox' : 'production';
     const startTime = Date.now();
     let status = 'success';
     let message = 'Conexão estabelecida com sucesso.';
@@ -24,7 +25,7 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
     let responseBody = {};
 
     try {
-      console.log(`[Admin] Testando conexão com ${category} (${environment})...`);
+      console.log(`[Admin] Testando conexão com ${category} (Ambiente Calculado: ${environment})...`);
       
       // Real or simulated logic based on category
       if (category === 'openai' || category === 'gemini' || category === 'claude' || category === 'deepseek') {

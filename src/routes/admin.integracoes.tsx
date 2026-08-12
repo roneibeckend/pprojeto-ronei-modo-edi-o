@@ -159,7 +159,7 @@ function IntegrationsPage() {
           category: selectedItem.category,
           credentials: selectedItem.credentials,
           settings: selectedItem.settings,
-          environment: (String(selectedItem.settings?.testMode) === 'true') ? 'sandbox' : 'production'
+          environment: (String(selectedItem.settings?.testMode) === 'true' || selectedItem.settings?.environment === 'sandbox') ? 'sandbox' : 'production'
         }
       });
       setTestResult(result);
@@ -381,7 +381,7 @@ function IntegrationsPage() {
                               <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
                               {key === 'environment' || key === 'testMode' ? (
                                 <select 
-                                  value={key === 'testMode' ? (String(selectedItem.settings[key]) === 'true' ? 'sandbox' : 'production') : selectedItem.settings[key]}
+                                  value={(String(selectedItem.settings[key]) === 'true') ? 'sandbox' : 'production'}
                                   onChange={(e) => {
                                     const val = e.target.value;
                                     if (key === 'testMode') {
