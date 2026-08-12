@@ -302,17 +302,30 @@ function AdminEbooksPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do E-book</label>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do E-book</label>
+                          {editingItem?.title && (
+                            <SEOTooltip 
+                              type="title" 
+                              content={editingItem.title} 
+                              keywords={editingItem.keywords} 
+                            />
+                          )}
+                        </div>
                         <input 
                           required 
                           value={editingItem?.title || ""} 
                           onChange={e => setEditingItem({...editingItem, title: e.target.value})} 
-                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors" 
+                          className={cn(
+                            "w-full bg-white/5 border p-3 rounded-lg text-sm outline-none transition-colors",
+                            editingItem?.title?.length >= 40 && editingItem?.title?.length <= 60 ? "border-green-500/30 focus:border-green-500" : 
+                            editingItem?.title?.length > 0 ? "border-yellow-500/30 focus:border-yellow-500" : "border-white/10 focus:border-[#ff6a00]"
+                          )}
                         />
                       </div>
                       
-                      <div className="space-y-1.5">
+                      <div className="space-y-2">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Subtítulo</label>
                         <input 
                           value={editingItem?.subtitle || ""} 
@@ -321,13 +334,49 @@ function AdminEbooksPage() {
                         />
                       </div>
 
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição</label>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição SEO (Meta Description)</label>
+                          {editingItem?.description && (
+                            <SEOTooltip 
+                              type="description" 
+                              content={editingItem.description} 
+                              keywords={editingItem.keywords} 
+                            />
+                          )}
+                        </div>
                         <textarea 
                           value={editingItem?.description || ""} 
                           onChange={e => setEditingItem({...editingItem, description: e.target.value})} 
                           rows={4}
-                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors resize-none" 
+                          placeholder="Breve resumo para motores de busca (120-160 caracteres)."
+                          className={cn(
+                            "w-full bg-white/5 border p-3 rounded-lg text-sm outline-none transition-colors resize-none",
+                            editingItem?.description?.length >= 120 && editingItem?.description?.length <= 160 ? "border-green-500/30 focus:border-green-500" : 
+                            editingItem?.description?.length > 0 ? "border-yellow-500/30 focus:border-yellow-500" : "border-white/10 focus:border-[#ff6a00]"
+                          )}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Palavras-chave (separadas por vírgula)</label>
+                          {editingItem?.keywords && (
+                            <SEOTooltip 
+                              type="keywords" 
+                              content={editingItem.keywords} 
+                            />
+                          )}
+                        </div>
+                        <input 
+                          value={editingItem?.keywords || ""} 
+                          onChange={e => setEditingItem({...editingItem, keywords: e.target.value})} 
+                          placeholder="ex: churrasco, espetinho, receitas, gourmet"
+                          className={cn(
+                            "w-full bg-white/5 border p-3 rounded-lg text-sm outline-none transition-colors",
+                            editingItem?.keywords?.split(',').filter((k: string) => k.trim()).length >= 5 ? "border-green-500/30 focus:border-green-500" : 
+                            editingItem?.keywords?.length > 0 ? "border-yellow-500/30 focus:border-yellow-500" : "border-white/10 focus:border-[#ff6a00]"
+                          )}
                         />
                       </div>
                     </div>
