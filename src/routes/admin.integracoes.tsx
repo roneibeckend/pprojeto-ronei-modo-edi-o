@@ -731,6 +731,15 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   <CardDescription className="text-xs text-white/40">Configure como os e-mails aparecerão para os alunos.</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
+                  {settings?.validation_status && (
+                    <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${
+                      settings.validation_status === 'verified' ? 'text-emerald-400 bg-emerald-400/10' : 
+                      settings.validation_status === 'pending' ? 'text-amber-400 bg-amber-400/10' : 'text-red-400 bg-red-400/10'
+                    }`}>
+                      {settings.validation_status === 'verified' ? 'Domínio Validado' : 
+                       settings.validation_status === 'pending' ? 'Validação Pendente' : 'Erro de Validação'}
+                    </Badge>
+                  )}
                   <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${settings?.is_enabled ? 'text-emerald-400 bg-emerald-400/10' : 'text-white/20 bg-white/5'}`}>
                     {settings?.is_enabled ? 'ATIVO' : 'INATIVO'}
                   </Badge>
