@@ -95,7 +95,6 @@ function EbookReaderPage() {
         ebookId: ebook.id,
         moduleId: activeChapter.module_id
       });
-      localStorage.setItem(`ebook_last_read_${ebook.id}`, activeChapterId);
     }
   }, [activeChapterId, activeChapter, ebook.id, completeChapter]);
 
