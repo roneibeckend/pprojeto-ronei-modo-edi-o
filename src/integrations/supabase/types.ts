@@ -905,16 +905,19 @@ export type Database = {
         Row: {
           id: string
           manual_revenue: number | null
+          total_revenue: number | null
           updated_at: string
         }
         Insert: {
           id?: string
           manual_revenue?: number | null
+          total_revenue?: number | null
           updated_at?: string
         }
         Update: {
           id?: string
           manual_revenue?: number | null
+          total_revenue?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -1222,6 +1225,57 @@ export type Database = {
           total_withdrawn?: number
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          billing_type: string | null
+          confirmed_at: string | null
+          created_at: string | null
+          customer_id: string | null
+          external_id: string
+          external_reference: string | null
+          fee: number
+          id: string
+          metadata: Json | null
+          net_amount: number
+          status: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          billing_type?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          customer_id?: string | null
+          external_id: string
+          external_reference?: string | null
+          fee: number
+          id?: string
+          metadata?: Json | null
+          net_amount: number
+          status: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          billing_type?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          customer_id?: string | null
+          external_id?: string
+          external_reference?: string | null
+          fee?: number
+          id?: string
+          metadata?: Json | null
+          net_amount?: number
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

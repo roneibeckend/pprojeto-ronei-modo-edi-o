@@ -16,6 +16,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { distributeProfits } from "@/lib/payouts.functions";
+import { getFinancialSummary } from "@/lib/finance.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/financeiro")({
@@ -37,17 +38,23 @@ function FinancePage() {
   const [costs, setCosts] = useState<Cost[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
 
+  const fetchFinancialSummary = useServerFn(getFinancialSummary);
+
   // Fetch initial data
   const { isLoading } = useQuery({
     queryKey: ["financial-config"],
     queryFn: async () => {
-      const [settingsRes, costsRes, partnersRes] = await Promise.all([
+      const [settingsRes, costsRes, partnersRes, autoRevenue] = await Promise.all([
         supabase.from("financial_settings").select("*").single(),
         supabase.from("financial_costs").select("*").order("created_at"),
-        supabase.from("financial_partners").select("*").order("created_at")
+        supabase.from("financial_partners").select("*").order("created_at"),
+        fetchFinancialSummary()
       ]);
 
-      if (settingsRes.data) setRevenue(Number(settingsRes.data.manual_revenue));
+      if (settingsRes.data) {
+        // Se temos receita automatizada, usamos ela, caso contrário o manual
+        setRevenue(autoRevenue.totalNetRevenue || Number(settingsRes.data.manual_revenue));
+      }
       if (costsRes.data) setCosts(costsRes.data.map(c => ({ id: c.id, label: c.label, value: Number(c.value) })));
       if (partnersRes.data) setPartners(partnersRes.data.map(p => ({ 
         id: p.id, 
@@ -232,32 +239,36 @@ function FinancePage() {
         {/* Coluna 1: Receita e Profit Table */}
         <div className="space-y-6 text-left lg:col-span-1">
           <section className="border border-white/5 bg-black/40 p-6">
-            <div className="mb-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-              <Calculator className="h-4 w-4" style={{ color: ORANGE }} /> Ajustar Receita
+            <div className="mb-4 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+              <div className="flex items-center gap-2">
+                <Calculator className="h-4 w-4" style={{ color: ORANGE }} /> Receita Automatizada
+              </div>
+              <div className="flex items-center gap-1 text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full lowercase tracking-normal font-normal">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                sincronizado Asaas
+              </div>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-[10px] uppercase font-bold text-white/30 mb-2">Valor da Receita (BRL)</label>
-                <div className="relative">
+                <label className="block text-[10px] uppercase font-bold text-white/30 mb-2">Valor da Receita (Líquida Asaas)</label>
+                <div className="relative group">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-bold">R$</span>
                   <input
                     type="number"
                     value={revenue}
-                    onChange={(e) => setRevenue(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-sm border border-white/10 bg-black pl-11 pr-4 py-3 font-display text-xl sm:text-2xl font-extrabold text-emerald-400 outline-none transition focus:border-[color:var(--orange)] text-[16px]"
-                    style={{ ["--orange" as any]: ORANGE }}
+                    readOnly
+                    className="w-full rounded-sm border border-white/5 bg-white/[0.02] pl-11 pr-4 py-3 font-display text-xl sm:text-2xl font-extrabold text-emerald-400 outline-none cursor-not-allowed opacity-80"
                   />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 rounded-sm">
+                    <span className="text-[9px] text-white/60 uppercase font-black">Preenchido Automaticamente</span>
+                  </div>
                 </div>
               </div>
 
               <div className="rounded-sm bg-white/[0.03] p-4 space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-white/50">Receita Bruta</span>
+                  <span className="text-white/50">Receita Líquida Real</span>
                   <span className="font-bold text-white">{brl(revenue)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-white/50">Impostos / Taxas (Est.)</span>
-                  <span className="font-bold text-red-400/70">− {brl(revenue * 0.1)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-white/50">Custos Operacionais</span>
@@ -369,46 +380,38 @@ function FinancePage() {
                       className="max-w-[150px] bg-black border border-white/10 rounded-sm px-2 py-1 text-[10px] text-white outline-none focus:border-orange-500"
                     >
                       <option value="">Vincular Usuário</option>
-                      {users?.map(u => (
+                      {users?.map((u) => (
                         <option key={u.id} value={u.id}>
                           {u.name || u.email}
                         </option>
                       ))}
                     </select>
-                    <div className="flex items-center gap-2">
-                      <div className="relative w-16">
-                         <input
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-20">
+                        <input
                           type="number"
                           value={p.percent}
                           onChange={(e) => updatePartner(p.id, { percent: parseFloat(e.target.value) || 0 })}
-                          className="w-full rounded-sm bg-black px-2 py-1 text-right text-xs font-bold text-white outline-none"
+                          className="w-full rounded-sm bg-black/60 px-2 py-1 text-center font-display font-extrabold text-white outline-none focus:bg-black text-[16px]"
                         />
-                        <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-white/30">%</span>
+                        <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-[10px] text-white/40">%</span>
                       </div>
-                      <button
-                        onClick={() => removePartner(p.id)}
-                        className="ml-4 p-1 text-white/20 transition hover:text-red-400"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-end justify-between">
-                    <div className="flex-1 max-w-[120px]">
-                      <div className="h-1 w-full bg-white/5">
-                        <div
-                          className="h-full bg-[color:var(--orange)] transition-all duration-700"
-                          style={{ width: `${Math.min(100, p.percent)}%` }}
-                        />
+                      <div className="flex flex-col items-start ml-4">
+                        <span className="text-[10px] uppercase font-black text-white/20 mb-1">Lucro Individual</span>
+                        <div className="px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-display font-black text-sm">
+                          {brl(share)}
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-0.5">Participação</div>
-                      <div className={`text-sm font-display font-extrabold ${share >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                        {brl(share)}
-                      </div>
-                    </div>
+                    <button
+                      onClick={() => removePartner(p.id)}
+                      className="p-1 text-white/20 transition hover:text-red-400"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
               );
