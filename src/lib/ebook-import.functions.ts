@@ -106,11 +106,12 @@ export const importEbookFromPdf = createServerFn({ method: "POST" })
   }).parse(data))
   .handler(async ({ data }) => {
     try {
-      // Basic validation of base64 size to fail early if too large (e.g. > 10MB)
-      // Base64 is roughly 1.37x the original file size. 13MB base64 is ~9.5MB file.
-      if (data.file_base64.length > 13 * 1024 * 1024) {
-        throw new Error("LIMITE_EXCEDIDO: O arquivo PDF excede o limite de 10MB para processamento automático. Tente dividir o PDF em partes menores.");
+      // Basic validation of base64 size to fail early if too large (e.g. > 60MB)
+      // Base64 is roughly 1.37x the original file size. 85MB base64 is ~62MB file.
+      if (data.file_base64.length > 85 * 1024 * 1024) {
+        throw new Error("LIMITE_EXCEDIDO: O arquivo PDF excede o limite de 60MB para processamento automático. Tente dividir o PDF em partes menores.");
       }
+
 
       const buffer = Buffer.from(data.file_base64.split(',')[1] || data.file_base64, 'base64');
       
