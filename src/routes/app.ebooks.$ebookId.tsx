@@ -89,6 +89,14 @@ function EbookReaderPage() {
       localStorage.setItem(`ebook_last_read_${ebook.id}`, activeChapterId);
     }
   }, [activeChapterId, ebook.id]);
+10: 
+11:   // Scroll to top when chapter changes
+12:   useEffect(() => {
+13:     if (activeChapterId) {
+14:       window.scrollTo({ top: 0, behavior: 'smooth' });
+15:     }
+16:   }, [activeChapterId]);
+
 
   const activeChapter = chapters.find((c: any) => c.id === activeChapterId) || chapters[0];
   const activeIndex = chapters.findIndex((c: any) => c.id === activeChapter?.id);
