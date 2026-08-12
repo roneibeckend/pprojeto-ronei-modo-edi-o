@@ -895,3 +895,169 @@ function EmailIntegrationPanel() {
     </div>
   );
 }
+
+function OffersIntegrationPanel() {
+  const queryClient = useQueryClient();
+  
+  const { data: offerSettings, isLoading } = useQuery({
+    queryKey: ['offer_settings'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('integrations')
+        .select('*')
+        .eq('category', 'offer_settings')
+        .maybeSingle();
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const saveOfferSettings = async (updates: { status?: boolean, discount?: number }) => {
+    try {
+      const settings = offerSettings?.settings || {};
+      const newSettings = {
+        ...settings,
+        discountPercentage: updates.discount !== undefined ? updates.discount : (settings.discountPercentage || 15)
+      };
+
+      const { error } = await supabase
+        .from('integrations')
+        .upsert({
+          name: 'Configurações de Oferta',
+          type: 'payment',
+          category: 'offer_settings',
+          status: updates.status !== undefined ? updates.status : (offerSettings?.status ?? true),
+          credentials: offerSettings?.credentials || {},
+          settings: newSettings,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'category' });
+
+      if (error) throw error;
+      
+      if (updates.status !== undefined && typeof window !== 'undefined' && (window as any).togglePostPurchaseOfferPopup) {
+        (window as any).togglePostPurchaseOfferPopup(updates.status);
+      }
+
+      toast.success("Configurações de oferta atualizadas!");
+      queryClient.invalidateQueries({ queryKey: ['offer_settings'] });
+    } catch (err: any) {
+      toast.error("Erro ao salvar: " + err.message);
+    }
+  };
+
+  if (isLoading) return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" /></div>;
+
+  const currentDiscount = offerSettings?.settings?.discountPercentage || 15;
+  const isEnabled = offerSettings?.status ?? true;
+
+  return (
+    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
+      <Card className="bg-[#111] border-white/5 overflow-hidden">
+        <CardHeader className="border-b border-white/5 bg-white/[0.02]">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-lg font-bold uppercase flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-[#ff6a00]" /> Gestão de Ofertas (Upsell)
+              </CardTitle>
+              <CardDescription className="text-xs text-white/40">
+                Configure o comportamento do popup de oferta pós-venda.
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-3 bg-black/40 p-1.5 rounded-full border border-white/5">
+              <span className={`text-[9px] font-black uppercase tracking-widest px-3 ${isEnabled ? 'text-emerald-400' : 'text-white/20'}`}>
+                {isEnabled ? 'Ativado' : 'Desativado'}
+              </span>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => saveOfferSettings({ status: !isEnabled })}
+                className={`h-7 w-12 rounded-full p-0 transition-all relative ${isEnabled ? 'bg-emerald-500/20' : 'bg-white/5'}`}
+              >
+                <div className={`absolute top-1 h-5 w-5 rounded-full transition-all duration-300 shadow-lg ${isEnabled ? 'right-1 bg-emerald-400 shadow-emerald-500/50' : 'left-1 bg-white/20'}`} />
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-8 space-y-8">
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 flex items-center gap-2">
+                  <Percent className="h-4 w-4 text-[#ff6a00]" /> Percentual de Desconto
+                </Label>
+                <Badge variant="outline" className="bg-[#ff6a00]/10 text-[#ff6a00] border-none font-black">
+                  Mínimo 15%
+                </Badge>
+              </div>
+              <div className="relative group">
+                <Input 
+                  type="number"
+                  min={15}
+                  max={100}
+                  defaultValue={currentDiscount}
+                  id="discount_input"
+                  className="bg-black/60 border-white/10 focus:border-[#ff6a00] h-14 text-xl font-bold pl-12 rounded-2xl transition-all"
+                />
+                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 font-bold group-focus-within:text-[#ff6a00] transition-colors">%</span>
+              </div>
+              <p className="text-[10px] text-white/30 italic">
+                * Este desconto será aplicado automaticamente sobre o valor original dos produtos sugeridos no popup de upsell.
+              </p>
+            </div>
+
+            <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 flex flex-col justify-center">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
+                  <Zap className="h-5 w-5 text-[#ff6a00]" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white uppercase tracking-widest">Ação Imediata</h4>
+                  <p className="text-[10px] text-white/40">As mudanças refletem instantaneamente no checkout.</p>
+                </div>
+              </div>
+              <Button 
+                onClick={() => {
+                  const input = document.getElementById('discount_input') as HTMLInputElement;
+                  const val = parseInt(input.value);
+                  if (isNaN(val) || val < 15) {
+                    toast.error("O desconto mínimo permitido é de 15%");
+                    return;
+                  }
+                  saveOfferSettings({ discount: val });
+                }}
+                className="w-full bg-[#ff6a00] text-black hover:bg-[#ff6a00]/90 font-black uppercase tracking-[0.2em] text-[10px] h-12 rounded-xl shadow-lg shadow-orange-500/20"
+              >
+                <Save className="h-4 w-4 mr-2" /> Atualizar Regras de Oferta
+              </Button>
+            </div>
+          </div>
+
+          <div className="pt-8 border-t border-white/5 grid gap-4 sm:grid-cols-3">
+             <div className="p-4 bg-black/40 border border-white/5 rounded-xl space-y-1">
+                <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest">Tipo de Oferta</p>
+                <p className="text-xs font-bold text-white uppercase">Pós-venda (Upsell)</p>
+             </div>
+             <div className="p-4 bg-black/40 border border-white/5 rounded-xl space-y-1">
+                <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest">Itens exibidos</p>
+                <p className="text-xs font-bold text-white uppercase">2-3 Produtos</p>
+             </div>
+             <div className="p-4 bg-black/40 border border-white/5 rounded-xl space-y-1">
+                <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest">Gatilho</p>
+                <p className="text-xs font-bold text-white uppercase">Ao clicar em comprar</p>
+             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Alert className="bg-[#ff6a00]/5 border-[#ff6a00]/20 max-w-2xl">
+        <Info className="h-4 w-4 text-[#ff6a00]" />
+        <AlertTitle className="text-xs font-bold uppercase tracking-widest text-[#ff6a00]">Dica Estratégica</AlertTitle>
+        <AlertDescription className="text-[11px] text-white/50 leading-relaxed">
+          Oferecer descontos entre 15% e 30% no momento da compra aumenta a taxa de conversão do ticket médio em até 22%. 
+          Certifique-se de que os produtos selecionados como "complementares" façam sentido para a jornada do aluno.
+        </AlertDescription>
+      </Alert>
+    </div>
+  );
+}
