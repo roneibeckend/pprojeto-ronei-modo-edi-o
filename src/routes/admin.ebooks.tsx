@@ -268,7 +268,7 @@ function AdminEbooksPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/80 backdrop-blur-sm p-4 text-left overflow-y-auto outline-none" tabIndex={-1}>
-          <div className="w-full max-w-4xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-8 min-h-[600px] flex flex-col relative z-50 shadow-2xl">
+          <div className="w-full max-w-[95vw] lg:max-w-7xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-4 min-h-[90vh] flex flex-col relative z-50 shadow-2xl">
             <div className="flex items-center justify-between mb-6 sticky top-0 z-30 bg-[#0e0e0e] pb-4 border-b border-white/5 pt-2">
               <h3 className="text-xl font-bold truncate pr-4">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo E-book"}</h3>
               <button 
