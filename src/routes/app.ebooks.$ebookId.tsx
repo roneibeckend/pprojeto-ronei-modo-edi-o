@@ -100,6 +100,11 @@ function EbookReaderPage() {
 
   const handlePurchase = async () => {
     if (isOfferEnabled) {
+      const { data } = await supabase.from('integrations').select('status').eq('category', 'offer_settings').maybeSingle();
+      if (data && data.status === false) {
+        await executeCheckout([]);
+        return;
+      }
       setShowOffer(true);
       return;
     }
@@ -123,9 +128,20 @@ function EbookReaderPage() {
           productType: off.type,
           title: off.title,
           description: off.description,
-          value: (off.price || 0) * 0.85,
+          value: (off.price || 0) * (1 - (15 / 100)),
         }))
       ];
+
+      const { data: config } = await supabase.from('integrations').select('settings').eq('category', 'offer_settings').maybeSingle();
+      const settings = config?.settings as any;
+      const discount = settings?.discountPercentage || 15;
+
+      products.forEach((p, i) => {
+        if (i > 0) {
+          const originalItem = additionalItems[i-1];
+          p.value = (originalItem.price || 0) * (1 - (discount / 100));
+        }
+      });
 
       const result = await createPaymentLink({
         data: {
