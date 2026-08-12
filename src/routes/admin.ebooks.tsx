@@ -267,7 +267,7 @@ function AdminEbooksPage() {
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors"><X className="h-5 w-5" /></button>
             </div>
 
-            <Tabs defaultValue="info" className="flex-1 flex flex-col">
+            <Tabs defaultValue="info" className="flex-1 flex flex-col" onValueChange={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start">
                 <TabsTrigger value="info" className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Info className="h-4 w-4" /> Informações
