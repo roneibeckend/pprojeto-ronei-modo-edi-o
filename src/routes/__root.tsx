@@ -36,20 +36,49 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const { queryClient } = Route.useRouteContext();
+  const navigate = Route.useNavigate();
+  
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
+
+  const handleReset = async () => {
+    // Reseta o cache do queryClient para garantir que dados corrompidos/falhos sejam limpos
+    await queryClient.resetQueries();
+    router.invalidate();
+    reset();
+  };
+
+  const handleGoHome = async () => {
+    const { data } = await import("@/integrations/supabase/client").then(m => m.supabase.auth.getSession());
+    if (data.session) {
+      navigate({ to: "/inicio" });
+    } else {
+      navigate({ to: "/" });
+    }
+    reset();
+  };
 
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold">Erro ao carregar</h1>
         <p className="mt-2 text-sm text-muted-foreground">Tente novamente em instantes.</p>
+        
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 rounded-lg bg-red-500/10 p-3 text-left">
+            <p className="text-[10px] font-mono text-red-400 break-all">{error.message}</p>
+          </div>
+        )}
+
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button onClick={() => { router.invalidate(); reset(); }} className="btn-fire">
+          <button onClick={handleReset} className="btn-fire">
             Tentar novamente
           </button>
-          <a href="/" className="btn-ghost-fire">Ir para o início</a>
+          <button onClick={handleGoHome} className="btn-ghost-fire">
+            Ir para o início
+          </button>
         </div>
       </div>
     </div>
