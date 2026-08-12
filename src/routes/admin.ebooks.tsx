@@ -410,7 +410,7 @@ function AdminEbooksPage() {
                           placeholder="ex: churrasco, espetinho, receitas, gourmet"
                           className={cn(
                             "w-full bg-white/5 border p-3 rounded-lg text-sm outline-none transition-colors",
-                            (typeof editingItem?.keywords === 'string' ? editingItem.keywords : (editingItem?.keywords || [])).toString().split(',').filter((k: string) => k.trim()).length >= 5 ? "border-green-500/30 focus:border-green-500" : 
+                            (Array.isArray(editingItem?.keywords) ? editingItem.keywords.join(', ') : (editingItem?.keywords || "")).split(',').filter((k: string) => k.trim()).length >= 5 ? "border-green-500/30 focus:border-green-500" : 
                             (editingItem?.keywords?.length > 0) ? "border-yellow-500/30 focus:border-yellow-500" : "border-white/10 focus:border-[#ff6a00]"
                           )}
                         />
