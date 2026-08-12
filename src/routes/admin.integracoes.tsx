@@ -697,8 +697,8 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   <AlertCircle className="h-4 w-4 text-amber-500" />
                   <AlertTitle className="text-xs font-bold uppercase tracking-widest text-amber-500">Credenciais Necessárias</AlertTitle>
                   <AlertDescription className="text-[10px] text-white/50">
-                    A API do Resend não foi configurada ou não está ativa na aba "Pagamentos" (Resend). 
-                    Por favor, adicione sua API Key lá primeiro.
+                    A API do Resend não foi configurada ou não está ativa na aba "E-mail" (Resend). 
+                    Por favor, adicione sua API Key lá primeiro selecionando "E-mail" no menu superior.
                   </AlertDescription>
                 </Alert>
               )}
