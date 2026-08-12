@@ -43,6 +43,7 @@ function AdminFeedbacksPage() {
       if (searchTerm) {
         return data.filter(f => 
           f.course?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          f.ebook?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           f.profile?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           f.comment?.toLowerCase().includes(searchTerm.toLowerCase())
         );
