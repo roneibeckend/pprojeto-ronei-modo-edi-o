@@ -916,6 +916,144 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
   );
 }
 
+function ResendConfigTab({ integration: initialIntegration }: { integration: Integration | undefined }) {
+  const queryClient = useQueryClient();
+  const [integration, setIntegration] = useState<Integration | null>(null);
+  const [isTesting, setIsTesting] = useState(false);
+  const [testResult, setTestResult] = useState<any>(null);
+  
+  const testConnectionFn = useServerFn(testIntegrationConnection);
+  const saveIntegrationFn = useServerFn(saveIntegration);
+
+  useEffect(() => {
+    if (initialIntegration) {
+      setIntegration(JSON.parse(JSON.stringify(initialIntegration)));
+    } else {
+      setIntegration({
+        id: '',
+        name: 'Resend',
+        type: 'ia' as any, // category logic in functions handles it
+        category: 'resend',
+        status: false,
+        credentials: { apiKey: '' },
+        settings: {}
+      });
+    }
+  }, [initialIntegration]);
+
+  const handleSave = async () => {
+    if (!integration) return;
+    try {
+      await saveIntegrationFn({ 
+        data: {
+          ...integration,
+          type: 'ia' as any // Backend expects this for integrations table
+        }
+      });
+      toast.success("API Key do Resend salva com sucesso.");
+      queryClient.invalidateQueries({ queryKey: ['resend_integration'] });
+    } catch (err: any) {
+      toast.error("Erro ao salvar: " + err.message);
+    }
+  };
+
+  const handleTest = async () => {
+    if (!integration?.credentials.apiKey) {
+      toast.error("Insira a API Key antes de testar.");
+      return;
+    }
+    try {
+      setIsTesting(true);
+      setTestResult(null);
+      const result = await testConnectionFn({
+        data: {
+          id: integration.id || 'temp',
+          category: 'resend',
+          credentials: integration.credentials,
+          settings: integration.settings,
+          environment: 'production'
+        }
+      });
+      setTestResult(result);
+      if (result.success) toast.success("Conexão com Resend validada!");
+      else toast.error("Falha na validação: " + result.message);
+    } catch (err: any) {
+      toast.error(err.message || "Erro no teste");
+    } finally {
+      setIsTesting(false);
+    }
+  };
+
+  if (!integration) return null;
+
+  return (
+    <Card className="bg-[#111] border-white/5">
+      <CardHeader className="border-b border-white/5 bg-white/[0.02]">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-lg font-bold uppercase">Credenciais API (Resend)</CardTitle>
+            <CardDescription className="text-xs text-white/40">Insira sua API Key para habilitar os envios transacionais.</CardDescription>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setIntegration({ ...integration, status: !integration.status })}
+            className={`h-7 rounded-full px-4 border-none transition-all ${integration.status ? 'bg-[#ff6a00] text-black' : 'bg-white/10 text-white/40'}`}
+          >
+            {integration.status ? 'ATIVO' : 'INATIVO'}
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="p-6 space-y-6">
+        <div className="space-y-2">
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
+            <Key className="h-3 w-3 text-[#ff6a00]" /> API Key
+          </Label>
+          <Input 
+            type="password"
+            value={integration.credentials.apiKey || ''}
+            onChange={(e) => setIntegration({
+              ...integration,
+              credentials: { ...integration.credentials, apiKey: e.target.value }
+            })}
+            placeholder="re_..."
+            className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm font-mono"
+          />
+        </div>
+
+        <div className="pt-4 flex flex-col gap-4">
+          <div className="flex items-center justify-between p-4 bg-black/40 border border-white/5 rounded-xl">
+            <div className="space-y-1">
+              <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Teste de Conexão</p>
+              <p className="text-xs text-white">Valide se a chave inserida é válida na Resend.</p>
+            </div>
+            <Button 
+              onClick={handleTest} 
+              disabled={isTesting}
+              className="bg-white/5 border border-white/10 hover:bg-white/10 text-[10px] font-bold uppercase tracking-widest h-10 px-6"
+            >
+              {isTesting ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" /> : <Zap className="h-3.5 w-3.5 mr-2 text-[#ff6a00]" />}
+              Testar
+            </Button>
+          </div>
+
+          {testResult && (
+            <div className={`p-4 rounded-xl border ${testResult.success ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-red-500/5 border-red-500/20'}`}>
+              <p className="text-[10px] font-bold uppercase text-white/60">{testResult.success ? 'Conexão OK' : 'Falha na Conexão'}</p>
+              <p className="text-xs text-white/40 mt-1">{testResult.message}</p>
+            </div>
+          )}
+        </div>
+      </CardContent>
+      <CardFooter className="bg-white/[0.01] border-t border-white/5 p-4 flex justify-end">
+        <Button onClick={handleSave} className="bg-[#ff6a00] text-black hover:bg-[#ff6a00]/90 text-[10px] font-bold uppercase tracking-widest h-9 px-6">
+          <Save className="h-3.5 w-3.5 mr-2" /> Salvar API Key
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
 function OffersIntegrationPanel() {
   const queryClient = useQueryClient();
   
