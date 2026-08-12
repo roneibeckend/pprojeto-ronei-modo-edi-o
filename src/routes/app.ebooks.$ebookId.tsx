@@ -90,12 +90,13 @@ function EbookReaderPage() {
     }
   }, [activeChapterId, ebook.id]);
 
-  // Scroll to top when chapter changes
+  // Scroll to top when chapter changes (mobile only)
   useEffect(() => {
-    if (activeChapterId) {
+    if (activeChapterId && window.innerWidth < 1024) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [activeChapterId]);
+
 
 
 
