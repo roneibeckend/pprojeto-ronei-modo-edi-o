@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProgress } from "@/hooks/use-progress";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
+import { FeedbackModal } from "@/components/platform/FeedbackModal";
+
 
 const VideoPlayer = lazy(() => import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer })));
 
@@ -52,6 +54,9 @@ function CoursePage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
+
 
   const handlePurchase = async () => {
     try {
@@ -86,12 +91,40 @@ function CoursePage() {
   const isEnrolled = isEnrolledInCourse(course.id);
   const hasAccess = isFree || isEnrolled;
 
+  const flat = course.modules?.flatMap((m: any) => m.lessons || []) || [];
+  const completedCount = flat.filter((l: any) => isLessonCompleted(l.id)).length;
+  const isCompleted = flat.length > 0 && completedCount === flat.length;
+
+  useEffect(() => {
+    if (isCompleted && !hasSubmittedFeedback) {
+      // Check if user already submitted feedback via DB to be sure
+      const checkFeedback = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        
+        const { data } = await supabase
+          .from("course_feedback")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("course_id", course.id)
+          .maybeSingle();
+        
+        if (data) {
+          setHasSubmittedFeedback(true);
+        } else {
+          setShowFeedbackModal(true);
+        }
+      };
+      checkFeedback();
+    }
+  }, [isCompleted, hasSubmittedFeedback, course.id]);
+
   useEffect(() => {
     if (!isLoadingEnrollments && !hasAccess) {
       // Se não tem acesso, não redirecionamos bruscamente, apenas mostramos o estado bloqueado na UI
-      // ou poderíamos redirecionar para a vitrine. Vamos manter na página mas mostrar o bloqueio.
     }
   }, [hasAccess, isLoadingEnrollments]);
+
 
   // Se não tem acesso, mostra tela de compra
   if (!isLoadingEnrollments && !hasAccess) {
@@ -126,8 +159,9 @@ function CoursePage() {
   }
 
   // Lógica normal do curso
-  const flat = course.modules?.flatMap((m: any) => m.lessons || []) || [];
+  // const flat defined above
   const [activeId, setActiveId] = useState<string | undefined>(flat[0]?.id);
+
   const [tab, setTab] = useState<"materiais" | "anotacoes">("materiais");
   const [note, setNote] = useState("");
 
@@ -307,6 +341,17 @@ function CoursePage() {
           </div>
         </aside>
       </div>
+
+      <FeedbackModal
+        courseId={course.id}
+        courseTitle={course.title}
+        isOpen={showFeedbackModal}
+        onClose={() => {
+          setShowFeedbackModal(false);
+          setHasSubmittedFeedback(true);
+        }}
+      />
     </div>
   );
 }
+

@@ -287,6 +287,57 @@ export type Database = {
           },
         ]
       }
+      course_feedback: {
+        Row: {
+          comment: string | null
+          course_id: string
+          created_at: string
+          id: string
+          rating: number
+          status: string
+          updated_at: string
+          user_id: string
+          video_url: string | null
+        }
+        Insert: {
+          comment?: string | null
+          course_id: string
+          created_at?: string
+          id?: string
+          rating: number
+          status?: string
+          updated_at?: string
+          user_id: string
+          video_url?: string | null
+        }
+        Update: {
+          comment?: string | null
+          course_id?: string
+          created_at?: string
+          id?: string
+          rating?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_feedback_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_lessons: {
         Row: {
           content: string | null
