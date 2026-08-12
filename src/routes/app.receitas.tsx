@@ -87,7 +87,7 @@ function RecipesPage() {
               </div>
               <div className="p-5">
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">{r.category}</div>
-                <h3 className="mt-1 font-display text-lg font-bold">{r.name}</h3>
+                <h3 className="mt-1 font-display text-lg font-bold whitespace-normal">{r.name}</h3>
                 <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {r.prep_time}</span>
                   <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {r.yield}</span>
@@ -124,7 +124,7 @@ function RecipesPage() {
           <div className="glass max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl" onClick={(e) => e.stopPropagation()}>
             <img src={open.image_url || "/placeholder.svg"} alt={open.name} className="h-56 w-full object-cover" />
             <div className="p-6">
-              <h3 className="font-display text-2xl font-bold">{open.name}</h3>
+              <h3 className="font-display text-2xl font-bold whitespace-normal">{open.name}</h3>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <div>
                   <h4 className="font-bold">Ingredientes</h4>
