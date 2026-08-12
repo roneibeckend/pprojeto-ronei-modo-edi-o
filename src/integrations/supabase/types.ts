@@ -450,6 +450,7 @@ export type Database = {
       courses: {
         Row: {
           badge: string | null
+          checkpoints: Json | null
           content_url: string | null
           cover_url: string | null
           created_at: string
@@ -471,6 +472,7 @@ export type Database = {
         }
         Insert: {
           badge?: string | null
+          checkpoints?: Json | null
           content_url?: string | null
           cover_url?: string | null
           created_at?: string
@@ -492,6 +494,7 @@ export type Database = {
         }
         Update: {
           badge?: string | null
+          checkpoints?: Json | null
           content_url?: string | null
           cover_url?: string | null
           created_at?: string
@@ -666,6 +669,7 @@ export type Database = {
       ebooks: {
         Row: {
           category: string | null
+          checkpoints: Json | null
           content_url: string | null
           cover: string | null
           cover_url: string | null
@@ -687,6 +691,7 @@ export type Database = {
         }
         Insert: {
           category?: string | null
+          checkpoints?: Json | null
           content_url?: string | null
           cover?: string | null
           cover_url?: string | null
@@ -708,6 +713,7 @@ export type Database = {
         }
         Update: {
           category?: string | null
+          checkpoints?: Json | null
           content_url?: string | null
           cover?: string | null
           cover_url?: string | null
@@ -1293,6 +1299,7 @@ export type Database = {
           id: string
           item_id: string
           item_type: string
+          last_milestone: number | null
           points_awarded: number | null
           started_at: string
           user_id: string
@@ -1302,6 +1309,7 @@ export type Database = {
           id?: string
           item_id: string
           item_type: string
+          last_milestone?: number | null
           points_awarded?: number | null
           started_at?: string
           user_id: string
@@ -1311,6 +1319,7 @@ export type Database = {
           id?: string
           item_id?: string
           item_type?: string
+          last_milestone?: number | null
           points_awarded?: number | null
           started_at?: string
           user_id?: string
