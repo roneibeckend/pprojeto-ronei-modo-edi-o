@@ -25,7 +25,10 @@ import {
   Play,
   FileUp,
   ShieldCheck,
-  ChevronUp
+  ChevronUp,
+  AlertCircle,
+  CheckCircle2,
+  HelpCircle
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
