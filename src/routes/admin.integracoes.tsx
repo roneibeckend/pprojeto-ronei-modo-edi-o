@@ -33,12 +33,13 @@ import {
   ToggleRight,
   AlertCircle
 } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { testIntegrationConnection, saveIntegration, getIntegrationHistory } from "@/lib/integrations.functions";
-import { getEmailLogs, getEmailSettings, updateEmailSettings, sendEmail } from "@/lib/resend.functions";
+import { getEmailLogs, getEmailSettings, updateEmailSettings, sendEmail, validateSender } from "@/lib/resend.functions";
+import { getEmailTemplates, saveEmailTemplate, deleteEmailTemplate } from "@/lib/email-templates.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -707,6 +708,9 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
           <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
             Identidade
           </TabsTrigger>
+          <TabsTrigger value="templates" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+            Templates
+          </TabsTrigger>
           <TabsTrigger value="resend" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
             API Key (Resend)
           </TabsTrigger>
@@ -727,6 +731,15 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   <CardDescription className="text-xs text-white/40">Configure como os e-mails aparecerão para os alunos.</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
+                  {settings?.validation_status && (
+                    <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${
+                      settings.validation_status === 'verified' ? 'text-emerald-400 bg-emerald-400/10' : 
+                      settings.validation_status === 'pending' ? 'text-amber-400 bg-amber-400/10' : 'text-red-400 bg-red-400/10'
+                    }`}>
+                      {settings.validation_status === 'verified' ? 'Domínio Validado' : 
+                       settings.validation_status === 'pending' ? 'Validação Pendente' : 'Erro de Validação'}
+                    </Badge>
+                  )}
                   <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${settings?.is_enabled ? 'text-emerald-400 bg-emerald-400/10' : 'text-white/20 bg-white/5'}`}>
                     {settings?.is_enabled ? 'ATIVO' : 'INATIVO'}
                   </Badge>
@@ -817,6 +830,10 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
               <p className="mt-2 text-blue-400/60 italic">* Consulte o painel do Resend para os valores exatos de "xxxxxx".</p>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="templates" className="space-y-6 m-0">
+          <EmailTemplatesTab />
         </TabsContent>
 
         <TabsContent value="resend" className="space-y-6 m-0">
@@ -955,6 +972,16 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
   const testConnectionFn = useServerFn(testIntegrationConnection);
   const saveIntegrationFn = useServerFn(saveIntegration);
 
+  const validateMutation = useMutation({
+    mutationFn: validateSender,
+    onSuccess: (res) => {
+      if (res.status === 'verified') toast.success("Remetente validado no Resend!");
+      else if (res.status === 'pending') toast.warning("Domínio pendente de verificação DNS.");
+      else toast.error(res.error || "Domínio não encontrado no Resend.");
+      queryClient.invalidateQueries({ queryKey: ['email_settings'] });
+    }
+  });
+
   useEffect(() => {
     if (initialIntegration) {
       setIntegration(JSON.parse(JSON.stringify(initialIntegration)));
@@ -962,7 +989,7 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
       setIntegration({
         id: '',
         name: 'Resend',
-        type: 'ia' as any, // category logic in functions handles it
+        type: 'ia' as any,
         category: 'resend',
         status: false,
         credentials: { apiKey: '' },
@@ -977,10 +1004,24 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
       await saveIntegrationFn({ 
         data: {
           ...integration,
-          type: 'ia' as any // Backend expects this for integrations table
+          type: 'ia' as any
         }
       });
       toast.success("API Key do Resend salva com sucesso.");
+      
+      // Auto-validate after save if we have the identity email
+      const settingsResult = await getEmailSettings();
+      const settings = (settingsResult as any);
+      if (settings?.from_email && integration.credentials.apiKey) {
+
+        validateMutation.mutate({ 
+          data: { 
+            apiKey: integration.credentials.apiKey, 
+            email: settings.from_email 
+          } 
+        });
+      }
+      
       queryClient.invalidateQueries({ queryKey: ['resend_integration'] });
     } catch (err: any) {
       toast.error("Erro ao salvar: " + err.message);
@@ -1247,6 +1288,142 @@ function OffersIntegrationPanel() {
           Certifique-se de que os produtos selecionados como "complementares" façam sentido para a jornada do aluno.
         </AlertDescription>
       </Alert>
+    </div>
+  );
+}
+
+function EmailTemplatesTab() {
+  const queryClient = useQueryClient();
+  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const getTemplatesFn = useServerFn(getEmailTemplates);
+  const saveTemplateFn = useServerFn(saveEmailTemplate);
+  const deleteTemplateFn = useServerFn(deleteEmailTemplate);
+
+  const { data: templates, isLoading } = useQuery({
+    queryKey: ['email_templates'],
+    queryFn: async () => await getTemplatesFn()
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: saveTemplateFn,
+    onSuccess: () => {
+      toast.success("Template salvo com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ['email_templates'] });
+      setIsEditing(false);
+      setSelectedTemplate(null);
+    },
+    onError: (err: any) => toast.error("Erro ao salvar template: " + err.message)
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteTemplateFn,
+    onSuccess: () => {
+      toast.success("Template removido.");
+      queryClient.invalidateQueries({ queryKey: ['email_templates'] });
+      setSelectedTemplate(null);
+    }
+  });
+
+  const handleSave = () => {
+    const name = (document.getElementById('temp_name') as HTMLInputElement).value;
+    const subject = (document.getElementById('temp_subject') as HTMLInputElement).value;
+    const content_html = (document.getElementById('temp_html') as HTMLTextAreaElement).value;
+    const description = (document.getElementById('temp_desc') as HTMLInputElement).value;
+
+    saveMutation.mutate({ 
+      data: {
+        id: selectedTemplate?.id,
+        name,
+        subject,
+        content_html,
+        description,
+        variables: selectedTemplate?.variables || []
+      }
+    });
+  };
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-12">
+      <div className="lg:col-span-4 space-y-4">
+        <Button 
+          onClick={() => { setSelectedTemplate({ name: '', subject: '', content_html: '', description: '' }); setIsEditing(true); }}
+          className="w-full bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-10"
+        >
+          <Plus className="h-4 w-4 mr-2" /> Novo Template
+        </Button>
+        
+        <div className="space-y-2">
+          {isLoading ? (
+            Array(3).fill(0).map((_, i) => <div key={i} className="h-16 bg-white/5 animate-pulse rounded-lg" />)
+          ) : templates?.map((temp: any) => (
+            <button
+              key={temp.id}
+              onClick={() => { setSelectedTemplate(temp); setIsEditing(true); }}
+              className={`w-full text-left p-4 rounded-xl border transition-all ${selectedTemplate?.id === temp.id ? 'bg-[#ff6a00]/10 border-[#ff6a00]' : 'bg-[#111] border-white/5 hover:border-white/20'}`}
+            >
+              <p className="text-xs font-bold text-white uppercase tracking-tight">{temp.name}</p>
+              <p className="text-[10px] text-white/40 mt-1 truncate">{temp.subject}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="lg:col-span-8">
+        {isEditing && selectedTemplate ? (
+          <Card className="bg-[#111] border-white/5">
+            <CardHeader>
+              <CardTitle className="text-lg font-bold uppercase">Editar Template</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 p-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Identificador (Slug)</Label>
+                  <Input id="temp_name" defaultValue={selectedTemplate.name} className="bg-black/40 border-white/10" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição</Label>
+                  <Input id="temp_desc" defaultValue={selectedTemplate.description} className="bg-black/40 border-white/10" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Assunto do E-mail</Label>
+                <Input id="temp_subject" defaultValue={selectedTemplate.subject} className="bg-black/40 border-white/10" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo HTML</Label>
+                <textarea 
+                  id="temp_html" 
+                  defaultValue={selectedTemplate.content_html} 
+                  rows={12}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg p-4 font-mono text-xs text-white/80 focus:border-[#ff6a00] outline-none"
+                />
+              </div>
+              
+              <div className="flex items-center gap-3 pt-4">
+                <Button onClick={handleSave} disabled={saveMutation.isPending} className="bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] px-8">
+                  {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                  Salvar Template
+                </Button>
+                {selectedTemplate.id && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => deleteMutation.mutate({ data: { id: selectedTemplate.id } })}
+                    className="border-red-500/20 text-red-500 hover:bg-red-500/10 uppercase text-[10px] font-bold"
+                  >
+                    Excluir
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="h-[400px] border border-dashed border-white/5 rounded-2xl flex flex-col items-center justify-center text-white/10">
+            <Mail className="h-12 w-12 mb-4 opacity-5" />
+            <p className="text-xs uppercase font-bold tracking-widest">Selecione ou crie um template</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
