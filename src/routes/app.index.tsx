@@ -169,8 +169,8 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
       </div>
 
       <div className="p-4 sm:p-5">
-        <h3 className="font-display text-base sm:text-lg font-bold line-clamp-1">{item.title}</h3>
-        <p className="mt-1 line-clamp-2 text-xs sm:text-sm text-muted-foreground min-h-[32px] sm:min-h-[40px]">{item.description}</p>
+        <h3 className="font-display text-base sm:text-lg font-bold line-clamp-2">{item.title}</h3>
+        <p className="mt-1 line-clamp-3 text-xs sm:text-sm text-muted-foreground min-h-[48px] sm:min-h-[60px]">{item.description}</p>
         
         {isLocked ? (
           <div className="mt-4">

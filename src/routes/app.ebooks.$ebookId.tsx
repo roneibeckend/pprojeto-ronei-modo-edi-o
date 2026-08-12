@@ -295,7 +295,7 @@ function EbookReaderPage() {
               </div>
               <div className="hidden text-left md:block">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Anterior</div>
-                <div className="line-clamp-1 text-sm font-bold">{prevChapter?.title || "Início"}</div>
+                <div className="line-clamp-2 text-sm font-bold">{prevChapter?.title || "Início"}</div>
               </div>
             </button>
 
@@ -306,7 +306,7 @@ function EbookReaderPage() {
             >
               <div className="hidden md:block">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Próximo</div>
-                <div className="line-clamp-1 text-sm font-bold">{nextChapter?.title || "Fim"}</div>
+                <div className="line-clamp-2 text-sm font-bold">{nextChapter?.title || "Fim"}</div>
               </div>
               <div className="grid h-10 w-10 place-items-center rounded-xl bg-fire text-white shadow-lg shadow-fire/20">
                 <ChevronRight className="h-5 w-5" />
@@ -356,7 +356,7 @@ function EbookReaderPage() {
                           }`}
                         >
                           <div className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-fire" : (isChapterCompleted(c.id) ? "bg-green-500" : "bg-white/20")}`} />
-                          <span className="flex-1 truncate">{c.title}</span>
+                          <span className="flex-1 whitespace-normal">{c.title}</span>
                           {(isActive || isChapterCompleted(c.id)) && <CheckCircle2 className={`h-3.5 w-3.5 ${isChapterCompleted(c.id) && !isActive ? "text-green-500" : ""}`} />}
                         </button>
                       );
