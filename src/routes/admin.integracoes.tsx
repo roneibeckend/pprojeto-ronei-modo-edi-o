@@ -101,7 +101,7 @@ const GUIDES: Record<string, string[]> = {
 
 function IntegrationsPage() {
   const queryClient = useQueryClient();
-  const [activeCategory, setActiveCategory] = useState<'ia' | 'payment' | 'email' | 'webhooks'>('ia');
+  const [activeCategory, setActiveCategory] = useState<'ia' | 'payment' | 'email' | 'webhooks' | 'offers'>('ia');
   const [selectedItem, setSelectedItem] = useState<Integration | null>(null);
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<any>(null);
