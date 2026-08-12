@@ -294,10 +294,15 @@ function CoursePage() {
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         {/* Player */}
         <div className="min-w-0 space-y-4">
-          <div className="overflow-hidden rounded-none sm:rounded-2xl bg-black/20 min-h-[400px]">
+          <motion.div 
+            key={active.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="overflow-hidden rounded-none sm:rounded-2xl bg-black/20 min-h-[400px]"
+          >
             <Suspense fallback={<div className="aspect-[9/16] max-h-[70vh] w-full max-w-[400px] mx-auto rounded-2xl bg-white/5 animate-pulse" />}>
               <VideoPlayer
-                key={active.id}
                 videoId={active.id}
                 src={active.video_url || ""}
                 poster={course.cover_url || ""}
