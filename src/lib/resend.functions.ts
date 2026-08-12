@@ -23,23 +23,31 @@ export const sendEmail = createServerFn({ method: "POST" })
   }).parse(data))
   .handler(async ({ data: { to, template, data, idempotencyKey } }) => {
     try {
-      // 1. Obter sessão para verificar se o chamador está autenticado
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      // 2. Chamar a Edge Function (será implementada via Supabase CLI ou similar)
-      // Nota: A invocação direta usa o token da sessão do usuário se disponível
-      const { data: result, error } = await supabase.functions.invoke('send-email', {
-        body: { to, template, data, idempotency_key: idempotencyKey }
+      // 1. Decidir se usa Resend direto ou via Edge Function
+      // Por padrão, vamos usar a nova implementação direta com Resend API
+      const result = await sendResendEmail({
+        to,
+        subject: data?.subject || `Notificação: ${template.replace(/_/g, ' ')}`,
+        html: data?.html || `<h1>Notificação</h1><p>Template: ${template}</p><pre>${JSON.stringify(data, null, 2)}</pre>`,
+        text: data?.text,
+        tags: idempotencyKey ? [{ name: 'idempotency_key', value: idempotencyKey }] : undefined
       });
-
-      if (error) {
-        console.error(`[Resend] Erro ao enviar e-mail (${template}):`, error);
-        throw new Error(error.message || "Erro ao processar envio de e-mail");
-      }
 
       return result;
     } catch (error: any) {
       console.error(`[Resend] Falha na abstração sendEmail:`, error);
+      
+      // Fallback para Edge Function se configurado ou se falhar o direto
+      try {
+        console.log(`[Resend] Tentando fallback para Edge Function...`);
+        const { data: fallbackResult, error: fallbackError } = await supabase.functions.invoke('send-email', {
+          body: { to, template, data, idempotency_key: idempotencyKey }
+        });
+        if (!fallbackError) return fallbackResult;
+      } catch (e) {
+        console.error(`[Resend] Fallback também falhou:`, e);
+      }
+      
       throw error;
     }
   });
