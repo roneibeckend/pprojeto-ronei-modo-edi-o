@@ -62,8 +62,14 @@ function EbookReaderPage() {
     localStorage.setItem(`ebook_opening_${ebook.id}`, 'true');
   };
 
-  const chapters = ebook.modules?.flatMap((m: any) => m.chapters || []).sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0)) || [];
-  const [activeChapterId, setActiveChapterId] = useState<string | undefined>(chapters[0]?.id);
+  useEffect(() => {
+    const lastRead = localStorage.getItem(`ebook_last_read_${ebook.id}`);
+    if (lastRead && chapters.some(c => c.id === lastRead)) {
+      setActiveChapterId(lastRead);
+    } else {
+      setActiveChapterId(chapters[0]?.id);
+    }
+  }, [ebook.id, chapters]);
   
   const activeChapter = chapters.find((c: any) => c.id === activeChapterId) || chapters[0];
   const activeIndex = chapters.findIndex((c: any) => c.id === activeChapter?.id);
@@ -78,6 +84,7 @@ function EbookReaderPage() {
         ebookId: ebook.id,
         moduleId: activeChapter.module_id
       });
+      localStorage.setItem(`ebook_last_read_${ebook.id}`, activeChapterId);
     }
   }, [activeChapterId, activeChapter, ebook.id, completeChapter]);
 
