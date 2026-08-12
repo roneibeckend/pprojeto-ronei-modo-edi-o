@@ -405,13 +405,13 @@ function AdminEbooksPage() {
                           )}
                         </div>
                         <input 
-                          value={editingItem?.keywords || ""} 
+                          value={Array.isArray(editingItem?.keywords) ? editingItem.keywords.join(', ') : (editingItem?.keywords || "")} 
                           onChange={e => setEditingItem({...editingItem, keywords: e.target.value})} 
                           placeholder="ex: churrasco, espetinho, receitas, gourmet"
                           className={cn(
                             "w-full bg-white/5 border p-3 rounded-lg text-sm outline-none transition-colors",
-                            editingItem?.keywords?.split(',').filter((k: string) => k.trim()).length >= 5 ? "border-green-500/30 focus:border-green-500" : 
-                            editingItem?.keywords?.length > 0 ? "border-yellow-500/30 focus:border-yellow-500" : "border-white/10 focus:border-[#ff6a00]"
+                            (typeof editingItem?.keywords === 'string' ? editingItem.keywords : (editingItem?.keywords || [])).toString().split(',').filter((k: string) => k.trim()).length >= 5 ? "border-green-500/30 focus:border-green-500" : 
+                            (editingItem?.keywords?.length > 0) ? "border-yellow-500/30 focus:border-yellow-500" : "border-white/10 focus:border-[#ff6a00]"
                           )}
                         />
                       </div>
