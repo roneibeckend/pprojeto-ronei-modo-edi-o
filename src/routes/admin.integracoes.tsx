@@ -1290,6 +1290,7 @@ function OffersIntegrationPanel() {
       </Alert>
     </div>
   );
+}
 
 function EmailTemplatesTab() {
   const queryClient = useQueryClient();
