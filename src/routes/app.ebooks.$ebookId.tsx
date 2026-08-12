@@ -66,16 +66,21 @@ function EbookReaderPage() {
   };
 
   const chapters = ebook.modules?.flatMap((m: any) => m.chapters || []).sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0)) || [];
-  const [activeChapterId, setActiveChapterId] = useState<string | undefined>(undefined);
-  
-  useEffect(() => {
+  const [activeChapterId, setActiveChapterId] = useState<string | undefined>(() => {
+    if (typeof window === 'undefined') return undefined;
     const lastRead = localStorage.getItem(`ebook_last_read_${ebook.id}`);
     if (lastRead && chapters.some((c: any) => c.id === lastRead)) {
-      setActiveChapterId(lastRead);
-    } else if (chapters.length > 0) {
-      setActiveChapterId(chapters[0].id);
+      return lastRead;
     }
-  }, [ebook.id, chapters]);
+    return chapters.length > 0 ? chapters[0].id : undefined;
+  });
+  
+  // Update local storage when chapter changes
+  useEffect(() => {
+    if (activeChapterId) {
+      localStorage.setItem(`ebook_last_read_${ebook.id}`, activeChapterId);
+    }
+  }, [activeChapterId, ebook.id]);
 
   const activeChapter = chapters.find((c: any) => c.id === activeChapterId) || chapters[0];
   const activeIndex = chapters.findIndex((c: any) => c.id === activeChapter?.id);
@@ -90,7 +95,6 @@ function EbookReaderPage() {
         ebookId: ebook.id,
         moduleId: activeChapter.module_id
       });
-      localStorage.setItem(`ebook_last_read_${ebook.id}`, activeChapterId);
     }
   }, [activeChapterId, activeChapter, ebook.id, completeChapter]);
 
