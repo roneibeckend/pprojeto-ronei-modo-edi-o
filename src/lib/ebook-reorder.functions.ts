@@ -43,7 +43,7 @@ export const reorderChapter = createServerFn({ method: "POST" })
 
     if (updates.length > 0) {
       const results = await Promise.all(updates);
-      const firstError = results.find(r => r.error);
+      const firstError = results.find(r => r && r.error);
       if (firstError) throw new Error(firstError.error?.message);
     }
 
