@@ -128,8 +128,29 @@ export function useProgress() {
   });
 
   const completeChapterMutation = useMutation({
-    mutationFn: async (chapterId: string) => {
+    mutationFn: async ({ chapterId, ebookId, moduleId }: { chapterId: string, ebookId?: string, moduleId?: string }) => {
       if (!user?.id) throw new Error("Usuário não autenticado");
+
+      // Track start if not already tracked
+      if (ebookId && moduleId) {
+        await supabase
+          .from("progress_tracking")
+          .upsert({
+            user_id: user.id,
+            item_type: 'ebook_module',
+            item_id: moduleId,
+            started_at: new Date().toISOString()
+          }, { onConflict: 'user_id,item_type,item_id' });
+        
+        await supabase
+          .from("progress_tracking")
+          .upsert({
+            user_id: user.id,
+            item_type: 'ebook',
+            item_id: ebookId,
+            started_at: new Date().toISOString()
+          }, { onConflict: 'user_id,item_type,item_id' });
+      }
 
       const { error } = await supabase
         .from("ebook_progress")
@@ -143,6 +164,31 @@ export function useProgress() {
         });
 
       if (error) throw error;
+
+      // Logic to check module completion
+      if (ebookId && moduleId) {
+        const { data: chapters } = await supabase
+          .from("ebook_chapters")
+          .select("id")
+          .eq("module_id", moduleId);
+        
+        const { data: progress } = await supabase
+          .from("ebook_progress")
+          .select("chapter_id")
+          .eq("user_id", user.id)
+          .not("completed_at", "is", null)
+          .in("chapter_id", chapters?.map(c => c.id) || []);
+        
+        if (progress?.length === chapters?.length) {
+          await supabase
+            .from("progress_tracking")
+            .update({ completed_at: new Date().toISOString() })
+            .eq("user_id", user.id)
+            .eq("item_type", 'ebook_module')
+            .eq("item_id", moduleId)
+            .is("completed_at", null);
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ebook-progress", user?.id] });
