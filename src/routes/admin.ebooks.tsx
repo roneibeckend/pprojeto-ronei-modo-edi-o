@@ -38,7 +38,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { importEbookFromPdf } from "@/lib/ebook-import.functions";
+import { importEbookFromFile } from "@/lib/ebook-import.functions";
 
 export const Route = createFileRoute("/admin/ebooks")({
   head: () => ({ meta: [{ title: "Gestão de E-books · Admin" }] }),
