@@ -822,6 +822,10 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
           </Card>
         </TabsContent>
 
+        <TabsContent value="templates" className="space-y-6 m-0">
+          <EmailTemplatesTab />
+        </TabsContent>
+
         <TabsContent value="resend" className="space-y-6 m-0">
           <ResendConfigTab integration={resendIntegration} />
         </TabsContent>
