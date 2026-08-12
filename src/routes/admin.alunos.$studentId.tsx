@@ -372,7 +372,7 @@ function AdminStudentProfilePage() {
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-bold text-sm truncate pr-16">{enrollment.title}</h4>
+                          <h4 className="font-bold text-sm pr-16">{enrollment.title}</h4>
                           <span className="text-[10px] font-bold text-[#ff6a00] uppercase tracking-widest">
                             {enrollment.progress || 0}% Concluído
                           </span>
