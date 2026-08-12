@@ -382,6 +382,16 @@ function AdminEbooksPage() {
                           )}
                         />
                       </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">URL do Vídeo de Abertura (YouTube/Vimeo)</label>
+                        <input 
+                          value={editingItem?.opening_video_url || ""} 
+                          onChange={e => setEditingItem({...editingItem, opening_video_url: e.target.value})} 
+                          placeholder="https://www.youtube.com/watch?v=..."
+                          className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors"
+                        />
+                      </div>
                     </div>
 
                     <div className="space-y-4">
