@@ -381,7 +381,7 @@ function IntegrationsPage() {
                               <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
                               {key === 'environment' || key === 'testMode' ? (
                                 <select 
-                                  value={key === 'testMode' ? (String(selectedItem.settings[key]) === 'true' || selectedItem.settings[key] === true ? 'sandbox' : 'production') : selectedItem.settings[key]}
+                                  value={(String(selectedItem.settings[key]) === 'true') ? 'sandbox' : 'production'}
                                   onChange={(e) => {
                                     const val = e.target.value;
                                     if (key === 'testMode') {
