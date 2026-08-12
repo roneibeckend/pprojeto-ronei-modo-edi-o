@@ -534,7 +534,7 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
               mime_type: file.type
             }
           });
-          toast.success(`Arquivo importado com sucesso! ${result.chapters_count} capítulos criados.`);
+          toast.success(`Arquivo importado com sucesso! ${result.chapters_count} capítulos criados em ${(result.duration_ms / 1000).toFixed(1)}s.`);
           fetchContent();
         } catch (err: any) {
           console.error("File Import Failure:", err);
