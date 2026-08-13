@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { sendResendEmail } from '@/lib/resend.server';
+import { triggerEmailEvent } from '@/lib/resend.server';
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import {
   asaasHeaders,
@@ -113,7 +113,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                     
                     console.log(`[Webhook Asaas] Pagamento registrado: R$ ${netAmount.toFixed(2)} (Líquido)`);
                     
-                    // --- ENVIO DE EMAIL DE BOAS VINDAS ---
+                    // --- ENVIO DE EMAIL AUTOMATIZADO ---
                     if (customerEmail && granted) {
                       try {
                         const { data: profile } = await supabaseAdmin
@@ -122,33 +122,42 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                           .eq('id', userId)
                           .maybeSingle();
 
-                        const productName = productType === 'course' ? 'seu Curso' : 'seu E-book';
-                        const subject = 'Acesso Liberado! 🚀 Seu conteúdo já está disponível';
                         const userName = profile?.name || 'Cliente';
+                        const templateName = productType === 'course' ? 'course_access' : 'ebook_access';
                         
-                        await sendResendEmail({
+                        // Busca o título do produto para o e-mail
+                        const { data: product } = await supabaseAdmin
+                          .from(productType === 'course' ? 'courses' : 'ebooks')
+                          .select('title')
+                          .eq('id', productId)
+                          .maybeSingle();
+
+                        await triggerEmailEvent({
+                          event: templateName,
                           to: customerEmail,
-                          subject: subject,
-                          html: `
-                            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
-                              <h1 style="color: #ff6a00;">Olá, ${userName}!</h1>
-                              <p>Boas notícias! Seu pagamento foi confirmado e seu acesso ao <strong>${productName}</strong> já está liberado.</p>
-                              <div style="background: #f4f4f4; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                                <p style="margin-top: 0;">Para acessar, basta entrar na plataforma com seu e-mail:</p>
-                                <a href="https://lovable.app" style="display: inline-block; background: #ff6a00; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Acessar Plataforma</a>
-                              </div>
-                              <p>Se tiver qualquer dúvida, basta responder a este e-mail.</p>
-                              <p>Bons estudos!<br>Equipe Plataforma</p>
-                            </div>
-                          `,
-                          tags: [
-                            { name: 'product_type', value: productType },
-                            { name: 'product_id', value: productId }
-                          ]
+                          data: {
+                            name: userName,
+                            product_name: product?.title || (productType === 'course' ? 'Treinamento' : 'E-book'),
+                            access_link: 'https://lovable.app/app'
+                          },
+                          idempotencyKey: `access_${body.payment?.id}`
                         });
-                        console.log(`[Webhook Asaas] Email de acesso enviado para ${customerEmail}`);
+
+                        // Também envia confirmação de pagamento genérica
+                        await triggerEmailEvent({
+                          event: 'payment_confirmed',
+                          to: customerEmail,
+                          data: {
+                            name: userName,
+                            amount: amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+                            payment_id: body.payment?.id
+                          },
+                          idempotencyKey: `payment_${body.payment?.id}`
+                        });
+
+                        console.log(`[Webhook Asaas] E-mails de automação disparados para ${customerEmail}`);
                       } catch (emailErr) {
-                        console.error('[Webhook Asaas] Erro ao enviar email de boas-vindas:', emailErr);
+                        console.error('[Webhook Asaas] Erro nas automações de e-mail:', emailErr);
                       }
                     }
                   }
