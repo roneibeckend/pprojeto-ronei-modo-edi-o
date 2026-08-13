@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
-import { Onboarding } from "../components/platform/Onboarding";
+
 import { useAffiliateTracking } from "../hooks/use-affiliate-tracking";
 
 import appCss from "../styles.css?url";
