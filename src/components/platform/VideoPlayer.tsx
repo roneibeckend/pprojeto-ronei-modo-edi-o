@@ -323,6 +323,17 @@ export function VideoPlayer({
         }}
       />
 
+      {/* Memoria: Garantir que o src seja limpo ao desmontar para liberar o buffer */}
+      {useEffect(() => {
+        return () => {
+          if (videoRef.current) {
+            videoRef.current.pause();
+            videoRef.current.src = "";
+            videoRef.current.load();
+          }
+        };
+      }, []) && null}
+
 
       {/* Loading Overlay */}
       {isLoading && !isPlaying && (
