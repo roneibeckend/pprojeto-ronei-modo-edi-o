@@ -4,14 +4,25 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const getMaterials = createServerFn({ method: "GET" })
   .handler(async () => {
-    const { data, error } = await supabase
-      .from("platform_materials")
-      .select("*")
-      .eq("is_active", true)
-      .order("created_at", { ascending: false });
+    try {
+      console.log("Server side: Fetching platform_materials");
+      const { data, error } = await supabase
+        .from("platform_materials")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
 
-    if (error) throw error;
-    return data || [];
+      if (error) {
+        console.error("Server side: Error fetching platform_materials:", error);
+        throw error;
+      }
+      
+      console.log("Server side: Materials fetched:", data?.length || 0);
+      return data || [];
+    } catch (e) {
+      console.error("Server side: Fatal error in getMaterials:", e);
+      throw e;
+    }
   });
 
 export const upsertMaterial = createServerFn({ method: "POST" })
