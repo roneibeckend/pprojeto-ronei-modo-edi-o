@@ -155,7 +155,7 @@ export function VideoPlayer({
         try {
           // Critical for mobile: the play() call must be directly inside the interaction handler
           // and we should ensure it's not waiting for a long promise chain.
-          console.log('play() triggered'); await video.play();
+          console.log('play() triggered'); console.log('play() triggered'); await video.play();
           setIsPlaying(true);
         } catch (err) {
           console.error("Erro ao reproduzir vídeo:", err);
@@ -163,7 +163,7 @@ export function VideoPlayer({
           if (video.muted && isIntro) {
              video.muted = true; // Stay muted but try again
              try {
-               console.log('play() triggered'); await video.play();
+               console.log('play() triggered'); console.log('play() triggered'); await video.play();
                setIsPlaying(true);
              } catch (retryErr) {
                console.error("Second attempt failed:", retryErr);
