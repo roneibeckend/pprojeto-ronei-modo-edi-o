@@ -312,7 +312,7 @@ function EbookReaderPage() {
                     : ebook.opening_video_url.includes('drive.google.com')
                     ? (ebook.opening_video_url.includes('/preview') ? ebook.opening_video_url : `https://drive.google.com/file/d/${(ebook.opening_video_url.match(/\/file\/d\/([^\/]+)/) || ebook.opening_video_url.match(/id=([^&]+)/))?.[1]}/preview`) + "?autoplay=1"
                     : ebook.opening_video_url + "?autoplay=1"}
-                  className="absolute inset-0 h-full w-full object-cover"
+                  className="absolute inset-0 h-[100.5%] w-[100.5%] -left-[0.25%] -top-[0.25%] object-cover scale-[1.12]"
                   allow="autoplay; fullscreen"
                   allowFullScreen
                 />
@@ -359,7 +359,7 @@ function EbookReaderPage() {
                           : activeChapter.video_url.includes('drive.google.com')
                           ? (activeChapter.video_url.includes('/preview') ? activeChapter.video_url : `https://drive.google.com/file/d/${(activeChapter.video_url.match(/\/file\/d\/([^\/]+)/) || activeChapter.video_url.match(/id=([^&]+)/))?.[1]}/preview`)
                           : activeChapter.video_url}
-                        className="h-full w-full"
+                        className="h-[100.5%] w-[100.5%] -left-[0.25%] -top-[0.25%] scale-[1.12]"
                         allowFullScreen
                       />
                       <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-none sm:rounded-2xl"></div>
