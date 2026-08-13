@@ -73,8 +73,6 @@ export function VideoPlayer({
 
   const isYouTube = src.includes('youtube.com') || src.includes('youtu.be');
   const isGoogleDrive = src.includes('drive.google.com');
-  // Simple check for Supabase Storage or direct MP4 links
-  const isDirectVideo = src.endsWith('.mp4') || src.includes('/storage/v1/object/');
   
   const getEmbedUrl = (url: string) => {
     if (!url) return '';
@@ -122,9 +120,7 @@ export function VideoPlayer({
         console.warn("Video loading timeout reached, clearing loading state");
         setIsLoading(false);
       }
-    }, 20000); // Aumentado para 20s para conexões lentas mobile
-
-    // Load saved position
+    }, 20000); // Increased for slow mobile connections
 
     const handleTimeUpdate = () => {
       localStorage.setItem(`video_progress_${videoId}`, video.currentTime.toString());
@@ -138,7 +134,7 @@ export function VideoPlayer({
     };
   }, [videoId, onProgress, isYouTube, isGoogleDrive, isLoading]);
 
-  const togglePlay = async (e?: React.MouseEvent | React.TouchEvent) => {
+  const togglePlay = (e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
       e.stopPropagation();
       e.preventDefault();
@@ -147,29 +143,20 @@ export function VideoPlayer({
     const video = videoRef.current;
     if (video) {
       if (video.paused) {
-        // Force reload if stalled or in a bad state (readyState 0 = HAVE_NOTHING)
-        if (video.readyState === 0) {
-          video.load();
-        }
+        // Critical for mobile: call play() directly in the user interaction event
+        // Don't await it or do async work before calling it to avoid browser blocks
+        const playPromise = video.play();
         
-        try {
-          // Critical for mobile: the play() call must be directly inside the interaction handler
-          // and we should ensure it's not waiting for a long promise chain.
-          await video.play();
-          setIsPlaying(true);
-        } catch (err) {
-          console.error("Erro ao reproduzir vídeo:", err);
-          // If interaction failed, try unmuting if it was muted by intro logic
-          if (video.muted && isIntro) {
-             video.muted = true; // Stay muted but try again
-             try {
-               await video.play();
-               setIsPlaying(true);
-             } catch (retryErr) {
-               console.error("Second attempt failed:", retryErr);
-             }
-          }
-          setIsPlaying(false);
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            setIsPlaying(true);
+            setIsLoading(false);
+          }).catch(err => {
+            console.error("Playback failed:", err);
+            // If it failed because of lack of user interaction (even though we are in one),
+            // sometimes retrying after a tiny delay helps, but usually it's better to just stay paused.
+            setIsPlaying(false);
+          });
         }
       } else {
         video.pause();
@@ -195,7 +182,7 @@ export function VideoPlayer({
           allowFullScreen
           title={title || "Video Player"}
         />
-        {hideAllUI && <div className="absolute inset-0 z-50 bg-transparent" onClick={togglePlay} />}
+        {hideAllUI && <div className="absolute inset-0 z-50 bg-transparent" onClick={() => {}} />}
       </div>
     );
   }
@@ -226,26 +213,21 @@ export function VideoPlayer({
         onLoadStart={() => setIsLoading(true)}
         onCanPlay={() => {
           setIsLoading(false);
-          if (isIntro && videoRef.current) {
-            videoRef.current.play().catch((err) => {
-              console.log("Autoplay blocked or failed:", err);
-            });
-          }
+        }}
+        onPlaying={() => {
+          setIsPlaying(true);
+          setIsLoading(false);
+        }}
+        onPause={() => setIsPlaying(false)}
+        onWaiting={() => setIsLoading(true)}
+        onStalled={() => {
+          console.warn("Video stalled, attempting recovery...");
+          // Don't call .load() here as it can cause loops. Just let it buffer.
         }}
         onError={(e) => {
           console.error("Video element error:", e);
           setIsLoading(false);
         }}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onWaiting={() => setIsLoading(true)}
-        onStalled={() => {
-          console.warn("Video stalled, attempting recovery...");
-          if (videoRef.current && videoRef.current.readyState < 3) {
-            videoRef.current.load();
-          }
-        }}
-        onSuspend={() => console.log("Video playback suspended")}
         onClick={(e) => {
           e.stopPropagation();
           togglePlay(e);
@@ -267,15 +249,16 @@ export function VideoPlayer({
           "absolute inset-0 flex items-center justify-center bg-black/10 transition-all duration-300 z-30",
           (!isPlaying || showControls) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         )}
-        onTouchEnd={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          togglePlay();
-        }}
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          togglePlay();
+          togglePlay(e);
+        }}
+        onTouchEnd={(e) => {
+          // Some mobile browsers prefer touchEnd for immediate response
+          e.stopPropagation();
+          e.preventDefault();
+          togglePlay(e);
         }}
       >
         {!isLoading ? (
