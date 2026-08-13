@@ -1912,7 +1912,6 @@ function Objection() {
     <section className="relative py-12 sm:py-16">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          
           <h2 className="mt-4 max-w-2xl h-fluid-h2 font-black">
             "Mas eu vou <span className="text-gradient-fire">conseguir mesmo</span>?"
           </h2>
