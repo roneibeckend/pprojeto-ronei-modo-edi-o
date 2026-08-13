@@ -47,13 +47,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "admin_permissions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "student_ranking"
-            referencedColumns: ["user_id"]
-          },
         ]
       }
       affiliate_custom_commissions: {
@@ -257,13 +250,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "affiliates_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "student_ranking"
-            referencedColumns: ["user_id"]
-          },
-          {
             foreignKeyName: "affiliates_referrer_id_fkey"
             columns: ["referrer_id"]
             isOneToOne: false
@@ -362,13 +348,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "course_feedback_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "student_ranking"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1375,13 +1354,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "payout_requests_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "student_ranking"
-            referencedColumns: ["user_id"]
-          },
         ]
       }
       platform_materials: {
@@ -1684,13 +1656,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "support_messages_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "student_ranking"
-            referencedColumns: ["user_id"]
-          },
-          {
             foreignKeyName: "support_messages_ticket_id_fkey"
             columns: ["ticket_id"]
             isOneToOne: false
@@ -1746,13 +1711,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "support_tickets_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "student_ranking"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1871,16 +1829,7 @@ export type Database = {
       }
     }
     Views: {
-      student_ranking: {
-        Row: {
-          avatar_url: string | null
-          global_rank: number | null
-          name: string | null
-          total_points: number | null
-          user_id: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       award_points: {
@@ -1890,6 +1839,16 @@ export type Database = {
       distribute_partner_profits: {
         Args: { p_amount: number; p_partner_id: string }
         Returns: undefined
+      }
+      get_student_ranking: {
+        Args: { p_limit?: number }
+        Returns: {
+          avatar_url: string
+          global_rank: number
+          name: string
+          total_points: number
+          user_id: string
+        }[]
       }
       has_module_access: {
         Args: { _module: string; _user_id: string }
