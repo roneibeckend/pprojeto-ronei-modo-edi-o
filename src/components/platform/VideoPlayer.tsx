@@ -207,6 +207,16 @@ export function VideoPlayer({
         muted={isIntro} // Autoplay policy: intro videos must start muted on some mobile browsers
         autoPlay={isIntro} // Attempt autoplay for intro
         onLoadStart={() => setIsLoading(true)}
+        onProgress={(e) => {
+          const video = e.currentTarget;
+          if (video.buffered.length > 0) {
+            const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+            const duration = video.duration;
+            if (duration > 0 && (bufferedEnd / duration) > 0.1) {
+              // At least 10% buffered, enough for low latency start
+            }
+          }
+        }}
         onCanPlay={() => {
           setIsLoading(false);
           // Auto-start if it's an intro and was supposed to be playing
