@@ -33,8 +33,8 @@ function Dashboard() {
     queryKey: ["showcase-items"],
     queryFn: async () => {
       const [coursesRes, ebooksRes] = await Promise.all([
-        supabase.from("courses").select("*").eq("is_locked", false),
-        supabase.from("ebooks").select("*").eq("is_locked", false),
+        supabase.from("courses").select("id, title, description, price, cover_url, type:created_at").eq("is_locked", false),
+        supabase.from("ebooks").select("id, title, description, price, cover_url, type:created_at").eq("is_locked", false),
       ]);
 
       if (coursesRes.error) throw coursesRes.error;
@@ -45,8 +45,7 @@ function Dashboard() {
         ...(ebooksRes.data || []).map(e => ({ ...e, type: 'ebook' as const })),
       ];
 
-      const sortedItems = items.sort((a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime());
-      return sortedItems;
+      return items.sort((a, b) => new Date(b.type || "").getTime() - new Date(a.type || "").getTime());
     },
   });
 
