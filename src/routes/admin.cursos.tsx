@@ -175,12 +175,14 @@ function AdminCursosPage() {
         <button 
           onClick={() => { 
             setEditingItem({ 
+              id: crypto.randomUUID(),
               title: "", 
               slug: "", 
               status: "draft", 
               level: "beginner",
               order_index: totalCount 
             }); 
+
             setIsModalOpen(true); 
           }}
           className="flex items-center justify-center gap-2 bg-[#ff6a00] px-5 py-3 sm:py-2.5 rounded-xl sm:rounded-lg text-sm font-bold text-black hover:bg-[#ff8c33] transition-colors w-full sm:w-auto"
@@ -223,7 +225,7 @@ function AdminCursosPage() {
           <Library className="h-12 w-12 text-white/10 mb-4" />
           <p className="text-white/40 text-sm">Nenhum curso encontrado.</p>
           <button 
-            onClick={() => { setEditingItem({ title: "", slug: "", status: "draft", level: "beginner" }); setIsModalOpen(true); }}
+            onClick={() => { setEditingItem({ id: crypto.randomUUID(), title: "", slug: "", status: "draft", level: "beginner" }); setIsModalOpen(true); }}
             className="mt-4 text-[#ff6a00] text-sm font-bold hover:underline"
           >
             Criar meu primeiro curso

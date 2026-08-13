@@ -1,5 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/use-auth";
+
+
 import { 
   Plus, 
   FileSpreadsheet, 
@@ -25,11 +28,21 @@ export const Route = createFileRoute("/admin/materiais")({
 });
 
 function AdminMaterialsPage() {
+  const navigate = useNavigate();
+  const { role, isLoading: isLoadingAuth } = useAuth();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [uploading, setUploading] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isLoadingAuth && role === "student") {
+      toast.error("Acesso restrito.");
+      navigate({ to: "/admin" });
+    }
+  }, [role, isLoadingAuth, navigate]);
+
 
   const { data: materials = [], isLoading } = useQuery({
     queryKey: ["platform-materials-admin"],

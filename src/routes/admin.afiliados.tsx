@@ -1,5 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/use-auth";
+
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { 
@@ -29,10 +32,20 @@ export const Route = createFileRoute("/admin/afiliados")({
 });
 
 function AdminAffiliatesPage() {
+  const navigate = useNavigate();
+  const { role, isLoading: isLoadingAuth } = useAuth();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [currentMaterial, setCurrentMaterial] = useState<any>(null);
+
+  useEffect(() => {
+    if (!isLoadingAuth && role === "student") {
+      toast.error("Acesso restrito.");
+      navigate({ to: "/admin" });
+    }
+  }, [role, isLoadingAuth, navigate]);
+
 
   const { data: affiliates, isLoading } = useQuery({
     queryKey: ["admin-affiliates"],

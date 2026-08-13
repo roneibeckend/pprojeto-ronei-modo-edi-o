@@ -28,9 +28,10 @@ function AdminDashboard() {
 
   useEffect(() => {
     if (!authLoading && !["admin", "manager", "agent", "student"].includes(role || "")) {
-      toast.error("Acesso restrito.");
+      toast.error("Sua conta não tem acesso a esta área.");
       navigate({ to: "/app" });
     }
+
   }, [authLoading, role, navigate]);
 
   const { data: stats, isLoading } = useQuery({
