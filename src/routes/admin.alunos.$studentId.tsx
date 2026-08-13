@@ -46,6 +46,7 @@ function AdminStudentProfilePage() {
     lessonsWatched: 0,
     totalSpent: 0
   });
+  const [payments, setPayments] = useState<any[]>([]);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [availableProducts, setAvailableProducts] = useState<{courses: any[], ebooks: any[]}>({ courses: [], ebooks: [] });
   const [manualLoading, setManualLoading] = useState(false);
