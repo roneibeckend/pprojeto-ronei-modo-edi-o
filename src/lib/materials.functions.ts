@@ -37,7 +37,21 @@ export const upsertMaterial = createServerFn({ method: "POST" })
     is_active: z.boolean().default(true),
   }).parse(data))
   .handler(async ({ data }) => {
-    const { data: result, error } = await supabase
+    // 1. Check if user is admin using the normal client (which has the bearer token)
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Não autenticado");
+
+    const { data: hasRole } = await supabase.rpc("has_role", { 
+      _user_id: user.id, 
+      _role: "admin" 
+    });
+
+    if (!hasRole) throw new Error("Acesso negado: apenas administradores podem gerenciar materiais");
+
+    // 2. Use the admin client to bypass RLS since we already verified the role
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    const { data: result, error } = await supabaseAdmin
       .from("platform_materials")
       .upsert({
         ...data,
@@ -46,14 +60,30 @@ export const upsertMaterial = createServerFn({ method: "POST" })
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Erro ao salvar material (Admin Client):", error);
+      throw error;
+    }
     return result;
   });
+
 
 export const deleteMaterial = createServerFn({ method: "POST" })
   .inputValidator((data: any) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data }) => {
-    const { error } = await supabase
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Não autenticado");
+
+    const { data: hasRole } = await supabase.rpc("has_role", { 
+      _user_id: user.id, 
+      _role: "admin" 
+    });
+
+    if (!hasRole) throw new Error("Acesso negado");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { error } = await supabaseAdmin
       .from("platform_materials")
       .delete()
       .eq("id", data.id);
@@ -61,3 +91,4 @@ export const deleteMaterial = createServerFn({ method: "POST" })
     if (error) throw error;
     return { success: true };
   });
+
