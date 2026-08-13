@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, Suspense, lazy, useRef, useLayoutEffect } from "react";
-import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart, CheckCircle2, ArrowDown } from "lucide-react";
+import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart, CheckCircle2, ArrowDown, X } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,7 +17,7 @@ import { FeedbackSummary } from "@/components/platform/FeedbackSummary";
 import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 import { getSignedVideoUrl } from "@/lib/video.functions";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 
 
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/app/cursos/$courseId")({
     const { data: course, error } = await supabase
       .from("courses")
       .select(`
-        id, title, description, price, teacher_name, cover_url, payment_type, due_days, status,
+        id, title, description, price, teacher_name, cover_url, payment_type, due_days, status, intro_video_url,
         modules (
           id, title, video_url, order_index,
           lessons (id, title, video_url, duration, order_index, module_id)
@@ -81,7 +81,10 @@ function CoursePage() {
   const { openPayment } = usePaymentModal();
   const getSignedUrl = useServerFn(getSignedVideoUrl);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showOpeningVideo, setShowOpeningVideo] = useState(false);
+  const [showIntroVideo, setShowIntroVideo] = useState(false);
   const [signedLessonUrl, setSignedLessonUrl] = useState<string | null>(null);
+  const [signedIntroUrl, setSignedIntroUrl] = useState<string | null>(null);
   const [isLoadingSignedUrl, setIsLoadingSignedUrl] = useState(false);
 
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
@@ -186,6 +189,42 @@ function CoursePage() {
       checkFeedback();
     }
   }, [isCompleted, hasSubmittedFeedback, course.id]);
+
+  const introNeedsSigning = Boolean(
+    course?.intro_video_url &&
+    !course.intro_video_url.includes('youtube') &&
+    !course.intro_video_url.includes('drive')
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadSignedIntroUrl = async () => {
+      if (introNeedsSigning) {
+        try {
+          const result = await getSignedUrl({ data: { path: course.intro_video_url } });
+          if (!cancelled) setSignedIntroUrl(result.signedUrl);
+        } catch (error) {
+          console.error("Failed to sign intro video URL:", error);
+        }
+      }
+    };
+    loadSignedIntroUrl();
+    return () => { cancelled = true; };
+  }, [course.intro_video_url, introNeedsSigning, getSignedUrl]);
+
+  useEffect(() => {
+    if (course?.intro_video_url) {
+      const hasSeen = localStorage.getItem(`course_opening_${course.id}`);
+      if (!hasSeen) {
+        setShowOpeningVideo(true);
+      }
+    }
+  }, [course.id, course.intro_video_url]);
+
+  const markVideoAsSeen = () => {
+    setShowOpeningVideo(false);
+    localStorage.setItem(`course_opening_${course.id}`, 'true');
+  };
 
   useEffect(() => {
     if (!isLoadingEnrollments && !hasAccess) {
@@ -370,8 +409,76 @@ function CoursePage() {
             subtitle={`Professor: ${course.teacher_name || "Equipe Espetinho na Veia"}`}
           />
         </div>
-        <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4">← Todos os cursos</Link>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          {course.intro_video_url && (
+            <button 
+              onClick={() => setShowIntroVideo(true)}
+              className="btn-fire flex items-center justify-center gap-2 px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold"
+            >
+              <Play className="h-4 w-4 fill-current" />
+              Ver Vídeo Intro
+            </button>
+          )}
+          <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4 flex items-center justify-center">← Meus Conteúdos</Link>
+        </div>
       </div>
+
+      <AnimatePresence>
+        {(showOpeningVideo || showIntroVideo) && course.intro_video_url && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 backdrop-blur-md"
+          >
+            <div className="relative w-full max-w-4xl">
+              <button 
+                onClick={() => {
+                  if (showOpeningVideo) markVideoAsSeen();
+                  setShowIntroVideo(false);
+                }}
+                className="absolute -top-12 right-0 flex items-center gap-2 text-white/60 hover:text-white transition-colors"
+              >
+                <span>{showOpeningVideo ? "Pular Vídeo" : "Fechar"}</span>
+                <X className="h-6 w-6" />
+              </button>
+              
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-black text-white mb-2">{course.title}</h2>
+                <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Apresentação</p>
+              </div>
+ 
+              <div className="relative aspect-[9/16] h-[70vh] w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black">
+                {introNeedsSigning && !signedIntroUrl ? (
+                  <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>
+                ) : (
+                  <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
+                    <VideoPlayer
+                      videoId={`intro-${course.id}`}
+                      src={signedIntroUrl || course.intro_video_url}
+                      isIntro={true}
+                      className="w-full h-full"
+                    />
+                  </Suspense>
+                )}
+              </div>
+
+              <div className="mt-8 flex justify-center">
+                <button 
+                  onClick={() => {
+                    if (showOpeningVideo) markVideoAsSeen();
+                    setShowIntroVideo(false);
+                  }}
+                  className="btn-fire px-10 py-4 font-black text-lg shadow-2xl shadow-fire/30 flex items-center gap-3"
+                >
+                  <Play className="h-6 w-6 fill-current" />
+                  {showOpeningVideo ? "Começar Treinamento agora" : "Continuar Assistindo"}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         {/* Player */}
