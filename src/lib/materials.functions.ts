@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getMaterials = createServerFn({ method: "GET" })
   .handler(async () => {
@@ -26,6 +27,7 @@ export const getMaterials = createServerFn({ method: "GET" })
   });
 
 export const upsertMaterial = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: any) => z.object({
     id: z.string().uuid().optional(),
     title: z.string(),
@@ -36,25 +38,18 @@ export const upsertMaterial = createServerFn({ method: "POST" })
     category: z.string().nullable().optional(),
     is_active: z.boolean().default(true),
   }).parse(data))
-  .handler(async ({ data }) => {
-    // 1. Check for auth token in headers using the context injected by TanStack Start
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      console.error("Server side: Auth error or user not found:", authError);
-      throw new Error("Sessão expirada ou não autenticada (Não autenticado)");
-    }
-
-
-
-    const { data: hasRole } = await supabase.rpc("has_role", { 
-      _user_id: user.id, 
+  .handler(async ({ data, context }) => {
+    const { data: hasRole, error: roleError } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
       _role: "admin" 
     });
 
+    if (roleError) {
+      console.error("Erro ao validar permissão para salvar material:", roleError);
+      throw new Error("Não foi possível validar a permissão de administrador");
+    }
     if (!hasRole) throw new Error("Acesso negado: apenas administradores podem gerenciar materiais");
 
-    // 2. Use the admin client to bypass RLS since we already verified the role
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     const { data: result, error } = await supabaseAdmin
@@ -75,21 +70,18 @@ export const upsertMaterial = createServerFn({ method: "POST" })
 
 
 export const deleteMaterial = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: any) => z.object({ id: z.string().uuid() }).parse(data))
-  .handler(async ({ data }) => {
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      console.error("Server side: Auth error or user not found:", authError);
-      throw new Error("Sessão expirada ou não autenticada");
-    }
-
-
-    const { data: hasRole } = await supabase.rpc("has_role", { 
-      _user_id: user.id, 
+  .handler(async ({ data, context }) => {
+    const { data: hasRole, error: roleError } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
       _role: "admin" 
     });
 
+    if (roleError) {
+      console.error("Erro ao validar permissão para excluir material:", roleError);
+      throw new Error("Não foi possível validar a permissão de administrador");
+    }
     if (!hasRole) throw new Error("Acesso negado");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
