@@ -435,16 +435,24 @@ function EbookReaderPage() {
                 <div className="w-full bg-black/40 border-b border-white/5">
                   <div className="max-w-4xl mx-auto py-4 sm:py-8 px-0 sm:px-4">
                     <div className="relative aspect-[9/16] max-h-[70vh] max-w-[400px] mx-auto rounded-none sm:rounded-2xl overflow-hidden shadow-2xl border-y sm:border border-white/10 bg-black/60 group">
-                      <iframe
-                        key={activeChapter.video_url}
-                        src={activeChapter.video_url.includes('youtube.com') || activeChapter.video_url.includes('youtu.be')
-                          ? (activeChapter.video_url.includes('watch?v=') ? activeChapter.video_url.replace('watch?v=', 'embed/').split('&')[0] : `https://www.youtube.com/embed/${activeChapter.video_url.split('youtu.be/')[1].split('?')[0]}`)
-                          : activeChapter.video_url.includes('drive.google.com')
-                          ? (activeChapter.video_url.includes('/preview') ? activeChapter.video_url : `https://drive.google.com/file/d/${(activeChapter.video_url.match(/\/file\/d\/([^\/]+)/) || activeChapter.video_url.match(/id=([^&]+)/))?.[1]}/preview`)
-                          : activeChapter.video_url}
-                        className="h-[100.5%] w-[100.5%] -left-[0.25%] -top-[0.25%] scale-[1.12]"
-                        allowFullScreen
-                      />
+                      {activeChapter.video_url.includes('youtube.com') || activeChapter.video_url.includes('youtu.be') || activeChapter.video_url.includes('drive.google.com') ? (
+                        <iframe
+                          key={activeChapter.video_url}
+                          src={activeChapter.video_url.includes('youtube.com') || activeChapter.video_url.includes('youtu.be')
+                            ? (activeChapter.video_url.includes('watch?v=') ? activeChapter.video_url.replace('watch?v=', 'embed/').split('&')[0] : `https://www.youtube.com/embed/${activeChapter.video_url.split('youtu.be/')[1].split('?')[0]}`)
+                            : activeChapter.video_url.includes('drive.google.com')
+                            ? (activeChapter.video_url.includes('/preview') ? activeChapter.video_url : `https://drive.google.com/file/d/${(activeChapter.video_url.match(/\/file\/d\/([^\/]+)/) || activeChapter.video_url.match(/id=([^&]+)/))?.[1]}/preview`)
+                            : activeChapter.video_url}
+                          className="h-[100.5%] w-[100.5%] -left-[0.25%] -top-[0.25%] scale-[1.12]"
+                          allowFullScreen
+                        />
+                      ) : (
+                        <VideoPlayer
+                          videoId={`chapter-${activeChapter.id}`}
+                          src={signedChapterUrl || activeChapter.video_url}
+                          className="w-full h-full"
+                        />
+                      )}
                       <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-none sm:rounded-2xl"></div>
                     </div>
                   </div>
