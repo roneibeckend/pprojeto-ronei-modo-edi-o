@@ -53,44 +53,46 @@ function AdminUsuariosPage() {
     try {
       setLoading(true);
       
-      // Buscamos perfis que tenham roles administrativas
-      const { data: roleData, error: roleError } = await supabase
-        .from('user_roles')
-        .select('user_id, role')
-        .in('role', ['admin', 'manager', 'agent']);
-
-      if (roleError) throw roleError;
-
-      const adminUserIds = roleData.map(r => r.user_id);
+      // 1. Buscar todos os perfis (paginados)
+      let profileQuery = supabase
+        .from('profiles')
+        .select('*', { count: 'exact' });
       
-      if (adminUserIds.length === 0) {
+      if (search) {
+        profileQuery = profileQuery.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
+      }
+      
+      const { data: profileData, error: profileError, count } = await profileQuery
+        .order('created_at', { ascending: false })
+        .range((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE - 1);
+        
+      if (profileError) throw profileError;
+      if (!profileData) {
         setUsers([]);
         setTotalCount(0);
         return;
       }
 
-      let query = supabase
-        .from('profiles')
-        .select('*', { count: 'exact' })
-        .in('id', adminUserIds);
-      
-      if (search) {
-        query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
-      }
-      
-      const { data, error, count } = await query
-        .order('created_at', { ascending: false })
-        .range((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE - 1);
-        
-      if (error) throw error;
+      // 2. Buscar roles para estes perfis específicos
+      const userIds = profileData.map(p => p.id);
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('user_id, role')
+        .in('user_id', userIds);
 
-      // Combinar dados de perfil com roles
-      const enrichedUsers = data?.map(profile => ({
-        ...profile,
-        role: roleData.find(r => r.user_id === profile.id)?.role
-      })) || [];
+      if (roleError) throw roleError;
 
-      setUsers(enrichedUsers);
+      // 3. Combinar dados e FILTRAR apenas quem tem role administrativa
+      // Se não tiver role, assumimos que não é equipe (a menos que queiramos listar todos para promover)
+      // O objetivo original era "Gestão de Equipe", então filtramos por roles administrativas
+      const resultUsers = profileData
+        .map(profile => ({
+          ...profile,
+          role: roleData?.find(r => r.user_id === profile.id)?.role
+        }))
+        .filter(u => ['admin', 'manager', 'agent'].includes(u.role as string));
+
+      setUsers(resultUsers);
       setTotalCount(count || 0);
     } catch (error: any) {
       toast.error("Erro ao carregar usuários: " + error.message);
