@@ -190,7 +190,7 @@ function Reveal({
           }
         }
       },
-      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" },
+      { threshold: 0.1, rootMargin: "0px 0px 50px 0px" },
     );
     io.observe(node);
     return () => io.disconnect();
@@ -705,9 +705,13 @@ function Hero() {
                     src={`https://i.ytimg.com/vi/ZowrRHEwP7I/hqdefault.jpg`}
                     alt="Ronnei — história do Espetos Grill"
                     loading="lazy"
+                    decoding="async"
+                    width={448}
+                    height={252}
                     className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--ember)] shadow-[0_0_40px_-4px_var(--ember)] transition group-hover:scale-110">
                       <span className="absolute inset-0 animate-ping rounded-full bg-[color:var(--ember)] opacity-40" />
@@ -864,12 +868,13 @@ function Pain() {
 
 function AuthorSolution() {
   const slides = [
-    { src: chefWorking.url, alt: "Ronnei na grelha preparando espetinhos" },
-    { src: platter1.url, alt: "Tábua premium de espetinhos variados" },
-    { src: skewersHeld.url, alt: "Espetinhos suculentos no ponto" },
-    { src: ribeye.url, alt: "Corte nobre bovino selecionado" },
-    { src: platter2.url, alt: "Espetinhos servidos com apresentação profissional" },
+    { src: chefWorking.url, alt: "Ronnei na grelha preparando espetinhos", width: 300, height: 300 },
+    { src: platter1.url, alt: "Tábua premium de espetinhos variados", width: 300, height: 300 },
+    { src: skewersHeld.url, alt: "Espetinhos suculentos no ponto", width: 300, height: 300 },
+    { src: ribeye.url, alt: "Corte nobre bovino selecionado", width: 300, height: 300 },
+    { src: platter2.url, alt: "Espetinhos servidos com apresentação profissional", width: 300, height: 300 },
   ];
+
 
   const [idx, setIdx] = useState(0);
 
@@ -892,8 +897,12 @@ function AuthorSolution() {
                   src={s.src}
                   alt={s.alt}
                   loading="lazy"
+                  decoding="async"
+                  width={s.width}
+                  height={s.height}
                   className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
                     i === idx ? "opacity-100" : "opacity-0"
+
                   }`}
                 />
               ))}
@@ -1794,9 +1803,13 @@ function FinalCTA() {
             src={skewersFlat.url}
             alt=""
             aria-hidden
-            className="absolute inset-0 -z-10 h-full w-full object-cover opacity-20"
             loading="lazy"
+            decoding="async"
+            width={1280}
+            height={800}
+            className="absolute inset-0 -z-10 h-full w-full object-cover opacity-20"
           />
+
           <div className="absolute inset-0 -z-10 bg-gradient-to-br from-background/90 via-background/80 to-[color:var(--ember)]/50" />
           <SectionTag>Última chamada</SectionTag>
           <h2 className="mx-auto mt-6 max-w-3xl h-fluid-h2 font-black">

@@ -36,14 +36,15 @@ export const Route = createFileRoute("/app/cursos/$courseId")({
     const { data: course, error } = await supabase
       .from("courses")
       .select(`
-        *,
+        id, title, description, price, teacher_name, cover_url, payment_type, due_days,
         modules (
-          *,
-          lessons (*)
+          id, title, video_url, order_index,
+          lessons (id, title, video_url, duration, order_index, module_id)
         )
       `)
       .eq("id", params.courseId)
       .single();
+
 
     if (error || !course) throw notFound();
     return { course };
@@ -306,9 +307,10 @@ function CoursePage() {
   const [note, setNote] = useState("");
 
   const active = flat.find((l: any) => l.id === activeId) ?? flat[0];
-  const idx = flat.findIndex((l: any) => l.id === active?.id);
-  const prev = idx > 0 ? flat[idx - 1] : null;
-  const next = idx < flat.length - 1 ? flat[idx + 1] : null;
+  const nextLessonForPrefetch = flat.findIndex((l: any) => l.id === active?.id) + 1;
+  const next = nextLessonForPrefetch < flat.length ? flat[nextLessonForPrefetch] : null;
+  const prev = (flat.findIndex((l: any) => l.id === active?.id) || 0) > 0 ? flat[flat.findIndex((l: any) => l.id === active?.id) - 1] : null;
+
 
   if (isLoadingEnrollments) {
     return (

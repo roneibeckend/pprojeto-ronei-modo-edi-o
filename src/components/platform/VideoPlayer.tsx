@@ -219,7 +219,7 @@ export function VideoPlayer({
         webkit-playsinline="true"
         x5-playsinline="true"
         controls={false}
-        preload="metadata"
+        preload="auto"
         muted={isIntro} 
         autoPlay={isIntro}
         onLoadStart={() => setIsLoading(true)}
