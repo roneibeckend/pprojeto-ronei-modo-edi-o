@@ -1,0 +1,95 @@
+/**
+ * Base de dados única para demonstração nos materiais
+ * Coerência entre custos, estoque e precificação.
+ */
+
+export const BRAND_COLORS = {
+  bg: 'F7F4F1',
+  white: 'FFFFFF',
+  black: '171311',
+  darkGray: '3A3431',
+  gray: '756B65',
+  lightGray: 'EEE9E5',
+  red: 'FF3427',
+  orange: 'FF8A18',
+  yellow: 'FFB224',
+  green: '20A464',
+  critical: 'D93A34',
+  alert: 'E7A629',
+  inputBg: 'FFFDE7', // Amarelo/bege muito claro para inputs
+  autoBg: 'F5F5F5',  // Cinza claro para campos automáticos
+};
+
+export const DEMO_INSUMOS = [
+  { id: 'I01', name: 'Alcatra Bovina', category: 'Carnes', unit: 'Kg', buyQty: 1, price: 48.90, weight: 1000, loss: 12 },
+  { id: 'I02', name: 'Contrafilé', category: 'Carnes', unit: 'Kg', buyQty: 1, price: 54.50, weight: 1000, loss: 10 },
+  { id: 'I03', name: 'Peito de Frango', category: 'Carnes', unit: 'Kg', buyQty: 1, price: 21.90, weight: 1000, loss: 5 },
+  { id: 'I04', name: 'Linguiça Toscana', category: 'Carnes', unit: 'Kg', buyQty: 1, price: 19.90, weight: 1000, loss: 0 },
+  { id: 'I05', name: 'Coração de Frango', category: 'Carnes', unit: 'Kg', buyQty: 1, price: 29.90, weight: 1000, loss: 2 },
+  { id: 'I06', name: 'Bacon Defumado', category: 'Carnes', unit: 'Kg', buyQty: 1, price: 38.00, weight: 1000, loss: 0 },
+  { id: 'I07', name: 'Queijo Coalho', category: 'Laticínios', unit: 'Kg', buyQty: 1, price: 45.00, weight: 1000, loss: 0 },
+  { id: 'I08', name: 'Carne para Kafta', category: 'Carnes', unit: 'Kg', buyQty: 1, price: 32.00, weight: 1000, loss: 5 },
+  { id: 'I09', name: 'Palito de Bambu', category: 'Descartáveis', unit: 'Pacote', buyQty: 1, price: 12.50, weight: 100, loss: 0 },
+  { id: 'I10', name: 'Carvão Vegetal 4kg', category: 'Combustível', unit: 'Saco', buyQty: 1, price: 22.00, weight: 4000, loss: 0 },
+  { id: 'I11', name: 'Sal Grosso', category: 'Temperos', unit: 'Kg', buyQty: 1, price: 4.50, weight: 1000, loss: 0 },
+  { id: 'I12', name: 'Alho Roxo', category: 'Hortifruti', unit: 'Kg', buyQty: 1, price: 28.00, weight: 1000, loss: 10 },
+  { id: 'I13', name: 'Cebola Branca', category: 'Hortifruti', unit: 'Kg', buyQty: 1, price: 5.50, weight: 1000, loss: 15 },
+  { id: 'I14', name: 'Pimentão Verde', category: 'Hortifruti', unit: 'Kg', buyQty: 1, price: 6.90, weight: 1000, loss: 20 },
+  { id: 'I15', name: 'Tomate Italiano', category: 'Hortifruti', unit: 'Kg', buyQty: 1, price: 8.50, weight: 1000, loss: 5 },
+  { id: 'I16', name: 'Cheiro-Verde', category: 'Hortifruti', unit: 'Maço', buyQty: 1, price: 2.50, weight: 100, loss: 10 },
+  { id: 'I17', name: 'Limão Taiti', category: 'Hortifruti', unit: 'Kg', buyQty: 1, price: 4.90, weight: 1000, loss: 30 },
+  { id: 'I18', name: 'Farinha de Mandioca', category: 'Secos', unit: 'Kg', buyQty: 1, price: 7.80, weight: 1000, loss: 0 },
+  { id: 'I19', name: 'Óleo de Soja', category: 'Secos', unit: 'Garrafa', buyQty: 1, price: 6.50, weight: 900, loss: 0 },
+  { id: 'I20', name: 'Vinagre de Álcool', category: 'Secos', unit: 'Garrafa', buyQty: 1, price: 3.50, weight: 750, loss: 0 },
+  { id: 'I21', name: 'Molho de Alho', category: 'Condimentos', unit: 'Pote', buyQty: 1, price: 12.00, weight: 500, loss: 0 },
+  { id: 'I22', name: 'Ketchup', category: 'Condimentos', unit: 'Galão', buyQty: 1, price: 35.00, weight: 3000, loss: 0 },
+  { id: 'I23', name: 'Maionese', category: 'Condimentos', unit: 'Balde', buyQty: 1, price: 42.00, weight: 3000, loss: 0 },
+  { id: 'I24', name: 'Mostarda', category: 'Condimentos', unit: 'Galão', buyQty: 1, price: 28.00, weight: 3000, loss: 0 },
+  { id: 'I25', name: 'Pimenta do Reino', category: 'Temperos', unit: 'Pote', buyQty: 1, price: 15.00, weight: 100, loss: 0 },
+  { id: 'I26', name: 'Pão de Alho', category: 'Padaria', unit: 'Pacote', buyQty: 1, price: 18.00, weight: 400, loss: 0 },
+  { id: 'I27', name: 'Mandioca Cozida', category: 'Hortifruti', unit: 'Kg', buyQty: 1, price: 4.50, weight: 1000, loss: 20 },
+  { id: 'I28', name: 'Marmita Isopor', category: 'Embalagem', unit: 'Cento', buyQty: 1, price: 45.00, weight: 100, loss: 0 },
+  { id: 'I29', name: 'Sacola Plástica', category: 'Embalagem', unit: 'Milheiro', buyQty: 1, price: 35.00, weight: 1000, loss: 0 },
+  { id: 'I30', name: 'Guardanapo Papel', category: 'Descartáveis', unit: 'Fardo', buyQty: 1, price: 25.00, weight: 50, loss: 0 },
+  { id: 'I31', name: 'Copo Descartável', category: 'Descartáveis', unit: 'Cento', buyQty: 1, price: 8.50, weight: 100, loss: 0 },
+  { id: 'I32', name: 'Papel Alumínio', category: 'Embalagem', unit: 'Rolo', buyQty: 1, price: 12.00, weight: 5, loss: 0 },
+  { id: 'I33', name: 'Gelo 5kg', category: 'Bebidas', unit: 'Saco', buyQty: 1, price: 10.00, weight: 5000, loss: 0 },
+  { id: 'I34', name: 'Coca-Cola 350ml', category: 'Bebidas', unit: 'Fardo', buyQty: 12, price: 42.00, weight: 12, loss: 0 },
+  { id: 'I35', name: 'Água Mineral 500ml', category: 'Bebidas', unit: 'Fardo', buyQty: 12, price: 18.00, weight: 12, loss: 0 },
+];
+
+export const DEMO_PRODUCTS = [
+  { id: 'P01', name: 'Espetinho Bovino', category: 'Espetinhos', basePrice: 12.00, ingredients: [{ id: 'I01', qty: 100 }, { id: 'I11', qty: 5 }, { id: 'I09', qty: 1 }] },
+  { id: 'P02', name: 'Espetinho de Frango', category: 'Espetinhos', basePrice: 10.00, ingredients: [{ id: 'I03', qty: 100 }, { id: 'I11', qty: 5 }, { id: 'I09', qty: 1 }] },
+  { id: 'P03', name: 'Frango com Bacon', category: 'Espetinhos', basePrice: 13.00, ingredients: [{ id: 'I03', qty: 80 }, { id: 'I06', qty: 30 }, { id: 'I11', qty: 5 }, { id: 'I09', qty: 1 }] },
+  { id: 'P04', name: 'Espetinho de Linguiça', category: 'Espetinhos', basePrice: 9.00, ingredients: [{ id: 'I04', qty: 110 }, { id: 'I09', qty: 1 }] },
+  { id: 'P05', name: 'Espetinho de Coração', category: 'Espetinhos', basePrice: 11.00, ingredients: [{ id: 'I05', qty: 100 }, { id: 'I11', qty: 5 }, { id: 'I09', qty: 1 }] },
+  { id: 'P06', name: 'Kafta Especial', category: 'Espetinhos', basePrice: 12.00, ingredients: [{ id: 'I08', qty: 110 }, { id: 'I09', qty: 1 }] },
+  { id: 'P07', name: 'Queijo Coalho', category: 'Espetinhos', basePrice: 11.00, ingredients: [{ id: 'I07', qty: 100 }, { id: 'I09', qty: 1 }] },
+  { id: 'P08', name: 'Pão de Alho', category: 'Acompanhamentos', basePrice: 8.00, ingredients: [{ id: 'I26', qty: 100 }] },
+  { id: 'P09', name: 'Porção de Mandioca', category: 'Acompanhamentos', basePrice: 15.00, ingredients: [{ id: 'I27', qty: 500 }, { id: 'I19', qty: 20 }] },
+  { id: 'P10', name: 'Farofa Caseira', category: 'Acompanhamentos', basePrice: 5.00, ingredients: [{ id: 'I18', qty: 100 }, { id: 'I06', qty: 20 }] },
+  { id: 'P11', name: 'Vinagrete (Pote)', category: 'Acompanhamentos', basePrice: 5.00, ingredients: [{ id: 'I13', qty: 30 }, { id: 'I15', qty: 30 }, { id: 'I20', qty: 10 }] },
+  { id: 'P12', name: 'Molho de Alho', category: 'Acompanhamentos', basePrice: 3.00, ingredients: [{ id: 'I21', qty: 30 }] },
+  { id: 'P13', name: 'Coca-Cola Lata', category: 'Bebidas', basePrice: 6.00, ingredients: [{ id: 'I34', qty: 1 }] },
+  { id: 'P14', name: 'Água Mineral', category: 'Bebidas', basePrice: 4.00, ingredients: [{ id: 'I35', qty: 1 }] },
+  { id: 'P15', name: 'Combo Individual', category: 'Combos', basePrice: 22.00, ingredients: [{ id: 'P01', qty: 1 }, { id: 'P09', qty: 0.5 }, { id: 'P10', qty: 1 }, { id: 'P13', qty: 1 }] },
+  { id: 'P16', name: 'Combo Casal', category: 'Combos', basePrice: 45.00, ingredients: [{ id: 'P01', qty: 2 }, { id: 'P02', qty: 2 }, { id: 'P09', qty: 1 }, { id: 'P13', qty: 2 }] },
+  { id: 'P17', name: 'Combo Família', category: 'Combos', basePrice: 85.00, ingredients: [{ id: 'P01', qty: 4 }, { id: 'P02', qty: 4 }, { id: 'P09', qty: 2 }, { id: 'P13', qty: 4 }] },
+  { id: 'P18', name: 'Combo Completo', category: 'Combos', basePrice: 35.00, ingredients: [{ id: 'P01', qty: 1 }, { id: 'P03', qty: 1 }, { id: 'P08', qty: 1 }, { id: 'P09', qty: 0.5 }, { id: 'P13', qty: 1 }] },
+];
+
+export const DEMO_FIXED_COSTS = [
+  { description: 'Aluguel do Espaço', value: 1800 },
+  { description: 'Energia Elétrica', value: 350 },
+  { description: 'Água e Esgoto', value: 120 },
+  { description: 'Gás de Cozinha / Carvão Base', value: 450 },
+  { description: 'Internet e Telefone', value: 150 },
+  { description: 'Marketing Digital (Ads)', value: 300 },
+  { description: 'Sistema de Gestão', value: 90 },
+  { description: 'Contabilidade', value: 450 },
+  { description: 'Pró-labore Ronnei', value: 3500 },
+  { description: 'Ajudante (Meio Período)', value: 1400 },
+  { description: 'Taxas Bancárias', value: 60 },
+  { description: 'Manutenção Mensal', value: 200 },
+];

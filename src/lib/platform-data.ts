@@ -142,7 +142,7 @@ export const materials = [
   { id: "m3", title: "Controle de estoque", description: "Gestão inteligente com alertas visuais de reposição e estoque mínimo.", type: "XLSX" },
   { id: "m4", title: "Lista de compras semanal", description: "Modelo profissional organizado por categorias para otimizar suas compras.", type: "PDF" },
   { id: "m5", title: "Checklist de equipamentos", description: "Guia completo de tudo que você precisa para montar uma operação profissional.", type: "PDF" },
-  { id: "m6", title: "Cardápio editável", description: "Design profissional e editável no Canva para atrair mais clientes.", type: "CANVA" },
+  { id: "m6", title: "Cardápio editável", description: "Design profissional e editável no PowerPoint ou Canva para atrair mais clientes.", type: "PPTX" },
   { id: "m7", title: "Artes para divulgação", description: "Pack de artes profissionais prontas para Instagram e WhatsApp.", type: "ZIP" },
   { id: "m8", title: "Controle de vendas", description: "Acompanhe seu faturamento diário e desempenho financeiro.", type: "XLSX" },
 ];
