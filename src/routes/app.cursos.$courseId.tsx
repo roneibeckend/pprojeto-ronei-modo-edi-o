@@ -73,6 +73,7 @@ function CoursePage() {
   const getSignedUrl = useServerFn(getSignedVideoUrl);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [signedLessonUrl, setSignedLessonUrl] = useState<string | null>(null);
+  const [isLoadingSignedUrl, setIsLoadingSignedUrl] = useState(false);
 
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
 
@@ -263,11 +264,14 @@ function CoursePage() {
     if (activeLesson?.video_url && !activeLesson.video_url.includes('youtube') && !activeLesson.video_url.includes('drive')) {
       const loadSignedUrl = async () => {
         try {
+          setIsLoadingSignedUrl(true);
           const result = await getSignedUrl({ data: { path: activeLesson.video_url } });
           setSignedLessonUrl(result.signedUrl);
         } catch (error) {
           console.error("Failed to sign lesson video URL:", error);
           setSignedLessonUrl(null);
+        } finally {
+          setIsLoadingSignedUrl(false);
         }
       };
       loadSignedUrl();

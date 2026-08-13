@@ -171,6 +171,7 @@ function EbookReaderPage() {
 
 
   const [signedChapterUrl, setSignedChapterUrl] = useState<string | null>(null);
+  const [isLoadingSignedChapter, setIsLoadingSignedChapter] = useState(false);
   const activeChapter = chapters.find((c: any) => c.id === activeChapterId) || chapters[0];
   const activeIndex = chapters.findIndex((c: any) => c.id === activeChapter?.id);
 
@@ -178,6 +179,7 @@ function EbookReaderPage() {
     const loadSignedChapterUrl = async () => {
       if (activeChapter?.video_url && !activeChapter.video_url.includes('youtube') && !activeChapter.video_url.includes('drive')) {
         try {
+          setIsLoadingSignedChapter(true);
           // Determine bucket - fallback to course-assets if it's an old URL
           const bucket = activeChapter.video_url.includes('ebook-assets') ? 'ebook-assets' : 'course-assets';
           const result = await getSignedUrl({ data: { path: activeChapter.video_url, bucket } });
@@ -185,6 +187,8 @@ function EbookReaderPage() {
         } catch (error) {
           console.error("Failed to sign chapter video URL:", error);
           setSignedChapterUrl(null);
+        } finally {
+          setIsLoadingSignedChapter(false);
         }
       } else {
         setSignedChapterUrl(null);
