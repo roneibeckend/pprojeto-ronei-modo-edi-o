@@ -145,6 +145,20 @@ function AdminRootLayout() {
           </SheetContent>
         </Sheet>
         <span className="font-bold tracking-widest text-[10px] sm:text-sm uppercase ml-4 truncate flex-1 pr-4">Painel Administrativo</span>
+        <div className="flex items-center gap-2">
+          <Link 
+            to="/admin/suporte"
+            className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 hover:border-[#ff6a00]/50 hover:text-[#ff6a00] transition-colors touch-target"
+          >
+            <HelpCircle className="h-5 w-5" />
+          </Link>
+          <Link 
+            to="/admin/notificacoes"
+            className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 hover:border-[#ff6a00]/50 hover:text-[#ff6a00] transition-colors touch-target"
+          >
+            <Bell className="h-5 w-5" />
+          </Link>
+        </div>
       </div>
 
       {/* Main Content */}
