@@ -153,13 +153,13 @@ export function PostPurchaseOffer({
                   <div 
                     key={offer.id}
                     onClick={() => toggleSelection(offer.id)}
-                    className={`flex items-center gap-4 p-4 rounded-2xl border transition-all cursor-pointer ${
+                    className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-all cursor-pointer ${
                       isSelected 
                         ? 'bg-gold/10 border-gold shadow-lg shadow-gold/5' 
                         : 'bg-white/5 border-white/5 hover:border-white/10'
                     }`}
                   >
-                    <div className="h-16 w-24 sm:h-20 sm:w-32 rounded-lg overflow-hidden shrink-0 bg-muted/20">
+                    <div className="h-14 w-20 sm:h-20 sm:w-32 rounded-lg overflow-hidden shrink-0 bg-muted/20">
                       <img 
                         src={offer.cover_url || IMG.hero} 
                         alt={offer.title} 
