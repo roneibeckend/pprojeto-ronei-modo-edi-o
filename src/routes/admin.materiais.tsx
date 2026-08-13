@@ -67,7 +67,10 @@ function AdminMaterialsPage() {
     try {
       setUploading(true);
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+      // Se estiver editando um item existente, podemos manter o mesmo nome ou usar um padrão que facilite a identificação
+      const fileName = editingItem?.id 
+        ? `${editingItem.id}-${Date.now()}.${fileExt}`
+        : `${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `${fileName}`;
 
       const bucketName = 'platform-materials';

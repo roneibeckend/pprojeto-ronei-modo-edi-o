@@ -34,7 +34,7 @@ function MaterialsPage() {
   }
 
   const dynamicMaterials = (data as any[]) || [];
-  const materials = [...dynamicMaterials, ...staticMaterials.filter(sm => !dynamicMaterials.some(dm => dm.title === sm.title))];
+  const materials = [...dynamicMaterials, ...staticMaterials.filter(sm => !dynamicMaterials.some(dm => dm.id === sm.id))];
 
   const handleDownload = async (materialId: string, title: string, fileUrl?: string, externalUrl?: string) => {
     if (externalUrl) {
