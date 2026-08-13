@@ -13,7 +13,9 @@ import {
   Trophy,
   History,
   ShieldAlert,
-  Plus
+  Plus,
+  CreditCard,
+  DollarSign
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -44,6 +46,7 @@ function AdminStudentProfilePage() {
     lessonsWatched: 0,
     totalSpent: 0
   });
+  const [payments, setPayments] = useState<any[]>([]);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [availableProducts, setAvailableProducts] = useState<{courses: any[], ebooks: any[]}>({ courses: [], ebooks: [] });
   const [manualLoading, setManualLoading] = useState(false);
@@ -117,6 +120,11 @@ function AdminStudentProfilePage() {
         .from('course_lessons')
         .select('id, module_id, course_modules!inner(course_id)');
 
+      // Fetch all ebook chapters to calculate progress
+      const { data: allChapters } = await supabase
+        .from('ebook_chapters')
+        .select('id, ebook_id');
+
       // Fetch enrollments (courses and ebooks)
       const [{ data: courseEnrollData, error: courseEnrollError }, { data: ebookEnrollData, error: ebookEnrollError }] = await Promise.all([
         supabase.from('course_enrollments')
@@ -130,14 +138,30 @@ function AdminStudentProfilePage() {
       if (courseEnrollError) throw courseEnrollError;
       if (ebookEnrollError) throw ebookEnrollError;
 
-      // Fetch progress status
+      // Fetch progress status for lessons
       const { data: progressData } = await supabase
         .from('lesson_progress')
         .select('lesson_id, is_completed')
         .eq('user_id', studentId)
         .eq('is_completed', true);
 
+      // Fetch progress status for ebook chapters
+      const { data: ebookProgressData } = await supabase
+        .from('ebook_progress')
+        .select('chapter_id')
+        .eq('user_id', studentId);
+
       const completedLessonIds = new Set(progressData?.map(p => p.lesson_id) || []);
+      const completedChapterIds = new Set(ebookProgressData?.map(p => p.chapter_id) || []);
+
+      // Fetch payment history
+      const { data: paymentData } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('user_id', studentId)
+        .order('created_at', { ascending: false });
+
+      setPayments(paymentData || []);
 
       // Calculate progress per course enrollment
       const courseEnrollmentsWithProgress = (courseEnrollData || []).map(enroll => {
@@ -155,21 +179,32 @@ function AdminStudentProfilePage() {
         };
       });
 
-      const ebookEnrollmentsFormatted = (ebookEnrollData || []).map(enroll => ({
-        ...enroll,
-        type: 'ebook',
-        progress: 100, // Ebooks don't have linear progress tracked this way yet or are just unlocked
-        title: enroll.ebook?.title,
-        cover: enroll.ebook?.cover_url
-      }));
+      const ebookEnrollmentsFormatted = (ebookEnrollData || []).map(enroll => {
+        const ebookChapters = allChapters?.filter(c => c.ebook_id === enroll.ebook_id) || [];
+        const total = ebookChapters.length;
+        const completed = ebookChapters.filter(c => completedChapterIds.has(c.id)).length;
+        const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        return {
+          ...enroll,
+          type: 'ebook',
+          progress: percent,
+          title: enroll.ebook?.title,
+          cover: enroll.ebook?.cover_url
+        };
+      });
 
       const allEnrollments = [...courseEnrollmentsWithProgress, ...ebookEnrollmentsFormatted];
       setEnrollments(allEnrollments);
 
+      // Calculate total spent
+      const confirmedPayments = paymentData?.filter(p => p.status === 'CONFIRMED' || p.status === 'RECEIVED') || [];
+      const totalSpent = confirmedPayments.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+
       setStats({
         coursesCompleted: allEnrollments.filter(e => e.progress === 100).length,
         lessonsWatched: completedLessonIds.size,
-        totalSpent: 0 
+        totalSpent
       });
 
     } catch (error: any) {
@@ -236,6 +271,12 @@ function AdminStudentProfilePage() {
                 <div className="rounded-xl bg-white/[0.03] p-3 text-center border border-white/5">
                   <div className="text-lg font-bold text-[#ff6a00]">{stats.coursesCompleted}</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Cursos</div>
+                </div>
+                <div className="col-span-2 rounded-xl bg-[#ff6a00]/5 p-3 text-center border border-[#ff6a00]/10">
+                  <div className="text-lg font-bold text-[#ff6a00]">
+                    {stats.totalSpent.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00]/60">Total Investido</div>
                 </div>
               </div>
             </div>
@@ -416,6 +457,59 @@ function AdminStudentProfilePage() {
                 ) : (
                   <div className="text-center py-8 border border-dashed border-white/10 rounded-xl">
                     <p className="text-sm text-white/20 italic">Nenhuma atividade registrada recentemente.</p>
+                  </div>
+                 )}
+             </div>
+          </section>
+
+          {/* Payment History */}
+          <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
+             <div className="flex items-center gap-3 mb-6">
+                <CreditCard className="w-5 h-5 text-[#ff6a00]" />
+                <h3 className="font-display text-xl font-bold text-white">Histórico Financeiro</h3>
+             </div>
+             
+             <div className="space-y-3">
+                {payments.length > 0 ? (
+                  payments.map((payment) => (
+                    <div key={payment.id} className="flex items-center justify-between p-4 rounded-xl bg-white/[0.01] border border-white/5 hover:bg-white/[0.02] transition">
+                      <div className="flex items-center gap-4">
+                        <div className={`grid h-10 w-10 place-items-center rounded-lg ${
+                          payment.status === 'CONFIRMED' || payment.status === 'RECEIVED' 
+                            ? 'bg-emerald-500/10 text-emerald-400' 
+                            : 'bg-white/5 text-white/40'
+                        }`}>
+                          <DollarSign className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold">
+                            {Number(payment.amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                          </p>
+                          <p className="text-[10px] text-white/40 font-medium uppercase tracking-widest mt-0.5">
+                            {payment.billing_type || 'OUTRO'} • {new Date(payment.created_at).toLocaleDateString('pt-BR')}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className={`px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest ${
+                          payment.status === 'CONFIRMED' || payment.status === 'RECEIVED'
+                            ? 'bg-emerald-500/10 text-emerald-400'
+                            : payment.status === 'PENDING'
+                            ? 'bg-amber-500/10 text-amber-400'
+                            : 'bg-red-500/10 text-red-400'
+                        }`}>
+                          {payment.status === 'CONFIRMED' || payment.status === 'RECEIVED' ? 'Confirmado' : 
+                           payment.status === 'PENDING' ? 'Pendente' : payment.status}
+                        </span>
+                        {payment.external_reference && (
+                          <p className="text-[8px] text-white/20 mt-1 font-mono">{payment.external_reference}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 border border-dashed border-white/10 rounded-xl">
+                    <p className="text-sm text-white/20 italic">Nenhum registro financeiro encontrado.</p>
                   </div>
                 )}
              </div>
