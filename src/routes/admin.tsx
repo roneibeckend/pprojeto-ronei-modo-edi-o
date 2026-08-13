@@ -16,8 +16,6 @@ import {
   Bell,
   HelpCircle,
   DollarSign,
-  HelpCircle,
-  Bell,
   FileText,
   Wallet,
   TrendingUp,
