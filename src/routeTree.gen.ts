@@ -36,6 +36,7 @@ import { Route as AdminSuporteRouteImport } from './routes/admin.suporte'
 import { Route as AdminRelatoriosRouteImport } from './routes/admin.relatorios'
 import { Route as AdminReceitasRouteImport } from './routes/admin.receitas'
 import { Route as AdminNotificacoesRouteImport } from './routes/admin.notificacoes'
+import { Route as AdminMateriaisRouteImport } from './routes/admin.materiais'
 import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin.financeiro'
 import { Route as AdminFeedbacksRouteImport } from './routes/admin.feedbacks'
@@ -194,6 +195,11 @@ const AdminNotificacoesRoute = AdminNotificacoesRouteImport.update({
   path: '/notificacoes',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMateriaisRoute = AdminMateriaisRouteImport.update({
+  id: '/materiais',
+  path: '/materiais',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminIntegracoesRoute = AdminIntegracoesRouteImport.update({
   id: '/integracoes',
   path: '/integracoes',
@@ -323,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/admin/feedbacks': typeof AdminFeedbacksRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/integracoes': typeof AdminIntegracoesRoute
+  '/admin/materiais': typeof AdminMateriaisRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
@@ -372,6 +379,7 @@ export interface FileRoutesByTo {
   '/admin/feedbacks': typeof AdminFeedbacksRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/integracoes': typeof AdminIntegracoesRoute
+  '/admin/materiais': typeof AdminMateriaisRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
@@ -422,6 +430,7 @@ export interface FileRoutesById {
   '/admin/feedbacks': typeof AdminFeedbacksRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/integracoes': typeof AdminIntegracoesRoute
+  '/admin/materiais': typeof AdminMateriaisRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
@@ -475,6 +484,7 @@ export interface FileRouteTypes {
     | '/admin/feedbacks'
     | '/admin/financeiro'
     | '/admin/integracoes'
+    | '/admin/materiais'
     | '/admin/notificacoes'
     | '/admin/receitas'
     | '/admin/relatorios'
@@ -524,6 +534,7 @@ export interface FileRouteTypes {
     | '/admin/feedbacks'
     | '/admin/financeiro'
     | '/admin/integracoes'
+    | '/admin/materiais'
     | '/admin/notificacoes'
     | '/admin/receitas'
     | '/admin/relatorios'
@@ -573,6 +584,7 @@ export interface FileRouteTypes {
     | '/admin/feedbacks'
     | '/admin/financeiro'
     | '/admin/integracoes'
+    | '/admin/materiais'
     | '/admin/notificacoes'
     | '/admin/receitas'
     | '/admin/relatorios'
@@ -813,6 +825,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNotificacoesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/materiais': {
+      id: '/admin/materiais'
+      path: '/materiais'
+      fullPath: '/admin/materiais'
+      preLoaderRoute: typeof AdminMateriaisRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/integracoes': {
       id: '/admin/integracoes'
       path: '/integracoes'
@@ -1003,6 +1022,7 @@ interface AdminRouteChildren {
   AdminFeedbacksRoute: typeof AdminFeedbacksRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRouteWithChildren
   AdminIntegracoesRoute: typeof AdminIntegracoesRoute
+  AdminMateriaisRoute: typeof AdminMateriaisRoute
   AdminNotificacoesRoute: typeof AdminNotificacoesRoute
   AdminReceitasRoute: typeof AdminReceitasRoute
   AdminRelatoriosRoute: typeof AdminRelatoriosRoute
@@ -1020,6 +1040,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFeedbacksRoute: AdminFeedbacksRoute,
   AdminFinanceiroRoute: AdminFinanceiroRouteWithChildren,
   AdminIntegracoesRoute: AdminIntegracoesRoute,
+  AdminMateriaisRoute: AdminMateriaisRoute,
   AdminNotificacoesRoute: AdminNotificacoesRoute,
   AdminReceitasRoute: AdminReceitasRoute,
   AdminRelatoriosRoute: AdminRelatoriosRoute,
