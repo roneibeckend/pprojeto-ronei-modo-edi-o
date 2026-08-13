@@ -220,7 +220,7 @@ function EbookReaderPage() {
 
 
   useEffect(() => {
-    if (activeChapterId && activeChapter) {
+    if (activeChapterId && activeChapter && isEnrolled) {
       completeChapter({ 
         chapterId: activeChapterId,
         ebookId: ebook.id,
@@ -235,7 +235,7 @@ function EbookReaderPage() {
         }
       }
     }
-  }, [activeChapterId, activeChapter, ebook.id, completeChapter, chapters.length, isChapterCompleted]);
+  }, [activeChapterId, activeChapter, ebook.id, completeChapter, chapters.length, isChapterCompleted, isEnrolled, hasSubmittedFeedback]);
 
   const handlePurchase = async () => {
     if (isOfferEnabled) {
