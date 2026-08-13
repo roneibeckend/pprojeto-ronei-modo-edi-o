@@ -242,16 +242,21 @@ function CoursePage() {
     const nextLesson = flat[currentIndex + 1];
     
     if (nextLesson?.video_url && !nextLesson.video_url.includes('youtube') && !nextLesson.video_url.includes('drive')) {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'video';
-      link.href = nextLesson.video_url;
-      document.head.appendChild(link);
-      return () => {
-        document.head.removeChild(link);
+      const prefetchNext = async () => {
+        try {
+          const result = await getSignedUrl({ data: { path: nextLesson.video_url } });
+          const link = document.createElement('link');
+          link.rel = 'prefetch';
+          link.as = 'video';
+          link.href = result.signedUrl;
+          document.head.appendChild(link);
+        } catch (e) {
+          console.error("Next lesson prefetch failed", e);
+        }
       };
+      prefetchNext();
     }
-  }, [activeId, flat]);
+  }, [activeId, flat, getSignedUrl]);
 
   useEffect(() => {
     const activeLesson = flat.find((l: any) => l.id === activeId);
