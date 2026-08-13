@@ -282,12 +282,7 @@ export function VideoPlayer({
           e.preventDefault();
           togglePlay(e);
         }}
-        onTouchEnd={(e) => {
-          // Some mobile browsers prefer touchEnd for immediate response
-          e.stopPropagation();
-          e.preventDefault();
-          togglePlay(e);
-        }}
+
       >
         {!isLoading ? (
           <div className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition active:scale-95 hover:scale-110 pointer-events-none">
