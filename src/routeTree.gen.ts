@@ -29,6 +29,7 @@ import { Route as AppMateriaisRouteImport } from './routes/app.materiais'
 import { Route as AppFinanceiroRouteImport } from './routes/app.financeiro'
 import { Route as AppCursosRouteImport } from './routes/app.cursos'
 import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
+import { Route as AppAoVivoRouteImport } from './routes/app.ao-vivo'
 import { Route as AppAfiliadosRouteImport } from './routes/app.afiliados'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
@@ -158,6 +159,11 @@ const AppCursosRoute = AppCursosRouteImport.update({
 const AppCertificadosRoute = AppCertificadosRouteImport.update({
   id: '/certificados',
   path: '/certificados',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAoVivoRoute = AppAoVivoRouteImport.update({
+  id: '/ao-vivo',
+  path: '/ao-vivo',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAfiliadosRoute = AppAfiliadosRouteImport.update({
@@ -337,6 +343,7 @@ export interface FileRoutesByFullPath {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/app/admin': typeof AppAdminRoute
   '/app/afiliados': typeof AppAfiliadosRouteWithChildren
+  '/app/ao-vivo': typeof AppAoVivoRoute
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/financeiro': typeof AppFinanceiroRoute
@@ -386,6 +393,7 @@ export interface FileRoutesByTo {
   '/admin/suporte': typeof AdminSuporteRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/ao-vivo': typeof AppAoVivoRoute
   '/app/certificados': typeof AppCertificadosRoute
   '/app/financeiro': typeof AppFinanceiroRoute
   '/app/materiais': typeof AppMateriaisRoute
@@ -438,6 +446,7 @@ export interface FileRoutesById {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/app/admin': typeof AppAdminRoute
   '/app/afiliados': typeof AppAfiliadosRouteWithChildren
+  '/app/ao-vivo': typeof AppAoVivoRoute
   '/app/certificados': typeof AppCertificadosRoute
   '/app/cursos': typeof AppCursosRouteWithChildren
   '/app/financeiro': typeof AppFinanceiroRoute
@@ -492,6 +501,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/app/admin'
     | '/app/afiliados'
+    | '/app/ao-vivo'
     | '/app/certificados'
     | '/app/cursos'
     | '/app/financeiro'
@@ -541,6 +551,7 @@ export interface FileRouteTypes {
     | '/admin/suporte'
     | '/admin/usuarios'
     | '/app/admin'
+    | '/app/ao-vivo'
     | '/app/certificados'
     | '/app/financeiro'
     | '/app/materiais'
@@ -592,6 +603,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/app/admin'
     | '/app/afiliados'
+    | '/app/ao-vivo'
     | '/app/certificados'
     | '/app/cursos'
     | '/app/financeiro'
@@ -774,6 +786,13 @@ declare module '@tanstack/react-router' {
       path: '/certificados'
       fullPath: '/app/certificados'
       preLoaderRoute: typeof AppCertificadosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/ao-vivo': {
+      id: '/app/ao-vivo'
+      path: '/ao-vivo'
+      fullPath: '/app/ao-vivo'
+      preLoaderRoute: typeof AppAoVivoRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/afiliados': {
@@ -1092,6 +1111,7 @@ const AppCursosRouteWithChildren = AppCursosRoute._addFileChildren(
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
   AppAfiliadosRoute: typeof AppAfiliadosRouteWithChildren
+  AppAoVivoRoute: typeof AppAoVivoRoute
   AppCertificadosRoute: typeof AppCertificadosRoute
   AppCursosRoute: typeof AppCursosRouteWithChildren
   AppFinanceiroRoute: typeof AppFinanceiroRoute
@@ -1108,6 +1128,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
   AppAfiliadosRoute: AppAfiliadosRouteWithChildren,
+  AppAoVivoRoute: AppAoVivoRoute,
   AppCertificadosRoute: AppCertificadosRoute,
   AppCursosRoute: AppCursosRouteWithChildren,
   AppFinanceiroRoute: AppFinanceiroRoute,

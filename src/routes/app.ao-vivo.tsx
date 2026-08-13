@@ -35,8 +35,8 @@ function LiveClassesPage() {
     );
   }
 
-  const upcomingClasses = liveClasses?.filter(c => c.status !== 'finished') || [];
-  const pastClasses = liveClasses?.filter(c => c.status === 'finished') || [];
+  const upcomingClasses = liveClasses?.filter(c => c.status !== 'completed') || [];
+  const pastClasses = liveClasses?.filter(c => c.status === 'completed') || [];
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
