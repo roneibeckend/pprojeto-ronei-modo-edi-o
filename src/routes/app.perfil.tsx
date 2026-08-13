@@ -55,7 +55,7 @@ function ProfilePage() {
       if (error) throw error;
 
       toast.success("Perfil atualizado com sucesso!");
-      setProfile(prev => prev ? { ...prev, phone: newPhone } : null);
+      setProfile((prev: any) => prev ? { ...prev, phone: newPhone } : null);
     } catch (error: any) {
       console.error("Error updating profile:", error);
       toast.error("Erro ao atualizar perfil: " + (error.message || "Tente novamente."));
