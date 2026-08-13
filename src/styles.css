@@ -100,9 +100,10 @@
   }
   html { 
     scroll-behavior: smooth;
-    height: -webkit-fill-available;
+    height: auto;
+    min-height: 100%;
     overflow-x: hidden;
-    width: 100vw;
+    width: 100%;
   }
   body {
     background-color: var(--color-background);
@@ -120,7 +121,7 @@
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overscroll-behavior-y: none;
+    overscroll-behavior-y: auto;
   }
   h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.005em; }
 
