@@ -60,6 +60,29 @@ function CoursesPage() {
 
   const handlePurchase = async (item: any, type: 'course' | 'ebook') => {
     if (isOfferEnabled) {
+      // Fast check: if it's the only product or if no other products exist, skip modal
+      const { data: otherProducts } = await supabase.from(type === 'course' ? 'courses' : 'ebooks')
+        .select('id')
+        .eq('status', 'published')
+        .eq('is_locked', false)
+        .neq('id', item.id)
+        .limit(1);
+
+      if (!otherProducts || otherProducts.length === 0) {
+        // Check both tables
+        const otherType = type === 'course' ? 'ebooks' : 'courses';
+        const { data: otherTypeProducts } = await supabase.from(otherType)
+          .select('id')
+          .eq('status', 'published')
+          .eq('is_locked', false)
+          .limit(1);
+          
+        if (!otherTypeProducts || otherTypeProducts.length === 0) {
+          await executeCheckout(item, type, []);
+          return;
+        }
+      }
+
       // Sync toggle state just in case
       const { data } = await supabase.from('integrations').select('status').eq('category', 'offer_settings').maybeSingle();
       if (data && data.status === false) {

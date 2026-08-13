@@ -43,6 +43,15 @@ export function PostPurchaseOffer({
     }
   }, [isOpen, originalProductId]);
 
+  useEffect(() => {
+    if (isOpen && !isLoading && offers.length === 0) {
+      const timer = setTimeout(() => {
+        onProceedWithoutOffers();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, isLoading, offers.length, onProceedWithoutOffers]);
+
   const fetchOffers = async () => {
     try {
       setIsLoading(true);
@@ -149,10 +158,11 @@ export function PostPurchaseOffer({
             </div>
           ) : offers.length === 0 ? (
             <div className="text-center py-10">
-              <p>Nenhuma oferta adicional disponível no momento.</p>
-              <Button onClick={onProceedWithoutOffers} className="mt-4 btn-fire">
-                Prosseguir para o Checkout
-              </Button>
+              <p className="text-muted-foreground mb-4">Otimizando sua experiência de compra...</p>
+              <div className="flex justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-gold" />
+              </div>
+              {/* Auto-proceed logic added in useEffect */}
             </div>
           ) : (
             <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1 min-h-0">
