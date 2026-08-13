@@ -81,6 +81,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
       { to: "/admin/cursos", label: "Cursos", icon: GraduationCap, module: "conteudo" },
       { to: "/admin/ebooks", label: "E-books", icon: BookOpen, module: "conteudo" },
       { to: "/admin/suporte", label: "Suporte", icon: LifeBuoy, module: "suporte" },
+      { to: "/admin/materiais", label: "Materiais", icon: Library, module: "admin_only" },
       { to: "/admin/afiliados", label: "Afiliados", icon: TrendingUp, module: "financeiro" },
     ],
   },
