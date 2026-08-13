@@ -149,12 +149,28 @@ function AdminRootLayout() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pt-20 lg:pt-0 w-full">
-        <header className="p-8 border-b border-white/10 hidden lg:block">
+        <header className="p-8 border-b border-white/10 hidden lg:flex items-center justify-between shrink-0">
           <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight">
             {role === "student" ? "Painel Central" : (
               <>Painel Central <span style={{ color: ORANGE }}>Administrativo</span></>
             )}
           </h1>
+          <div className="flex items-center gap-3">
+            <Link 
+              to="/admin/suporte"
+              className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 hover:border-[#ff6a00]/50 hover:text-[#ff6a00] transition-colors"
+              title="Ajuda e Suporte"
+            >
+              <HelpCircle className="h-5 w-5" />
+            </Link>
+            <Link 
+              to="/admin/notificacoes"
+              className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 hover:border-[#ff6a00]/50 hover:text-[#ff6a00] transition-colors"
+              title="Notificações"
+            >
+              <Bell className="h-5 w-5" />
+            </Link>
+          </div>
         </header>
         <div className="p-4 sm:p-6 lg:p-8">
           <Outlet />
