@@ -51,7 +51,7 @@ export const Route = createFileRoute("/app/cursos/$courseId")({
         )
       `)
       .eq("id", params.courseId)
-      .eq("status", "active")
+      .in("status", ["active", "published"])
       .single();
 
 

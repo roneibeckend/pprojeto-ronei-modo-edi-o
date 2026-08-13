@@ -46,7 +46,7 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
         )
       `)
       .eq("id", params.ebookId)
-      .eq("status", "active")
+      .in("status", ["active", "published"])
       .single();
 
 
