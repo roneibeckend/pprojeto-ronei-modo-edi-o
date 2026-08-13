@@ -6,7 +6,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
-import { IMG, student } from "@/lib/platform-data";
+import { IMG } from "@/lib/platform-data";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
@@ -97,9 +97,8 @@ function Dashboard() {
     );
   }
 
-  // Fallback para o último curso se o usuário não tiver nada
-  const lastId = student.lastLesson.courseId;
-  const lastItem = showcaseItems?.find(i => i.id === lastId) || showcaseItems?.[0];
+  // Fallback para o primeiro item se não houver contexto anterior
+  const lastItem = showcaseItems?.[0];
 
 
 

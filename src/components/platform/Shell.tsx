@@ -92,7 +92,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
 export function Shell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const { isAdmin, role, hasModule } = useAuth();
+  const { isAdmin, role, hasModule, profile, user } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { unreadCount } = useNotifications();
 
@@ -119,11 +119,15 @@ export function Shell({ children }: { children: ReactNode }) {
       {/* Student mini card */}
       <div className="mx-3 mt-3 flex shrink-0 items-center gap-3 rounded-lg border border-sidebar-border bg-sidebar-accent px-3 py-2.5">
         <div className="relative shrink-0">
-          <img src={student.avatar} alt={student.name} className="h-9 w-9 rounded-md object-cover" />
+          <img 
+            src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profile?.name || user?.email}&backgroundColor=e11d48`} 
+            alt={profile?.name || "Usuário"} 
+            className="h-9 w-9 rounded-md object-cover" 
+          />
           <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-sidebar bg-emerald-500" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-sm font-semibold text-sidebar-foreground">{student.name}</div>
+          <div className="text-sm font-semibold text-sidebar-foreground truncate">{profile?.name || user?.email?.split('@')[0] || "Estudante"}</div>
           <div className="text-[10px] font-bold uppercase tracking-widest text-primary">Aluno ativo</div>
         </div>
       </div>
@@ -261,8 +265,12 @@ export function Shell({ children }: { children: ReactNode }) {
               to="/app/perfil"
               className="flex items-center gap-2 rounded-md border border-white/10 py-1 pl-1 pr-3 transition-colors hover:border-primary/50 touch-target"
             >
-            <img src={student.avatar} alt={student.name} className="h-8 w-8 rounded" />
-              <span className="hidden text-sm font-medium sm:inline">{student.name.split(" ")[0]}</span>
+            <img 
+              src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profile?.name || user?.email}&backgroundColor=e11d48`} 
+              alt={profile?.name || "Usuário"} 
+              className="h-8 w-8 rounded object-cover" 
+            />
+              <span className="hidden text-sm font-medium sm:inline">{ (profile?.name || user?.email?.split('@')[0] || "Aluno").split(" ")[0] }</span>
             </Link>
           </div>
         </header>
