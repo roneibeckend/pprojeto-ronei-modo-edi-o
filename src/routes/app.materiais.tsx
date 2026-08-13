@@ -14,11 +14,12 @@ export const Route = createFileRoute("/app/materiais")({
 });
 
 function MaterialsPage() {
-  const { data: dynamicMaterials = [], isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["platform-materials"],
     queryFn: () => getMaterials(),
   });
 
+  const dynamicMaterials = Array.isArray(data) ? data : [];
   const materials = [...dynamicMaterials, ...staticMaterials.filter(sm => !dynamicMaterials.some(dm => dm.title === sm.title))];
 
   const handleDownload = async (materialId: string, title: string, fileUrl?: string, externalUrl?: string) => {
