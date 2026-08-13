@@ -163,10 +163,29 @@ function EbookReaderPage() {
 
 
 
-
+  const [signedChapterUrl, setSignedChapterUrl] = useState<string | null>(null);
   const activeChapter = chapters.find((c: any) => c.id === activeChapterId) || chapters[0];
   const activeIndex = chapters.findIndex((c: any) => c.id === activeChapter?.id);
-  
+
+  useEffect(() => {
+    const loadSignedChapterUrl = async () => {
+      if (activeChapter?.video_url && !activeChapter.video_url.includes('youtube') && !activeChapter.video_url.includes('drive')) {
+        try {
+          // Determine bucket - fallback to course-assets if it's an old URL
+          const bucket = activeChapter.video_url.includes('ebook-assets') ? 'ebook-assets' : 'course-assets';
+          const result = await getSignedUrl({ data: { path: activeChapter.video_url, bucket } });
+          setSignedChapterUrl(result.signedUrl);
+        } catch (error) {
+          console.error("Failed to sign chapter video URL:", error);
+          setSignedChapterUrl(null);
+        }
+      } else {
+        setSignedChapterUrl(null);
+      }
+    };
+    loadSignedChapterUrl();
+  }, [activeChapter?.video_url, getSignedUrl]);
+
   const prevChapter = activeIndex > 0 ? chapters[activeIndex - 1] : null;
   const nextChapter = activeIndex < chapters.length - 1 ? chapters[activeIndex + 1] : null;
 
