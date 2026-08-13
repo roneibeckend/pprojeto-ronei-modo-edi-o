@@ -96,8 +96,8 @@ function MaterialsPage() {
             await generateEditableMenuPPTX();
             break;
         }
-      } else {
-        toast.info(`O material "${title}" ainda não possui uma ferramenta de geração direta disponível. Contate o suporte.`);
+      } else if (!fileUrl && !externalUrl) {
+        toast.info(`O material "${title}" ainda não está disponível para download.`);
         return;
       }
       toast.success(`Download de "${title}" iniciado com sucesso!`);
