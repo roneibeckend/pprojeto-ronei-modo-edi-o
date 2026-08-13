@@ -77,20 +77,28 @@ function EbookReaderPage() {
   const getSignedUrl = useServerFn(getSignedVideoUrl);
   const { openPayment } = usePaymentModal();
   const [signedIntroUrl, setSignedIntroUrl] = useState<string | null>(null);
+  const introNeedsSigning = Boolean(
+    ebook?.opening_video_url &&
+    !ebook.opening_video_url.includes('youtube') &&
+    !ebook.opening_video_url.includes('drive')
+  );
 
   useEffect(() => {
+    let cancelled = false;
     const loadSignedUrl = async () => {
-      if (ebook?.opening_video_url && !ebook.opening_video_url.includes('youtube') && !ebook.opening_video_url.includes('drive')) {
+      if (introNeedsSigning) {
         try {
           const result = await getSignedUrl({ data: { path: ebook.opening_video_url } });
-          setSignedIntroUrl(result.signedUrl);
+          if (!cancelled) setSignedIntroUrl(result.signedUrl);
         } catch (error) {
           console.error("Failed to sign intro video URL:", error);
         }
       }
     };
     loadSignedUrl();
-  }, [ebook.opening_video_url, getSignedUrl]);
+    return () => { cancelled = true; };
+  }, [ebook.opening_video_url, introNeedsSigning, getSignedUrl]);
+
 
 
   useEffect(() => {
