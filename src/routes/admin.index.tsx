@@ -37,7 +37,7 @@ function AdminDashboard() {
     queryKey: ['admin-stats'],
     queryFn: async () => {
       if (role === 'student') return null;
-
+      
       const [
         studentsRes,
         coursesRes,
