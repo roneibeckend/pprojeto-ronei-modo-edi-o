@@ -108,11 +108,11 @@ function ProfilePage() {
               
               <div className="mt-6 grid w-full grid-cols-2 gap-2">
                 <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                  <div className="text-lg font-bold text-[#ff6a00]">0</div>
+                  <div className="text-lg font-bold text-[#ff6a00]">{profile?.streak || 0}</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Dias</div>
                 </div>
                 <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                  <div className="text-lg font-bold text-[#ff6a00]">0</div>
+                  <div className="text-lg font-bold text-[#ff6a00]">{profile?.lessons_watched || 0}</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Aulas</div>
                 </div>
               </div>
@@ -128,7 +128,7 @@ function ProfilePage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">E-mail</div>
-                  <div className="text-sm font-medium break-words">{user?.email}</div>
+                  <div className="text-sm font-medium break-words">{user?.email || profile?.email || "—"}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
