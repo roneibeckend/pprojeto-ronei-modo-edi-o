@@ -70,6 +70,7 @@ function AdminRootLayout() {
     { to: "/admin/integracoes", label: "Integrações", icon: Settings },
     { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
+    { to: "/admin/materiais", label: "Materiais", icon: Library },
   ];
 
   return (
