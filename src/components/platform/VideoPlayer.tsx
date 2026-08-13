@@ -152,7 +152,13 @@ export function VideoPlayer({
       clearTimeout(loadingTimeout);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       listeners.forEach(([name, fn]) => video.removeEventListener(name, fn));
+      
+      // Cleanup for memory
+      video.pause();
+      video.removeAttribute('src');
+      video.load();
     };
+
   }, [src, videoId, isYouTube, isGoogleDrive]);
 
 
@@ -272,6 +278,8 @@ export function VideoPlayer({
       onMouseMove={handleInteraction}
       onTouchStart={handleInteraction}
     >
+      
+
 
       <video
         ref={videoRef}
@@ -322,6 +330,7 @@ export function VideoPlayer({
           togglePlay(e);
         }}
       />
+
 
 
       {/* Loading Overlay */}
