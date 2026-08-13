@@ -59,6 +59,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
     title: "Aprendizado",
     items: [
       { to: "/app/cursos", label: "Meus cursos", icon: GraduationCap },
+      { to: "/app/aulas-ao-vivo", label: "Aulas ao Vivo", icon: Video },
       { to: "/app/progresso", label: "Ranking", icon: TrendingUp },
     ],
   },
