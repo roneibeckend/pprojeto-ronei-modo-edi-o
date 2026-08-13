@@ -1,0 +1,24 @@
+name: Security update check
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # toda segunda-feira, 06:00 UTC
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # Report-only: nunca aplica atualizações. Falha apenas em high/critical.
+      - name: Check for pending security updates
+        run: bun run security:check -- --fail-on=high
