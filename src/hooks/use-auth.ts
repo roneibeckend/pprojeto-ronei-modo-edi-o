@@ -75,6 +75,8 @@ export function useAuth() {
     role: userRole,
     profile,
     isAdmin: userRole === "admin",
+    isStudent: profile?.status === "student",
+    isLead: !profile?.status || profile?.status === "lead",
     isManager: userRole === "manager",
     isAgent: userRole === "agent",
     hasModule,

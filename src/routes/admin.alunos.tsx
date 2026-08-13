@@ -136,6 +136,7 @@ function AdminAlunosPage() {
             <thead>
               <tr className="border-b border-white/5 bg-white/[0.02]">
                 <th className="px-6 py-4 font-bold text-white/40 uppercase tracking-widest text-[10px]">Aluno</th>
+                <th className="px-6 py-4 font-bold text-white/40 uppercase tracking-widest text-[10px]">Status</th>
                 <th className="px-6 py-4 font-bold text-white/40 uppercase tracking-widest text-[10px]">Contato</th>
                 <th className="px-6 py-4 font-bold text-white/40 uppercase tracking-widest text-[10px]">Matrícula</th>
                 <th className="px-6 py-4 font-bold text-white/40 uppercase tracking-widest text-[10px] text-right">Ações</th>
@@ -151,6 +152,13 @@ function AdminAlunosPage() {
                       </div>
                       <span className="font-medium">{p.name || "Sem Nome"}</span>
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
+                        p.status === 'student' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
+                    }`}>
+                        {p.status === 'student' ? 'Aluno' : 'Lead'}
+                    </span>
                   </td>
                   <td className="px-6 py-4 text-white/40">{p.email || "—"}</td>
                   <td className="px-6 py-4 text-white/40">{p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR') : "—"}</td>
