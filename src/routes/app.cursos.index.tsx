@@ -25,7 +25,7 @@ export const Route = createFileRoute("/app/cursos/")({
 
 function CoursesPage() {
   const { courseEnrollments, ebookEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
-  const { startedCount, finishedCount, isLoading: isLoadingProgress } = useProgress();
+  const { startedCount, finishedCount, totalProgress, isLoading: isLoadingProgress } = useProgress();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [offerContext, setOfferContext] = useState<{ item: any; type: 'course' | 'ebook' } | null>(null);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
@@ -215,7 +215,7 @@ function CoursesPage() {
   const ownedEbooks = dbEbooks?.filter((e) => ebookEnrollments.includes(e.id) || (e.price || 0) === 0) || [];
   const otherEbooks = dbEbooks?.filter((e) => !ebookEnrollments.includes(e.id) && (e.price || 0) > 0) || [];
 
-  const totalProgress = ownedCourses.length > 0 ? 0 : 0;
+  // totalProgress removido daqui para evitar conflito com o que vem do hook
 
   return (
     <div className="pb-10">
