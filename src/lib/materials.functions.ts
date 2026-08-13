@@ -37,22 +37,14 @@ export const upsertMaterial = createServerFn({ method: "POST" })
     is_active: z.boolean().default(true),
   }).parse(data))
   .handler(async ({ data }) => {
-    // 1. Check for auth token in headers manually as a fallback/debug measure
-    const { getWebRequest } = await import("@tanstack/react-start/server");
-    const request = getWebRequest();
-    const authHeader = request?.headers.get("Authorization");
-    
-    if (!authHeader) {
-      console.error("Server side: Missing Authorization header");
-      throw new Error("Sessão expirada ou não autenticada (Token ausente)");
-    }
-
-    const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+    // 1. Check for auth token in headers using the context injected by TanStack Start
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
       console.error("Server side: Auth error or user not found:", authError);
-      throw new Error("Sessão expirada ou não autenticada (Usuário não encontrado)");
+      throw new Error("Sessão expirada ou não autenticada (Não autenticado)");
     }
+
 
 
     const { data: hasRole } = await supabase.rpc("has_role", { 
