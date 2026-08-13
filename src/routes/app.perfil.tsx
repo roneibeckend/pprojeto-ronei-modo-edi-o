@@ -40,20 +40,19 @@ function ProfilePage() {
           .from("course_enrollments")
           .select(`
             id,
-            enrolled_at,
-            course:courses(title),
-            price_paid
+            created_at,
+            course:courses(title, price)
           `)
           .eq("user_id", user.id)
-          .order("enrolled_at", { ascending: false });
+          .order("created_at", { ascending: false });
 
         if (ordersData) {
-          setUserOrders(ordersData.map(o => ({
+          setUserOrders((ordersData as any[]).map(o => ({
             id: `#ORD-${o.id.slice(0, 4).toUpperCase()}`,
-            date: format(new Date(o.enrolled_at), "dd/MM/yyyy"),
-            product: (o.course as any)?.title || "Conteúdo",
+            date: o.created_at ? format(new Date(o.created_at), "dd/MM/yyyy") : "—",
+            product: o.course?.title || "Conteúdo",
             status: "Pago",
-            value: o.price_paid ? `R$ ${o.price_paid.toFixed(2).replace('.', ',')}` : "Grátis"
+            value: o.course?.price ? `R$ ${o.course.price.toFixed(2).replace('.', ',')}` : "Liberado"
           })));
         }
       } catch (error) {
