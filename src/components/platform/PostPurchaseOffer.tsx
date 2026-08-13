@@ -110,24 +110,24 @@ export function PostPurchaseOffer({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onProceedWithoutOffers()}>
-      <DialogContent className="max-w-2xl glass border-white/10 p-0 overflow-hidden sm:rounded-3xl w-[95vw] sm:w-full fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90vh] overflow-y-auto outline-none z-[9999] custom-scrollbar">
-        <div className="relative p-4 sm:p-8">
+      <DialogContent className="max-w-2xl glass border-white/10 p-0 overflow-hidden sm:rounded-3xl w-[92vw] sm:w-full fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-h-[90vh] flex flex-col outline-none z-[9999]">
+        <div className="relative p-4 sm:p-8 flex flex-col h-full overflow-hidden">
           <button 
             onClick={onProceedWithoutOffers}
-            className="absolute right-4 top-4 text-white/40 hover:text-white transition-colors"
+            className="absolute right-4 top-4 text-white/40 hover:text-white transition-colors z-10"
           >
             <X className="h-6 w-6" />
           </button>
 
-          <DialogHeader className="mb-6">
+          <DialogHeader className="mb-6 shrink-0">
             <div className="flex items-center gap-2 text-gold mb-2">
               <Sparkles className="h-5 w-5 fill-current" />
-              <span className="text-xs font-bold uppercase tracking-widest">Oferta Exclusiva</span>
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest">Oferta Exclusiva</span>
             </div>
-            <DialogTitle className="font-display text-2xl sm:text-3xl font-black text-white">
+            <DialogTitle className="font-display text-xl sm:text-3xl font-black text-white leading-tight break-words text-balance">
               Turbine seu aprendizado!
             </DialogTitle>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base leading-relaxed break-words text-balance">
               Adicione estes itens complementares agora e ganhe <span className="text-gold font-bold">{discountPercentage}% de desconto</span> em cada um.
             </p>
           </DialogHeader>
@@ -144,7 +144,7 @@ export function PostPurchaseOffer({
               </Button>
             </div>
           ) : (
-            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1 min-h-0">
               {offers.map(offer => {
                 const discountPrice = (offer.price || 0) * (1 - (discountPercentage / 100));
                 const isSelected = selectedIds.includes(offer.id);
@@ -172,12 +172,14 @@ export function PostPurchaseOffer({
                           {offer.type === 'course' ? 'Curso' : 'E-book'}
                         </span>
                       </div>
-                      <h4 className="font-bold text-sm sm:text-base truncate text-white">{offer.title}</h4>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs line-through text-muted-foreground">
+                      <h4 className="font-bold text-sm sm:text-base leading-tight break-words text-white line-clamp-2">
+                        {offer.title}
+                      </h4>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1.5">
+                        <span className="text-[10px] sm:text-xs line-through text-muted-foreground">
                           R$ {offer.price?.toFixed(2).replace('.', ',')}
                         </span>
-                        <span className="text-sm font-bold text-gold">
+                        <span className="text-xs sm:text-sm font-bold text-gold">
                           R$ {discountPrice.toFixed(2).replace('.', ',')}
                         </span>
                       </div>
@@ -193,18 +195,18 @@ export function PostPurchaseOffer({
             </div>
           )}
 
-          <div className="mt-8 flex flex-col sm:grid sm:grid-cols-2 gap-3 items-center sm:items-stretch">
+          <div className="mt-6 sm:mt-8 flex flex-col sm:grid sm:grid-cols-2 gap-3 shrink-0">
             <Button 
               variant="outline" 
               onClick={onProceedWithoutOffers}
-              className="w-full sm:w-auto rounded-xl border-white/10 hover:bg-white/5 h-12 order-2 sm:order-1"
+              className="w-full rounded-xl border-white/10 hover:bg-white/5 h-12 order-2 sm:order-1 text-sm sm:text-base whitespace-normal text-center py-2"
             >
               Prosseguir sem Ofertas
             </Button>
             <Button 
               disabled={selectedIds.length === 0}
               onClick={handleAddAndProceed}
-              className="w-full sm:w-auto btn-fire rounded-xl font-bold h-12 shadow-lg shadow-fire/20 order-1 sm:order-2"
+              className="w-full btn-fire rounded-xl font-bold h-12 shadow-lg shadow-fire/20 order-1 sm:order-2 text-sm sm:text-base whitespace-normal text-center py-2"
             >
               Adicionar Ofertas e Prosseguir
             </Button>
