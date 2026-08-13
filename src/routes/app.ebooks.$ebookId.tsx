@@ -116,16 +116,23 @@ function EbookReaderPage() {
     const nextChapter = chapters[currentIndex + 1];
     
     if (nextChapter?.video_url && !nextChapter.video_url.includes('youtube') && !nextChapter.video_url.includes('drive')) {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'video';
-      link.href = nextChapter.video_url;
-      document.head.appendChild(link);
-      return () => {
-        document.head.removeChild(link);
+      // Prefetch signed URL for next chapter
+      const prefetchUrl = async () => {
+        try {
+          const bucket = nextChapter.video_url.includes('ebook-assets') ? 'ebook-assets' : 'course-assets';
+          const result = await getSignedUrl({ data: { path: nextChapter.video_url, bucket } });
+          const link = document.createElement('link');
+          link.rel = 'prefetch';
+          link.as = 'video';
+          link.href = result.signedUrl;
+          document.head.appendChild(link);
+        } catch (e) {
+          console.error("Next chapter prefetch failed", e);
+        }
       };
+      prefetchUrl();
     }
-  }, [activeChapterId, chapters]);
+  }, [activeChapterId, chapters, getSignedUrl]);
   
   // Update local storage when chapter changes
   useEffect(() => {

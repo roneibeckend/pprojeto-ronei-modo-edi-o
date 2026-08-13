@@ -122,7 +122,7 @@ export function VideoPlayer({
         console.warn("Video loading timeout reached, clearing loading state");
         setIsLoading(false);
       }
-    }, 15000); // 15 seconds
+    }, 20000); // Aumentado para 20s para conexões lentas mobile
 
     // Load saved position
 
@@ -219,7 +219,8 @@ export function VideoPlayer({
         webkit-playsinline="true"
         x5-playsinline="true"
         controls={false}
-        preload="auto"
+        preload={isIntro ? "auto" : "metadata"}
+        controlsList="nodownload"
         muted={isIntro} 
         autoPlay={isIntro}
         onLoadStart={() => setIsLoading(true)}
@@ -237,6 +238,14 @@ export function VideoPlayer({
         }}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
+        onWaiting={() => setIsLoading(true)}
+        onStalled={() => {
+          console.warn("Video stalled, attempting recovery...");
+          if (videoRef.current && videoRef.current.readyState < 3) {
+            videoRef.current.load();
+          }
+        }}
+        onSuspend={() => console.log("Video playback suspended")}
         onClick={(e) => {
           e.stopPropagation();
           togglePlay(e);
