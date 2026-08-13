@@ -140,12 +140,22 @@ export function VideoPlayer({
     const video = videoRef.current;
     if (video) {
       if (video.paused) {
-        video.play().catch(err => {
+        // Force reload if stalled or in a bad state
+        if (video.readyState === 0) {
+          video.load();
+        }
+        
+        video.play().then(() => {
+          setIsPlaying(true);
+        }).catch(err => {
           console.error("Erro ao reproduzir vídeo:", err);
-          // Fallback para quando o play falha (ex: política de autoplay do browser)
+          // If interaction failed, try unmuting if it was muted by intro logic
+          if (video.muted && !isMuted) {
+             video.muted = false;
+             video.play().catch(e => console.error("Second attempt failed:", e));
+          }
           setIsPlaying(false);
         });
-        setIsPlaying(true);
       } else {
         video.pause();
         setIsPlaying(false);
@@ -190,16 +200,28 @@ export function VideoPlayer({
         poster={poster}
         className="w-full h-full object-cover scale-[1.12]"
         playsInline
-        controls={false} // Custom controls
-        preload="auto" // Força o carregamento completo do vídeo
+        webkit-playsinline="true"
+        x5-playsinline="true"
+        controls={false}
+        preload="auto"
+        muted={isIntro} // Autoplay policy: intro videos must start muted on some mobile browsers
+        autoPlay={isIntro} // Attempt autoplay for intro
         onLoadStart={() => setIsLoading(true)}
-        onCanPlay={() => setIsLoading(false)}
+        onCanPlay={() => {
+          setIsLoading(false);
+          // Auto-start if it's an intro and was supposed to be playing
+          if (isIntro && videoRef.current) {
+            videoRef.current.play().catch(() => {
+              // Silently fail if blocked by browser policy, user will hit the center button
+              console.log("Autoplay blocked, waiting for interaction");
+            });
+          }
+        }}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onClick={() => togglePlay()}
       >
         <source src={src} type="video/mp4" />
-        {/* Support for original quality by ensuring no browser-side compression is hinted */}
       </video>
 
       {/* Loading Overlay */}
