@@ -9,18 +9,24 @@ export const Route = createFileRoute("/app/progresso")({
   component: RankingPage,
 });
 
+type RankingRow = {
+  user_id: string;
+  name: string | null;
+  avatar_url: string | null;
+  total_points: number;
+  global_rank: number;
+};
+
 function RankingPage() {
   const { data: ranking, isLoading: isLoadingRanking } = useQuery({
     queryKey: ["student-ranking"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("student_ranking")
-        .select("*")
-        .limit(50);
+      const { data, error } = await (supabase as any).rpc("get_student_ranking", { p_limit: 50 });
       if (error) throw error;
-      return data;
+      return (data ?? []) as RankingRow[];
     },
   });
+
 
   const { data: userStats, isLoading: isLoadingStats } = useQuery({
     queryKey: ["user-stats"],
