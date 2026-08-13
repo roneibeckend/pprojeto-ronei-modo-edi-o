@@ -246,6 +246,13 @@ export function Shell({ children }: { children: ReactNode }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Link
+              to="/app/suporte"
+              className="grid h-10 w-10 place-items-center rounded-md border border-white/10 text-white/40 hover:border-primary/50 hover:text-primary transition-colors touch-target"
+              title="Ajuda e Suporte"
+            >
+              <LifeBuoy className="h-5 w-5" />
+            </Link>
             <Link 
               to="/app/notificacoes"
               className="relative grid h-10 w-10 place-items-center rounded-md border border-white/10 hover:border-primary/50 transition-colors touch-target"
