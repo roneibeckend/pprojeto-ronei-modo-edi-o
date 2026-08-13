@@ -32,8 +32,15 @@ function AdminMaterialsPage() {
   const [uploading, setUploading] = useState(false);
 
   const { data: materials = [], isLoading } = useQuery({
-    queryKey: ["platform-materials"],
-    queryFn: () => getMaterials(),
+    queryKey: ["platform-materials-admin"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("platform_materials")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
   });
 
   const upsertMutation = useMutation({
