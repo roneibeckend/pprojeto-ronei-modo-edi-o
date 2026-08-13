@@ -27,7 +27,7 @@ export const Route = createFileRoute("/admin/usuarios")({
 
 function AdminUsuariosPage() {
   const navigate = useNavigate();
-  const { isAdmin, role: currentUserRole } = useAuth();
+  const { role, isLoading: isLoadingAuth } = useAuth();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -38,16 +38,22 @@ function AdminUsuariosPage() {
   const [totalCount, setTotalCount] = useState(0);
   const ITEMS_PER_PAGE = 10;
 
+
   // Permissões editáveis
   const [userPermissions, setUserPermissions] = useState<{module: string, can_access: boolean}[]>([]);
 
   useEffect(() => {
-    if (!isAdmin && currentUserRole !== "student") {
-        // Se não for admin, mas estiver logado, redirecionar ou mostrar erro
-        // (O Shell já deve filtrar, mas é uma segurança extra)
+    if (!isLoadingAuth && role === "student") {
+      toast.error("Acesso restrito.");
+      navigate({ to: "/admin" });
+      return;
     }
-    fetchData();
-  }, [currentPage, search]);
+    if (!isLoadingAuth) {
+      fetchData();
+    }
+  }, [currentPage, search, role, isLoadingAuth, navigate]);
+
+
 
   async function fetchData() {
     try {

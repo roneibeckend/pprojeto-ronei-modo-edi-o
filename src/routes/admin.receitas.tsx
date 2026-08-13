@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { useNavigate } from "@tanstack/react-router";
+
 import { 
   Plus, 
   ChefHat, 
@@ -22,17 +25,26 @@ export const Route = createFileRoute("/admin/receitas")({
 });
 
 function AdminReceitasPage() {
+  const navigate = useNavigate();
+  const { role, isLoading: isLoadingAuth } = useAuth();
   const [recipes, setRecipes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+
   const categories = ["Carne bovina", "Frango", "Linguiça", "Suíno", "Queijo", "Vegetarianos", "Molhos", "Acompanhamentos"];
 
   useEffect(() => {
+    if (!isLoadingAuth && role === "student") {
+      toast.error("Acesso restrito.");
+      navigate({ to: "/admin" });
+      return;
+    }
     fetchData();
-  }, []);
+  }, [role, isLoadingAuth, navigate]);
+
 
   async function fetchData() {
     try {

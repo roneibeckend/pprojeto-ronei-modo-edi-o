@@ -35,6 +35,9 @@ import {
   Search
 } from "lucide-react";
 import { useState, useEffect, useMemo, useRef } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { useNavigate } from "@tanstack/react-router";
+
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -103,6 +106,8 @@ const GUIDES: Record<string, string[]> = {
 };
 
 function IntegrationsPage() {
+  const navigate = useNavigate();
+  const { role, isLoading: isLoadingAuth } = useAuth();
   const queryClient = useQueryClient();
   const [activeCategory, setActiveCategory] = useState<'ia' | 'payment' | 'email' | 'webhooks' | 'offers'>('ia');
   const [selectedItem, setSelectedItem] = useState<Integration | null>(null);
@@ -110,6 +115,14 @@ function IntegrationsPage() {
   const [testResult, setTestResult] = useState<any>(null);
   const [copiedAll, setCopiedAll] = useState(false);
   const [originalItem, setOriginalItem] = useState<Integration | null>(null);
+
+  useEffect(() => {
+    if (!isLoadingAuth && role === "student") {
+      toast.error("Acesso restrito.");
+      navigate({ to: "/admin" });
+    }
+  }, [role, isLoadingAuth, navigate]);
+
 
   const testConnectionFn = useServerFn(testIntegrationConnection);
   const saveIntegrationFn = useServerFn(saveIntegration);
