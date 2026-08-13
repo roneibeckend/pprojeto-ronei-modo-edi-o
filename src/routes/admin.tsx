@@ -13,6 +13,8 @@ import {
   Loader2,
   BrainCircuit,
   Clapperboard,
+  Bell,
+  HelpCircle,
   DollarSign,
   HelpCircle,
   Bell,
