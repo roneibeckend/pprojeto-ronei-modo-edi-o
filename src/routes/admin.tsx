@@ -70,6 +70,7 @@ function AdminRootLayout() {
     { to: "/admin/integracoes", label: "Integrações", icon: Settings },
     { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
+    { to: "/admin/materiais", label: "Materiais", icon: Library },
   ];
 
   return (
@@ -86,8 +87,7 @@ function AdminRootLayout() {
         <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden">
           {navItems.filter(item => {
             if (role !== "student") return true;
-            // Para alunos, só o dashboard principal e talvez financeiro se tiver módulo?
-            // Mas o requisito diz: "Se o usuário for um aluno comum, o clique em 'GESTAO' deve levar apenas ao 'painel central'."
+            // Para alunos, só o dashboard principal
             return item.to === "/admin";
           }).map((item) => {
             const Icon = item.icon;
