@@ -33,7 +33,7 @@ function AdminMaterialsPage() {
 
   const { data: materials = [], isLoading } = useQuery({
     queryKey: ["platform-materials"],
-    queryFn: () => getMaterials(),
+    queryFn: () => getMaterials({}),
   });
 
   const upsertMutation = useMutation({
@@ -50,7 +50,7 @@ function AdminMaterialsPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => deleteMaterial({ id }),
+    mutationFn: (id: string) => deleteMaterial({ data: { id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["platform-materials"] });
       toast.success("Material excluído!");
