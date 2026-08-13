@@ -210,6 +210,7 @@ export function VideoPlayer({
         controlsList="nodownload"
         muted={isIntro} 
         autoPlay={isIntro}
+        loop={false}
         onLoadStart={() => setIsLoading(true)}
         onCanPlay={() => {
           setIsLoading(false);
