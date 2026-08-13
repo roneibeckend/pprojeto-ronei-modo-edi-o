@@ -16,7 +16,9 @@ import { FeedbackModal } from "@/components/platform/FeedbackModal";
 import { FeedbackSummary } from "@/components/platform/FeedbackSummary";
 import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
+import { getSignedVideoUrl } from "@/lib/video.functions";
 import { motion } from "framer-motion";
+
 
 
 const VideoPlayer = lazy(() => import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer })));
@@ -67,7 +69,10 @@ function CoursePage() {
   });
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
+  const getSignedUrl = useServerFn(getSignedVideoUrl);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [signedLessonUrl, setSignedLessonUrl] = useState<string | null>(null);
+
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
 
 
@@ -248,6 +253,24 @@ function CoursePage() {
   }, [activeId, flat]);
 
   useEffect(() => {
+    const activeLesson = flat.find((l: any) => l.id === activeId);
+    if (activeLesson?.video_url && !activeLesson.video_url.includes('youtube') && !activeLesson.video_url.includes('drive')) {
+      const loadSignedUrl = async () => {
+        try {
+          const result = await getSignedUrl({ data: { path: activeLesson.video_url } });
+          setSignedLessonUrl(result.signedUrl);
+        } catch (error) {
+          console.error("Failed to sign lesson video URL:", error);
+          setSignedLessonUrl(null);
+        }
+      };
+      loadSignedUrl();
+    } else {
+      setSignedLessonUrl(null);
+    }
+  }, [activeId, flat, getSignedUrl]);
+
+  useEffect(() => {
     if (activeId) {
       localStorage.setItem(`course_last_watched_${course.id}`, activeId);
     }
@@ -345,7 +368,7 @@ function CoursePage() {
             <Suspense fallback={<div className="aspect-[9/16] max-h-[70vh] w-full max-w-[400px] mx-auto rounded-2xl bg-white/5 animate-pulse" />}>
               <VideoPlayer
                 videoId={active.id}
-                src={active.video_url || ""}
+                src={signedLessonUrl || active.video_url || ""}
                 poster={course.cover_url || ""}
                 title={active.title}
                 className="w-full"

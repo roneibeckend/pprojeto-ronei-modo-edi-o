@@ -19,6 +19,8 @@ import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
 import { FeedbackSummary } from "@/components/platform/FeedbackSummary";
 import { FeedbackModal } from "@/components/platform/FeedbackModal";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
+import { getSignedVideoUrl } from "@/lib/video.functions";
+
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
   head: () => ({
@@ -62,7 +64,24 @@ function EbookReaderPage() {
   const [showOpeningVideo, setShowOpeningVideo] = useState(false);
   const [showIntroVideo, setShowIntroVideo] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
+  const getSignedUrl = useServerFn(getSignedVideoUrl);
   const { openPayment } = usePaymentModal();
+  const [signedIntroUrl, setSignedIntroUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadSignedUrl = async () => {
+      if (ebook?.opening_video_url && !ebook.opening_video_url.includes('youtube') && !ebook.opening_video_url.includes('drive')) {
+        try {
+          const result = await getSignedUrl({ data: { path: ebook.opening_video_url } });
+          setSignedIntroUrl(result.signedUrl);
+        } catch (error) {
+          console.error("Failed to sign intro video URL:", error);
+        }
+      }
+    };
+    loadSignedUrl();
+  }, [ebook.opening_video_url, getSignedUrl]);
+
 
   useEffect(() => {
     if (ebook?.opening_video_url) {
@@ -352,7 +371,7 @@ function EbookReaderPage() {
               <div className="relative aspect-[9/16] h-[70vh] w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black">
                 <VideoPlayer
                   videoId={`intro-${ebook.id}`}
-                  src={ebook.opening_video_url}
+                  src={signedIntroUrl || ebook.opening_video_url}
                   isIntro={true}
                   className="w-full h-full"
                 />

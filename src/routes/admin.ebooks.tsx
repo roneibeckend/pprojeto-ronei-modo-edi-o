@@ -491,8 +491,9 @@ function AdminEbooksPage() {
                         <VideoUpload 
                           value={editingItem?.opening_video_url || ""} 
                           onChange={url => setEditingItem({...editingItem, opening_video_url: url})}
+                          bucket="course-assets"
                           label="Vídeo de Abertura"
-                          description="Este vídeo será exibido antes do início do conteúdo para o aluno."
+                          description="Este vídeo será exibido antes do início do conteúdo para o aluno. Formatos: MP4 (H.264/AAC)."
                         />
                       </div>
                     </div>

@@ -73,6 +73,8 @@ export function VideoPlayer({
 
   const isYouTube = src.includes('youtube.com') || src.includes('youtu.be');
   const isGoogleDrive = src.includes('drive.google.com');
+  // Simple check for Supabase Storage or direct MP4 links
+  const isDirectVideo = src.endsWith('.mp4') || src.includes('/storage/v1/object/');
   
   const getEmbedUrl = (url: string) => {
     if (!url) return '';
@@ -186,6 +188,7 @@ export function VideoPlayer({
           className="absolute inset-0 w-[100.5%] h-[100.5%] -left-[0.25%] -top-[0.25%] object-cover border-0 scale-[1.12]"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
+          title={title || "Video Player"}
         />
         {hideAllUI && <div className="absolute inset-0 z-50 bg-transparent" onClick={togglePlay} />}
       </div>
