@@ -103,7 +103,7 @@ function ProfilePage() {
                   <User className="h-4 w-4" />
                 </button>
               </div>
-              <h3 className="mt-4 font-display text-xl font-bold">{profile?.full_name || "Estudante"}</h3>
+              <h3 className="mt-4 font-display text-xl font-bold">{profile?.name || profile?.full_name || "Estudante"}</h3>
               <p className="text-sm text-white/40">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
               
               <div className="mt-6 grid w-full grid-cols-2 gap-2">
@@ -157,7 +157,7 @@ function ProfilePage() {
             </div>
             
             <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
-              <Field label="Nome completo" value={profile?.full_name || ""} readOnly icon={User} />
+              <Field label="Nome completo" value={profile?.name || profile?.full_name || ""} readOnly icon={User} />
               <Field label="Seu e-mail" value={user?.email || profile?.email || ""} readOnly type="email" icon={Mail} />
               <Field label="WhatsApp / Telefone" value={profile?.phone || "Não informado"} readOnly icon={Phone} />
               <Field label="Data de cadastro" value={profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"} disabled icon={Calendar} />

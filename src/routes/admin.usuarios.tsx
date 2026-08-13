@@ -82,15 +82,13 @@ function AdminUsuariosPage() {
 
       if (roleError) throw roleError;
 
-      // 3. Combinar dados e FILTRAR apenas quem tem role administrativa
-      // Se não tiver role, assumimos que não é equipe (a menos que queiramos listar todos para promover)
-      // O objetivo original era "Gestão de Equipe", então filtramos por roles administrativas
-      const resultUsers = profileData
-        .map(profile => ({
-          ...profile,
-          role: roleData?.find(r => r.user_id === profile.id)?.role
-        }))
-        .filter(u => ['admin', 'manager', 'agent'].includes(u.role as string));
+      // 3. Combinar dados
+      // Listamos TODOS os perfis que retornaram na busca, marcando sua role se houver.
+      // Isso permite que o admin veja novos cadastros e os promova a equipe.
+      const resultUsers = profileData.map(profile => ({
+        ...profile,
+        role: roleData?.find(r => r.user_id === profile.id)?.role || 'student'
+      }));
 
       setUsers(resultUsers);
       setTotalCount(count || 0);
@@ -138,11 +136,18 @@ function AdminUsuariosPage() {
       if (profileError) throw profileError;
 
       // 2. Atualizar Role
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .update({ role: editingUser.role })
-        .eq('user_id', editingUser.id);
-      if (roleError) throw roleError;
+      if (editingUser.role === 'student') {
+          // Se for estudante, remover entrada da user_roles se existir
+          await supabase
+            .from('user_roles')
+            .delete()
+            .eq('user_id', editingUser.id);
+      } else {
+          const { error: roleError } = await supabase
+            .from('user_roles')
+            .upsert({ user_id: editingUser.id, role: editingUser.role }, { onConflict: 'user_id' });
+          if (roleError) throw roleError;
+      }
 
       // 3. Atualizar Permissões
       for (const perm of userPermissions) {
@@ -235,9 +240,12 @@ function AdminUsuariosPage() {
                     <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
                         u.role === 'admin' ? 'bg-red-500/10 text-red-400' : 
                         u.role === 'manager' ? 'bg-[#ff6a00]/10 text-[#ff6a00]' : 
-                        'bg-blue-500/10 text-blue-400'
+                        u.role === 'agent' ? 'bg-blue-500/10 text-blue-400' :
+                        'bg-white/5 text-white/40'
                     }`}>
-                        {u.role === 'admin' ? 'Administrador' : u.role === 'manager' ? 'Gerente' : 'Atendente'}
+                        {u.role === 'admin' ? 'Administrador' : 
+                         u.role === 'manager' ? 'Gerente' : 
+                         u.role === 'agent' ? 'Atendente' : 'Aluno'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-white/40">
@@ -285,10 +293,11 @@ function AdminUsuariosPage() {
                     <div className="space-y-1.5">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Perfil de Acesso</label>
                         <select 
-                            value={editingUser?.role || "agent"} 
+                            value={editingUser?.role || "student"} 
                             onChange={e => setEditingUser({...editingUser, role: e.target.value})}
                             className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] appearance-none"
                         >
+                            <option value="student" className="bg-[#111]">Aluno (Padrão)</option>
                             <option value="admin" className="bg-[#111]">Administrador (Total)</option>
                             <option value="manager" className="bg-[#111]">Gerente</option>
                             <option value="agent" className="bg-[#111]">Atendente</option>
