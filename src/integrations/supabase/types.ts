@@ -1105,7 +1105,7 @@ export type Database = {
             foreignKeyName: "lesson_progress_lesson_id_fkey"
             columns: ["lesson_id"]
             isOneToOne: false
-            referencedRelation: "lessons"
+            referencedRelation: "course_lessons"
             referencedColumns: ["id"]
           },
         ]
