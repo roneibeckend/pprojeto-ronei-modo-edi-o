@@ -31,7 +31,8 @@ import {
   Percent,
   ToggleLeft,
   ToggleRight,
-  AlertCircle
+  AlertCircle,
+  Search
 } from "lucide-react";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
@@ -1297,6 +1298,8 @@ function EmailTemplatesTab() {
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isSendingTest, setIsSendingTest] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  
   const getTemplatesFn = useServerFn(getEmailTemplates);
   const saveTemplateFn = useServerFn(saveEmailTemplate);
   const deleteTemplateFn = useServerFn(deleteEmailTemplate);
@@ -1306,6 +1309,12 @@ function EmailTemplatesTab() {
     queryKey: ['email_templates'],
     queryFn: async () => await getTemplatesFn()
   });
+
+  const filteredTemplates = templates?.filter((t: any) => 
+    t.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    t.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    t.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const saveMutation = useMutation({
     mutationFn: saveTemplateFn,
@@ -1384,18 +1393,36 @@ function EmailTemplatesTab() {
         </Button>
         
         <div className="space-y-2">
+          <div className="relative mb-4">
+            <Input 
+              placeholder="Buscar templates..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-black/40 border-white/10 h-9 text-[10px] pl-8"
+            />
+            <Search className="h-3 w-3 text-white/20 absolute left-3 top-1/2 -translate-y-1/2" />
+          </div>
+
           {isLoading ? (
             Array(3).fill(0).map((_, i) => <div key={i} className="h-16 bg-white/5 animate-pulse rounded-lg" />)
-          ) : templates?.map((temp: any) => (
+          ) : filteredTemplates?.map((temp: any) => (
             <button
               key={temp.id}
               onClick={() => { setSelectedTemplate(temp); setIsEditing(true); }}
               className={`w-full text-left p-4 rounded-xl border transition-all ${selectedTemplate?.id === temp.id ? 'bg-[#ff6a00]/10 border-[#ff6a00]' : 'bg-[#111] border-white/5 hover:border-white/20'}`}
             >
-              <p className="text-xs font-bold text-white uppercase tracking-tight">{temp.name}</p>
-              <p className="text-[10px] text-white/40 mt-1 truncate">{temp.subject}</p>
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-xs font-bold text-white uppercase tracking-tight">{temp.name}</p>
+                <Badge variant="outline" className="text-[8px] border-white/10 text-white/40 uppercase">Template</Badge>
+              </div>
+              <p className="text-[10px] text-white/40 truncate">{temp.subject}</p>
             </button>
           ))}
+          {filteredTemplates?.length === 0 && searchQuery && (
+            <div className="py-8 text-center text-[10px] text-white/20 uppercase font-bold tracking-widest">
+              Nenhum template encontrado
+            </div>
+          )}
         </div>
       </div>
 
