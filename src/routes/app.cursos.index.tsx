@@ -215,7 +215,7 @@ function CoursesPage() {
   const ownedEbooks = dbEbooks?.filter((e) => ebookEnrollments.includes(e.id) || (e.price || 0) === 0) || [];
   const otherEbooks = dbEbooks?.filter((e) => !ebookEnrollments.includes(e.id) && (e.price || 0) > 0) || [];
 
-  const totalProgress = ownedCourses.length > 0 ? 0 : 0;
+  // totalProgress removido daqui para evitar conflito com o que vem do hook
 
   return (
     <div className="pb-10">
