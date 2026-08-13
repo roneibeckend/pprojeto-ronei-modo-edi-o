@@ -7,7 +7,7 @@ import { generateShoppingListPDF, generateEquipmentChecklistPDF } from "@/lib/pd
 import { generateEditableMenuPPTX } from "@/lib/pptx-generator";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
-import { getMaterials } from "@/lib/materials.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/app/materiais")({
   head: () => ({ meta: [{ title: "Planilhas e materiais — Espetinho na Veia" }] }),
@@ -15,10 +15,23 @@ export const Route = createFileRoute("/app/materiais")({
 });
 
 function MaterialsPage() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["platform-materials"],
-    queryFn: () => getMaterials(),
+    queryFn: async () => {
+      const { data: materials, error } = await supabase
+        .from("platform_materials")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return materials || [];
+    },
   });
+
+  if (error) {
+    console.error("Error fetching materials:", error);
+  }
 
   const dynamicMaterials = (data as any[]) || [];
   const materials = [...dynamicMaterials, ...staticMaterials.filter(sm => !dynamicMaterials.some(dm => dm.title === sm.title))];
