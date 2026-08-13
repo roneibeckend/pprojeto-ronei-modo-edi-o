@@ -137,14 +137,14 @@ export const recipeCategories = ["Todos", "Carne bovina", "Frango", "Linguiça",
 export const recipes: Recipe[] = [];
 
 export const materials = [
-  { id: "m1", title: "Planilha de custos", description: "Controle detalhado de matéria-prima e insumos.", type: "XLSX" },
-  { id: "m2", title: "Calculadora de preço de venda", description: "Descubra o preço ideal em segundos.", type: "XLSX" },
-  { id: "m3", title: "Controle de estoque", description: "Nunca fique sem o essencial.", type: "XLSX" },
-  { id: "m4", title: "Lista de compras semanal", description: "Modelo pronto para imprimir.", type: "PDF" },
-  { id: "m5", title: "Checklist de equipamentos", description: "Tudo que você precisa para começar.", type: "PDF" },
-  { id: "m6", title: "Cardápio editável", description: "Modelo profissional em Canva.", type: "CANVA" },
-  { id: "m7", title: "Artes para divulgação", description: "10 posts prontos para Instagram.", type: "ZIP" },
-  { id: "m8", title: "Modelo de controle de vendas", description: "Acompanhe seu faturamento diário.", type: "XLSX" },
+  { id: "m1", title: "Planilha de custos", description: "Ferramenta profissional para descobrir o custo real e margem de cada produto.", type: "XLSX" },
+  { id: "m2", title: "Calculadora de preço", description: "Sistema inteligente de formação de preço considerando taxas, impostos e lucro.", type: "XLSX" },
+  { id: "m3", title: "Controle de estoque", description: "Gestão inteligente com alertas visuais de reposição e estoque mínimo.", type: "XLSX" },
+  { id: "m4", title: "Lista de compras semanal", description: "Modelo profissional organizado por categorias para otimizar suas compras.", type: "PDF" },
+  { id: "m5", title: "Checklist de equipamentos", description: "Guia completo de tudo que você precisa para montar uma operação profissional.", type: "PDF" },
+  { id: "m6", title: "Cardápio editável", description: "Design profissional e editável no Canva para atrair mais clientes.", type: "CANVA" },
+  { id: "m7", title: "Artes para divulgação", description: "Pack de artes profissionais prontas para Instagram e WhatsApp.", type: "ZIP" },
+  { id: "m8", title: "Controle de vendas", description: "Acompanhe seu faturamento diário e desempenho financeiro.", type: "XLSX" },
 ];
 
 export const certificates = [
