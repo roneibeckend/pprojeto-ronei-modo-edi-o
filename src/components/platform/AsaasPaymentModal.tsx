@@ -27,14 +27,19 @@ export function AsaasPaymentModal() {
 
   // Polling: revalida as matrículas e confirma automaticamente após o webhook
   React.useEffect(() => {
-    if (!isOpen || !productId || !productType || status === 'confirmed') return;
+    if (!isOpen || !productId || !productType || (status as string) === 'confirmed') return;
 
     const check = async () => {
+      // Avoid double confirm
+      if ((status as string) === 'confirmed') return;
+      
       await refetchEnrollments();
       const isEnrolled = productType === 'course'
         ? isEnrolledInCourse(productId)
         : isEnrolledInEbook(productId);
-      if (isEnrolled) setStatus('confirmed');
+      if (isEnrolled) {
+        setStatus('confirmed');
+      }
     };
 
     const interval = window.setInterval(check, 4000);

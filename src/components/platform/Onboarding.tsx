@@ -24,8 +24,9 @@ export function Onboarding() {
     const hasSeenOnboarding = localStorage.getItem("onboarding_seen");
     
     // Configura os passos baseado na rota
+    let newSteps: Step[] = [];
     if (location.pathname === "/login") {
-      setSteps([
+      newSteps = [
         {
           target: "body",
           placement: "center",
@@ -42,10 +43,9 @@ export function Onboarding() {
           content: "Ou se preferir, use seu e-mail e senha cadastrados.",
           title: "Acesso por E-mail",
         },
-      ]);
-      setRun(true);
+      ];
     } else if (location.pathname.startsWith("/app") && !hasSeenOnboarding) {
-      setSteps([
+      newSteps = [
         {
           target: "header",
           content: "Aqui você encontra o menu principal e notificações.",
@@ -61,7 +61,11 @@ export function Onboarding() {
           content: "Aqui estão os cursos disponíveis para você começar a lucrar.",
           title: "Vitrine de Cursos",
         },
-      ]);
+      ];
+    }
+
+    if (newSteps.length > 0) {
+      setSteps(newSteps);
       setRun(true);
     }
   }, [location.pathname, isMobile]);
