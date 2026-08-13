@@ -85,21 +85,14 @@ function AdminUsuariosPage() {
       // 3. Combinar dados e FILTRAR apenas quem tem role administrativa
       // Se não tiver role, assumimos que não é equipe (a menos que queiramos listar todos para promover)
       // O objetivo original era "Gestão de Equipe", então filtramos por roles administrativas
-      const enrichedUsers = profileData
+      const resultUsers = profileData
         .map(profile => ({
           ...profile,
           role: roleData?.find(r => r.user_id === profile.id)?.role
         }))
-        .filter(u => ['admin', 'manager', 'agent'].includes(u.role));
+        .filter(u => ['admin', 'manager', 'agent'].includes(u.role as string));
 
-
-      // Combinar dados de perfil com roles
-      const enrichedUsers = data?.map(profile => ({
-        ...profile,
-        role: roleData.find(r => r.user_id === profile.id)?.role
-      })) || [];
-
-      setUsers(enrichedUsers);
+      setUsers(resultUsers);
       setTotalCount(count || 0);
     } catch (error: any) {
       toast.error("Erro ao carregar usuários: " + error.message);
