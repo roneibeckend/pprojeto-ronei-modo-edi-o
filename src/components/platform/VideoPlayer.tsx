@@ -131,15 +131,25 @@ export function VideoPlayer({
     };
   }, [videoId, onProgress, isYouTube, isGoogleDrive]);
 
-  const togglePlay = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
+  const togglePlay = (e?: React.MouseEvent | React.TouchEvent) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    
+    const video = videoRef.current;
+    if (video) {
+      if (video.paused) {
+        video.play().catch(err => {
+          console.error("Erro ao reproduzir vídeo:", err);
+          // Fallback para quando o play falha (ex: política de autoplay do browser)
+          setIsPlaying(false);
+        });
+        setIsPlaying(true);
       } else {
-        videoRef.current.play().catch(err => console.error("Error playing video:", err));
+        video.pause();
+        setIsPlaying(false);
       }
-      setIsPlaying(!isPlaying);
       handleInteraction();
     }
   };
@@ -180,12 +190,12 @@ export function VideoPlayer({
         className="w-full h-full object-cover scale-[1.12]"
         playsInline
         controls={false} // Custom controls
-        preload="auto" // Changed from metadata to auto for better initial quality/loading
+        preload="auto" // Força o carregamento completo do vídeo
         onLoadStart={() => setIsLoading(true)}
         onCanPlay={() => setIsLoading(false)}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-        onClick={togglePlay}
+        onClick={() => togglePlay()}
       >
         <source src={src} type="video/mp4" />
         {/* Support for original quality by ensuring no browser-side compression is hinted */}
@@ -199,14 +209,17 @@ export function VideoPlayer({
       )}
 
       {/* Play/Pause Center Button Overlay */}
-      {!isLoading && (
-        <div 
-          className={cn(
-            "absolute inset-0 flex items-center justify-center bg-black/10 transition-all duration-300 z-30",
-            showControls || !isPlaying ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
-          )}
-          onClick={(e) => togglePlay(e)}
-        >
+      <div 
+        className={cn(
+          "absolute inset-0 flex items-center justify-center bg-black/10 transition-all duration-300 z-30",
+          (!isPlaying || showControls) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          togglePlay();
+        }}
+      >
+        {!isLoading ? (
           <div className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition active:scale-95 hover:scale-110">
             {isPlaying ? (
               <div className="flex gap-1.5">
@@ -217,8 +230,12 @@ export function VideoPlayer({
               <Play className="w-8 h-8 text-white ml-1 fill-current" />
             )}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="w-20 h-20 rounded-full bg-fire/20 flex items-center justify-center">
+            <Loader2 className="w-10 h-10 animate-spin text-fire" />
+          </div>
+        )}
+      </div>
 
 
       {/* Controls Overlay (Volume/Fullscreen) */}
