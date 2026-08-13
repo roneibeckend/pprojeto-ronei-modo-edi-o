@@ -115,6 +115,7 @@ export function useProgress() {
 
   const { data: ebookProgress, isLoading: isLoadingEbookProgress } = useQuery({
     queryKey: ["ebook-progress", user?.id],
+    staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
