@@ -152,7 +152,13 @@ export function VideoPlayer({
       clearTimeout(loadingTimeout);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       listeners.forEach(([name, fn]) => video.removeEventListener(name, fn));
+      
+      // Cleanup for memory
+      video.pause();
+      video.removeAttribute('src');
+      video.load();
     };
+
   }, [src, videoId, isYouTube, isGoogleDrive]);
 
 
@@ -325,16 +331,6 @@ export function VideoPlayer({
         }}
       />
 
-      {/* Memoria: Garantir que o src seja limpo ao desmontar para liberar o buffer */}
-      {useEffect(() => {
-        return () => {
-          if (videoRef.current) {
-            videoRef.current.pause();
-            videoRef.current.src = "";
-            videoRef.current.load();
-          }
-        };
-      }, []) && null}
 
 
       {/* Loading Overlay */}
