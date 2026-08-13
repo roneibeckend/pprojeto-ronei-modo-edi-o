@@ -705,9 +705,13 @@ function Hero() {
                     src={`https://i.ytimg.com/vi/ZowrRHEwP7I/hqdefault.jpg`}
                     alt="Ronnei — história do Espetos Grill"
                     loading="lazy"
+                    decoding="async"
+                    width={448}
+                    height={252}
                     className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--ember)] shadow-[0_0_40px_-4px_var(--ember)] transition group-hover:scale-110">
                       <span className="absolute inset-0 animate-ping rounded-full bg-[color:var(--ember)] opacity-40" />

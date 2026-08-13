@@ -36,14 +36,15 @@ export const Route = createFileRoute("/app/cursos/$courseId")({
     const { data: course, error } = await supabase
       .from("courses")
       .select(`
-        *,
+        id, title, description, price, teacher_name, cover_url, payment_type, due_days,
         modules (
-          *,
-          lessons (*)
+          id, title, video_url, order_index,
+          lessons (id, title, video_url, duration, order_index, module_id)
         )
       `)
       .eq("id", params.courseId)
       .single();
+
 
     if (error || !course) throw notFound();
     return { course };
