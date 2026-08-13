@@ -223,7 +223,7 @@ function AdminUsuariosPage() {
             <thead>
               <tr className="border-b border-white/5 bg-white/[0.02]">
                 <th className="px-6 py-4 font-bold text-white/40 uppercase tracking-widest text-[10px]">Colaborador</th>
-                <th className="px-6 py-4 font-bold text-white/40 uppercase tracking-widest text-[10px]">Nível de Acesso</th>
+                <th className="px-6 py-4 font-bold text-white/40 uppercase tracking-widest text-[10px]">Acesso / Perfil</th>
                 <th className="px-6 py-4 font-bold text-white/40 uppercase tracking-widest text-[10px]">Status</th>
                 <th className="px-6 py-4 font-bold text-white/40 uppercase tracking-widest text-[10px] text-right">Ações</th>
               </tr>
@@ -243,16 +243,23 @@ function AdminUsuariosPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
-                        u.role === 'admin' ? 'bg-red-500/10 text-red-400' : 
-                        u.role === 'manager' ? 'bg-[#ff6a00]/10 text-[#ff6a00]' : 
-                        u.role === 'agent' ? 'bg-blue-500/10 text-blue-400' :
-                        'bg-white/5 text-white/40'
-                    }`}>
-                        {u.role === 'admin' ? 'Administrador' : 
-                         u.role === 'manager' ? 'Gerente' : 
-                         u.role === 'agent' ? 'Atendente' : 'Aluno'}
-                    </span>
+                    <div className="flex flex-col gap-1">
+                      <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider w-fit ${
+                          u.role === 'admin' ? 'bg-red-500/10 text-red-400' : 
+                          u.role === 'manager' ? 'bg-[#ff6a00]/10 text-[#ff6a00]' : 
+                          u.role === 'agent' ? 'bg-blue-500/10 text-blue-400' :
+                          'bg-white/5 text-white/40'
+                      }`}>
+                          {u.role === 'admin' ? 'Administrador' : 
+                          u.role === 'manager' ? 'Gerente' : 
+                          u.role === 'agent' ? 'Atendente' : 'Colaborador'}
+                      </span>
+                      <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider w-fit ${
+                          u.status === 'student' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
+                      }`}>
+                          {u.status === 'student' ? 'Aluno Ativo' : 'Lead (Cadastrado)'}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-white/40">
                     <div className="flex items-center gap-1.5">
