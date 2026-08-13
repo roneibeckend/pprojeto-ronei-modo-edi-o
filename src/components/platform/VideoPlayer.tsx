@@ -116,11 +116,15 @@ export function VideoPlayer({
     const video = videoRef.current;
     if (!video) return;
 
+    // Timeout to prevent infinite loading if video data doesn't load
+    const loadingTimeout = setTimeout(() => {
+      if (isLoading) {
+        console.warn("Video loading timeout reached, clearing loading state");
+        setIsLoading(false);
+      }
+    }, 15000); // 15 seconds
+
     // Load saved position
-    const savedTime = localStorage.getItem(`video_progress_${videoId}`);
-    if (savedTime) {
-      video.currentTime = parseFloat(savedTime);
-    }
 
     const handleTimeUpdate = () => {
       localStorage.setItem(`video_progress_${videoId}`, video.currentTime.toString());
@@ -129,9 +133,10 @@ export function VideoPlayer({
 
     video.addEventListener('timeupdate', handleTimeUpdate);
     return () => {
+      clearTimeout(loadingTimeout);
       video.removeEventListener('timeupdate', handleTimeUpdate);
     };
-  }, [videoId, onProgress, isYouTube, isGoogleDrive]);
+  }, [videoId, onProgress, isYouTube, isGoogleDrive, isLoading]);
 
   const togglePlay = async (e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
@@ -221,10 +226,14 @@ export function VideoPlayer({
         onCanPlay={() => {
           setIsLoading(false);
           if (isIntro && videoRef.current) {
-            videoRef.current.play().catch(() => {
-              console.log("Autoplay blocked, waiting for interaction");
+            videoRef.current.play().catch((err) => {
+              console.log("Autoplay blocked or failed:", err);
             });
           }
+        }}
+        onError={(e) => {
+          console.error("Video element error:", e);
+          setIsLoading(false);
         }}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
