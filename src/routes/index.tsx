@@ -282,6 +282,9 @@ function BrasaTicker() {
 }
 
 function SectionTag({ children }: { children: React.ReactNode }) {
+  const isHidden = children === "\u2063" || (typeof children === "string" && children.trim() === "");
+  if (isHidden) return null;
+
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--gold)] sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs sm:tracking-[0.2em]">
       <Flame className="h-3 w-3 animate-flicker sm:h-3.5 sm:w-3.5" />
