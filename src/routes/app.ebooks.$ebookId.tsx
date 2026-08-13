@@ -170,6 +170,7 @@ function EbookReaderPage() {
   const prevChapter = activeIndex > 0 ? chapters[activeIndex - 1] : null;
   const nextChapter = activeIndex < chapters.length - 1 ? chapters[activeIndex + 1] : null;
 
+
   useEffect(() => {
     if (activeChapterId && activeChapter) {
       completeChapter({ 
