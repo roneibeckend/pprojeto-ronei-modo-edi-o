@@ -37,9 +37,15 @@ export const upsertMaterial = createServerFn({ method: "POST" })
     is_active: z.boolean().default(true),
   }).parse(data))
   .handler(async ({ data }) => {
-    // 1. Check if user is admin using the normal client (which has the bearer token)
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Não autenticado");
+    // 1. Check for auth token in headers using the context injected by TanStack Start
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      console.error("Server side: Auth error or user not found:", authError);
+      throw new Error("Sessão expirada ou não autenticada (Não autenticado)");
+    }
+
+
 
     const { data: hasRole } = await supabase.rpc("has_role", { 
       _user_id: user.id, 
@@ -71,8 +77,13 @@ export const upsertMaterial = createServerFn({ method: "POST" })
 export const deleteMaterial = createServerFn({ method: "POST" })
   .inputValidator((data: any) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data }) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Não autenticado");
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      console.error("Server side: Auth error or user not found:", authError);
+      throw new Error("Sessão expirada ou não autenticada");
+    }
+
 
     const { data: hasRole } = await supabase.rpc("has_role", { 
       _user_id: user.id, 
