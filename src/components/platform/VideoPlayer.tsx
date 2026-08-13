@@ -155,7 +155,7 @@ export function VideoPlayer({
         try {
           // Critical for mobile: the play() call must be directly inside the interaction handler
           // and we should ensure it's not waiting for a long promise chain.
-          await video.play();
+          console.log('play() triggered'); await video.play();
           setIsPlaying(true);
         } catch (err) {
           console.error("Erro ao reproduzir vídeo:", err);
@@ -163,7 +163,7 @@ export function VideoPlayer({
           if (video.muted && isIntro) {
              video.muted = true; // Stay muted but try again
              try {
-               await video.play();
+               console.log('play() triggered'); await video.play();
                setIsPlaying(true);
              } catch (retryErr) {
                console.error("Second attempt failed:", retryErr);
@@ -236,9 +236,9 @@ export function VideoPlayer({
           console.error("Video element error:", e);
           setIsLoading(false);
         }}
-        onPlay={() => setIsPlaying(true)}
+        onPlay={() => { console.log('Video playing'); setIsPlaying(true); }}
         onPause={() => setIsPlaying(false)}
-        onWaiting={() => setIsLoading(true)}
+        onWaiting={() => { console.log('Video waiting'); setIsLoading(true); }}
         onStalled={() => {
           console.warn("Video stalled, attempting recovery...");
           if (videoRef.current && videoRef.current.readyState < 3) {
