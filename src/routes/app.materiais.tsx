@@ -52,36 +52,57 @@ function MaterialsPage() {
     }
 
     try {
-      switch (materialId) {
-        case "m1":
-        case (materials.find(m => m.title === "Planilha de custos")?.id):
-          await generateCostSpreadsheet();
-          break;
-        case "m2":
-        case (materials.find(m => m.title === "Calculadora de preço")?.id):
-          await generatePricingCalculator();
-          break;
-        case "m3":
-        case (materials.find(m => m.title === "Controle de estoque")?.id):
-          await generateInventoryControl();
-          break;
-        case "m4":
-        case (materials.find(m => m.title === "Lista de compras semanal")?.id):
-          generateShoppingListPDF();
-          break;
-        case "m5":
-        case (materials.find(m => m.title === "Checklist de equipamentos")?.id):
-          generateEquipmentChecklistPDF();
-          break;
-        case "m6":
-        case (materials.find(m => m.title === "Cardápio editável")?.id):
-          await generateEditableMenuPPTX();
-          break;
-        default:
-          toast.info(`O material "${title}" está sendo preparado e estará disponível em breve!`);
-          return;
+      // Verifica se o ID ou título corresponde a um gerador local conhecido
+      const isKnownGenerator = [
+        "m1", "Planilha de custos",
+        "m2", "Calculadora de preço",
+        "m3", "Controle de estoque",
+        "m4", "Lista de compras semanal",
+        "m5", "Checklist de equipamentos",
+        "m6", "Cardápio editável"
+      ].includes(materialId) || [
+        "Planilha de custos",
+        "Calculadora de preço",
+        "Controle de estoque",
+        "Lista de compras semanal",
+        "Checklist de equipamentos",
+        "Cardápio editável"
+      ].includes(title);
+
+      if (isKnownGenerator) {
+        switch (materialId) {
+          case "m1":
+          case (materials.find(m => m.title === "Planilha de custos")?.id):
+            await generateCostSpreadsheet();
+            break;
+          case "m2":
+          case (materials.find(m => m.title === "Calculadora de preço")?.id):
+            await generatePricingCalculator();
+            break;
+          case "m3":
+          case (materials.find(m => m.title === "Controle de estoque")?.id):
+            await generateInventoryControl();
+            break;
+          case "m4":
+          case (materials.find(m => m.title === "Lista de compras semanal")?.id):
+            generateShoppingListPDF();
+            break;
+          case "m5":
+          case (materials.find(m => m.title === "Checklist de equipamentos")?.id):
+            generateEquipmentChecklistPDF();
+            break;
+          case "m6":
+          case (materials.find(m => m.title === "Cardápio editável")?.id):
+            await generateEditableMenuPPTX();
+            break;
+        }
+      } else if (!fileUrl && !externalUrl) {
+        toast.info(`O material "${title}" ainda não está disponível para download.`);
+        return;
       }
-      toast.success(`Download de "${title}" iniciado com sucesso!`);
+      if (isKnownGenerator) {
+        toast.success(`Download de "${title}" iniciado com sucesso!`);
+      }
     } catch (error) {
       console.error("Erro no download:", error);
       toast.error("Ocorreu um erro ao gerar o arquivo. Tente novamente.");
