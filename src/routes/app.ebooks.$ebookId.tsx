@@ -77,20 +77,28 @@ function EbookReaderPage() {
   const getSignedUrl = useServerFn(getSignedVideoUrl);
   const { openPayment } = usePaymentModal();
   const [signedIntroUrl, setSignedIntroUrl] = useState<string | null>(null);
+  const introNeedsSigning = Boolean(
+    ebook?.opening_video_url &&
+    !ebook.opening_video_url.includes('youtube') &&
+    !ebook.opening_video_url.includes('drive')
+  );
 
   useEffect(() => {
+    let cancelled = false;
     const loadSignedUrl = async () => {
-      if (ebook?.opening_video_url && !ebook.opening_video_url.includes('youtube') && !ebook.opening_video_url.includes('drive')) {
+      if (introNeedsSigning) {
         try {
           const result = await getSignedUrl({ data: { path: ebook.opening_video_url } });
-          setSignedIntroUrl(result.signedUrl);
+          if (!cancelled) setSignedIntroUrl(result.signedUrl);
         } catch (error) {
           console.error("Failed to sign intro video URL:", error);
         }
       }
     };
     loadSignedUrl();
-  }, [ebook.opening_video_url, getSignedUrl]);
+    return () => { cancelled = true; };
+  }, [ebook.opening_video_url, introNeedsSigning, getSignedUrl]);
+
 
 
   useEffect(() => {
@@ -410,14 +418,19 @@ function EbookReaderPage() {
               </div>
  
               <div className="relative aspect-[9/16] h-[70vh] w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black">
-                <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
-                  <VideoPlayer
-                    videoId={`intro-${ebook.id}`}
-                    src={signedIntroUrl || ebook.opening_video_url}
-                    isIntro={true}
-                    className="w-full h-full"
-                  />
-                </Suspense>
+                {introNeedsSigning && !signedIntroUrl ? (
+                  <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>
+                ) : (
+                  <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
+                    <VideoPlayer
+                      videoId={`intro-${ebook.id}`}
+                      src={signedIntroUrl || ebook.opening_video_url}
+                      isIntro={true}
+                      className="w-full h-full"
+                    />
+                  </Suspense>
+                )}
+
               </div>
 
  
@@ -468,15 +481,18 @@ function EbookReaderPage() {
                           className="h-[100.5%] w-[100.5%] -left-[0.25%] -top-[0.25%] scale-[1.12]"
                           allowFullScreen
                         />
+                      ) : (isLoadingSignedChapter || !signedChapterUrl) ? (
+                        <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>
                       ) : (
                         <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
                           <VideoPlayer
                             videoId={`chapter-${activeChapter.id}`}
-                            src={signedChapterUrl || activeChapter.video_url}
+                            src={signedChapterUrl}
                             className="w-full h-full"
                           />
                         </Suspense>
                       )}
+
                       <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-none sm:rounded-2xl"></div>
                     </div>
                   </div>

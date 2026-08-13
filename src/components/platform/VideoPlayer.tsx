@@ -105,6 +105,11 @@ export function VideoPlayer({
     return url;
   };
 
+  // Keep latest onProgress without re-running the media effect
+  const onProgressRef = useRef(onProgress);
+  useEffect(() => { onProgressRef.current = onProgress; }, [onProgress]);
+
+  // Diagnostics + progress tracking. Runs only when the actual media changes.
   useEffect(() => {
     if (isYouTube || isGoogleDrive) {
       setIsLoading(false);
@@ -114,29 +119,42 @@ export function VideoPlayer({
     const video = videoRef.current;
     if (!video) return;
 
-    // Timeout to prevent infinite loading if video data doesn't load
-    const loadingTimeout = setTimeout(() => {
-      if (isLoading && video.networkState === video.NETWORK_IDLE && video.readyState < video.HAVE_FUTURE_DATA) {
-        console.warn("Video loading timeout reached, clearing loading state and attempting reload");
-        setIsLoading(false);
-        // Force a small reload if stuck in NETWORK_IDLE but not enough data
-        if (!isIntro) video.load(); 
-      } else if (isLoading) {
-        setIsLoading(false);
-      }
-    }, 15000); // 15s is usually enough to see if it's going to work
+    const log = (event: string) => {
+      console.log(
+        `[VideoPlayer:${event}] readyState=${video.readyState} networkState=${video.networkState} ` +
+        `t=${video.currentTime.toFixed(2)} dur=${Number.isFinite(video.duration) ? video.duration.toFixed(2) : 'NaN'} ` +
+        `buffered=${video.buffered.length ? `${video.buffered.start(0).toFixed(2)}-${video.buffered.end(video.buffered.length - 1).toFixed(2)}` : 'none'}`
+      );
+    };
+
+    const diagnosticEvents = [
+      'loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'canplay',
+      'canplaythrough', 'play', 'playing', 'pause', 'waiting', 'stalled',
+      'suspend', 'seeking', 'seeked', 'ended', 'error', 'abort', 'emptied',
+    ];
+    const listeners = diagnosticEvents.map((name) => {
+      const fn = () => log(name);
+      video.addEventListener(name, fn);
+      return [name, fn] as const;
+    });
+
+    // Safety net: never leave the spinner up forever. Never call load() here,
+    // as that restarts the download and creates the mobile loading loop.
+    const loadingTimeout = setTimeout(() => setIsLoading(false), 12000);
 
     const handleTimeUpdate = () => {
       localStorage.setItem(`video_progress_${videoId}`, video.currentTime.toString());
-      if (onProgress) onProgress(video.currentTime);
+      onProgressRef.current?.(video.currentTime);
     };
 
     video.addEventListener('timeupdate', handleTimeUpdate);
     return () => {
       clearTimeout(loadingTimeout);
       video.removeEventListener('timeupdate', handleTimeUpdate);
+      listeners.forEach(([name, fn]) => video.removeEventListener(name, fn));
     };
-  }, [videoId, onProgress, isYouTube, isGoogleDrive, isLoading]);
+  }, [src, videoId, isYouTube, isGoogleDrive]);
+
 
   const togglePlay = (e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
@@ -201,7 +219,6 @@ export function VideoPlayer({
     >
 
       <video
-        key={src}
         ref={videoRef}
         src={src}
         poster={poster}
@@ -210,43 +227,42 @@ export function VideoPlayer({
         webkit-playsinline="true"
         x5-playsinline="true"
         controls={false}
-        preload={isIntro ? "auto" : "metadata"}
+        preload="metadata"
         controlsList="nodownload"
-        muted={isMuted || isIntro} 
+        muted={isMuted || isIntro}
         autoPlay={isIntro}
         loop={false}
         onLoadStart={() => setIsLoading(true)}
-        onCanPlay={() => {
-          setIsLoading(false);
-        }}
+        onLoadedMetadata={() => setIsLoading(false)}
+        onCanPlay={() => setIsLoading(false)}
         onPlaying={() => {
           setIsPlaying(true);
           setIsLoading(false);
         }}
         onPause={() => setIsPlaying(false)}
-        onWaiting={() => setIsLoading(true)}
+        onWaiting={() => {
+          const video = videoRef.current;
+          // Only show the spinner for a genuine buffer underrun.
+          if (video && video.readyState < video.HAVE_FUTURE_DATA) setIsLoading(true);
+        }}
         onStalled={() => {
-          console.warn("Video stalled, attempting recovery...");
+          // Do not call load() here: it restarts the request and loops on mobile.
+          console.warn('Video stalled; letting the browser resume the range request');
         }}
-        onSuspend={() => {
-          console.log("Video loading suspended");
-        }}
-        onError={(e) => {
-          console.error("Video element error:", e);
+        onError={() => {
           setIsLoading(false);
-          
+          setIsPlaying(false);
           const video = videoRef.current;
           if (video?.error) {
-            console.error("Video error code:", video.error.code, "message:", video.error.message);
+            console.error('Video error code:', video.error.code, 'message:', video.error.message);
           }
         }}
         onClick={(e) => {
           e.stopPropagation();
           togglePlay(e);
         }}
-      >
-        <source src={src} type="video/mp4" />
-      </video>
+      />
+
 
       {/* Loading Overlay */}
       {isLoading && (
@@ -266,12 +282,7 @@ export function VideoPlayer({
           e.preventDefault();
           togglePlay(e);
         }}
-        onTouchEnd={(e) => {
-          // Some mobile browsers prefer touchEnd for immediate response
-          e.stopPropagation();
-          e.preventDefault();
-          togglePlay(e);
-        }}
+
       >
         {!isLoading ? (
           <div className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition active:scale-95 hover:scale-110 pointer-events-none">

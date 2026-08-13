@@ -384,15 +384,20 @@ function CoursePage() {
             className="overflow-hidden rounded-none sm:rounded-2xl bg-black/20 min-h-[400px]"
           >
             <div ref={lessonTopRef} className="scroll-mt-24" />
-            <Suspense fallback={<div className="aspect-[9/16] max-h-[70vh] w-full max-w-[400px] mx-auto rounded-2xl bg-white/5 animate-pulse" />}>
-              <VideoPlayer
-                videoId={active.id}
-                src={signedLessonUrl || active.video_url || ""}
-                poster={course.cover_url || ""}
-                title={active.title}
-                className="w-full"
-              />
-            </Suspense>
+            {isLoadingSignedUrl ? (
+              <div className="aspect-[9/16] max-h-[70vh] w-full max-w-[400px] mx-auto rounded-2xl bg-white/5 animate-pulse" />
+            ) : (
+              <Suspense fallback={<div className="aspect-[9/16] max-h-[70vh] w-full max-w-[400px] mx-auto rounded-2xl bg-white/5 animate-pulse" />}>
+                <VideoPlayer
+                  videoId={active.id}
+                  src={signedLessonUrl || active.video_url || ""}
+                  poster={course.cover_url || ""}
+                  title={active.title}
+                  className="w-full"
+                />
+              </Suspense>
+            )}
+
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5 glass border-t-0 rounded-t-none">
               <div className="min-w-0">
