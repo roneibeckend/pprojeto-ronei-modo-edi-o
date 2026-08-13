@@ -310,8 +310,8 @@ function CTAButton({
   );
 }
 
-// Configuração do checkout — troque pela URL do Kiwify/Hotmart/Stripe quando disponível.
-const CHECKOUT_URL = "";
+// Configuração do checkout — redireciona para o checkout do ebook principal.
+const CHECKOUT_URL = "/app/cursos?buy=ee1a776c-6c7d-4a88-a980-7e671ad8d4fb&type=ebook";
 
 function CheckoutButton({ className = "", label = "Quero garantir meu acesso" }: { className?: string; label?: string }) {
   const [loading, setLoading] = useState(false);

@@ -32,6 +32,24 @@ function CoursesPage() {
 
   useState(() => {
     syncWithDatabase();
+    
+    // Check for auto-buy from URL (e.g. from landing page)
+    const params = new URLSearchParams(window.location.search);
+    const buyId = params.get('buy');
+    const buyType = params.get('type') as 'course' | 'ebook';
+    
+    if (buyId && buyType) {
+      // Small delay to ensure data is loaded
+      setTimeout(async () => {
+        const { data, error } = await supabase.from(buyType === 'course' ? 'courses' : 'ebooks').select('*').eq('id', buyId).maybeSingle();
+        if (data && !error) {
+          handlePurchase(data, buyType);
+          // Clean up URL
+          const newUrl = window.location.pathname;
+          window.history.replaceState({}, '', newUrl);
+        }
+      }, 500);
+    }
   });
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
