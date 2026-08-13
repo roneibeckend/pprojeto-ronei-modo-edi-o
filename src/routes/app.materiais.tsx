@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, FileSpreadsheet, FileText, Layout, Package, Share2, ExternalLink, Loader2 } from "lucide-react";
+import { Download, FileSpreadsheet, FileText, Layout, Package, Share2, ExternalLink, Loader2, Presentation } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { materials as staticMaterials } from "@/lib/platform-data";
 import { generateCostSpreadsheet, generatePricingCalculator, generateInventoryControl } from "@/lib/materials-generator";
 import { generateShoppingListPDF, generateEquipmentChecklistPDF } from "@/lib/pdf-generator";
+import { generateEditableMenuPPTX } from "@/lib/pptx-generator";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { getMaterials } from "@/lib/materials.functions";
@@ -52,7 +53,7 @@ function MaterialsPage() {
           generateEquipmentChecklistPDF();
           break;
         case "m6":
-          window.open("https://www.canva.com/design/play?category=tACFasY85_A&type=TAB79-58_M0", "_blank");
+          await generateEditableMenuPPTX();
           break;
         default:
           toast.info(`O material "${title}" está sendo preparado e estará disponível em breve!`);
@@ -68,7 +69,7 @@ function MaterialsPage() {
   const getIcon = (id: string, type: string) => {
     if (type === "XLSX") return <FileSpreadsheet className="h-6 w-6" />;
     if (type === "PDF") return <FileText className="h-6 w-6" />;
-    if (type === "CANVA") return <Layout className="h-6 w-6" />;
+    if (type === "CANVA" || type === "PPTX") return <Presentation className="h-6 w-6" />;
     if (id === "m7") return <Share2 className="h-6 w-6" />;
     return <Package className="h-6 w-6" />;
   };

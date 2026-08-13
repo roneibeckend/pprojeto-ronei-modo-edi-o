@@ -234,7 +234,7 @@ export const generatePricingCalculator = async () => {
       r.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.inputBg } };
       r.getCell(3).font = { size: 9, color: { argb: BRAND_COLORS.gray } };
       
-      if (item[0].includes('%')) r.getCell(2).numFmt = '0"%"';
+      if (String(item[0]).includes('%')) r.getCell(2).numFmt = '0"%"';
       else r.getCell(2).numFmt = '"R$ "#,##0.00';
       applyBorder(r.getCell(1));
       applyBorder(r.getCell(2));
@@ -315,7 +315,9 @@ export const generateInventoryControl = async () => {
     };
 
     // Conditional formatting (simulated via manual check for demo data or left for user)
-    if (row[4] < row[3]) {
+    const estoqueMinimo = Number(row[3]) || 0;
+    const estoqueAtual = Number(row[4]) || 0;
+    if (estoqueAtual < estoqueMinimo) {
        r.getCell(8).font = { color: { argb: BRAND_COLORS.critical }, bold: true };
     }
   });
