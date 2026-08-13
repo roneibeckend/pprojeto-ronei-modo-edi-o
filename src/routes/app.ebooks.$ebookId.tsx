@@ -88,6 +88,25 @@ function EbookReaderPage() {
     return chapters.length > 0 ? chapters[0].id : undefined;
   });
   
+  // Prefetch next chapter content
+  useEffect(() => {
+    if (!activeChapterId || !chapters.length) return;
+    
+    const currentIndex = chapters.findIndex((c: any) => c.id === activeChapterId);
+    const nextChapter = chapters[currentIndex + 1];
+    
+    if (nextChapter?.video_url && !nextChapter.video_url.includes('youtube') && !nextChapter.video_url.includes('drive')) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'video';
+      link.href = nextChapter.video_url;
+      document.head.appendChild(link);
+      return () => {
+        document.head.removeChild(link);
+      };
+    }
+  }, [activeChapterId, chapters]);
+  
   // Update local storage when chapter changes
   useEffect(() => {
     if (activeChapterId) {
