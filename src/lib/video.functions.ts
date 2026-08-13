@@ -29,7 +29,7 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
     
     const { data: signedData, error } = await supabaseAdmin.storage
       .from(data.bucket)
-      .createSignedUrl(relativePath, 3600); // 1 hour
+      .createSignedUrl(relativePath, 21600); // 6 hours - long enough for a full session
 
     if (error) {
       console.error("Error generating signed URL:", error);
