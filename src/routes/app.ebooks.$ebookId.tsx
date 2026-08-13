@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X, Play } from "lucide-react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
+import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X, Play, ArrowDown } from "lucide-react";
 import { VideoPlayer } from "@/components/platform/VideoPlayer";
 
 import { Skeleton } from "@/components/ui/skeleton";
@@ -53,6 +53,9 @@ function EbookReaderPage() {
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
+  const readerRef = useRef<HTMLDivElement>(null);
+  const chapterTopRef = useRef<HTMLDivElement>(null);
+  
   useState(() => {
     syncWithDatabase();
   });
@@ -93,9 +96,28 @@ function EbookReaderPage() {
   }, [activeChapterId, ebook.id]);
 
   // Scroll to top when chapter changes (all devices)
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (activeChapterId) {
-      window.scrollTo({ top: 0, behavior: 'auto' });
+      // Find the scrollable container (in Shell.tsx it is <main className="... overflow-y-auto ...">)
+      const scrollContainer = readerRef.current?.closest('main');
+      
+      const scrollToTop = () => {
+        if (scrollContainer) {
+          scrollContainer.scrollTop = 0;
+        }
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        
+        // Also use the anchor as a fallback/reinforcement
+        if (chapterTopRef.current) {
+          chapterTopRef.current.scrollIntoView({ block: 'start', behavior: 'auto' });
+        }
+      };
+
+      // Execute immediately and again after a frame to handle content rendering shifts
+      scrollToTop();
+      const rafId = requestAnimationFrame(scrollToTop);
+      
+      return () => cancelAnimationFrame(rafId);
     }
   }, [activeChapterId]);
 
@@ -341,6 +363,7 @@ function EbookReaderPage() {
         <div className="min-w-0">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
+              ref={readerRef}
               key={activeChapter?.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -348,6 +371,7 @@ function EbookReaderPage() {
               transition={{ duration: 0.4, ease: "easeOut" }}
               className="glass min-h-[500px] overflow-hidden rounded-none sm:rounded-3xl pb-12 sm:min-h-[600px] w-full max-w-full"
             >
+              <div ref={chapterTopRef} className="scroll-mt-24" />
               {activeChapter?.video_url && (
                 <div className="w-full bg-black/40 border-b border-white/5">
                   <div className="max-w-4xl mx-auto py-4 sm:py-8 px-0 sm:px-4">

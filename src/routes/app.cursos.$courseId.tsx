@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, Suspense, lazy } from "react";
-import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart, CheckCircle2 } from "lucide-react";
+import { useEffect, useState, Suspense, lazy, useRef, useLayoutEffect } from "react";
+import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart, CheckCircle2, ArrowDown } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,6 +59,9 @@ function CoursePage() {
   const [showOffer, setShowOffer] = useState(false);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
+  const readerRef = useRef<HTMLDivElement>(null);
+  const lessonTopRef = useRef<HTMLDivElement>(null);
+  
   useState(() => {
     syncWithDatabase();
   });
@@ -232,9 +235,24 @@ function CoursePage() {
   }, [activeId, course.id]);
 
   // Scroll to top when lesson changes (all devices)
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (activeId) {
-      window.scrollTo({ top: 0, behavior: 'auto' });
+      const scrollContainer = readerRef.current?.closest('main');
+      
+      const scrollToTop = () => {
+        if (scrollContainer) {
+          scrollContainer.scrollTop = 0;
+        }
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        
+        if (lessonTopRef.current) {
+          lessonTopRef.current.scrollIntoView({ block: 'start', behavior: 'auto' });
+        }
+      };
+
+      scrollToTop();
+      const rafId = requestAnimationFrame(scrollToTop);
+      return () => cancelAnimationFrame(rafId);
     }
   }, [activeId]);
 
@@ -297,12 +315,14 @@ function CoursePage() {
         {/* Player */}
         <div className="min-w-0 space-y-4">
           <motion.div 
+            ref={readerRef}
             key={active.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="overflow-hidden rounded-none sm:rounded-2xl bg-black/20 min-h-[400px]"
           >
+            <div ref={lessonTopRef} className="scroll-mt-24" />
             <Suspense fallback={<div className="aspect-[9/16] max-h-[70vh] w-full max-w-[400px] mx-auto rounded-2xl bg-white/5 animate-pulse" />}>
               <VideoPlayer
                 videoId={active.id}
