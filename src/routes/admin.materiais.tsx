@@ -110,11 +110,13 @@ function AdminMaterialsPage() {
         const material = materials.find((m: any) => m.id === materialId);
         if (material) {
           upsertMutation.mutate({ ...material, file_url: publicUrl });
+          toast.success("Arquivo enviado e material atualizado!");
         }
       } else {
         setEditingItem({ ...editingItem, file_url: publicUrl, type: fileExt?.toUpperCase() || "FILE" });
+        toast.success("Arquivo enviado com sucesso!");
       }
-      toast.success("Arquivo enviado com sucesso!");
+
     } catch (error: any) {
       toast.error("Erro no upload: " + error.message);
     } finally {
@@ -195,8 +197,9 @@ function AdminMaterialsPage() {
                     <a href={m.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-white/5 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition">
                       <Download className="h-3 w-3" /> Download
                     </a>
-                    <label className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-white/10 transition cursor-pointer font-bold text-[10px] uppercase tracking-widest ${uploading === m.id ? 'opacity-50 cursor-wait' : 'bg-white/5 hover:bg-white/10'}`}>
-                      {uploading === m.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+                    <label className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-white/10 transition cursor-pointer font-bold text-[10px] uppercase tracking-widest ${uploading === m.id || upsertMutation.isPending ? 'opacity-50 cursor-wait' : 'bg-white/5 hover:bg-white/10'}`}>
+                      {uploading === m.id || (upsertMutation.isPending && upsertMutation.variables?.id === m.id) ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+
                       Atualizar
                       <input type="file" disabled={!!uploading} className="hidden" onChange={(e) => handleFileUpload(e, m.id)} />
                     </label>
@@ -208,8 +211,9 @@ function AdminMaterialsPage() {
                 ) : (
                   <div className="flex gap-2">
                     <span className="flex-1 text-center py-2 text-[10px] font-bold uppercase tracking-widest text-white/10">Sem Arquivo</span>
-                    <label className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-white/10 transition cursor-pointer font-bold text-[10px] uppercase tracking-widest ${uploading === m.id ? 'opacity-50 cursor-wait' : 'bg-[#ff6a00]/10 text-[#ff6a00] hover:bg-[#ff6a00]/20'}`}>
-                      {uploading === m.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+                    <label className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-white/10 transition cursor-pointer font-bold text-[10px] uppercase tracking-widest ${uploading === m.id || upsertMutation.isPending ? 'opacity-50 cursor-wait' : 'bg-[#ff6a00]/10 text-[#ff6a00] hover:bg-[#ff6a00]/20'}`}>
+                      {uploading === m.id || (upsertMutation.isPending && upsertMutation.variables?.id === m.id) ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+
                       Upload
                       <input type="file" disabled={!!uploading} className="hidden" onChange={(e) => handleFileUpload(e, m.id)} />
                     </label>
