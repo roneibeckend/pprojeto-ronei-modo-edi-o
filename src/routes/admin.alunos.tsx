@@ -103,10 +103,6 @@ function AdminAlunosPage() {
     }
   }
 
-  const filtered = profiles.filter(p => 
-    p.full_name?.toLowerCase().includes(search.toLowerCase()) || 
-    p.email?.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <div className="space-y-6">
