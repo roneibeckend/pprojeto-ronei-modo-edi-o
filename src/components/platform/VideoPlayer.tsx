@@ -166,16 +166,29 @@ export function VideoPlayer({
   const tryAutoplay = () => {
     const video = videoRef.current;
     if (!video || !isIntro || autoplayTriedRef.current) return;
+    
     autoplayTriedRef.current = true;
+    
+    // Explicitly set muted properties on the DOM element for mobile reliability
     video.muted = true;
+    video.defaultMuted = true;
     setIsMuted(true);
+    
+    console.log(`[VideoPlayer:tryAutoplay] Attempting muted play for intro video: ${videoId}`);
+    
     const p = video.play();
     if (p !== undefined) {
       p.then(() => {
+        console.log(`[VideoPlayer:tryAutoplay] Playback started successfully for: ${videoId}`);
         setIsPlaying(true);
         setIsLoading(false);
       }).catch((err) => {
-        console.warn('Autoplay blocked, waiting for user interaction:', err?.name || err);
+        console.error(`[VideoPlayer:tryAutoplay] Playback rejected for: ${videoId}`, {
+          name: err.name,
+          message: err.message,
+          readyState: video.readyState,
+          networkState: video.networkState
+        });
         setIsPlaying(false);
         setIsLoading(false);
       });
@@ -269,7 +282,7 @@ export function VideoPlayer({
         webkit-playsinline="true"
         x5-playsinline="true"
         controls={useNativeControls}
-        preload="metadata"
+        preload={isIntro ? "auto" : "metadata"}
         controlsList="nodownload"
         muted={isMuted}
         loop={false}
