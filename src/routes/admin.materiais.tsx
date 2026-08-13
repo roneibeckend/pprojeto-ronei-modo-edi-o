@@ -33,11 +33,11 @@ function AdminMaterialsPage() {
 
   const { data: materials = [], isLoading } = useQuery({
     queryKey: ["platform-materials"],
-    queryFn: () => getMaterials({}),
+    queryFn: () => getMaterials(),
   });
 
   const upsertMutation = useMutation({
-    mutationFn: (data: any) => upsertMaterial(data),
+    mutationFn: (data: any) => upsertMaterial({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["platform-materials"] });
       toast.success("Material salvo com sucesso!");
