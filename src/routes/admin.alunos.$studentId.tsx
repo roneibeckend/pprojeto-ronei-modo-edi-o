@@ -272,6 +272,12 @@ function AdminStudentProfilePage() {
                   <div className="text-lg font-bold text-[#ff6a00]">{stats.coursesCompleted}</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Cursos</div>
                 </div>
+                <div className="col-span-2 rounded-xl bg-[#ff6a00]/5 p-3 text-center border border-[#ff6a00]/10">
+                  <div className="text-lg font-bold text-[#ff6a00]">
+                    {stats.totalSpent.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00]/60">Total Investido</div>
+                </div>
               </div>
             </div>
           </section>
