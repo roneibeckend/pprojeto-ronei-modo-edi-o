@@ -21,7 +21,15 @@ import { motion } from "framer-motion";
 
 
 
-const VideoPlayer = lazy(() => import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer })));
+const VideoPlayer = lazy(() => 
+  import("@/components/platform/VideoPlayer")
+    .then(m => ({ default: m.VideoPlayer }))
+    .catch(err => {
+      console.error("Failed to load VideoPlayer chunk, reloading page...", err);
+      if (typeof window !== 'undefined') window.location.reload();
+      return { default: () => <div className="aspect-[9/16] bg-white/5 animate-pulse rounded-2xl" /> };
+    })
+);
 
 
 export const Route = createFileRoute("/app/cursos/$courseId")({

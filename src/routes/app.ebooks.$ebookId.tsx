@@ -1,7 +1,16 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X, Play, ArrowDown } from "lucide-react";
-import { VideoPlayer } from "@/components/platform/VideoPlayer";
+import { lazy, Suspense } from "react";
+const VideoPlayer = lazy(() => 
+  import("@/components/platform/VideoPlayer")
+    .then(m => ({ default: m.VideoPlayer }))
+    .catch(err => {
+      console.error("Failed to load VideoPlayer chunk in ebook, reloading...", err);
+      if (typeof window !== 'undefined') window.location.reload();
+      return { default: () => <div className="aspect-[9/16] bg-white/5 animate-pulse rounded-3xl" /> };
+    })
+);
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/platform/Shell";
@@ -401,12 +410,14 @@ function EbookReaderPage() {
               </div>
  
               <div className="relative aspect-[9/16] h-[70vh] w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black">
-                <VideoPlayer
-                  videoId={`intro-${ebook.id}`}
-                  src={signedIntroUrl || ebook.opening_video_url}
-                  isIntro={true}
-                  className="w-full h-full"
-                />
+                <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
+                  <VideoPlayer
+                    videoId={`intro-${ebook.id}`}
+                    src={signedIntroUrl || ebook.opening_video_url}
+                    isIntro={true}
+                    className="w-full h-full"
+                  />
+                </Suspense>
               </div>
 
  
@@ -458,11 +469,13 @@ function EbookReaderPage() {
                           allowFullScreen
                         />
                       ) : (
-                        <VideoPlayer
-                          videoId={`chapter-${activeChapter.id}`}
-                          src={signedChapterUrl || activeChapter.video_url}
-                          className="w-full h-full"
-                        />
+                        <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
+                          <VideoPlayer
+                            videoId={`chapter-${activeChapter.id}`}
+                            src={signedChapterUrl || activeChapter.video_url}
+                            className="w-full h-full"
+                          />
+                        </Suspense>
                       )}
                       <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-none sm:rounded-2xl"></div>
                     </div>

@@ -44,7 +44,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   const handleReset = async () => {
-    // Reseta o cache do queryClient para garantir que dados corrompidos/falhos sejam limpos
+    // Tentar recarregar a página inteira para limpar o cache do navegador e manifestos antigos
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+      return;
+    }
     await queryClient.resetQueries();
     router.invalidate();
     reset();
