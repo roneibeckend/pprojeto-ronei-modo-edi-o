@@ -469,11 +469,13 @@ function EbookReaderPage() {
                           allowFullScreen
                         />
                       ) : (
-                        <VideoPlayer
-                          videoId={`chapter-${activeChapter.id}`}
-                          src={signedChapterUrl || activeChapter.video_url}
-                          className="w-full h-full"
-                        />
+                        <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
+                          <VideoPlayer
+                            videoId={`chapter-${activeChapter.id}`}
+                            src={signedChapterUrl || activeChapter.video_url}
+                            className="w-full h-full"
+                          />
+                        </Suspense>
                       )}
                       <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-none sm:rounded-2xl"></div>
                     </div>
