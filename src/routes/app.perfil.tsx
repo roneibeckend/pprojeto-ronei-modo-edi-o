@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/platform/Shell";
-import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2 } from "lucide-react";
+import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/perfil")({
   head: () => ({ meta: [{ title: "Meu perfil — Espetinho na Veia" }] }),
