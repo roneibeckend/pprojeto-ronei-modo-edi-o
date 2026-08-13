@@ -157,10 +157,10 @@ function ProfilePage() {
             </div>
             
             <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
-              <Field label="Nome completo" defaultValue={profile?.full_name || ""} icon={User} />
-              <Field label="Seu e-mail" defaultValue={user?.email || ""} type="email" icon={Mail} />
-              <Field label="WhatsApp / Telefone" defaultValue={profile?.phone || ""} icon={Phone} />
-              <Field label="Data de cadastro" defaultValue={profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"} disabled icon={Calendar} />
+              <Field label="Nome completo" value={profile?.full_name || ""} readOnly icon={User} />
+              <Field label="Seu e-mail" value={user?.email || profile?.email || ""} readOnly type="email" icon={Mail} />
+              <Field label="WhatsApp / Telefone" value={profile?.phone || "Não informado"} readOnly icon={Phone} />
+              <Field label="Data de cadastro" value={profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"} disabled icon={Calendar} />
             </div>
           </section>
 
