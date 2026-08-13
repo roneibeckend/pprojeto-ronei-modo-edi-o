@@ -100,7 +100,9 @@ function MaterialsPage() {
         toast.info(`O material "${title}" ainda não está disponível para download.`);
         return;
       }
-      toast.success(`Download de "${title}" iniciado com sucesso!`);
+      if (isKnownGenerator) {
+        toast.success(`Download de "${title}" iniciado com sucesso!`);
+      }
     } catch (error) {
       console.error("Erro no download:", error);
       toast.error("Ocorreu um erro ao gerar o arquivo. Tente novamente.");
