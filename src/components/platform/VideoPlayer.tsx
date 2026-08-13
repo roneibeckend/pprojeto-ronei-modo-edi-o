@@ -131,7 +131,7 @@ export function VideoPlayer({
     };
   }, [videoId, onProgress, isYouTube, isGoogleDrive]);
 
-  const togglePlay = (e?: React.MouseEvent | React.TouchEvent) => {
+  const togglePlay = async (e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
       e.stopPropagation();
       e.preventDefault();
@@ -140,22 +140,30 @@ export function VideoPlayer({
     const video = videoRef.current;
     if (video) {
       if (video.paused) {
-        // Force reload if stalled or in a bad state
+        // Force reload if stalled or in a bad state (readyState 0 = HAVE_NOTHING)
         if (video.readyState === 0) {
           video.load();
         }
         
-        video.play().then(() => {
+        try {
+          // Critical for mobile: the play() call must be directly inside the interaction handler
+          // and we should ensure it's not waiting for a long promise chain.
+          await video.play();
           setIsPlaying(true);
-        }).catch(err => {
+        } catch (err) {
           console.error("Erro ao reproduzir vídeo:", err);
           // If interaction failed, try unmuting if it was muted by intro logic
-          if (video.muted && !isMuted) {
-             video.muted = false;
-             video.play().catch(e => console.error("Second attempt failed:", e));
+          if (video.muted && isIntro) {
+             video.muted = true; // Stay muted but try again
+             try {
+               await video.play();
+               setIsPlaying(true);
+             } catch (retryErr) {
+               console.error("Second attempt failed:", retryErr);
+             }
           }
           setIsPlaying(false);
-        });
+        }
       } else {
         video.pause();
         setIsPlaying(false);
@@ -203,33 +211,24 @@ export function VideoPlayer({
         webkit-playsinline="true"
         x5-playsinline="true"
         controls={false}
-        preload="auto"
-        muted={isIntro} // Autoplay policy: intro videos must start muted on some mobile browsers
-        autoPlay={isIntro} // Attempt autoplay for intro
+        preload="metadata"
+        muted={isIntro} 
+        autoPlay={isIntro}
         onLoadStart={() => setIsLoading(true)}
-        onProgress={(e) => {
-          const video = e.currentTarget;
-          if (video.buffered.length > 0) {
-            const bufferedEnd = video.buffered.end(video.buffered.length - 1);
-            const duration = video.duration;
-            if (duration > 0 && (bufferedEnd / duration) > 0.1) {
-              // At least 10% buffered, enough for low latency start
-            }
-          }
-        }}
         onCanPlay={() => {
           setIsLoading(false);
-          // Auto-start if it's an intro and was supposed to be playing
           if (isIntro && videoRef.current) {
             videoRef.current.play().catch(() => {
-              // Silently fail if blocked by browser policy, user will hit the center button
               console.log("Autoplay blocked, waiting for interaction");
             });
           }
         }}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-        onClick={() => togglePlay()}
+        onClick={(e) => {
+          e.stopPropagation();
+          togglePlay(e);
+        }}
       >
         <source src={src} type="video/mp4" />
       </video>
@@ -247,13 +246,19 @@ export function VideoPlayer({
           "absolute inset-0 flex items-center justify-center bg-black/10 transition-all duration-300 z-30",
           (!isPlaying || showControls) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         )}
+        onTouchEnd={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          togglePlay();
+        }}
         onClick={(e) => {
           e.stopPropagation();
+          e.preventDefault();
           togglePlay();
         }}
       >
         {!isLoading ? (
-          <div className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition active:scale-95 hover:scale-110">
+          <div className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition active:scale-95 hover:scale-110 pointer-events-none">
             {isPlaying ? (
               <div className="flex gap-1.5">
                 <div className="w-2 h-8 bg-white rounded-full" />
