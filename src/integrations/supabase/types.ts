@@ -701,6 +701,7 @@ export type Database = {
           pages_count: number | null
           payment_type: string | null
           price: number | null
+          status: string | null
           subtitle: string | null
           title: string
           updated_at: string | null
@@ -724,6 +725,7 @@ export type Database = {
           pages_count?: number | null
           payment_type?: string | null
           price?: number | null
+          status?: string | null
           subtitle?: string | null
           title: string
           updated_at?: string | null
@@ -747,6 +749,7 @@ export type Database = {
           pages_count?: number | null
           payment_type?: string | null
           price?: number | null
+          status?: string | null
           subtitle?: string | null
           title?: string
           updated_at?: string | null
@@ -1105,7 +1108,7 @@ export type Database = {
             foreignKeyName: "lesson_progress_lesson_id_fkey"
             columns: ["lesson_id"]
             isOneToOne: false
-            referencedRelation: "lessons"
+            referencedRelation: "course_lessons"
             referencedColumns: ["id"]
           },
         ]
