@@ -18,10 +18,14 @@ function MaterialsPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["platform-materials"],
     queryFn: async () => {
-      console.log("Fetching materials...");
-      const result = await getMaterials();
-      console.log("Materials result:", result);
-      return result;
+      const { data: materials, error } = await supabase
+        .from("platform_materials")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return materials || [];
     },
   });
 
