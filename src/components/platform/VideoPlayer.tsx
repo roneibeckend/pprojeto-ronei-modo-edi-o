@@ -24,8 +24,10 @@ export function VideoPlayer({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [showControls, setShowControls] = useState(true);
+  const [showControls, setShowControls] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   
   // Detection for mobile to hide UI on intro videos
   const [isMobileDevice, setIsMobileDevice] = useState(false);
@@ -40,8 +42,31 @@ export function VideoPlayer({
     
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+
+    const handleInitialControls = () => {
+      setShowControls(true);
+      startControlsTimer();
+    };
+    handleInitialControls();
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    };
   }, []);
+
+  const startControlsTimer = () => {
+    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    controlsTimeoutRef.current = setTimeout(() => {
+      setShowControls(false);
+    }, 3000);
+  };
+
+  const handleInteraction = () => {
+    setShowControls(true);
+    startControlsTimer();
+  };
+
 
   const hideAllUI = isIntro && isMobileDevice;
 
@@ -64,7 +89,7 @@ export function VideoPlayer({
       }
       
       if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&vq=hd1080`;
+        return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&vq=hd1080`;
       }
     }
 
@@ -106,16 +131,19 @@ export function VideoPlayer({
     };
   }, [videoId, onProgress, isYouTube, isGoogleDrive]);
 
-  const togglePlay = () => {
+  const togglePlay = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play();
+        videoRef.current.play().catch(err => console.error("Error playing video:", err));
       }
       setIsPlaying(!isPlaying);
+      handleInteraction();
     }
   };
+
 
   if (isYouTube || isGoogleDrive) {
     const embedUrl = getEmbedUrl(src);
@@ -139,10 +167,12 @@ export function VideoPlayer({
 
   return (
     <div 
-      className={cn("relative group aspect-[9/16] max-h-[85vh] mx-auto bg-black rounded-xl overflow-hidden glass", className)}
-      onMouseEnter={() => setShowControls(true)}
-      onMouseLeave={() => !videoRef.current?.paused && setShowControls(false)}
+      className={cn("relative group aspect-[9/16] max-h-[85vh] mx-auto bg-black rounded-xl overflow-hidden glass cursor-pointer", className)}
+      onMouseMove={handleInteraction}
+      onClick={handleInteraction}
+      onTouchStart={handleInteraction}
     >
+
       <video
         ref={videoRef}
         src={src}
@@ -168,17 +198,28 @@ export function VideoPlayer({
         </div>
       )}
 
-      {/* Play Overlay */}
-      {!isPlaying && !isLoading && (
+      {/* Play/Pause Center Button Overlay */}
+      {!isLoading && (
         <div 
-          className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/40 transition-colors cursor-pointer z-10"
-          onClick={togglePlay}
+          className={cn(
+            "absolute inset-0 flex items-center justify-center bg-black/10 transition-all duration-300 z-30",
+            showControls || !isPlaying ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+          )}
+          onClick={(e) => togglePlay(e)}
         >
-          <div className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition group-hover:scale-110">
-            <Play className="w-8 h-8 text-white ml-1" />
+          <div className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition active:scale-95 hover:scale-110">
+            {isPlaying ? (
+              <div className="flex gap-1.5">
+                <div className="w-2 h-8 bg-white rounded-full" />
+                <div className="w-2 h-8 bg-white rounded-full" />
+              </div>
+            ) : (
+              <Play className="w-8 h-8 text-white ml-1 fill-current" />
+            )}
           </div>
         </div>
       )}
+
 
       {/* Subtle Bottom Bar (Simplified) */}
       {!hideAllUI && (
