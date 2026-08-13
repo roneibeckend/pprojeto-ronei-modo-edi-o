@@ -272,6 +272,8 @@ export function VideoPlayer({
       onMouseMove={handleInteraction}
       onTouchStart={handleInteraction}
     >
+      <VideoCleanup videoRef={videoRef} />
+
 
       <video
         ref={videoRef}
