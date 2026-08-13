@@ -54,21 +54,27 @@ function MaterialsPage() {
     try {
       switch (materialId) {
         case "m1":
+        case (materials.find(m => m.title === "Planilha de custos")?.id):
           await generateCostSpreadsheet();
           break;
         case "m2":
+        case (materials.find(m => m.title === "Calculadora de preço")?.id):
           await generatePricingCalculator();
           break;
         case "m3":
+        case (materials.find(m => m.title === "Controle de estoque")?.id):
           await generateInventoryControl();
           break;
         case "m4":
+        case (materials.find(m => m.title === "Lista de compras semanal")?.id):
           generateShoppingListPDF();
           break;
         case "m5":
+        case (materials.find(m => m.title === "Checklist de equipamentos")?.id):
           generateEquipmentChecklistPDF();
           break;
         case "m6":
+        case (materials.find(m => m.title === "Cardápio editável")?.id):
           await generateEditableMenuPPTX();
           break;
         default:
