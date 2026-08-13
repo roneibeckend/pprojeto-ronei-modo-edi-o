@@ -881,6 +881,7 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
                       <VideoUpload 
                         value={editingChapter.video_url || ""}
                         onChange={url => setEditingChapter({...editingChapter, video_url: url})}
+                        bucket="ebook-assets"
                         label="Vídeo do Capítulo"
                         description="Opcional: Vídeo centralizado no capítulo."
                       />
