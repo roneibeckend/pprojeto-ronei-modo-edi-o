@@ -79,7 +79,9 @@ function ProfilePage() {
         
         if (profileData) {
           setProfile(profileData);
+          setNewPhone(profileData.phone || "");
         }
+
 
         // Load user specific orders
         const { data: ordersData } = await supabase
