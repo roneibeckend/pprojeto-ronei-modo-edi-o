@@ -7,7 +7,7 @@ import { generateShoppingListPDF, generateEquipmentChecklistPDF } from "@/lib/pd
 import { generateEditableMenuPPTX } from "@/lib/pptx-generator";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
-import { getMaterials } from "@/lib/materials.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/app/materiais")({
   head: () => ({ meta: [{ title: "Planilhas e materiais — Espetinho na Veia" }] }),
