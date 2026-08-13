@@ -30,17 +30,18 @@ function CoursesPage() {
   const [offerContext, setOfferContext] = useState<{ item: any; type: 'course' | 'ebook' } | null>(null);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
-  useState(() => {
+  useEffect(() => {
     syncWithDatabase();
-    
+  }, [syncWithDatabase]);
+
+  useEffect(() => {
     // Check for auto-buy from URL (e.g. from landing page)
     const params = new URLSearchParams(window.location.search);
     const buyId = params.get('buy');
     const buyType = params.get('type') as 'course' | 'ebook';
     
     if (buyId && buyType) {
-      // Small delay to ensure data is loaded
-      setTimeout(async () => {
+      const checkAndPurchase = async () => {
         const { data, error } = await supabase.from(buyType === 'course' ? 'courses' : 'ebooks').select('*').eq('id', buyId).maybeSingle();
         if (data && !error) {
           handlePurchase(data, buyType);
@@ -48,9 +49,12 @@ function CoursesPage() {
           const newUrl = window.location.pathname;
           window.history.replaceState({}, '', newUrl);
         }
-      }, 500);
+      };
+      
+      const timer = setTimeout(checkAndPurchase, 500);
+      return () => clearTimeout(timer);
     }
-  });
+  }, []);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
 

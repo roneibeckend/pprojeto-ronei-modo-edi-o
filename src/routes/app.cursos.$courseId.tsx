@@ -74,9 +74,9 @@ function CoursePage() {
   const readerRef = useRef<HTMLDivElement>(null);
   const lessonTopRef = useRef<HTMLDivElement>(null);
   
-  useState(() => {
+  useEffect(() => {
     syncWithDatabase();
-  });
+  }, [syncWithDatabase]);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
   const getSignedUrl = useServerFn(getSignedVideoUrl);

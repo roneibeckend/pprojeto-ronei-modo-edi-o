@@ -69,9 +69,9 @@ function EbookReaderPage() {
   const readerRef = useRef<HTMLDivElement>(null);
   const chapterTopRef = useRef<HTMLDivElement>(null);
   
-  useState(() => {
+  useEffect(() => {
     syncWithDatabase();
-  });
+  }, [syncWithDatabase]);
   const [showOpeningVideo, setShowOpeningVideo] = useState(false);
   const [showIntroVideo, setShowIntroVideo] = useState(false);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);

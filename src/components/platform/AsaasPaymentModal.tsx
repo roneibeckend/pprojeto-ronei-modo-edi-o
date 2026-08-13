@@ -30,11 +30,16 @@ export function AsaasPaymentModal() {
     if (!isOpen || !productId || !productType || status === 'confirmed') return;
 
     const check = async () => {
+      // Se já estiver confirmado por outra via durante o intervalo, pare.
+      if (status === 'confirmed') return;
+      
       await refetchEnrollments();
       const isEnrolled = productType === 'course'
         ? isEnrolledInCourse(productId)
         : isEnrolledInEbook(productId);
-      if (isEnrolled) setStatus('confirmed');
+      if (isEnrolled && status !== 'confirmed') {
+        setStatus('confirmed');
+      }
     };
 
     const interval = window.setInterval(check, 4000);

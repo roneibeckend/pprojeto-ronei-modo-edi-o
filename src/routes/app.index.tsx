@@ -23,11 +23,9 @@ export const Route = createFileRoute("/app/")({
 
 function Dashboard() {
   const { isEnrolledInCourse, isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
-  const { syncWithDatabase } = usePostPurchaseOfferStore();
-
-  useState(() => {
+  useEffect(() => {
     syncWithDatabase();
-  });
+  }, [syncWithDatabase]);
 
   const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
     queryKey: ["showcase-items"],
