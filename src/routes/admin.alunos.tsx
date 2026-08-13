@@ -159,6 +159,7 @@ function AdminAlunosPage() {
                     }`}>
                         {p.status === 'student' ? 'Aluno' : 'Lead'}
                     </span>
+                  </td>
                   <td className="px-6 py-4 text-white/40">{p.email || "—"}</td>
                   <td className="px-6 py-4 text-white/40">{p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR') : "—"}</td>
                   <td className="px-6 py-4 text-right">
