@@ -195,18 +195,18 @@ export function PostPurchaseOffer({
             </div>
           )}
 
-          <div className="mt-8 flex flex-col sm:grid sm:grid-cols-2 gap-3 items-center sm:items-stretch">
+          <div className="mt-6 sm:mt-8 flex flex-col sm:grid sm:grid-cols-2 gap-3 shrink-0">
             <Button 
               variant="outline" 
               onClick={onProceedWithoutOffers}
-              className="w-full sm:w-auto rounded-xl border-white/10 hover:bg-white/5 h-12 order-2 sm:order-1"
+              className="w-full rounded-xl border-white/10 hover:bg-white/5 h-12 order-2 sm:order-1 text-sm sm:text-base whitespace-normal text-center py-2"
             >
               Prosseguir sem Ofertas
             </Button>
             <Button 
               disabled={selectedIds.length === 0}
               onClick={handleAddAndProceed}
-              className="w-full sm:w-auto btn-fire rounded-xl font-bold h-12 shadow-lg shadow-fire/20 order-1 sm:order-2"
+              className="w-full btn-fire rounded-xl font-bold h-12 shadow-lg shadow-fire/20 order-1 sm:order-2 text-sm sm:text-base whitespace-normal text-center py-2"
             >
               Adicionar Ofertas e Prosseguir
             </Button>
