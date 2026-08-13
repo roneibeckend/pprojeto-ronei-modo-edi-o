@@ -166,6 +166,7 @@ function AdminDashboard() {
               { to: "/admin/suporte", label: "Central de Suporte (Tickets)", highlight: (stats?.pendingTickets || 0) > 0, visible: hasModule("suporte") },
               { to: "/admin/receitas", label: "Central de Receitas", visible: isAdmin },
               { to: "/admin/usuarios", label: "Gestão de Equipe", visible: isAdmin, icon: UserCheck },
+              { to: "/admin/materiais", label: "Gestão de Materiais", visible: isAdmin, icon: Library },
             ].filter(link => link.visible).map((link, i) => (
               <Link 
                 key={i} 
