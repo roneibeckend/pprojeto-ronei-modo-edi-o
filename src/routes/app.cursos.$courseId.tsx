@@ -92,8 +92,14 @@ function CoursePage() {
 
   const handlePurchase = async () => {
     if (isOfferEnabled) {
+      // Check for available offers before showing modal
+      const { data: otherCourses } = await supabase.from('courses').select('id').eq('status', 'published').eq('is_locked', false).neq('id', course.id).limit(1);
+      const { data: otherEbooks } = await supabase.from('ebooks').select('id').eq('status', 'published').eq('is_locked', false).limit(1);
+      
+      const hasOffers = (otherCourses && otherCourses.length > 0) || (otherEbooks && otherEbooks.length > 0);
+
       const { data } = await supabase.from('integrations').select('status').eq('category', 'offer_settings').maybeSingle();
-      if (data && data.status === false) {
+      if ((data && data.status === false) || !hasOffers) {
         await executeCheckout([]);
         return;
       }
