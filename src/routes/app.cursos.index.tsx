@@ -129,8 +129,13 @@ function CoursesPage() {
   
   const { data: dbCourses, isLoading: isLoadingCourses } = useQuery({
     queryKey: ["courses"],
+    staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
-      const { data, error } = await supabase.from("courses").select("*");
+      const { data, error } = await supabase
+        .from("courses")
+        .select("id, title, description, price, cover_url, badge, status")
+        .neq("status", "archived")
+        .neq("status", "deleted");
       if (error) throw error;
       return data;
     },
@@ -138,8 +143,13 @@ function CoursesPage() {
 
   const { data: dbEbooks, isLoading: isLoadingEbooks } = useQuery({
     queryKey: ["ebooks"],
+    staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
-      const { data, error } = await supabase.from("ebooks").select("*");
+      const { data, error } = await supabase
+        .from("ebooks")
+        .select("id, title, description, price, cover_url, cover, badge, status")
+        .neq("status", "archived")
+        .neq("status", "deleted");
       if (error) throw error;
       return data;
     },
@@ -172,11 +182,11 @@ function CoursesPage() {
   }
 
 
-  const ownedCourses = dbCourses?.filter((c) => (courseEnrollments.includes(c.id) || c.price === 0) && c.status !== 'archived' && c.status !== 'deleted') || [];
-  const otherCourses = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0 && c.status !== 'archived' && c.status !== 'deleted') || [];
+  const ownedCourses = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || (c.price || 0) === 0) || [];
+  const otherCourses = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0) || [];
   
-  const ownedEbooks = dbEbooks?.filter((e) => (ebookEnrollments.includes(e.id) || (e.price || 0) === 0) && e.status !== 'archived' && e.status !== 'deleted') || [];
-  const otherEbooks = dbEbooks?.filter((e) => !ebookEnrollments.includes(e.id) && (e.price || 0) > 0 && e.status !== 'archived' && e.status !== 'deleted') || [];
+  const ownedEbooks = dbEbooks?.filter((e) => ebookEnrollments.includes(e.id) || (e.price || 0) === 0) || [];
+  const otherEbooks = dbEbooks?.filter((e) => !ebookEnrollments.includes(e.id) && (e.price || 0) > 0) || [];
 
   const totalProgress = ownedCourses.length > 0 ? 0 : 0;
 

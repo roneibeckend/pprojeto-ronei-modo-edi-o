@@ -11,6 +11,7 @@ export function useProgress() {
 
   const { data: lessonProgress, isLoading: isLoadingLessonProgress } = useQuery({
     queryKey: ["lesson-progress", user?.id],
+    staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
@@ -114,6 +115,7 @@ export function useProgress() {
 
   const { data: ebookProgress, isLoading: isLoadingEbookProgress } = useQuery({
     queryKey: ["ebook-progress", user?.id],
+    staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
@@ -200,11 +202,12 @@ export function useProgress() {
 
   const { data: globalProgressTracking, isLoading: isLoadingGlobalProgress } = useQuery({
     queryKey: ["global-progress-tracking", user?.id],
+    staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
         .from("progress_tracking")
-        .select("*")
+        .select("item_type, started_at, completed_at")
         .eq("user_id", user.id);
       
       if (error) throw error;

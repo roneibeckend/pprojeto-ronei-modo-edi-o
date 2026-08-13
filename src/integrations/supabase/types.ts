@@ -684,6 +684,7 @@ export type Database = {
       }
       ebooks: {
         Row: {
+          badge: string | null
           category: string | null
           checkpoints: Json | null
           content_url: string | null
@@ -708,6 +709,7 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          badge?: string | null
           category?: string | null
           checkpoints?: Json | null
           content_url?: string | null
@@ -732,6 +734,7 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          badge?: string | null
           category?: string | null
           checkpoints?: Json | null
           content_url?: string | null

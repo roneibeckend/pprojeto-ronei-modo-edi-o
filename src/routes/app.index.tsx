@@ -31,21 +31,54 @@ function Dashboard() {
 
   const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
     queryKey: ["showcase-items"],
+    staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
       const [coursesRes, ebooksRes] = await Promise.all([
-        supabase.from("courses").select("id, title, description, price, cover_url, type:created_at").eq("is_locked", false),
-        supabase.from("ebooks").select("id, title, description, price, cover_url, type:created_at").eq("is_locked", false),
+        supabase
+          .from("courses")
+          .select("id, title, description, price, cover_url, created_at, badge, is_locked, status")
+          .eq("is_locked", false)
+          .eq("status", "active")
+          .limit(10),
+        supabase
+          .from("ebooks")
+          .select("id, title, description, price, cover_url, created_at, badge, is_locked, status")
+          .eq("is_locked", false)
+          .eq("status", "active")
+          .limit(10),
       ]);
 
       if (coursesRes.error) throw coursesRes.error;
       if (ebooksRes.error) throw ebooksRes.error;
 
       const items = [
-        ...(coursesRes.data || []).map(c => ({ ...c, type: 'course' as const })),
-        ...(ebooksRes.data || []).map(e => ({ ...e, type: 'ebook' as const })),
+        ...(coursesRes.data || []).map(c => ({ 
+          id: c.id,
+          title: c.title,
+          description: c.description,
+          price: c.price,
+          cover_url: c.cover_url,
+          created_at: c.created_at,
+          badge: c.badge,
+          is_locked: c.is_locked,
+          status: c.status,
+          type: 'course' as const 
+        })),
+        ...(ebooksRes.data || []).map(e => ({ 
+          id: e.id,
+          title: e.title,
+          description: e.description,
+          price: e.price,
+          cover_url: e.cover_url,
+          created_at: e.created_at,
+          badge: e.badge,
+          is_locked: e.is_locked,
+          status: e.status,
+          type: 'ebook' as const 
+        })),
       ];
 
-      return items.sort((a, b) => new Date(b.type || "").getTime() - new Date(a.type || "").getTime());
+      return items.sort((a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime());
     },
   });
 

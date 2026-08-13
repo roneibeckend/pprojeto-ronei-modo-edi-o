@@ -39,13 +39,14 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
     const { data: ebook, error } = await supabase
       .from("ebooks")
       .select(`
-        id, title, subtitle, description, price, opening_video_url, payment_type, due_days,
+        id, title, subtitle, description, price, opening_video_url, payment_type, due_days, status,
         modules:ebook_modules (
           id, title, order_index,
           chapters:ebook_chapters (id, title, content, video_url, reading_minutes, order_index, module_id)
         )
       `)
       .eq("id", params.ebookId)
+      .eq("status", "active")
       .single();
 
 
