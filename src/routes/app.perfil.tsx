@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/platform/Shell";
-import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2 } from "lucide-react";
+import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/perfil")({
   head: () => ({ meta: [{ title: "Meu perfil — Espetinho na Veia" }] }),
@@ -18,6 +19,51 @@ function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [userOrders, setUserOrders] = useState<any[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [newPhone, setNewPhone] = useState("");
+
+  const formatPhone = (value: string) => {
+    // Remove non-digits
+    const digits = value.replace(/\D/g, "");
+    
+    // Format: (XX) XXXXX-XXXX or (XX) XXXX-XXXX
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhone(e.target.value);
+    setNewPhone(formatted);
+  };
+
+  const handleSave = async () => {
+    if (!user) return;
+    
+    try {
+      setIsSaving(true);
+      
+      const { error } = await supabase
+        .from("profiles")
+        .update({ 
+          phone: newPhone,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      toast.success("Perfil atualizado com sucesso!");
+      setProfile((prev: any) => prev ? { ...prev, phone: newPhone } : null);
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      toast.error("Erro ao atualizar perfil: " + (error.message || "Tente novamente."));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
 
   useEffect(() => {
     async function loadProfileData() {
@@ -33,7 +79,9 @@ function ProfilePage() {
         
         if (profileData) {
           setProfile(profileData);
+          setNewPhone(profileData.phone || "");
         }
+
 
         // Load user specific orders
         const { data: ordersData } = await supabase
@@ -153,15 +201,35 @@ function ProfilePage() {
                 <h3 className="font-display text-xl font-bold text-white">Dados da Conta</h3>
                 <p className="text-sm text-white/40">Mantenha suas informações sempre atualizadas.</p>
               </div>
-              <button className="btn-fire w-full sm:w-auto px-6 py-3 sm:py-2 text-sm font-bold uppercase tracking-widest">Salvar</button>
+              <button 
+                onClick={handleSave}
+                disabled={isSaving}
+                className="btn-fire w-full sm:w-auto px-6 py-3 sm:py-2 text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  "Salvar"
+                )}
+              </button>
             </div>
             
             <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
               <Field label="Nome completo" value={profile?.name || profile?.full_name || ""} readOnly icon={User} />
               <Field label="Seu e-mail" value={user?.email || profile?.email || ""} readOnly type="email" icon={Mail} />
-              <Field label="WhatsApp / Telefone" value={profile?.phone || "Não informado"} readOnly icon={Phone} />
+              <Field 
+                label="WhatsApp / Telefone" 
+                value={newPhone} 
+                onChange={handlePhoneChange}
+                placeholder="(00) 00000-0000"
+                icon={Phone} 
+              />
               <Field label="Data de cadastro" value={profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"} disabled icon={Calendar} />
             </div>
+
           </section>
 
           {/* Order History */}
