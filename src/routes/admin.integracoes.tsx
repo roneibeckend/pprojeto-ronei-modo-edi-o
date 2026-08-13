@@ -1403,31 +1403,77 @@ function EmailTemplatesTab() {
         {isEditing && selectedTemplate ? (
           <Card className="bg-[#111] border-white/5">
             <CardHeader>
-              <CardTitle className="text-lg font-bold uppercase">Editar Template</CardTitle>
+              <CardTitle className="text-lg font-bold uppercase">{selectedTemplate.id ? 'Editar Template' : 'Novo Template'}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 p-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Identificador (Slug)</Label>
-                  <Input id="temp_name" defaultValue={selectedTemplate.name} className="bg-black/40 border-white/10" />
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                    Finalidade / Tipo de Uso (Slug)
+                  </Label>
+                  <Input 
+                    id="temp_name" 
+                    placeholder="ex: boas_vindas, acesso_curso"
+                    defaultValue={selectedTemplate.name} 
+                    className="bg-black/40 border-white/10 focus:border-[#ff6a00]" 
+                  />
+                  <p className="text-[9px] text-white/20 italic">* Use letras minúsculas e underscores (ex: recovery_password)</p>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição</Label>
-                  <Input id="temp_desc" defaultValue={selectedTemplate.description} className="bg-black/40 border-white/10" />
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição Curta</Label>
+                  <Input 
+                    id="temp_desc" 
+                    placeholder="Para que serve este e-mail?"
+                    defaultValue={selectedTemplate.description} 
+                    className="bg-black/40 border-white/10" 
+                  />
                 </div>
               </div>
+              
               <div className="space-y-2">
                 <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Assunto do E-mail</Label>
-                <Input id="temp_subject" defaultValue={selectedTemplate.subject} className="bg-black/40 border-white/10" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo HTML</Label>
-                <textarea 
-                  id="temp_html" 
-                  defaultValue={selectedTemplate.content_html} 
-                  rows={12}
-                  className="w-full bg-black/40 border border-white/10 rounded-lg p-4 font-mono text-xs text-white/80 focus:border-[#ff6a00] outline-none"
+                <Input 
+                  id="temp_subject" 
+                  placeholder="Assunto que o cliente verá"
+                  defaultValue={selectedTemplate.subject} 
+                  className="bg-black/40 border-white/10" 
                 />
+              </div>
+
+              <div className="grid gap-4 lg:grid-cols-12">
+                <div className="lg:col-span-9 space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo HTML</Label>
+                  <textarea 
+                    id="temp_html" 
+                    defaultValue={selectedTemplate.content_html} 
+                    rows={12}
+                    className="w-full bg-black/40 border border-white/10 rounded-lg p-4 font-mono text-xs text-white/80 focus:border-[#ff6a00] outline-none"
+                    placeholder="<html>... Use {{variable}} para campos dinâmicos</html>"
+                  />
+                </div>
+                <div className="lg:col-span-3 space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Variáveis Comuns</Label>
+                  <div className="p-3 bg-white/[0.02] border border-white/5 rounded-lg space-y-2">
+                    {['name', 'product_name', 'access_link', 'amount', 'payment_id'].map(v => (
+                      <div 
+                        key={v} 
+                        className="flex items-center justify-between group cursor-pointer"
+                        onClick={() => {
+                          const textarea = document.getElementById('temp_html') as HTMLTextAreaElement;
+                          const start = textarea.selectionStart;
+                          const end = textarea.selectionEnd;
+                          const text = textarea.value;
+                          textarea.value = text.substring(0, start) + `{{${v}}}` + text.substring(end);
+                          textarea.focus();
+                        }}
+                      >
+                        <code className="text-[9px] text-[#ff6a00] group-hover:text-white transition-colors">{`{{${v}}}`}</code>
+                        <Plus className="h-2.5 w-2.5 text-white/10 group-hover:text-[#ff6a00]" />
+                      </div>
+                    ))}
+                    <p className="text-[8px] text-white/20 pt-2 border-t border-white/5">Clique para inserir no cursor.</p>
+                  </div>
+                </div>
               </div>
               
               <div className="flex items-center justify-between pt-4">
