@@ -120,6 +120,11 @@ function AdminStudentProfilePage() {
         .from('course_lessons')
         .select('id, module_id, course_modules!inner(course_id)');
 
+      // Fetch all ebook chapters to calculate progress
+      const { data: allChapters } = await supabase
+        .from('ebook_chapters')
+        .select('id, ebook_id');
+
       // Fetch enrollments (courses and ebooks)
       const [{ data: courseEnrollData, error: courseEnrollError }, { data: ebookEnrollData, error: ebookEnrollError }] = await Promise.all([
         supabase.from('course_enrollments')
@@ -133,14 +138,30 @@ function AdminStudentProfilePage() {
       if (courseEnrollError) throw courseEnrollError;
       if (ebookEnrollError) throw ebookEnrollError;
 
-      // Fetch progress status
+      // Fetch progress status for lessons
       const { data: progressData } = await supabase
         .from('lesson_progress')
         .select('lesson_id, is_completed')
         .eq('user_id', studentId)
         .eq('is_completed', true);
 
+      // Fetch progress status for ebook chapters
+      const { data: ebookProgressData } = await supabase
+        .from('ebook_progress')
+        .select('chapter_id')
+        .eq('user_id', studentId);
+
       const completedLessonIds = new Set(progressData?.map(p => p.lesson_id) || []);
+      const completedChapterIds = new Set(ebookProgressData?.map(p => p.chapter_id) || []);
+
+      // Fetch payment history
+      const { data: paymentData } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('user_id', studentId)
+        .order('created_at', { ascending: false });
+
+      setPayments(paymentData || []);
 
       // Calculate progress per course enrollment
       const courseEnrollmentsWithProgress = (courseEnrollData || []).map(enroll => {
@@ -158,21 +179,32 @@ function AdminStudentProfilePage() {
         };
       });
 
-      const ebookEnrollmentsFormatted = (ebookEnrollData || []).map(enroll => ({
-        ...enroll,
-        type: 'ebook',
-        progress: 100, // Ebooks don't have linear progress tracked this way yet or are just unlocked
-        title: enroll.ebook?.title,
-        cover: enroll.ebook?.cover_url
-      }));
+      const ebookEnrollmentsFormatted = (ebookEnrollData || []).map(enroll => {
+        const ebookChapters = allChapters?.filter(c => c.ebook_id === enroll.ebook_id) || [];
+        const total = ebookChapters.length;
+        const completed = ebookChapters.filter(c => completedChapterIds.has(c.id)).length;
+        const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        return {
+          ...enroll,
+          type: 'ebook',
+          progress: percent,
+          title: enroll.ebook?.title,
+          cover: enroll.ebook?.cover_url
+        };
+      });
 
       const allEnrollments = [...courseEnrollmentsWithProgress, ...ebookEnrollmentsFormatted];
       setEnrollments(allEnrollments);
 
+      // Calculate total spent
+      const confirmedPayments = paymentData?.filter(p => p.status === 'CONFIRMED' || p.status === 'RECEIVED') || [];
+      const totalSpent = confirmedPayments.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+
       setStats({
         coursesCompleted: allEnrollments.filter(e => e.progress === 100).length,
         lessonsWatched: completedLessonIds.size,
-        totalSpent: 0 
+        totalSpent
       });
 
     } catch (error: any) {
