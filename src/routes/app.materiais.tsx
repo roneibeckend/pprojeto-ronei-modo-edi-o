@@ -34,11 +34,10 @@ function MaterialsPage() {
   }
 
   const dynamicMaterials = (data as any[]) || [];
-  // Prioriza materiais dinâmicos (do banco) sobre os estáticos se houver conflito de ID
-  const materials = [
-    ...dynamicMaterials, 
-    ...staticMaterials.filter(sm => !dynamicMaterials.some(dm => dm.id === sm.id))
-  ];
+  // Os materiais agora são gerenciados inteiramente pelo banco de dados.
+  // Mantemos staticMaterials apenas como um fallback de UI se necessário, 
+  // mas a lógica de download agora prioriza o que vem do banco.
+  const materials = dynamicMaterials.length > 0 ? dynamicMaterials : staticMaterials;
 
   const handleDownload = async (materialId: string, title: string, fileUrl?: string, externalUrl?: string) => {
     if (externalUrl) {
