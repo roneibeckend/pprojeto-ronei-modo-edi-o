@@ -110,7 +110,7 @@ export function PostPurchaseOffer({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onProceedWithoutOffers()}>
-      <DialogContent className="max-w-2xl glass border-white/10 p-0 overflow-hidden sm:rounded-3xl">
+      <DialogContent className="max-w-2xl glass border-white/10 p-0 overflow-hidden sm:rounded-3xl w-[95vw] sm:w-full mx-auto">
         <div className="relative p-6 sm:p-8">
           <button 
             onClick={onProceedWithoutOffers}
