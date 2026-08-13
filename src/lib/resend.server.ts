@@ -9,7 +9,6 @@ export async function getResendConfig() {
     .single();
 
   if (error || !integration) {
-    // If not found in integrations table, try environment variable as fallback
     const envApiKey = process.env['RESEND_API_KEY'];
     if (envApiKey) {
       return {
@@ -109,7 +108,6 @@ export async function sendResendEmail(params: {
       throw new Error(data.message || `Erro ${response.status} ao enviar email via Resend`);
     }
 
-    // Log the email attempt in a central table
     try {
       await supabaseAdmin.from('email_logs').insert({
         recipient_email: Array.isArray(params.to) ? params.to.join(', ') : params.to,
@@ -125,8 +123,6 @@ export async function sendResendEmail(params: {
     return { success: true, id: data.id };
   } catch (error: any) {
     console.error('[Resend] Erro ao enviar email:', error);
-    
-    // Log failure
     try {
       await supabaseAdmin.from('email_logs').insert({
         recipient_email: Array.isArray(params.to) ? params.to.join(', ') : params.to,
@@ -134,10 +130,68 @@ export async function sendResendEmail(params: {
         status: 'error',
         error_message: error.message
       });
-    } catch (logError) {
-      // Silently fail logging if it crashes
-    }
-    
+    } catch (logError) {}
     throw error;
   }
 }
+
+/**
+ * Replace variables in a template string.
+ * Example: "Hello {{name}}" + {name: "John"} -> "Hello John"
+ */
+function renderTemplate(content: string, variables: Record<string, any>) {
+  return content.replace(/\{\{(.+?)\}\}/g, (match, key) => {
+    const cleanKey = key.trim();
+    return variables[cleanKey] !== undefined ? variables[cleanKey] : match;
+  });
+}
+
+/**
+ * Triggers an automated email based on a template name.
+ */
+export async function triggerEmailEvent(params: {
+  event: string;
+  to: string;
+  data: Record<string, any>;
+  idempotencyKey?: string;
+}) {
+  console.log(`[Email] Disparando evento: ${params.event} para ${params.to}`);
+  
+  try {
+    const { data: template, error } = await supabaseAdmin
+      .from('email_templates')
+      .select('*')
+      .eq('name', params.event)
+      .maybeSingle();
+
+    if (error || !template) {
+      console.warn(`[Email] Template não encontrado para o evento: ${params.event}. Usando fallback.`);
+      // Generic fallback logic if template is missing
+      return await sendResendEmail({
+        to: params.to,
+        subject: params.data.subject || `Notificação: ${params.event}`,
+        html: `<p>Notificação de sistema para o evento: ${params.event}</p>`,
+        tags: params.idempotencyKey ? [{ name: 'idempotency_key', value: params.idempotencyKey }] : undefined
+      });
+    }
+
+    const renderedSubject = renderTemplate(template.subject, params.data);
+    const renderedHtml = renderTemplate(template.content_html, params.data);
+    const renderedText = template.content_text ? renderTemplate(template.content_text, params.data) : undefined;
+
+    return await sendResendEmail({
+      to: params.to,
+      subject: renderedSubject,
+      html: renderedHtml,
+      text: renderedText,
+      tags: [
+        { name: 'event', value: params.event },
+        ...(params.idempotencyKey ? [{ name: 'idempotency_key', value: params.idempotencyKey }] : [])
+      ]
+    });
+  } catch (err: any) {
+    console.error(`[Email] Falha ao disparar evento ${params.event}:`, err);
+    throw err;
+  }
+}
+

@@ -1296,9 +1296,11 @@ function EmailTemplatesTab() {
   const queryClient = useQueryClient();
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isSendingTest, setIsSendingTest] = useState(false);
   const getTemplatesFn = useServerFn(getEmailTemplates);
   const saveTemplateFn = useServerFn(saveEmailTemplate);
   const deleteTemplateFn = useServerFn(deleteEmailTemplate);
+  const sendEmailFn = useServerFn(sendEmail);
 
   const { data: templates, isLoading } = useQuery({
     queryKey: ['email_templates'],
@@ -1341,6 +1343,34 @@ function EmailTemplatesTab() {
         variables: selectedTemplate?.variables || []
       }
     });
+  };
+
+  const handleTestEmail = async () => {
+    if (!selectedTemplate) return;
+    const email = prompt("Digite o e-mail para receber o teste:");
+    if (!email) return;
+
+    try {
+      setIsSendingTest(true);
+      const subject = (document.getElementById('temp_subject') as HTMLInputElement).value;
+      const html = (document.getElementById('temp_html') as HTMLTextAreaElement).value;
+      
+      await sendEmailFn({
+        data: {
+          to: email,
+          template: 'novo_conteudo' as any, // Abstração genérica
+          data: {
+            subject: `[TESTE] ${subject}`,
+            html: html.replace(/\{\{(.+?)\}\}/g, 'VALOR_TESTE')
+          }
+        }
+      });
+      toast.success("E-mail de teste enviado!");
+    } catch (err: any) {
+      toast.error("Erro ao enviar teste: " + err.message);
+    } finally {
+      setIsSendingTest(false);
+    }
   };
 
   return (
@@ -1400,11 +1430,22 @@ function EmailTemplatesTab() {
                 />
               </div>
               
-              <div className="flex items-center gap-3 pt-4">
-                <Button onClick={handleSave} disabled={saveMutation.isPending} className="bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] px-8">
-                  {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                  Salvar Template
-                </Button>
+              <div className="flex items-center justify-between pt-4">
+                <div className="flex items-center gap-3">
+                  <Button onClick={handleSave} disabled={saveMutation.isPending} className="bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] px-8">
+                    {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                    Salvar Template
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleTestEmail} 
+                    disabled={isSendingTest}
+                    className="border-white/10 text-white/60 hover:text-white uppercase text-[10px] font-bold"
+                  >
+                    {isSendingTest ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" /> : <SendHorizontal className="h-3.5 w-3.5 mr-2" />}
+                    Enviar Teste
+                  </Button>
+                </div>
                 {selectedTemplate.id && (
                   <Button 
                     variant="outline" 
