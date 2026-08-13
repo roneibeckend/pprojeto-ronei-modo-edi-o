@@ -219,7 +219,6 @@ export function VideoPlayer({
     >
 
       <video
-        key={src}
         ref={videoRef}
         src={src}
         poster={poster}
@@ -228,43 +227,42 @@ export function VideoPlayer({
         webkit-playsinline="true"
         x5-playsinline="true"
         controls={false}
-        preload={isIntro ? "auto" : "metadata"}
+        preload="metadata"
         controlsList="nodownload"
-        muted={isMuted || isIntro} 
+        muted={isMuted || isIntro}
         autoPlay={isIntro}
         loop={false}
         onLoadStart={() => setIsLoading(true)}
-        onCanPlay={() => {
-          setIsLoading(false);
-        }}
+        onLoadedMetadata={() => setIsLoading(false)}
+        onCanPlay={() => setIsLoading(false)}
         onPlaying={() => {
           setIsPlaying(true);
           setIsLoading(false);
         }}
         onPause={() => setIsPlaying(false)}
-        onWaiting={() => setIsLoading(true)}
+        onWaiting={() => {
+          const video = videoRef.current;
+          // Only show the spinner for a genuine buffer underrun.
+          if (video && video.readyState < video.HAVE_FUTURE_DATA) setIsLoading(true);
+        }}
         onStalled={() => {
-          console.warn("Video stalled, attempting recovery...");
+          // Do not call load() here: it restarts the request and loops on mobile.
+          console.warn('Video stalled; letting the browser resume the range request');
         }}
-        onSuspend={() => {
-          console.log("Video loading suspended");
-        }}
-        onError={(e) => {
-          console.error("Video element error:", e);
+        onError={() => {
           setIsLoading(false);
-          
+          setIsPlaying(false);
           const video = videoRef.current;
           if (video?.error) {
-            console.error("Video error code:", video.error.code, "message:", video.error.message);
+            console.error('Video error code:', video.error.code, 'message:', video.error.message);
           }
         }}
         onClick={(e) => {
           e.stopPropagation();
           togglePlay(e);
         }}
-      >
-        <source src={src} type="video/mp4" />
-      </video>
+      />
+
 
       {/* Loading Overlay */}
       {isLoading && (
