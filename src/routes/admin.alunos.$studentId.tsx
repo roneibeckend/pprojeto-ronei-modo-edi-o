@@ -458,6 +458,59 @@ function AdminStudentProfilePage() {
                   <div className="text-center py-8 border border-dashed border-white/10 rounded-xl">
                     <p className="text-sm text-white/20 italic">Nenhuma atividade registrada recentemente.</p>
                   </div>
+                 )}
+             </div>
+          </section>
+
+          {/* Payment History */}
+          <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
+             <div className="flex items-center gap-3 mb-6">
+                <CreditCard className="w-5 h-5 text-[#ff6a00]" />
+                <h3 className="font-display text-xl font-bold text-white">Histórico Financeiro</h3>
+             </div>
+             
+             <div className="space-y-3">
+                {payments.length > 0 ? (
+                  payments.map((payment) => (
+                    <div key={payment.id} className="flex items-center justify-between p-4 rounded-xl bg-white/[0.01] border border-white/5 hover:bg-white/[0.02] transition">
+                      <div className="flex items-center gap-4">
+                        <div className={`grid h-10 w-10 place-items-center rounded-lg ${
+                          payment.status === 'CONFIRMED' || payment.status === 'RECEIVED' 
+                            ? 'bg-emerald-500/10 text-emerald-400' 
+                            : 'bg-white/5 text-white/40'
+                        }`}>
+                          <DollarSign className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold">
+                            {Number(payment.amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                          </p>
+                          <p className="text-[10px] text-white/40 font-medium uppercase tracking-widest mt-0.5">
+                            {payment.billing_type || 'OUTRO'} • {new Date(payment.created_at).toLocaleDateString('pt-BR')}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className={`px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest ${
+                          payment.status === 'CONFIRMED' || payment.status === 'RECEIVED'
+                            ? 'bg-emerald-500/10 text-emerald-400'
+                            : payment.status === 'PENDING'
+                            ? 'bg-amber-500/10 text-amber-400'
+                            : 'bg-red-500/10 text-red-400'
+                        }`}>
+                          {payment.status === 'CONFIRMED' || payment.status === 'RECEIVED' ? 'Confirmado' : 
+                           payment.status === 'PENDING' ? 'Pendente' : payment.status}
+                        </span>
+                        {payment.external_reference && (
+                          <p className="text-[8px] text-white/20 mt-1 font-mono">{payment.external_reference}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 border border-dashed border-white/10 rounded-xl">
+                    <p className="text-sm text-white/20 italic">Nenhum registro financeiro encontrado.</p>
+                  </div>
                 )}
              </div>
           </section>
