@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -20,7 +21,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getMaterials, upsertMaterial, deleteMaterial } from "@/lib/materials.functions";
+import { upsertMaterial, deleteMaterial } from "@/lib/materials.functions";
 
 export const Route = createFileRoute("/admin/materiais")({
   head: () => ({ meta: [{ title: "Gestão de Materiais · Admin" }] }),
@@ -35,6 +36,8 @@ function AdminMaterialsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [uploading, setUploading] = useState<string | null>(null);
+  const saveMaterial = useServerFn(upsertMaterial);
+  const removeMaterial = useServerFn(deleteMaterial);
 
   useEffect(() => {
     if (!isLoadingAuth && role === "student") {
@@ -57,9 +60,9 @@ function AdminMaterialsPage() {
   });
 
   const upsertMutation = useMutation({
-    mutationFn: (data: any) => upsertMaterial({ data }),
+    mutationFn: (data: any) => saveMaterial({ data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["platform-materials"] });
+      queryClient.invalidateQueries({ queryKey: ["platform-materials-admin"] });
       toast.success("Material salvo com sucesso!");
       setIsModalOpen(false);
       setEditingItem(null);
@@ -70,9 +73,9 @@ function AdminMaterialsPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => deleteMaterial({ data: { id } }),
+    mutationFn: (id: string) => removeMaterial({ data: { id } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["platform-materials"] });
+      queryClient.invalidateQueries({ queryKey: ["platform-materials-admin"] });
       toast.success("Material excluído!");
     },
     onError: (error: any) => {
@@ -110,7 +113,6 @@ function AdminMaterialsPage() {
         const material = materials.find((m: any) => m.id === materialId);
         if (material) {
           upsertMutation.mutate({ ...material, file_url: publicUrl });
-          toast.success("Arquivo enviado e material atualizado!");
         }
       } else {
         setEditingItem({ ...editingItem, file_url: publicUrl, type: fileExt?.toUpperCase() || "FILE" });
