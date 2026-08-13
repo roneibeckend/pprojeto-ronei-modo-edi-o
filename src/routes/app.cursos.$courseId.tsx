@@ -173,7 +173,7 @@ function CoursePage() {
   const isCompleted = flat.length > 0 && completedCount === flat.length;
 
   useEffect(() => {
-    if (isCompleted && !hasSubmittedFeedback) {
+    if (isCompleted && !hasSubmittedFeedback && hasAccess) {
       // Check if user already submitted feedback via DB to be sure
       const checkFeedback = async () => {
         const { data: { user } } = await supabase.auth.getUser();
@@ -194,7 +194,7 @@ function CoursePage() {
       };
       checkFeedback();
     }
-  }, [isCompleted, hasSubmittedFeedback, course.id]);
+  }, [isCompleted, hasSubmittedFeedback, course.id, hasAccess]);
 
   const introNeedsSigning = Boolean(
     course?.intro_video_url &&

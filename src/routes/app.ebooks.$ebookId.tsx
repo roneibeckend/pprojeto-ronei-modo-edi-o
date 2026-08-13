@@ -219,8 +219,12 @@ function EbookReaderPage() {
   const nextChapter = activeIndex < chapters.length - 1 ? chapters[activeIndex + 1] : null;
 
 
+  const isFree = (ebook.price || 0) === 0;
+  const isEnrolled = isEnrolledInEbook(ebook.id);
+  const hasAccess = isFree || isEnrolled;
+
   useEffect(() => {
-    if (activeChapterId && activeChapter) {
+    if (activeChapterId && activeChapter && hasAccess) {
       completeChapter({ 
         chapterId: activeChapterId,
         ebookId: ebook.id,
@@ -235,7 +239,7 @@ function EbookReaderPage() {
         }
       }
     }
-  }, [activeChapterId, activeChapter, ebook.id, completeChapter, chapters.length, isChapterCompleted]);
+  }, [activeChapterId, activeChapter, ebook.id, completeChapter, chapters.length, isChapterCompleted, hasAccess, hasSubmittedFeedback]);
 
   const handlePurchase = async () => {
     if (isOfferEnabled) {
@@ -331,9 +335,6 @@ function EbookReaderPage() {
   }
 
 
-  const isFree = (ebook.price || 0) === 0;
-  const isEnrolled = isEnrolledInEbook(ebook.id);
-  const hasAccess = isFree || isEnrolled;
 
   if (!hasAccess) {
     return (

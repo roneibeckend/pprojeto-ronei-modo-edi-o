@@ -83,7 +83,7 @@ export function useProgress() {
   const totalProgress = totalItems > 0 ? Math.round((totalCompleted / totalItems) * 100) : 0;
 
   const startedCount = globalProgressTracking?.tracking.filter((t: any) => 
-    (t.item_type === 'course' || t.item_type === 'ebook') && !!t.started_at
+    (t.item_type === 'course' || t.item_type === 'ebook') && !!t.started_at && !t.completed_at
   ).length || 0;
 
   const finishedCount = globalProgressTracking?.tracking.filter((t: any) => 
