@@ -143,7 +143,7 @@ function AdminMaterialsPage() {
         </div>
         <button 
           onClick={() => { 
-            setEditingItem({ title: "", description: "", type: "XLSX", category: "", is_active: true }); 
+            setEditingItem({ title: "", description: "", type: "XLSX", category: "", file_url: null, external_url: "", is_active: true }); 
             setIsModalOpen(true); 
           }}
           className="flex items-center justify-center gap-2 bg-[#ff6a00] px-4 py-2.5 rounded-xl text-sm font-bold text-black transition hover:brightness-110"
