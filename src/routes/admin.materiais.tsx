@@ -70,14 +70,16 @@ function AdminMaterialsPage() {
       const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `${fileName}`;
 
+      const bucketName = 'platform-materials';
+      
       const { error: uploadError } = await supabase.storage
-        .from('platform-materials')
+        .from(bucketName)
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('platform-materials')
+        .from(bucketName)
         .getPublicUrl(filePath);
 
       setEditingItem({ ...editingItem, file_url: publicUrl, type: fileExt?.toUpperCase() || "FILE" });
@@ -95,7 +97,7 @@ function AdminMaterialsPage() {
   );
 
   const getIcon = (type: string) => {
-    if (type === "XLSX") return <FileSpreadsheet className="h-5 w-5" />;
+    if (["XLSX", "CSV", "ODS"].includes(type)) return <FileSpreadsheet className="h-5 w-5" />;
     if (type === "PDF") return <FileText className="h-5 w-5" />;
     if (type === "CANVA") return <Layout className="h-5 w-5" />;
     return <Package className="h-5 w-5" />;
@@ -204,6 +206,8 @@ function AdminMaterialsPage() {
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Tipo de Recurso</label>
                   <select value={editingItem?.type || "XLSX"} onChange={e => setEditingItem({...editingItem, type: e.target.value})} className="w-full bg-[#0a0a0a] border border-white/10 p-3 rounded-xl text-sm outline-none focus:border-[#ff6a00] transition text-white">
                     <option value="XLSX">Excel (.xlsx)</option>
+                    <option value="CSV">CSV (.csv)</option>
+                    <option value="ODS">Calc (.ods)</option>
                     <option value="PDF">Documento (.pdf)</option>
                     <option value="CANVA">Link Canva</option>
                     <option value="ZIP">Arquivo Compactado (.zip)</option>

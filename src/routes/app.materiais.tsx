@@ -80,7 +80,7 @@ function MaterialsPage() {
   };
 
   const getIcon = (id: string, type: string) => {
-    if (type === "XLSX") return <FileSpreadsheet className="h-6 w-6" />;
+    if (["XLSX", "CSV", "ODS"].includes(type)) return <FileSpreadsheet className="h-6 w-6" />;
     if (type === "PDF") return <FileText className="h-6 w-6" />;
     if (type === "CANVA" || type === "PPTX") return <Presentation className="h-6 w-6" />;
     if (id === "m7") return <Share2 className="h-6 w-6" />;
