@@ -35,6 +35,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { VideoUpload } from "@/components/admin/VideoUpload";
+import { VisualChapterEditor } from "@/components/admin/VisualChapterEditor";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -580,6 +581,7 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
   const [editingChapter, setEditingChapter] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [editorMode, setEditorMode] = useState<'visual' | 'code'>('visual');
 
   useEffect(() => {
     fetchContent();
@@ -902,13 +904,46 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
               </div>
 
               <div className="space-y-1.5 flex-1 flex flex-col min-h-[500px] lg:min-h-[65vh]">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do Capítulo (HTML ou Markdown)</label>
-                <textarea 
-                  value={editingChapter.content || ""}
-                  onChange={e => setEditingChapter({...editingChapter, content: e.target.value})}
-                  placeholder="Escreva aqui o conteúdo do capítulo..."
-                  className="flex-1 w-full bg-black/20 border border-white/10 p-6 rounded-xl text-base font-sans leading-relaxed outline-none focus:border-[#ff6a00] resize-none overflow-y-auto"
-                />
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo do Capítulo</label>
+                  <div className="flex bg-white/5 rounded-lg p-0.5 border border-white/10">
+                    <button 
+                      onClick={() => setEditorMode('visual')}
+                      className={cn(
+                        "px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-md transition-all",
+                        editorMode === 'visual' ? "bg-[#ff6a00] text-black" : "text-white/40 hover:text-white"
+                      )}
+                    >
+                      Visual
+                    </button>
+                    <button 
+                      onClick={() => setEditorMode('code')}
+                      className={cn(
+                        "px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-md transition-all",
+                        editorMode === 'code' ? "bg-[#ff6a00] text-black" : "text-white/40 hover:text-white"
+                      )}
+                    >
+                      Código
+                    </button>
+                  </div>
+                </div>
+
+                {editorMode === 'visual' ? (
+                  <div className="flex-1 min-h-0">
+                    <VisualChapterEditor 
+                      key={editingChapter.id}
+                      content={editingChapter.content || ""}
+                      onChange={(html) => setEditingChapter({...editingChapter, content: html})}
+                    />
+                  </div>
+                ) : (
+                  <textarea 
+                    value={editingChapter.content || ""}
+                    onChange={e => setEditingChapter({...editingChapter, content: e.target.value})}
+                    placeholder="Escreva aqui o conteúdo do capítulo (HTML ou Markdown)..."
+                    className="flex-1 w-full bg-black/20 border border-white/10 p-6 rounded-xl text-base font-mono leading-relaxed outline-none focus:border-[#ff6a00] resize-none overflow-y-auto"
+                  />
+                )}
               </div>
             </div>
           </div>
