@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/platform/Shell";
-import { student, orders } from "@/lib/platform-data";
 import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export const Route = createFileRoute("/app/perfil")({
   head: () => ({ meta: [{ title: "Meu perfil — Espetinho na Veia" }] }),
@@ -11,12 +14,56 @@ export const Route = createFileRoute("/app/perfil")({
 });
 
 function ProfilePage() {
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  const [profile, setProfile] = useState<any>(null);
+  const [userOrders, setUserOrders] = useState<any[]>([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
+    async function loadProfileData() {
+      if (!user) return;
+      
+      try {
+        // Load profile data
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+        
+        if (profileData) {
+          setProfile(profileData);
+        }
+
+        // Load user specific orders
+        const { data: ordersData } = await supabase
+          .from("course_enrollments")
+          .select(`
+            id,
+            created_at,
+            course:courses(title, price)
+          `)
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (ordersData) {
+          setUserOrders((ordersData as any[]).map(o => ({
+            id: `#ORD-${o.id.slice(0, 4).toUpperCase()}`,
+            date: o.created_at ? format(new Date(o.created_at), "dd/MM/yyyy") : "—",
+            product: o.course?.title || "Conteúdo",
+            status: "Pago",
+            value: o.course?.price ? `R$ ${o.course.price.toFixed(2).replace('.', ',')}` : "Liberado"
+          })));
+        }
+      } catch (error) {
+        console.error("Error loading profile:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadProfileData();
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -48,24 +95,24 @@ function ProfilePage() {
             <div className="relative -mt-12 flex flex-col items-center p-6 text-center">
               <div className="relative group">
                 <img 
-                  src={student.avatar} 
-                  alt={student.name} 
+                  src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profile?.full_name || user?.email}&backgroundColor=e11d48`} 
+                  alt={profile?.full_name} 
                   className="h-24 w-24 rounded-2xl border-4 border-[#0a0a0a] object-cover ring-1 ring-white/10"
                 />
                 <button className="absolute -bottom-2 -right-2 grid h-8 w-8 place-items-center rounded-lg bg-[#ff6a00] text-black shadow-lg transition-transform hover:scale-110">
                   <User className="h-4 w-4" />
                 </button>
               </div>
-              <h3 className="mt-4 font-display text-xl font-bold">{student.name}</h3>
-              <p className="text-sm text-white/40">Membro desde {student.since}</p>
+              <h3 className="mt-4 font-display text-xl font-bold">{profile?.full_name || "Estudante"}</h3>
+              <p className="text-sm text-white/40">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
               
               <div className="mt-6 grid w-full grid-cols-2 gap-2">
                 <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                  <div className="text-lg font-bold text-[#ff6a00]">{student.streak}</div>
+                  <div className="text-lg font-bold text-[#ff6a00]">{profile?.streak || 0}</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Dias</div>
                 </div>
                 <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                  <div className="text-lg font-bold text-[#ff6a00]">{student.lessonsWatched}</div>
+                  <div className="text-lg font-bold text-[#ff6a00]">{profile?.lessons_watched || 0}</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Aulas</div>
                 </div>
               </div>
@@ -81,7 +128,7 @@ function ProfilePage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">E-mail</div>
-                  <div className="text-sm font-medium break-words">{student.email}</div>
+                  <div className="text-sm font-medium break-words">{user?.email || profile?.email || "—"}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -90,7 +137,7 @@ function ProfilePage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Telefone</div>
-                  <div className="text-sm font-medium break-words">{student.phone}</div>
+                  <div className="text-sm font-medium break-words">{profile?.phone || "Não informado"}</div>
                 </div>
               </div>
             </div>
@@ -110,10 +157,10 @@ function ProfilePage() {
             </div>
             
             <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
-              <Field label="Nome completo" defaultValue={student.name} icon={User} />
-              <Field label="Seu e-mail" defaultValue={student.email} type="email" icon={Mail} />
-              <Field label="WhatsApp / Telefone" defaultValue={student.phone} icon={Phone} />
-              <Field label="Data de cadastro" defaultValue={student.since} disabled icon={Calendar} />
+              <Field label="Nome completo" value={profile?.full_name || ""} readOnly icon={User} />
+              <Field label="Seu e-mail" value={user?.email || profile?.email || ""} readOnly type="email" icon={Mail} />
+              <Field label="WhatsApp / Telefone" value={profile?.phone || "Não informado"} readOnly icon={Phone} />
+              <Field label="Data de cadastro" value={profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"} disabled icon={Calendar} />
             </div>
           </section>
 
@@ -142,7 +189,7 @@ function ProfilePage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
-                    {orders.map((order) => (
+                    {userOrders.map((order) => (
                       <tr key={order.id} className="transition-colors hover:bg-white/[0.02]">
                         <td className="px-6 py-4 font-mono font-medium text-[#ff6a00]">{order.id}</td>
                         <td className="px-6 py-4 text-white/60">{order.date}</td>
@@ -159,7 +206,7 @@ function ProfilePage() {
                   </tbody>
                 </table>
               </div>
-              {orders.length === 0 && (
+              {userOrders.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="mb-4 grid h-12 w-12 place-items-center rounded-full bg-white/5">
                     <ShoppingBag className="h-6 w-6 text-white/20" />
