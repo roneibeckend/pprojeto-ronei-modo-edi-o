@@ -15,10 +15,19 @@ export const Route = createFileRoute("/app/materiais")({
 });
 
 function MaterialsPage() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["platform-materials"],
-    queryFn: () => getMaterials(),
+    queryFn: async () => {
+      console.log("Fetching materials...");
+      const result = await getMaterials();
+      console.log("Materials result:", result);
+      return result;
+    },
   });
+
+  if (error) {
+    console.error("Error fetching materials:", error);
+  }
 
   const dynamicMaterials = (data as any[]) || [];
   const materials = [...dynamicMaterials, ...staticMaterials.filter(sm => !dynamicMaterials.some(dm => dm.title === sm.title))];
