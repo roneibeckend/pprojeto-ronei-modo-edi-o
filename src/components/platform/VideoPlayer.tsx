@@ -221,42 +221,35 @@ export function VideoPlayer({
       )}
 
 
-      {/* Subtle Bottom Bar (Simplified) */}
-      {!hideAllUI && (
-        <div className={cn(
-          "absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300 z-20",
-          showControls || !isPlaying ? "opacity-100" : "opacity-0"
-        )}>
-
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-             <button onClick={togglePlay} className="text-white hover:text-fire transition">
-               {isPlaying ? "Pausar" : "Reproduzir"}
-             </button>
-             {title && <span className="text-xs font-bold uppercase tracking-widest text-white/70 truncate max-w-[200px]">{title}</span>}
-          </div>
-          <div className="flex items-center gap-3">
+      {/* Controls Overlay (Volume/Fullscreen) */}
+      {!hideAllUI && showControls && (
+        <div className="absolute top-4 right-4 flex flex-col items-center gap-3 z-40">
             <button 
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 if(videoRef.current) {
                   videoRef.current.muted = !isMuted;
                   setIsMuted(!isMuted);
                 }
+                handleInteraction();
               }}
-              className="text-white/70 hover:text-white"
+              className="text-white/70 hover:text-white p-2 rounded-full bg-black/40 backdrop-blur-sm transition-all active:scale-90"
             >
-              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
             </button>
             <button 
-              onClick={() => videoRef.current?.requestFullscreen()}
-              className="text-white/70 hover:text-white"
+              onClick={(e) => {
+                e.stopPropagation();
+                videoRef.current?.requestFullscreen();
+                handleInteraction();
+              }}
+              className="text-white/70 hover:text-white p-2 rounded-full bg-black/40 backdrop-blur-sm transition-all active:scale-90"
             >
-              <Maximize className="w-4 h-4" />
+              <Maximize className="w-5 h-5" />
             </button>
-          </div>
-        </div>
         </div>
       )}
+
 
     </div>
   );
