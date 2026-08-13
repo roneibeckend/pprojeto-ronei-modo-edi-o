@@ -144,7 +144,7 @@ export function PostPurchaseOffer({
               </Button>
             </div>
           ) : (
-            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1 min-h-0">
               {offers.map(offer => {
                 const discountPrice = (offer.price || 0) * (1 - (discountPercentage / 100));
                 const isSelected = selectedIds.includes(offer.id);
@@ -172,12 +172,14 @@ export function PostPurchaseOffer({
                           {offer.type === 'course' ? 'Curso' : 'E-book'}
                         </span>
                       </div>
-                      <h4 className="font-bold text-sm sm:text-base truncate text-white">{offer.title}</h4>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs line-through text-muted-foreground">
+                      <h4 className="font-bold text-sm sm:text-base leading-tight break-words text-white line-clamp-2">
+                        {offer.title}
+                      </h4>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1.5">
+                        <span className="text-[10px] sm:text-xs line-through text-muted-foreground">
                           R$ {offer.price?.toFixed(2).replace('.', ',')}
                         </span>
-                        <span className="text-sm font-bold text-gold">
+                        <span className="text-xs sm:text-sm font-bold text-gold">
                           R$ {discountPrice.toFixed(2).replace('.', ',')}
                         </span>
                       </div>
