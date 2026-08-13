@@ -1,129 +1,199 @@
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { BRAND_COLORS, DEMO_INSUMOS, DEMO_PRODUCTS, DEMO_FIXED_COSTS } from './materials-data';
 
 /**
  * Utility to create professional XLSX files for the platform
  */
 
-const FIRE_COLOR = 'e11d48'; // Primary theme color
-const LIGHT_GRAY = 'f3f4f6';
+const setupProfessionalStyles = (workbook: ExcelJS.Workbook, sheet: ExcelJS.Worksheet) => {
+  sheet.views = [{ showGridLines: false }];
+  
+  // Freeze Panes for data sheets
+  if (sheet.name === 'INSUMOS' || sheet.name === 'FICHAS TÉCNICAS' || sheet.name === 'ESTOQUE') {
+    sheet.views = [{ showGridLines: false, state: 'frozen', ySplit: 5 }];
+  }
+};
+
+const addHeader = (sheet: ExcelJS.Worksheet, title: string, subtitle: string) => {
+  const titleCell = sheet.getCell('A1');
+  titleCell.value = title;
+  titleCell.font = { bold: true, size: 24, color: { argb: BRAND_COLORS.red }, name: 'Aptos' };
+  
+  const subtitleCell = sheet.getCell('A2');
+  subtitleCell.value = subtitle;
+  subtitleCell.font = { size: 14, color: { argb: BRAND_COLORS.gray }, name: 'Aptos' };
+
+  const infoCell = sheet.getCell('A3');
+  infoCell.value = 'DADOS DE EXEMPLO — substitua pelos dados do seu negócio.';
+  infoCell.font = { italic: true, size: 10, color: { argb: BRAND_COLORS.orange }, name: 'Aptos' };
+};
+
+const applyBorder = (cell: ExcelJS.Cell) => {
+  cell.border = {
+    top: { style: 'thin', color: { argb: 'E0E0E0' } },
+    left: { style: 'thin', color: { argb: 'E0E0E0' } },
+    bottom: { style: 'thin', color: { argb: 'E0E0E0' } },
+    right: { style: 'thin', color: { argb: 'E0E0E0' } }
+  };
+};
 
 export const generateCostSpreadsheet = async () => {
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = 'Espetinho na Veia';
-  workbook.lastModifiedBy = 'Espetinho na Veia';
-  workbook.created = new Date();
-
-  // 1. HOW TO USE SHEET
+  workbook.creator = 'Espetinho do Ronnei';
+  
+  // 1. COMO USAR
   const howToUse = workbook.addWorksheet('COMO USAR');
-  howToUse.columns = [{ width: 40 }, { width: 80 }];
+  setupProfessionalStyles(workbook, howToUse);
+  addHeader(howToUse, 'GUIA DE USO', 'Ferramenta de Gestão de Custos - Espetinho do Ronnei');
   
-  howToUse.addRow(['COMO USAR ESTA PLANILHA']).font = { bold: true, size: 16, color: { argb: FIRE_COLOR } };
-  howToUse.addRow(['ESTA É UMA FERRAMENTA PROFISSIONAL DE GESTÃO PARA SEU NEGÓCIO DE ESPETINHOS.']);
-  howToUse.addRow([]);
-  
-  const instructions = [
-    ['1. Cadastro de Insumos', 'Comece pela aba "INSUMOS". Cadastre tudo o que você compra (carnes, carvão, palitos).'],
-    ['2. Conversão Automática', 'A planilha converte automaticamente pacotes em gramas/unidades para facilitar o cálculo.'],
-    ['3. Fichas Técnicas', 'Na aba "FICHAS TÉCNICAS", monte seus espetinhos selecionando os insumos cadastrados.'],
-    ['4. Custos Fixos', 'Informe seus gastos mensais (aluguel, luz) para o cálculo do ponto de equilíbrio.'],
-    ['5. Dashboard', 'Acompanhe os resultados visuais e margens de lucro de forma automática.'],
+  howToUse.getColumn(1).width = 40;
+  howToUse.getColumn(2).width = 80;
+
+  const steps = [
+    ['ETAPA', 'DESCRIÇÃO'],
+    ['1. Cadastro de Insumos', 'Vá para a aba "INSUMOS" e cadastre tudo o que você compra. Informe o preço pago e a perda estimada.'],
+    ['2. Custos Fixos', 'Na aba "CUSTOS FIXOS", liste seus gastos mensais (aluguel, luz, funcionários).'],
+    ['3. Fichas Técnicas', 'Na aba "FICHAS TÉCNICAS", defina a composição de cada produto para saber o custo real de produção.'],
+    ['4. Dashboard', 'Visualize a saúde financeira e o ponto de equilíbrio de forma automática.'],
+    [],
+    ['LEGENDA DE CORES', ''],
+    ['Campos Amarelos', 'Preencha aqui (Entrada de dados)'],
+    ['Campos Cinzas', 'Calculado automaticamente (Não alterar)'],
   ];
 
-  instructions.forEach(row => {
+  steps.forEach((row, i) => {
     const r = howToUse.addRow(row);
-    r.getCell(1).font = { bold: true };
+    r.font = { name: 'Aptos' };
+    if (i === 0) {
+      r.font = { bold: true, color: { argb: 'FFFFFF' } };
+      r.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.darkGray } };
+    }
+    if (row[0] === 'Campos Amarelos') r.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.inputBg } };
+    if (row[0] === 'Campos Cinzas') r.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.autoBg } };
   });
 
-  // 2. INSUMOS SHEET
+  // 2. INSUMOS
   const insumos = workbook.addWorksheet('INSUMOS');
-  const insumosHeader = [
-    'Código', 'Ingrediente', 'Categoria', 'Unidade de Compra', 'Qtd Comprada', 
-    'Preço Embalagem (R$)', 'Peso/Vol Total (g/ml)', 'Perda Est. (%)', 'Custo Líquido (R$)', 'Custo Unit (g/ml/un)'
-  ];
+  setupProfessionalStyles(workbook, insumos);
+  addHeader(insumos, 'CADASTRO DE INSUMOS', 'Gerencie seus ingredientes e materiais de apoio');
   
-  const headerRow = insumos.addRow(insumosHeader);
-  headerRow.font = { bold: true, color: { argb: 'FFFFFF' } };
-  headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: FIRE_COLOR } };
-  
+  const headers = ['CÓDIGO', 'ITEM', 'CATEGORIA', 'UNIDADE', 'QTD EMBALAGEM', 'PREÇO PAGO (R$)', 'PESO/VOL TOTAL (g/ml)', 'PERDA EST. (%)', 'CUSTO LÍQUIDO (R$)', 'CUSTO UNIT (g/ml/un)'];
+  const headerRow = insumos.addRow(headers);
+  headerRow.height = 30;
+  headerRow.eachCell(cell => {
+    cell.font = { bold: true, color: { argb: 'FFFFFF' }, size: 10 };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.red } };
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  });
+
   insumos.columns = [
-    { width: 10 }, { width: 25 }, { width: 15 }, { width: 15 }, { width: 15 }, 
-    { width: 20 }, { width: 20 }, { width: 15 }, { width: 20 }, { width: 25 }
+    { width: 10 }, { width: 30 }, { width: 15 }, { width: 15 }, { width: 15 },
+    { width: 20 }, { width: 20 }, { width: 15 }, { width: 20 }, { width: 20 }
   ];
 
-  // Sample Data
-  const sampleInsumos = [
-    ['001', 'Alcatra Bovina', 'Carnes', 'Kg', 1, 45.90, 1000, 10, null, null],
-    ['002', 'Peito de Frango', 'Carnes', 'Kg', 1, 22.50, 1000, 5, null, null],
-    ['003', 'Palito de Bambu', 'Descartáveis', 'Pacote', 1, 15.00, 100, 0, null, null],
-    ['004', 'Sal Grosso', 'Temperos', 'Kg', 1, 4.50, 1000, 0, null, null],
-  ];
+  DEMO_INSUMOS.forEach((item, i) => {
+    const rowIdx = i + 6; // Start after headers and offset
+    const row = insumos.addRow([
+      item.id, item.name, item.category, item.unit, item.buyQty, item.price, item.weight, item.loss, null, null
+    ]);
 
-  sampleInsumos.forEach((data, i) => {
-    const rowIdx = i + 2;
-    const r = insumos.addRow(data);
-    
-    // Formula for Custo Líquido (considering loss)
+    row.eachCell((cell, colIdx) => {
+      applyBorder(cell);
+      cell.font = { name: 'Aptos', size: 10 };
+      // Styling inputs vs autos
+      if (colIdx <= 8) {
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.inputBg } };
+      } else {
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.autoBg } };
+      }
+    });
+
+    // Fórmulas Defensivas
     // Custo Líquido = Preço / (1 - Perda)
-    r.getCell(9).value = { formula: `F${rowIdx}/(1-(H${rowIdx}/100))` };
-    
-    // Formula for Custo Unitário
-    // Custo Unit = Custo Líquido / Peso Total
-    r.getCell(10).value = { formula: `I${rowIdx}/G${rowIdx}` };
-    
-    r.getCell(6).numFmt = '"R$ "#,##0.00';
-    r.getCell(9).numFmt = '"R$ "#,##0.00';
-    r.getCell(10).numFmt = '"R$ "#,##0.0000';
+    row.getCell(9).value = { formula: `IFERROR(F${rowIdx}/(1-(H${rowIdx}/100)), "—")` };
+    // Custo Unitário = Custo Líquido / (Qtd * Peso)
+    row.getCell(10).value = { formula: `IFERROR(I${rowIdx}/(E${rowIdx}*G${rowIdx}), "—")` };
+
+    row.getCell(6).numFmt = '"R$ "#,##0.00';
+    row.getCell(9).numFmt = '"R$ "#,##0.00';
+    row.getCell(10).numFmt = '"R$ "#,##0.0000';
   });
 
-  // 3. FICHAS TÉCNICAS
-  const fichas = workbook.addWorksheet('FICHAS TÉCNICAS');
-  fichas.addRow(['FICHA TÉCNICA - ESPETINHO BOVINO']).font = { bold: true, size: 14 };
-  fichas.addRow([]);
-  
-  const fichaHeader = ['Ingrediente', 'Quantidade', 'Unidade', 'Custo Unitário (R$)', 'Total (R$)'];
-  const fhr = fichas.addRow(fichaHeader);
-  fhr.font = { bold: true };
-  fhr.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'EEEEEE' } };
-
-  const recipeData = [
-    ['Alcatra Bovina', 120, 'g', { formula: 'INSUMOS!J2' }, { formula: 'B4*D4' }],
-    ['Sal Grosso', 5, 'g', { formula: 'INSUMOS!J5' }, { formula: 'B5*D5' }],
-    ['Palito de Bambu', 1, 'un', { formula: 'INSUMOS!J4' }, { formula: 'B6*D6' }],
-  ];
-
-  recipeData.forEach(row => {
-    const r = fichas.addRow(row);
-    r.getCell(4).numFmt = '"R$ "#,##0.0000';
-    r.getCell(5).numFmt = '"R$ "#,##0.00';
-  });
-
-  fichas.addRow([]);
-  const totalRow = fichas.addRow(['', '', '', 'CUSTO TOTAL INGREDIENTES:', { formula: 'SUM(E4:E6)' }]);
-  totalRow.getCell(4).font = { bold: true };
-  totalRow.getCell(5).font = { bold: true };
-  totalRow.getCell(5).numFmt = '"R$ "#,##0.00';
-
-  // 4. CUSTOS FIXOS
+  // 3. CUSTOS FIXOS
   const custosFixos = workbook.addWorksheet('CUSTOS FIXOS');
-  custosFixos.addRow(['CUSTOS FIXOS MENSAIS']).font = { bold: true, size: 14 };
-  custosFixos.addRow([]);
-  const fixedHeader = ['Descrição', 'Valor Mensal (R$)'];
-  custosFixos.addRow(fixedHeader).font = { bold: true };
-  
-  const sampleFixed = [
-    ['Aluguel', 1200],
-    ['Energia/Luz', 250],
-    ['Água', 80],
-    ['Gás/Carvão', 400],
-    ['Funcionários', 1500],
-  ];
-  
-  sampleFixed.forEach(d => custosFixos.addRow(d).getCell(2).numFmt = '"R$ "#,##0.00');
-  
-  const totalFixedRow = custosFixos.addRow(['TOTAL CUSTOS FIXOS:', { formula: 'SUM(B3:B7)' }]);
-  totalFixedRow.font = { bold: true };
-  totalFixedRow.getCell(2).numFmt = '"R$ "#,##0.00';
+  setupProfessionalStyles(workbook, custosFixos);
+  addHeader(custosFixos, 'CUSTOS FIXOS MENSAIS', 'Gastos invariáveis que seu negócio precisa cobrir todo mês');
+
+  const cfHeaders = ['DESCRIÇÃO', 'VALOR MENSAL (R$)'];
+  const cfHr = custosFixos.addRow(cfHeaders);
+  cfHr.eachCell(cell => {
+    cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.darkGray } };
+  });
+
+  custosFixos.getColumn(1).width = 40;
+  custosFixos.getColumn(2).width = 25;
+
+  DEMO_FIXED_COSTS.forEach(cf => {
+    const row = custosFixos.addRow([cf.description, cf.value]);
+    row.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.inputBg } };
+    row.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.inputBg } };
+    row.getCell(2).numFmt = '"R$ "#,##0.00';
+    applyBorder(row.getCell(1));
+    applyBorder(row.getCell(2));
+  });
+
+  const totalRow = custosFixos.addRow(['TOTAL CUSTOS FIXOS', { formula: 'SUM(B5:B25)' }]);
+  totalRow.font = { bold: true };
+  totalRow.getCell(2).numFmt = '"R$ "#,##0.00';
+  totalRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.autoBg } };
+
+  // 4. FICHAS TÉCNICAS (Simplified example for demonstration)
+  const fichas = workbook.addWorksheet('FICHAS TÉCNICAS');
+  setupProfessionalStyles(workbook, fichas);
+  addHeader(fichas, 'FICHAS TÉCNICAS', 'Custo detalhado por produto vendido');
+
+  fichas.getColumn(1).width = 30;
+  fichas.getColumn(2).width = 15;
+  fichas.getColumn(3).width = 15;
+  fichas.getColumn(4).width = 20;
+  fichas.getColumn(5).width = 20;
+
+  let currentY = 5;
+  DEMO_PRODUCTS.slice(0, 5).forEach(prod => {
+    const titleRow = fichas.addRow([prod.name.toUpperCase()]);
+    titleRow.getCell(1).font = { bold: true, size: 14, color: { argb: BRAND_COLORS.red } };
+    
+    const hRow = fichas.addRow(['INGREDIENTE', 'QTD', 'UNIDADE', 'CUSTO UNIT (R$)', 'TOTAL (R$)']);
+    hRow.eachCell(cell => {
+      cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.gray } };
+    });
+
+    prod.ingredients.forEach(ing => {
+      // Find index of ingredient in INSUMOS sheet for formula
+      const insumoIdx = DEMO_INSUMOS.findIndex(i => i.id === ing.id);
+      const formulaRow = insumoIdx + 6;
+      const insumo = DEMO_INSUMOS[insumoIdx];
+
+      const r = fichas.addRow([
+        insumo.name, 
+        ing.qty, 
+        insumo.unit === 'Kg' ? 'g' : (insumo.unit === 'Garrafa' ? 'ml' : 'un'),
+        { formula: `INSUMOS!J${formulaRow}` },
+        { formula: `B${fichas.rowCount}*D${fichas.rowCount}` }
+      ]);
+      r.getCell(4).numFmt = '"R$ "#,##0.0000';
+      r.getCell(5).numFmt = '"R$ "#,##0.00';
+    });
+
+    const totalProdRow = fichas.addRow(['', '', '', 'CUSTO TOTAL:', { formula: `SUM(E${fichas.rowCount - prod.ingredients.length + 1}:E${fichas.rowCount})` }]);
+    totalProdRow.getCell(4).font = { bold: true };
+    totalProdRow.getCell(5).font = { bold: true };
+    totalProdRow.getCell(5).numFmt = '"R$ "#,##0.00';
+    fichas.addRow([]);
+  });
 
   const buffer = await workbook.xlsx.writeBuffer();
   saveAs(new Blob([buffer]), 'planilha-custos-espetinho.xlsx');
@@ -132,69 +202,122 @@ export const generateCostSpreadsheet = async () => {
 export const generatePricingCalculator = async () => {
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('CALCULADORA');
-  
-  sheet.columns = [{ width: 30 }, { width: 25 }, { width: 40 }];
-  
-  sheet.addRow(['CALCULADORA DE PREÇO DE VENDA PROFISSIONAL']).font = { bold: true, size: 16, color: { argb: FIRE_COLOR } };
-  sheet.addRow([]);
-  
-  // Settings Section
-  sheet.addRow(['CONFIGURAÇÕES']).font = { bold: true };
-  sheet.addRow(['Margem de Lucro Desejada (%)', 40]).getCell(2).numFmt = '0"%"';
-  sheet.addRow(['Impostos (%)', 6]).getCell(2).numFmt = '0"%"';
-  sheet.addRow(['Taxa de Cartão/App (%)', 12]).getCell(2).numFmt = '0"%"';
-  sheet.addRow([]);
-  
-  // Product Section
-  sheet.addRow(['CÁLCULO POR PRODUTO']).font = { bold: true };
-  sheet.addRow(['Custo dos Ingredientes (R$)', 4.50]).getCell(2).numFmt = '"R$ "#,##0.00';
-  sheet.addRow(['Custo Operacional Estimado (R$)', 1.20]).getCell(2).numFmt = '"R$ "#,##0.00';
-  sheet.addRow(['Custo de Embalagem (R$)', 0.50]).getCell(2).numFmt = '"R$ "#,##0.00';
-  
-  sheet.addRow([]);
-  
-  // Calculations
-  const markupRow = sheet.addRow(['MARKUP CALCULADO', { formula: '1/((100-(B4+B5+B6))/100)' }]);
+  setupProfessionalStyles(workbook, sheet);
+  addHeader(sheet, 'CALCULADORA DE PRECIFICAÇÃO', 'Encontre o preço de venda ideal com base em suas margens');
+
+  sheet.getColumn(1).width = 40;
+  sheet.getColumn(2).width = 25;
+  sheet.getColumn(3).width = 50;
+
+  const sections = [
+    { title: '1. PREMISSAS DE VENDA', items: [
+      ['Margem de Lucro Desejada (%)', 45, 'Quanto você quer que sobre livre no bolso'],
+      ['Impostos / DAS (%)', 6, 'Percentual do seu regime tributário'],
+      ['Comissão / Taxas Apps (%)', 12, 'Taxas de iFood, Rappi ou cartões'],
+      ['Fundo de Reserva / Investimento (%)', 5, 'Para manutenção e crescimento']
+    ]},
+    { title: '2. CUSTO DO PRODUTO', items: [
+      ['Custo dos Ingredientes (R$)', 4.85, 'Busque o total na sua Ficha Técnica'],
+      ['Embalagens e Descartáveis (R$)', 0.95, 'Sacos, marmitas, guardanapos'],
+      ['Custo Operacional Variável (R$)', 1.50, 'Carvão, gás, entrega por unidade']
+    ]}
+  ];
+
+  let currentY = 5;
+  sections.forEach(sec => {
+    const head = sheet.addRow([sec.title]);
+    head.font = { bold: true, color: { argb: BRAND_COLORS.red } };
+    
+    sec.items.forEach(item => {
+      const r = sheet.addRow([item[0], item[1], item[2]]);
+      r.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.inputBg } };
+      r.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.inputBg } };
+      r.getCell(3).font = { size: 9, color: { argb: BRAND_COLORS.gray } };
+      
+      if (item[0].includes('%')) r.getCell(2).numFmt = '0"%"';
+      else r.getCell(2).numFmt = '"R$ "#,##0.00';
+      applyBorder(r.getCell(1));
+      applyBorder(r.getCell(2));
+    });
+    sheet.addRow([]);
+  });
+
+  const calcHead = sheet.addRow(['3. RESULTADOS CALCULADOS']);
+  calcHead.font = { bold: true, color: { argb: BRAND_COLORS.red } };
+
+  const markupRow = sheet.addRow(['MARKUP (Multiplicador)', { formula: 'IFERROR(1/((100-(B6+B7+B8+B9))/100), "—")' }]);
   markupRow.getCell(2).numFmt = '0.00';
-  
-  const priceRow = sheet.addRow(['PREÇO DE VENDA SUGERIDO', { formula: '(B9+B10+B11)*B14' }]);
-  priceRow.font = { bold: true, size: 12 };
-  priceRow.getCell(2).numFmt = '"R$ "#,##0.00';
-  priceRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DFF0D8' } };
-  
-  const profitRow = sheet.addRow(['LUCRO LÍQUIDO ESTIMADO (R$)', { formula: 'B15 * (B4/100)' }]);
+
+  sheet.addRow([]);
+  const suggestedPrice = sheet.addRow(['PREÇO DE VENDA SUGERIDO', { formula: 'IFERROR((B12+B13+B14)*B17, "—")' }]);
+  suggestedPrice.height = 35;
+  suggestedPrice.getCell(1).font = { bold: true, size: 14 };
+  suggestedPrice.getCell(2).font = { bold: true, size: 18, color: { argb: BRAND_COLORS.green } };
+  suggestedPrice.getCell(2).numFmt = '"R$ "#,##0.00';
+  suggestedPrice.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DFF0D8' } };
+
+  sheet.addRow([]);
+  const profitRow = sheet.addRow(['LUCRO LÍQUIDO ESTIMADO (R$)', { formula: 'IFERROR(B19 * (B6/100), "—")' }]);
+  profitRow.getCell(2).font = { bold: true };
   profitRow.getCell(2).numFmt = '"R$ "#,##0.00';
 
   const buffer = await workbook.xlsx.writeBuffer();
-  saveAs(new Blob([buffer]), 'calculadora-preco-espetinho.xlsx');
+  saveAs(new Blob([buffer]), 'calculadora-preco-venda.xlsx');
 };
 
 export const generateInventoryControl = async () => {
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('ESTOQUE');
-  
-  const headers = ['Item', 'Categoria', 'Estoque Mínimo', 'Estoque Atual', 'Unidade', 'Status'];
+  setupProfessionalStyles(workbook, sheet);
+  addHeader(sheet, 'CONTROLE DE ESTOQUE INTELIGENTE', 'Acompanhe suas quantidades e nunca deixe faltar nada');
+
+  const headers = ['ITEM', 'CATEGORIA', 'UNIDADE', 'ESTOQUE MÍNIMO', 'ESTOQUE ATUAL', 'VALOR UNIT (R$)', 'VALOR TOTAL (R$)', 'STATUS'];
   const hr = sheet.addRow(headers);
-  hr.font = { bold: true, color: { argb: 'FFFFFF' } };
-  hr.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: FIRE_COLOR } };
-  
+  hr.height = 25;
+  hr.eachCell(cell => {
+    cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.red } };
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  });
+
   sheet.columns = [
-    { width: 30 }, { width: 20 }, { width: 15 }, { width: 15 }, { width: 10 }, { width: 20 }
+    { width: 30 }, { width: 15 }, { width: 10 }, { width: 15 }, { width: 15 }, { width: 15 }, { width: 15 }, { width: 25 }
   ];
 
-  const data = [
-    ['Contra Filé', 'Carnes', 10, 5, 'Kg', null],
-    ['Carvão 4kg', 'Insumos', 5, 12, 'Saco', null],
-    ['Cerveja Lata', 'Bebidas', 48, 24, 'Un', null],
-    ['Arroz 5kg', 'Acompanhamentos', 2, 1, 'Pacote', null],
-  ];
+  const stockData = DEMO_INSUMOS.map((item, i) => {
+    // Generate some random realistic stock levels
+    const min = Math.ceil(item.buyQty * 5);
+    let current = Math.floor(Math.random() * (min * 3));
+    
+    // Force some "Reposição Urgente" situations
+    if (i === 0 || i === 12) current = min - 2;
+    
+    return [item.name, item.category, item.unit, min, current, (item.price/item.weight), null, null];
+  });
 
-  data.forEach((row, i) => {
-    const idx = i + 2;
+  stockData.forEach((row, i) => {
+    const rowIdx = i + 6;
     const r = sheet.addRow(row);
-    r.getCell(6).value = { 
-      formula: `IF(D${idx} < C${idx}, "🔴 REPOR URGENTE", IF(D${idx} < C${idx}*1.5, "🟡 ESTOQUE BAIXO", "🟢 OK"))` 
+    
+    r.eachCell((cell, colIdx) => {
+      applyBorder(cell);
+      if (colIdx === 4 || colIdx === 5) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.inputBg } };
+      else cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_COLORS.autoBg } };
+    });
+
+    r.getCell(6).numFmt = '"R$ "#,##0.00';
+    r.getCell(7).value = { formula: `E${rowIdx}*F${rowIdx}` };
+    r.getCell(7).numFmt = '"R$ "#,##0.00';
+
+    // Status Formula with conditional icons/colors via simple text for compatibility
+    r.getCell(8).value = { 
+      formula: `IF(E${rowIdx} < D${rowIdx}, "🚨 REPOSIÇÃO URGENTE", IF(E${rowIdx} < D${rowIdx}*1.5, "⚠️ ESTOQUE BAIXO", "✅ SAUDÁVEL"))` 
     };
+
+    // Conditional formatting (simulated via manual check for demo data or left for user)
+    if (row[4] < row[3]) {
+       r.getCell(8).font = { color: { argb: BRAND_COLORS.critical }, bold: true };
+    }
   });
 
   const buffer = await workbook.xlsx.writeBuffer();
