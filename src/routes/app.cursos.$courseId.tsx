@@ -421,8 +421,10 @@ function CoursePage() {
                             videoId={`module-${m.id}`}
                             src={m.video_url}
                             title={`Intro: ${m.title}`}
+                            isIntro={true}
                             className="w-full h-full scale-[1.01]"
                           />
+
                         </Suspense>
                         <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-fire/90 text-[8px] font-bold uppercase tracking-wider text-white">
                           Intro

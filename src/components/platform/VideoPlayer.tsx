@@ -9,6 +9,7 @@ interface VideoPlayerProps {
   videoId: string; // Used for saving progress
   onProgress?: (progress: number) => void;
   className?: string;
+  isIntro?: boolean;
 }
 
 export function VideoPlayer({ 
@@ -17,13 +18,33 @@ export function VideoPlayer({
   title, 
   videoId,
   onProgress,
-  className 
+  className,
+  isIntro = false
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showControls, setShowControls] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
+  
+  // Detection for mobile to hide UI on intro videos
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+      const isMobileUA = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+      const isSmallScreen = window.innerWidth < 1024;
+      setIsMobileDevice(isMobileUA || isSmallScreen);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const hideAllUI = isIntro && isMobileDevice;
+
 
   const isYouTube = src.includes('youtube.com') || src.includes('youtu.be');
   const isGoogleDrive = src.includes('drive.google.com');
@@ -97,17 +118,24 @@ export function VideoPlayer({
   };
 
   if (isYouTube || isGoogleDrive) {
+    const embedUrl = getEmbedUrl(src);
+    const finalUrl = hideAllUI 
+      ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1`
+      : embedUrl;
+
     return (
       <div className={cn("relative aspect-[9/16] max-h-[85vh] w-full mx-auto bg-black rounded-xl overflow-hidden glass", className)}>
         <iframe
-          src={getEmbedUrl(src)}
+          src={finalUrl}
           className="absolute inset-0 w-[100.5%] h-[100.5%] -left-[0.25%] -top-[0.25%] object-cover border-0 scale-[1.12]"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         />
+        {hideAllUI && <div className="absolute inset-0 z-50 bg-transparent" onClick={togglePlay} />}
       </div>
     );
   }
+
 
   return (
     <div 
@@ -153,10 +181,12 @@ export function VideoPlayer({
       )}
 
       {/* Subtle Bottom Bar (Simplified) */}
-      <div className={cn(
-        "absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300 z-20",
-        showControls || !isPlaying ? "opacity-100" : "opacity-0"
-      )}>
+      {!hideAllUI && (
+        <div className={cn(
+          "absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300 z-20",
+          showControls || !isPlaying ? "opacity-100" : "opacity-0"
+        )}>
+
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
              <button onClick={togglePlay} className="text-white hover:text-fire transition">
@@ -184,7 +214,9 @@ export function VideoPlayer({
             </button>
           </div>
         </div>
-      </div>
+        </div>
+      )}
+
     </div>
   );
 }
