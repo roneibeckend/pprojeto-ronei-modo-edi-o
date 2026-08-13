@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, Loader2, Maximize, Volume2, VolumeX } from 'lucide-react';
+import { Play, Loader2, Maximize, Volume2, VolumeX, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface VideoPlayerProps {
   src: string;
@@ -169,7 +170,7 @@ export function VideoPlayer({
     autoplayTriedRef.current = false;
   }, [src]);
 
-  const tryAutoplay = () => {
+  const tryAutoplay = async () => {
     const video = videoRef.current;
     if (!video || !isIntro || autoplayTriedRef.current) return;
     
@@ -178,26 +179,39 @@ export function VideoPlayer({
     // Explicitly set muted properties on the DOM element for mobile reliability
     video.muted = true;
     video.defaultMuted = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
     setIsMuted(true);
     
     console.log(`[VideoPlayer:tryAutoplay] Attempting muted play for intro video: ${videoId}`);
     
-    const p = video.play();
-    if (p !== undefined) {
-      p.then(() => {
+    try {
+      // Ensure the video is loaded enough to play
+      if (video.readyState < 2) {
+        console.log(`[VideoPlayer:tryAutoplay] Video not ready (readyState=${video.readyState}), waiting for loadedmetadata...`);
+        return;
+      }
+
+      const p = video.play();
+      if (p !== undefined) {
+        await p;
         console.log(`[VideoPlayer:tryAutoplay] Playback started successfully for: ${videoId}`);
         setIsPlaying(true);
         setIsLoading(false);
-      }).catch((err) => {
-        console.error(`[VideoPlayer:tryAutoplay] Playback rejected for: ${videoId}`, {
-          name: err.name,
-          message: err.message,
-          readyState: video.readyState,
-          networkState: video.networkState
-        });
-        setIsPlaying(false);
-        setIsLoading(false);
+      }
+    } catch (err: any) {
+      console.error(`[VideoPlayer:tryAutoplay] Playback rejected for: ${videoId}`, {
+        name: err.name,
+        message: err.message,
+        readyState: video.readyState,
+        networkState: video.networkState
       });
+      setIsPlaying(false);
+      setIsLoading(false);
+      
+      // Fallback: if it was a NotAllowedError, it might be due to a weird state where
+      // the browser thinks it's not muted or doesn't have a gesture.
+      // We'll keep it paused and let the user tap.
     }
   };
 
@@ -314,15 +328,26 @@ export function VideoPlayer({
           if (video && video.readyState < video.HAVE_FUTURE_DATA) setIsLoading(true);
         }}
         onStalled={() => {
-          // Do not call load() here: it restarts the request and loops on mobile.
-          console.warn('Video stalled; letting the browser resume the range request');
+          console.warn('[VideoPlayer:onStalled] Video stalled, attempting to resume...');
+          const video = videoRef.current;
+          if (video && video.paused && isPlaying) {
+             video.play().catch(() => {});
+          }
         }}
-        onError={() => {
+        onSuspend={() => {
+          console.log('[VideoPlayer:onSuspend] Video suspend - playback might be throttled by browser');
+        }}
+        onError={(e) => {
           setIsLoading(false);
-          setIsPlaying(false);
+          setIsPlaying(true); // Don't block the UI if it's just a temporary error
           const video = videoRef.current;
           if (video?.error) {
             console.error('Video error code:', video.error.code, 'message:', video.error.message);
+            
+            // Critical error fallback: show the poster or a message
+            if (video.error.code === 4) { // MEDIA_ERR_SRC_NOT_SUPPORTED
+               toast.error("Erro ao carregar o vídeo. Tente recarregar a página.");
+            }
           }
         }}
         onClick={useNativeControls ? undefined : (e) => {
@@ -336,7 +361,25 @@ export function VideoPlayer({
       {/* Loading Overlay */}
       {isLoading && !isPlaying && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-10 pointer-events-none">
-          <Loader2 className="w-8 h-8 animate-spin text-fire" />
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 animate-spin text-fire" />
+            <span className="text-white/70 text-xs font-medium animate-pulse">Carregando...</span>
+          </div>
+        </div>
+      )}
+
+      {/* Error Fallback */}
+      {videoRef.current?.error && !isLoading && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-20 p-6 text-center">
+          <AlertCircle className="w-12 h-12 text-fire mb-4" />
+          <h3 className="text-white font-bold mb-2">Ops! O vídeo não carregou</h3>
+          <p className="text-white/60 text-sm mb-6">Tente recarregar a página ou verifique sua conexão.</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="btn-fire px-6 py-2 text-sm"
+          >
+            Recarregar
+          </button>
         </div>
       )}
 
