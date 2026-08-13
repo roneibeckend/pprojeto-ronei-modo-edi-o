@@ -5,7 +5,7 @@ import { createAsaasPaymentLink } from "@/lib/asaas.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/platform/Shell";
 import { ProgressSummary } from "@/components/platform/ProgressSummary";
 import { IMG } from "@/lib/platform-data";

@@ -5,7 +5,7 @@ import { createAsaasPaymentLink } from "@/lib/asaas.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IMG, student } from "@/lib/platform-data";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +23,8 @@ export const Route = createFileRoute("/app/")({
 
 function Dashboard() {
   const { isEnrolledInCourse, isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
+  const { syncWithDatabase } = usePostPurchaseOfferStore();
+
   useEffect(() => {
     syncWithDatabase();
   }, [syncWithDatabase]);
