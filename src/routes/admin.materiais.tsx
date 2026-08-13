@@ -29,7 +29,7 @@ function AdminMaterialsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState<string | null>(null);
 
   const { data: materials = [], isLoading } = useQuery({
     queryKey: ["platform-materials-admin"],
@@ -67,16 +67,16 @@ function AdminMaterialsPage() {
     }
   });
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, materialId?: string) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
-      setUploading(true);
+      setUploading(materialId || "new");
       const fileExt = file.name.split('.').pop();
       // Se estiver editando um item existente, podemos manter o mesmo nome ou usar um padrão que facilite a identificação
-      const fileName = editingItem?.id 
-        ? `${editingItem.id}-${Date.now()}.${fileExt}`
+      const fileName = materialId 
+        ? `${materialId}-${Date.now()}.${fileExt}`
         : `${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `${fileName}`;
 
@@ -92,12 +92,20 @@ function AdminMaterialsPage() {
         .from(bucketName)
         .getPublicUrl(filePath);
 
-      setEditingItem({ ...editingItem, file_url: publicUrl, type: fileExt?.toUpperCase() || "FILE" });
+      if (materialId) {
+        // Se estiver atualizando um material específico diretamente no card
+        const material = materials.find((m: any) => m.id === materialId);
+        if (material) {
+          upsertMutation.mutate({ ...material, file_url: publicUrl });
+        }
+      } else {
+        setEditingItem({ ...editingItem, file_url: publicUrl, type: fileExt?.toUpperCase() || "FILE" });
+      }
       toast.success("Arquivo enviado com sucesso!");
     } catch (error: any) {
       toast.error("Erro no upload: " + error.message);
     } finally {
-      setUploading(false);
+      setUploading(null);
     }
   };
 
@@ -168,17 +176,31 @@ function AdminMaterialsPage() {
                 <p className="mt-1 text-xs text-white/40 line-clamp-2">{m.description || "Sem descrição."}</p>
               </div>
 
-              <div className="mt-4 flex items-center gap-2">
+              <div className="mt-4 flex flex-col gap-2">
                 {m.file_url ? (
-                  <a href={m.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-white/5 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition">
-                    <Download className="h-3 w-3" /> Download
-                  </a>
+                  <div className="flex gap-2">
+                    <a href={m.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-white/5 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition">
+                      <Download className="h-3 w-3" /> Download
+                    </a>
+                    <label className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-white/10 transition cursor-pointer font-bold text-[10px] uppercase tracking-widest ${uploading === m.id ? 'opacity-50 cursor-wait' : 'bg-white/5 hover:bg-white/10'}`}>
+                      {uploading === m.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+                      Atualizar
+                      <input type="file" disabled={!!uploading} className="hidden" onChange={(e) => handleFileUpload(e, m.id)} />
+                    </label>
+                  </div>
                 ) : m.external_url ? (
                   <a href={m.external_url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-white/5 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition text-[#ff6a00]">
                     <ExternalLink className="h-3 w-3" /> Acessar Link
                   </a>
                 ) : (
-                  <span className="flex-1 text-center py-2 text-[10px] font-bold uppercase tracking-widest text-white/10">Sem Arquivo</span>
+                  <div className="flex gap-2">
+                    <span className="flex-1 text-center py-2 text-[10px] font-bold uppercase tracking-widest text-white/10">Sem Arquivo</span>
+                    <label className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-white/10 transition cursor-pointer font-bold text-[10px] uppercase tracking-widest ${uploading === m.id ? 'opacity-50 cursor-wait' : 'bg-[#ff6a00]/10 text-[#ff6a00] hover:bg-[#ff6a00]/20'}`}>
+                      {uploading === m.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
+                      Upload
+                      <input type="file" disabled={!!uploading} className="hidden" onChange={(e) => handleFileUpload(e, m.id)} />
+                    </label>
+                  </div>
                 )}
               </div>
             </div>
@@ -241,10 +263,10 @@ function AdminMaterialsPage() {
                       placeholder="Upload de arquivo..."
                       className="flex-1 bg-white/5 border border-white/10 p-3 rounded-xl text-xs outline-none text-white/40 cursor-not-allowed" 
                     />
-                    <label className={`flex items-center justify-center gap-2 px-4 rounded-xl border border-white/10 transition cursor-pointer font-bold text-xs uppercase tracking-widest ${uploading ? 'opacity-50 cursor-wait' : 'bg-white/5 hover:bg-white/10'}`}>
-                      {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                    <label className={`flex items-center justify-center gap-2 px-4 rounded-xl border border-white/10 transition cursor-pointer font-bold text-xs uppercase tracking-widest ${uploading === "new" ? 'opacity-50 cursor-wait' : 'bg-white/5 hover:bg-white/10'}`}>
+                      {uploading === "new" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                       {editingItem?.file_url ? "Substituir" : "Upload"}
-                      <input type="file" disabled={uploading} className="hidden" onChange={handleFileUpload} />
+                      <input type="file" disabled={!!uploading} className="hidden" onChange={(e) => handleFileUpload(e)} />
                     </label>
                   </div>
                   
@@ -264,7 +286,7 @@ function AdminMaterialsPage() {
 
               <div className="pt-6 flex gap-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3.5 rounded-xl bg-white/5 font-bold hover:bg-white/10 transition uppercase tracking-widest text-[10px] text-white/60">Cancelar</button>
-                <button type="submit" disabled={upsertMutation.isPending || uploading} className="flex-1 py-3.5 rounded-xl bg-[#ff6a00] text-black font-bold disabled:opacity-50 hover:brightness-110 active:scale-[0.98] transition uppercase tracking-widest text-[10px]">
+                <button type="submit" disabled={upsertMutation.isPending || !!uploading} className="flex-1 py-3.5 rounded-xl bg-[#ff6a00] text-black font-bold disabled:opacity-50 hover:brightness-110 active:scale-[0.98] transition uppercase tracking-widest text-[10px]">
                   {upsertMutation.isPending ? "Salvando..." : "Salvar Material"}
                 </button>
               </div>
