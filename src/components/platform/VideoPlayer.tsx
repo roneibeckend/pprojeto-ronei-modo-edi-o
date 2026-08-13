@@ -156,36 +156,75 @@ export function VideoPlayer({
   }, [src, videoId, isYouTube, isGoogleDrive]);
 
 
+  // Intro videos: try a muted autoplay once the media is ready.
+  // If the browser blocks it (mobile policies), fall back to tap-to-play.
+  const autoplayTriedRef = useRef(false);
+  useEffect(() => {
+    autoplayTriedRef.current = false;
+  }, [src]);
+
+  const tryAutoplay = () => {
+    const video = videoRef.current;
+    if (!video || !isIntro || autoplayTriedRef.current) return;
+    autoplayTriedRef.current = true;
+    video.muted = true;
+    setIsMuted(true);
+    const p = video.play();
+    if (p !== undefined) {
+      p.then(() => {
+        setIsPlaying(true);
+        setIsLoading(false);
+      }).catch((err) => {
+        console.warn('Autoplay blocked, waiting for user interaction:', err?.name || err);
+        setIsPlaying(false);
+        setIsLoading(false);
+      });
+    }
+  };
+
   const togglePlay = (e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
       e.stopPropagation();
       e.preventDefault();
     }
-    
+
     const video = videoRef.current;
-    if (video) {
-      if (video.paused) {
-        // Critical for mobile: call play() directly in the user interaction event
-        // Don't await it or do async work before calling it to avoid browser blocks
-        const playPromise = video.play();
-        
-        if (playPromise !== undefined) {
-          playPromise.then(() => {
+    if (!video) return;
+
+    if (video.paused) {
+      // Critical for mobile: call play() synchronously inside the user gesture.
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
             setIsPlaying(true);
             setIsLoading(false);
-          }).catch(err => {
-            console.error("Playback failed:", err);
-            // If it failed because of lack of user interaction (even though we are in one),
-            // sometimes retrying after a tiny delay helps, but usually it's better to just stay paused.
-            setIsPlaying(false);
+          })
+          .catch((err) => {
+            // Some mobile browsers only allow unmuted playback after a gesture on
+            // the media element itself; retry muted as a last resort.
+            console.error('Playback failed:', err);
+            video.muted = true;
+            setIsMuted(true);
+            video.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
           });
-        }
-      } else {
-        video.pause();
-        setIsPlaying(false);
       }
-      handleInteraction();
+    } else {
+      video.pause();
+      setIsPlaying(false);
     }
+    handleInteraction();
+  };
+
+  const unmute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = false;
+    video.volume = 1;
+    setIsMuted(false);
+    if (video.paused) video.play().catch(() => {});
+    handleInteraction();
   };
 
 
@@ -210,11 +249,14 @@ export function VideoPlayer({
   }
 
 
+  // On phones/tablets we hand over to the native controls: they are touch-friendly,
+  // support fullscreen/scrubbing and never fight the browser's gesture requirements.
+  const useNativeControls = isMobileDevice;
+
   return (
     <div 
-      className={cn("relative group aspect-[9/16] max-h-[85vh] mx-auto bg-black rounded-xl overflow-hidden glass cursor-pointer", className)}
+      className={cn("relative group aspect-[9/16] max-h-[85vh] mx-auto bg-black rounded-xl overflow-hidden glass", !useNativeControls && "cursor-pointer", className)}
       onMouseMove={handleInteraction}
-      onClick={handleInteraction}
       onTouchStart={handleInteraction}
     >
 
@@ -222,19 +264,24 @@ export function VideoPlayer({
         ref={videoRef}
         src={src}
         poster={poster}
-        className="w-full h-full object-cover scale-[1.12]"
+        className={cn("w-full h-full", useNativeControls ? "object-contain" : "object-cover scale-[1.12]")}
         playsInline
         webkit-playsinline="true"
         x5-playsinline="true"
-        controls={false}
+        controls={useNativeControls}
         preload="metadata"
         controlsList="nodownload"
-        muted={isMuted || isIntro}
-        autoPlay={isIntro}
+        muted={isMuted}
         loop={false}
         onLoadStart={() => setIsLoading(true)}
-        onLoadedMetadata={() => setIsLoading(false)}
-        onCanPlay={() => setIsLoading(false)}
+        onLoadedMetadata={() => {
+          setIsLoading(false);
+          tryAutoplay();
+        }}
+        onCanPlay={() => {
+          setIsLoading(false);
+          tryAutoplay();
+        }}
         onPlaying={() => {
           setIsPlaying(true);
           setIsLoading(false);
@@ -257,7 +304,7 @@ export function VideoPlayer({
             console.error('Video error code:', video.error.code, 'message:', video.error.message);
           }
         }}
-        onClick={(e) => {
+        onClick={useNativeControls ? undefined : (e) => {
           e.stopPropagation();
           togglePlay(e);
         }}
@@ -265,46 +312,60 @@ export function VideoPlayer({
 
 
       {/* Loading Overlay */}
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-10">
+      {isLoading && !isPlaying && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-10 pointer-events-none">
           <Loader2 className="w-8 h-8 animate-spin text-fire" />
         </div>
       )}
 
-      {/* Play/Pause Center Button Overlay */}
-      <div 
-        className={cn(
-          "absolute inset-0 flex items-center justify-center bg-black/10 transition-all duration-300 z-30",
-          (!isPlaying || showControls) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
-        )}
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          togglePlay(e);
-        }}
+      {/* Tap-to-play overlay: on mobile it only shows while the video has never started,
+          so it never blocks the native controls. */}
+      {(!useNativeControls || !isPlaying) && (
+        <div
+          className={cn(
+            "absolute inset-0 flex items-center justify-center bg-black/10 transition-all duration-300 z-30",
+            useNativeControls
+              ? (isPlaying ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible")
+              : ((!isPlaying || showControls) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none")
+          )}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            togglePlay(e);
+          }}
+        >
+          {!isLoading ? (
+            <div className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition active:scale-95 hover:scale-110 pointer-events-none">
+              {isPlaying ? (
+                <div className="flex gap-1.5">
+                  <div className="w-2 h-8 bg-white rounded-full" />
+                  <div className="w-2 h-8 bg-white rounded-full" />
+                </div>
+              ) : (
+                <Play className="w-8 h-8 text-white ml-1 fill-current" />
+              )}
+            </div>
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-fire/20 flex items-center justify-center pointer-events-none">
+              <Loader2 className="w-10 h-10 animate-spin text-fire" />
+            </div>
+          )}
+        </div>
+      )}
 
-      >
-        {!isLoading ? (
-          <div className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition active:scale-95 hover:scale-110 pointer-events-none">
-            {isPlaying ? (
-              <div className="flex gap-1.5">
-                <div className="w-2 h-8 bg-white rounded-full" />
-                <div className="w-2 h-8 bg-white rounded-full" />
-              </div>
-            ) : (
-              <Play className="w-8 h-8 text-white ml-1 fill-current" />
-            )}
-          </div>
-        ) : (
-          <div className="w-20 h-20 rounded-full bg-fire/20 flex items-center justify-center">
-            <Loader2 className="w-10 h-10 animate-spin text-fire" />
-          </div>
-        )}
-      </div>
+      {/* Muted playback started automatically: offer a touch-friendly way to enable sound */}
+      {isMuted && isPlaying && (
+        <button
+          onClick={unmute}
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full bg-black/60 px-4 py-2.5 text-sm font-bold text-white backdrop-blur-sm transition active:scale-95"
+        >
+          <VolumeX className="w-4 h-4" />
+          Toque para ativar o som
+        </button>
+      )}
 
-
-      {/* Controls Overlay (Volume/Fullscreen) */}
-      {!hideAllUI && showControls && (
+      {/* Desktop-only extra controls */}
+      {!useNativeControls && showControls && (
         <div className="absolute top-4 right-4 flex flex-col items-center gap-3 z-40">
             <button 
               onClick={(e) => {
