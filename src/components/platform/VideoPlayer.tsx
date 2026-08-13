@@ -140,12 +140,22 @@ export function VideoPlayer({
     const video = videoRef.current;
     if (video) {
       if (video.paused) {
-        video.play().catch(err => {
+        // Force reload if stalled or in a bad state
+        if (video.readyState === 0) {
+          video.load();
+        }
+        
+        video.play().then(() => {
+          setIsPlaying(true);
+        }).catch(err => {
           console.error("Erro ao reproduzir vídeo:", err);
-          // Fallback para quando o play falha (ex: política de autoplay do browser)
+          // If interaction failed, try unmuting if it was muted by intro logic
+          if (video.muted && !isMuted) {
+             video.muted = false;
+             video.play().catch(e => console.error("Second attempt failed:", e));
+          }
           setIsPlaying(false);
         });
-        setIsPlaying(true);
       } else {
         video.pause();
         setIsPlaying(false);
