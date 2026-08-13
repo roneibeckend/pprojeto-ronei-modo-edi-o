@@ -31,8 +31,8 @@ export const upsertMaterial = createServerFn({ method: "POST" })
     title: z.string(),
     description: z.string().optional(),
     type: z.string(),
-    file_url: z.string().optional(),
-    external_url: z.string().optional(),
+    file_url: z.string().nullable().optional(),
+    external_url: z.string().nullable().optional(),
     category: z.string().nullable().optional(),
     is_active: z.boolean().default(true),
   }).parse(data))

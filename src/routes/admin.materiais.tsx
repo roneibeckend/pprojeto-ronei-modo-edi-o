@@ -143,7 +143,7 @@ function AdminMaterialsPage() {
         </div>
         <button 
           onClick={() => { 
-            setEditingItem({ title: "", description: "", type: "XLSX", category: "", is_active: true }); 
+            setEditingItem({ title: "", description: "", type: "XLSX", category: "", file_url: null, external_url: "", is_active: true }); 
             setIsModalOpen(true); 
           }}
           className="flex items-center justify-center gap-2 bg-[#ff6a00] px-4 py-2.5 rounded-xl text-sm font-bold text-black transition hover:brightness-110"
@@ -235,7 +235,16 @@ function AdminMaterialsPage() {
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition text-white/40 hover:text-white"><X className="h-5 w-5" /></button>
             </div>
             
-            <form onSubmit={(e) => { e.preventDefault(); upsertMutation.mutate(editingItem); }} className="space-y-5 text-left">
+            <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              const payload = {
+                ...editingItem,
+                external_url: editingItem.external_url || null,
+                file_url: editingItem.file_url || null,
+                category: editingItem.category || null
+              };
+              upsertMutation.mutate(payload); 
+            }} className="space-y-5 text-left">
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do Material</label>
                 <input required value={editingItem?.title || ""} onChange={e => setEditingItem({...editingItem, title: e.target.value})} placeholder="Ex: Planilha de Custos v2.0" className="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-sm outline-none focus:border-[#ff6a00] transition text-white" />
