@@ -90,17 +90,6 @@ export function useProgress() {
             .eq("item_id", moduleId)
             .is("completed_at", null);
         }
-
-        // Similar for course...
-        const { data: allLessons } = await supabase
-          .from("course_lessons")
-          .select("id, module_id")
-          .filter("module_id", "in", `(select id from course_modules where course_id = '${courseId}')`);
-        
-        // Note: The above filter is complex for PostgREST without a specific view, 
-        // usually we'd do this via a RPC for cleaner logic. 
-        // Let's assume the DB trigger handle_item_completion will do the heavy lifting 
-        // once we mark it as completed.
       }
     },
     onSuccess: () => {
@@ -205,22 +194,43 @@ export function useProgress() {
     staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data, error } = await supabase
-        .from("progress_tracking")
-        .select("item_type, started_at, completed_at")
-        .eq("user_id", user.id);
-      
-      if (error) throw error;
-      return data || [];
+      // Fetching all necessary data to calculate progress
+      const [
+        { data: allLessons, error: errL },
+        { data: allChapters, error: errC },
+        { data: progressTracking, error: errT }
+      ] = await Promise.all([
+        supabase.from("course_lessons").select("id"),
+        supabase.from("ebook_chapters").select("id"),
+        supabase.from("progress_tracking").select("item_type, started_at, completed_at")
+      ]);
+
+      if (errL || errC || errT) throw new Error("Erro ao buscar progresso global");
+
+      return {
+        lessonCount: allLessons?.length || 0,
+        chapterCount: allChapters?.length || 0,
+        tracking: progressTracking || []
+      };
     },
     enabled: !!user?.id,
   });
 
-  const startedCount = globalProgressTracking?.filter(t => 
+  const totalLessons = globalProgressTracking?.lessonCount || 0;
+  const totalChapters = globalProgressTracking?.chapterCount || 0;
+  
+  const completedLessons = lessonProgress?.filter(p => p.is_completed).length || 0;
+  const completedChapters = ebookProgress?.filter(p => !!p.completed_at).length || 0;
+
+  const totalCompleted = completedLessons + completedChapters;
+  const totalItems = totalLessons + totalChapters;
+  const totalProgress = totalItems > 0 ? Math.round((totalCompleted / totalItems) * 100) : 0;
+
+  const startedCount = globalProgressTracking?.tracking?.filter(t => 
     (t.item_type === 'course' || t.item_type === 'ebook') && !!t.started_at
   ).length || 0;
 
-  const finishedCount = globalProgressTracking?.filter(t => 
+  const finishedCount = globalProgressTracking?.tracking?.filter(t => 
     (t.item_type === 'course' || t.item_type === 'ebook') && !!t.completed_at
   ).length || 0;
 
@@ -237,6 +247,7 @@ export function useProgress() {
     completeChapter: completeChapterMutation.mutate,
 
     // Global
+    totalProgress,
     startedCount,
     finishedCount,
     isLoading: isLoadingLessonProgress || isLoadingEbookProgress || isLoadingGlobalProgress
