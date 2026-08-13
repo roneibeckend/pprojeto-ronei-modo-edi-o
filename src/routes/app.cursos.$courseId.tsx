@@ -228,6 +228,25 @@ function CoursePage() {
     return flat.length > 0 ? flat[0].id : undefined;
   });
 
+  // Prefetch next lesson video
+  useEffect(() => {
+    if (!activeId || !flat.length) return;
+    
+    const currentIndex = flat.findIndex((l: any) => l.id === activeId);
+    const nextLesson = flat[currentIndex + 1];
+    
+    if (nextLesson?.video_url && !nextLesson.video_url.includes('youtube') && !nextLesson.video_url.includes('drive')) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'video';
+      link.href = nextLesson.video_url;
+      document.head.appendChild(link);
+      return () => {
+        document.head.removeChild(link);
+      };
+    }
+  }, [activeId, flat]);
+
   useEffect(() => {
     if (activeId) {
       localStorage.setItem(`course_last_watched_${course.id}`, activeId);
