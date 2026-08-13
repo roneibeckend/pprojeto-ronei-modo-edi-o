@@ -25,6 +25,7 @@ import {
   ChevronRight,
   Settings,
   Wallet,
+  Video,
 } from "lucide-react";
 import { student } from "@/lib/platform-data";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,6 +60,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
     title: "Aprendizado",
     items: [
       { to: "/app/cursos", label: "Meus cursos", icon: GraduationCap },
+      { to: "/app/ao-vivo", label: "Ao Vivo", icon: Video },
       { to: "/app/progresso", label: "Ranking", icon: TrendingUp },
     ],
   },
