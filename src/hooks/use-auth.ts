@@ -12,6 +12,25 @@ export function useAuth() {
     },
   });
 
+  const { data: profile, isLoading: isLoadingProfile } = useQuery({
+    queryKey: ["user-profile", session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return null;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error fetching profile:", error);
+        return null;
+      }
+      return data;
+    },
+    enabled: !!session?.user?.id,
+  });
+
   const { data: userRole, isLoading: isLoadingRole } = useQuery({
     queryKey: ["user-role", session?.user?.id],
     queryFn: async () => {
@@ -54,10 +73,11 @@ export function useAuth() {
     session,
     user: session?.user ?? null,
     role: userRole,
+    profile,
     isAdmin: userRole === "admin",
     isManager: userRole === "manager",
     isAgent: userRole === "agent",
     hasModule,
-    isLoading: isLoadingSession || isLoadingRole || isLoadingPermissions,
+    isLoading: isLoadingSession || isLoadingRole || isLoadingPermissions || isLoadingProfile,
   };
 }
