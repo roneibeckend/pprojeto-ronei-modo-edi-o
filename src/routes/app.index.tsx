@@ -52,8 +52,30 @@ function Dashboard() {
       if (ebooksRes.error) throw ebooksRes.error;
 
       const items = [
-        ...(coursesRes.data || []).map(c => ({ ...c, type: 'course' as const })),
-        ...(ebooksRes.data || []).map(e => ({ ...e, type: 'ebook' as const })),
+        ...(coursesRes.data || []).map(c => ({ 
+          id: c.id,
+          title: c.title,
+          description: c.description,
+          price: c.price,
+          cover_url: c.cover_url,
+          created_at: c.created_at,
+          badge: c.badge,
+          is_locked: c.is_locked,
+          status: c.status,
+          type: 'course' as const 
+        })),
+        ...(ebooksRes.data || []).map(e => ({ 
+          id: e.id,
+          title: e.title,
+          description: e.description,
+          price: e.price,
+          cover_url: e.cover_url,
+          created_at: e.created_at,
+          badge: e.badge,
+          is_locked: e.is_locked,
+          status: e.status,
+          type: 'ebook' as const 
+        })),
       ];
 
       return items.sort((a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime());
