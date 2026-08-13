@@ -95,3 +95,23 @@ export const deleteMaterial = createServerFn({ method: "POST" })
     return { success: true };
   });
 
+export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: any) => z.object({ filePath: z.string() }).parse(data))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    // filePath is expected to be just the name of the file in the 'platform-materials' bucket
+    const { data: signedData, error } = await supabaseAdmin.storage
+      .from("platform-materials")
+      .createSignedUrl(data.filePath, 60 * 5); // 5 minutes
+
+    if (error) {
+      console.error("Erro ao gerar URL assinada:", error);
+      throw error;
+    }
+
+    return { url: signedData.signedUrl };
+  });
+
+

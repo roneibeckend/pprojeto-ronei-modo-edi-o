@@ -21,7 +21,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { upsertMaterial, deleteMaterial } from "@/lib/materials.functions";
+import { upsertMaterial, deleteMaterial, getMaterialDownloadUrl } from "@/lib/materials.functions";
+
 
 export const Route = createFileRoute("/admin/materiais")({
   head: () => ({ meta: [{ title: "Gestão de Materiais · Admin" }] }),
@@ -38,6 +39,8 @@ function AdminMaterialsPage() {
   const [uploading, setUploading] = useState<string | null>(null);
   const saveMaterial = useServerFn(upsertMaterial);
   const removeMaterial = useServerFn(deleteMaterial);
+  const fetchDownloadUrl = useServerFn(getMaterialDownloadUrl);
+
 
   useEffect(() => {
     if (!isLoadingAuth && role === "student") {
@@ -196,9 +199,22 @@ function AdminMaterialsPage() {
               <div className="mt-4 flex flex-col gap-2">
                 {m.file_url ? (
                   <div className="flex gap-2">
-                    <a href={m.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-white/5 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition">
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const urlParts = m.file_url.split('/');
+                          const fileName = urlParts[urlParts.length - 1];
+                          const { url } = await fetchDownloadUrl({ data: { filePath: fileName } });
+                          window.open(url, "_blank");
+                        } catch (err) {
+                          toast.error("Erro ao baixar arquivo.");
+                        }
+                      }}
+                      className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-white/5 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition"
+                    >
                       <Download className="h-3 w-3" /> Download
-                    </a>
+                    </button>
+
                     <label className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-white/10 transition cursor-pointer font-bold text-[10px] uppercase tracking-widest ${uploading === m.id || upsertMutation.isPending ? 'opacity-50 cursor-wait' : 'bg-white/5 hover:bg-white/10'}`}>
                       {uploading === m.id || (upsertMutation.isPending && upsertMutation.variables?.id === m.id) ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
 
