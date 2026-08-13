@@ -110,8 +110,8 @@ export function PostPurchaseOffer({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onProceedWithoutOffers()}>
-      <DialogContent className="max-w-2xl glass border-white/10 p-0 overflow-hidden sm:rounded-3xl w-[90vw] sm:w-full fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[85vh] overflow-y-auto outline-none z-[9999]">
-        <div className="relative p-6 sm:p-8">
+      <DialogContent className="max-w-2xl glass border-white/10 p-0 overflow-hidden sm:rounded-3xl w-[95vw] sm:w-full fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90vh] overflow-y-auto outline-none z-[9999] custom-scrollbar">
+        <div className="relative p-4 sm:p-8">
           <button 
             onClick={onProceedWithoutOffers}
             className="absolute right-4 top-4 text-white/40 hover:text-white transition-colors"
