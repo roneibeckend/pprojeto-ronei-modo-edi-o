@@ -116,11 +116,15 @@ export function VideoPlayer({
 
     // Timeout to prevent infinite loading if video data doesn't load
     const loadingTimeout = setTimeout(() => {
-      if (isLoading) {
-        console.warn("Video loading timeout reached, clearing loading state");
+      if (isLoading && video.networkState === video.NETWORK_IDLE && video.readyState < video.HAVE_FUTURE_DATA) {
+        console.warn("Video loading timeout reached, clearing loading state and attempting reload");
+        setIsLoading(false);
+        // Force a small reload if stuck in NETWORK_IDLE but not enough data
+        if (!isIntro) video.load(); 
+      } else if (isLoading) {
         setIsLoading(false);
       }
-    }, 20000); // Increased for slow mobile connections
+    }, 15000); // 15s is usually enough to see if it's going to work
 
     const handleTimeUpdate = () => {
       localStorage.setItem(`video_progress_${videoId}`, video.currentTime.toString());
@@ -208,7 +212,7 @@ export function VideoPlayer({
         controls={false}
         preload={isIntro ? "auto" : "metadata"}
         controlsList="nodownload"
-        muted={isIntro} 
+        muted={isMuted || isIntro} 
         autoPlay={isIntro}
         loop={false}
         onLoadStart={() => setIsLoading(true)}
@@ -223,11 +227,18 @@ export function VideoPlayer({
         onWaiting={() => setIsLoading(true)}
         onStalled={() => {
           console.warn("Video stalled, attempting recovery...");
-          // Don't call .load() here as it can cause loops. Just let it buffer.
+        }}
+        onSuspend={() => {
+          console.log("Video loading suspended");
         }}
         onError={(e) => {
           console.error("Video element error:", e);
           setIsLoading(false);
+          
+          const video = videoRef.current;
+          if (video?.error) {
+            console.error("Video error code:", video.error.code, "message:", video.error.message);
+          }
         }}
         onClick={(e) => {
           e.stopPropagation();
