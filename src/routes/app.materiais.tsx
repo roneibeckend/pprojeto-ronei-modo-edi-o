@@ -82,11 +82,11 @@ function MaterialsPage() {
     }
   };
 
-  const getIcon = (id: string, type: string) => {
+  const getIcon = (id: string, type: string, title?: string) => {
     if (["XLSX", "CSV", "ODS"].includes(type)) return <FileSpreadsheet className="h-6 w-6" />;
     if (type === "PDF") return <FileText className="h-6 w-6" />;
     if (type === "CANVA" || type === "PPTX") return <Presentation className="h-6 w-6" />;
-    if (id === "m7") return <Share2 className="h-6 w-6" />;
+    if (id === "m7" || title === "Artes para divulgação") return <Share2 className="h-6 w-6" />;
     return <Package className="h-6 w-6" />;
   };
 
@@ -106,7 +106,7 @@ function MaterialsPage() {
           <div key={m.id} className="glass card-tilt group flex flex-col rounded-2xl p-6 transition-all hover:border-fire/50">
             <div className="flex items-start justify-between gap-3">
               <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-fire/10 text-primary ring-1 ring-fire/20 transition-transform group-hover:scale-110">
-                {getIcon(m.id, m.type)}
+                {getIcon(m.id, m.type, m.title)}
               </div>
               <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                 {m.type}
