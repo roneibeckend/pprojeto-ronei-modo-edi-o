@@ -19,6 +19,51 @@ function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [userOrders, setUserOrders] = useState<any[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [newPhone, setNewPhone] = useState("");
+
+  const formatPhone = (value: string) => {
+    // Remove non-digits
+    const digits = value.replace(/\D/g, "");
+    
+    // Format: (XX) XXXXX-XXXX or (XX) XXXX-XXXX
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhone(e.target.value);
+    setNewPhone(formatted);
+  };
+
+  const handleSave = async () => {
+    if (!user) return;
+    
+    try {
+      setIsSaving(true);
+      
+      const { error } = await supabase
+        .from("profiles")
+        .update({ 
+          phone: newPhone,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      toast.success("Perfil atualizado com sucesso!");
+      setProfile(prev => prev ? { ...prev, phone: newPhone } : null);
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      toast.error("Erro ao atualizar perfil: " + (error.message || "Tente novamente."));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
 
   useEffect(() => {
     async function loadProfileData() {
