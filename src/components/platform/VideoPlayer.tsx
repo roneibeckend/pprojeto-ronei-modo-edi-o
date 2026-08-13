@@ -105,6 +105,11 @@ export function VideoPlayer({
     return url;
   };
 
+  // Keep latest onProgress without re-running the media effect
+  const onProgressRef = useRef(onProgress);
+  useEffect(() => { onProgressRef.current = onProgress; }, [onProgress]);
+
+  // Diagnostics + progress tracking. Runs only when the actual media changes.
   useEffect(() => {
     if (isYouTube || isGoogleDrive) {
       setIsLoading(false);
@@ -114,29 +119,42 @@ export function VideoPlayer({
     const video = videoRef.current;
     if (!video) return;
 
-    // Timeout to prevent infinite loading if video data doesn't load
-    const loadingTimeout = setTimeout(() => {
-      if (isLoading && video.networkState === video.NETWORK_IDLE && video.readyState < video.HAVE_FUTURE_DATA) {
-        console.warn("Video loading timeout reached, clearing loading state and attempting reload");
-        setIsLoading(false);
-        // Force a small reload if stuck in NETWORK_IDLE but not enough data
-        if (!isIntro) video.load(); 
-      } else if (isLoading) {
-        setIsLoading(false);
-      }
-    }, 15000); // 15s is usually enough to see if it's going to work
+    const log = (event: string) => {
+      console.log(
+        `[VideoPlayer:${event}] readyState=${video.readyState} networkState=${video.networkState} ` +
+        `t=${video.currentTime.toFixed(2)} dur=${Number.isFinite(video.duration) ? video.duration.toFixed(2) : 'NaN'} ` +
+        `buffered=${video.buffered.length ? `${video.buffered.start(0).toFixed(2)}-${video.buffered.end(video.buffered.length - 1).toFixed(2)}` : 'none'}`
+      );
+    };
+
+    const diagnosticEvents = [
+      'loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'canplay',
+      'canplaythrough', 'play', 'playing', 'pause', 'waiting', 'stalled',
+      'suspend', 'seeking', 'seeked', 'ended', 'error', 'abort', 'emptied',
+    ];
+    const listeners = diagnosticEvents.map((name) => {
+      const fn = () => log(name);
+      video.addEventListener(name, fn);
+      return [name, fn] as const;
+    });
+
+    // Safety net: never leave the spinner up forever. Never call load() here,
+    // as that restarts the download and creates the mobile loading loop.
+    const loadingTimeout = setTimeout(() => setIsLoading(false), 12000);
 
     const handleTimeUpdate = () => {
       localStorage.setItem(`video_progress_${videoId}`, video.currentTime.toString());
-      if (onProgress) onProgress(video.currentTime);
+      onProgressRef.current?.(video.currentTime);
     };
 
     video.addEventListener('timeupdate', handleTimeUpdate);
     return () => {
       clearTimeout(loadingTimeout);
       video.removeEventListener('timeupdate', handleTimeUpdate);
+      listeners.forEach(([name, fn]) => video.removeEventListener(name, fn));
     };
-  }, [videoId, onProgress, isYouTube, isGoogleDrive, isLoading]);
+  }, [src, videoId, isYouTube, isGoogleDrive]);
+
 
   const togglePlay = (e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
