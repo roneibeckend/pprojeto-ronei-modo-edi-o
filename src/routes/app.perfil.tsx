@@ -201,15 +201,35 @@ function ProfilePage() {
                 <h3 className="font-display text-xl font-bold text-white">Dados da Conta</h3>
                 <p className="text-sm text-white/40">Mantenha suas informações sempre atualizadas.</p>
               </div>
-              <button className="btn-fire w-full sm:w-auto px-6 py-3 sm:py-2 text-sm font-bold uppercase tracking-widest">Salvar</button>
+              <button 
+                onClick={handleSave}
+                disabled={isSaving}
+                className="btn-fire w-full sm:w-auto px-6 py-3 sm:py-2 text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  "Salvar"
+                )}
+              </button>
             </div>
             
             <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
               <Field label="Nome completo" value={profile?.name || profile?.full_name || ""} readOnly icon={User} />
               <Field label="Seu e-mail" value={user?.email || profile?.email || ""} readOnly type="email" icon={Mail} />
-              <Field label="WhatsApp / Telefone" value={profile?.phone || "Não informado"} readOnly icon={Phone} />
+              <Field 
+                label="WhatsApp / Telefone" 
+                value={newPhone} 
+                onChange={handlePhoneChange}
+                placeholder="(00) 00000-0000"
+                icon={Phone} 
+              />
               <Field label="Data de cadastro" value={profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"} disabled icon={Calendar} />
             </div>
+
           </section>
 
           {/* Order History */}
