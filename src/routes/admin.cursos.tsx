@@ -153,14 +153,15 @@ function AdminCursosPage() {
   }
 
   async function handleDelete(course: any) {
-    if (!confirm(`Tem certeza que deseja arquivar o curso "${course.title}"?`)) return;
+    if (!confirm(`Tem certeza que deseja excluir permanentemente o curso "${course.title}"? Esta ação removerá o curso da prateleira de todos os alunos.`)) return;
     try {
-      const { error } = await supabase.from('courses').update({ status: 'archived' }).eq('id', course.id);
+      // Direct deletion will now trigger ON DELETE CASCADE in the database
+      const { error } = await supabase.from('courses').delete().eq('id', course.id);
       if (error) throw error;
-      toast.success("Curso arquivado");
+      toast.success("Curso excluído permanentemente");
       fetchData();
     } catch (error: any) {
-      toast.error("Erro ao arquivar: " + error.message);
+      toast.error("Erro ao excluir: " + error.message);
     }
   }
 
