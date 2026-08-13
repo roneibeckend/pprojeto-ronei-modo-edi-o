@@ -913,7 +913,7 @@ function AuthorSolution() {
 
           {/* Copy */}
           <div>
-            <SectionTag>Quem escreveu · A história real</SectionTag>
+            <SectionTag>&#x2063;</SectionTag>
             <h2 className="mt-5 h-fluid-h2 font-black">
               De açougueiro sem R$ 1.000 no bolso a dono do <span className="text-gradient-fire">Espetos Grill</span>.
             </h2>
@@ -965,7 +965,7 @@ function Benefits() {
     <section id="beneficios" className="relative py-10 sm:py-14">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Benefícios</SectionTag>
+          <SectionTag>&#x2063;</SectionTag>
           <h2 className="mt-4 max-w-2xl text-2xl sm:text-3xl font-black">
             O que vai <span className="text-gradient-fire">mudar no seu bolso</span>
           </h2>
@@ -1021,7 +1021,7 @@ function ProfitCalculator() {
     <section id="calculadora" className="relative py-10 sm:py-14">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Simulador · quanto você pode faturar</SectionTag>
+          <SectionTag>&#x2063;</SectionTag>
           <h2 className="mt-4 max-w-2xl h-fluid-h3 font-black">
             Faça a <span className="text-gradient-fire">conta na sua tela</span> agora
           </h2>
@@ -1150,7 +1150,7 @@ function SocialProof() {
     <section id="depoimentos" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Prova real</SectionTag>
+          <SectionTag>&#x2063;</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             Alunos que <span className="text-gradient-fire">colocaram a mão na brasa</span> e viram resultado
           </h2>
@@ -1213,7 +1213,7 @@ function Modules() {
     <section id="modulos" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>O que você recebe</SectionTag>
+          <SectionTag>&#x2063;</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             14 capítulos <span className="text-gradient-fire">práticos e diretos</span>
           </h2>
@@ -1282,7 +1282,7 @@ function Bonuses() {
       </div>
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Bônus exclusivos</SectionTag>
+          <SectionTag>&#x2063;</SectionTag>
           <h2 className="mt-4 max-w-3xl h-fluid-h3 font-black">
             4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
           </h2>
@@ -1596,7 +1596,7 @@ function Offer() {
             <div className="flex justify-center lg:justify-start">
               <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3.5 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[color:var(--gold)]">
                 <ShieldCheck className="h-3 w-3" />
-                Risco zero
+                &#x2063;
               </span>
             </div>
 
@@ -1674,7 +1674,7 @@ function FAQ() {
     <section id="faq" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Perguntas frequentes</SectionTag>
+          <SectionTag>&#x2063;</SectionTag>
           <h2 className="mt-6 h-fluid-h2 font-black">
             Tire suas dúvidas com a <span className="text-gradient-fire">assistente</span>
           </h2>
