@@ -60,18 +60,30 @@ export function PostPurchaseOffer({
       }
 
       const [coursesRes, ebooksRes] = await Promise.all([
-        supabase.from('courses').select('*').eq('is_locked', false).neq('id', originalProductId),
-        supabase.from('ebooks').select('*').eq('is_locked', false).neq('id', originalProductId)
+        supabase.from('courses')
+          .select('id, title, description, price, cover_url, status')
+          .eq('is_locked', false)
+          .eq('status', 'published')
+          .neq('id', originalProductId),
+        supabase.from('ebooks')
+          .select('id, title, description, price, cover_url, status')
+          .eq('is_locked', false)
+          .eq('status', 'published')
+          .neq('id', originalProductId)
       ]);
 
       if (coursesRes.error) throw coursesRes.error;
       if (ebooksRes.error) throw ebooksRes.error;
 
+      // Filter and validate availability
       const allPossibleOffers: OfferItem[] = [
         ...(coursesRes.data || []).map(c => ({ ...c, type: 'course' as const })),
         ...(ebooksRes.data || []).map(e => ({ ...e, type: 'ebook' as const })),
       ].filter(item => {
-        // Filtrar apenas o que o usuário NÃO adquiriu
+        // 1. Ensure product has a valid price
+        if (!item.price || item.price <= 0) return false;
+
+        // 2. Filter out items the user already owns
         if (item.type === 'course') {
           return !isEnrolledInCourse(item.id);
         } else {
@@ -79,10 +91,9 @@ export function PostPurchaseOffer({
         }
       });
 
-      // Priorizar ou embaralhar para pegar 2-3 itens
-      // Aqui apenas pegamos os 3 primeiros para simplicidade, mas poderíamos ordenar por vendas/data
+      // Selection logic: Get up to 3 valid products
       const selectedOffers = allPossibleOffers
-        .sort(() => 0.5 - Math.random()) // Embaralhar simples
+        .sort(() => 0.5 - Math.random())
         .slice(0, 3);
 
       setOffers(selectedOffers);
