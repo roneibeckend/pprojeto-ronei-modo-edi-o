@@ -89,7 +89,7 @@ function EbookReaderPage() {
     const loadSignedUrl = async () => {
       if (introNeedsSigning) {
         try {
-          const result = await getSignedUrl({ data: { path: ebook.opening_video_url } });
+          const result = await getSignedUrl({ data: { path: ebook.opening_video_url, bucket: ebook.opening_video_url.includes("ebook-assets") ? "ebook-assets" : "course-assets" } });
           if (!cancelled) setSignedIntroUrl(result.signedUrl);
         } catch (error) {
           console.error("Failed to sign intro video URL:", error);
