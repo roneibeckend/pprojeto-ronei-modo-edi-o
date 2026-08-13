@@ -156,11 +156,11 @@ function AdminEbooksPage() {
   }
 
   async function handleDelete(ebook: any) {
-    if (!confirm(`Tem certeza que deseja excluir o e-book "${ebook.title}"?`)) return;
+    if (!confirm(`Tem certeza que deseja excluir permanentemente o e-book "${ebook.title}"? Todos os módulos, capítulos e progressos de alunos vinculados serão removidos.`)) return;
     try {
       const { error } = await supabase.from('ebooks').delete().eq('id', ebook.id);
       if (error) throw error;
-      toast.success("E-book excluído");
+      toast.success("E-book e conteúdos relacionados excluídos permanentemente");
       fetchData();
     } catch (error: any) {
       toast.error("Erro ao excluir: " + error.message);
