@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, FileSpreadsheet, FileText, Layout, Package, Calculator, ClipboardList, Share2, TrendingUp } from "lucide-react";
+import { Download, FileSpreadsheet, FileText, Layout, Package, Share2, ExternalLink, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { materials } from "@/lib/platform-data";
+import { materials as staticMaterials } from "@/lib/platform-data";
 import { generateCostSpreadsheet, generatePricingCalculator, generateInventoryControl } from "@/lib/materials-generator";
 import { generateShoppingListPDF, generateEquipmentChecklistPDF } from "@/lib/pdf-generator";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { getMaterials } from "@/lib/materials.functions";
 
 export const Route = createFileRoute("/app/materiais")({
   head: () => ({ meta: [{ title: "Planilhas e materiais — Espetinho na Veia" }] }),
@@ -12,7 +14,25 @@ export const Route = createFileRoute("/app/materiais")({
 });
 
 function MaterialsPage() {
-  const handleDownload = async (materialId: string, title: string) => {
+  const { data: dynamicMaterials = [], isLoading } = useQuery({
+    queryKey: ["platform-materials"],
+    queryFn: () => getMaterials(),
+  });
+
+  const materials = [...dynamicMaterials, ...staticMaterials.filter(sm => !dynamicMaterials.some(dm => dm.title === sm.title))];
+
+  const handleDownload = async (materialId: string, title: string, fileUrl?: string, externalUrl?: string) => {
+    if (externalUrl) {
+      window.open(externalUrl, "_blank");
+      return;
+    }
+
+    if (fileUrl) {
+      window.open(fileUrl, "_blank");
+      toast.success(`Download de "${title}" iniciado!`);
+      return;
+    }
+
     try {
       switch (materialId) {
         case "m1":
@@ -60,7 +80,11 @@ function MaterialsPage() {
       />
       
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {materials.map((m) => (
+        {isLoading ? (
+          <div className="col-span-full py-20 flex justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : materials.map((m: any) => (
           <div key={m.id} className="glass card-tilt group flex flex-col rounded-2xl p-6 transition-all hover:border-fire/50">
             <div className="flex items-start justify-between gap-3">
               <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-fire/10 text-primary ring-1 ring-fire/20 transition-transform group-hover:scale-110">
@@ -81,7 +105,7 @@ function MaterialsPage() {
             </div>
 
             <button 
-              onClick={() => handleDownload(m.id, m.title)}
+              onClick={() => handleDownload(m.id, m.title, m.file_url, m.external_url)}
               className="btn-fire mt-6 w-full py-3 text-sm font-bold flex items-center justify-center gap-2 group/btn"
             >
               <Download className="h-4 w-4 transition-transform group-hover/btn:-translate-y-0.5" /> 
