@@ -19,7 +19,7 @@ function MaterialsPage() {
     queryFn: () => getMaterials(),
   });
 
-  const dynamicMaterials = Array.isArray(data) ? data : [];
+  const dynamicMaterials = (data as any[]) || [];
   const materials = [...dynamicMaterials, ...staticMaterials.filter(sm => !dynamicMaterials.some(dm => dm.title === sm.title))];
 
   const handleDownload = async (materialId: string, title: string, fileUrl?: string, externalUrl?: string) => {
