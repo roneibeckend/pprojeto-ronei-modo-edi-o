@@ -129,8 +129,13 @@ function CoursesPage() {
   
   const { data: dbCourses, isLoading: isLoadingCourses } = useQuery({
     queryKey: ["courses"],
+    staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
-      const { data, error } = await supabase.from("courses").select("*");
+      const { data, error } = await supabase
+        .from("courses")
+        .select("id, title, description, price, cover_url, badge, status")
+        .neq("status", "archived")
+        .neq("status", "deleted");
       if (error) throw error;
       return data;
     },
@@ -138,8 +143,13 @@ function CoursesPage() {
 
   const { data: dbEbooks, isLoading: isLoadingEbooks } = useQuery({
     queryKey: ["ebooks"],
+    staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
-      const { data, error } = await supabase.from("ebooks").select("*");
+      const { data, error } = await supabase
+        .from("ebooks")
+        .select("id, title, description, price, cover_url, cover, badge, status")
+        .neq("status", "archived")
+        .neq("status", "deleted");
       if (error) throw error;
       return data;
     },
