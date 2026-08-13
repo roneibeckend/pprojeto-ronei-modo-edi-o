@@ -868,12 +868,13 @@ function Pain() {
 
 function AuthorSolution() {
   const slides = [
-    { src: chefWorking.url, alt: "Ronnei na grelha preparando espetinhos" },
-    { src: platter1.url, alt: "Tábua premium de espetinhos variados" },
-    { src: skewersHeld.url, alt: "Espetinhos suculentos no ponto" },
-    { src: ribeye.url, alt: "Corte nobre bovino selecionado" },
-    { src: platter2.url, alt: "Espetinhos servidos com apresentação profissional" },
+    { src: chefWorking.url, alt: "Ronnei na grelha preparando espetinhos", width: 300, height: 300 },
+    { src: platter1.url, alt: "Tábua premium de espetinhos variados", width: 300, height: 300 },
+    { src: skewersHeld.url, alt: "Espetinhos suculentos no ponto", width: 300, height: 300 },
+    { src: ribeye.url, alt: "Corte nobre bovino selecionado", width: 300, height: 300 },
+    { src: platter2.url, alt: "Espetinhos servidos com apresentação profissional", width: 300, height: 300 },
   ];
+
 
   const [idx, setIdx] = useState(0);
 
@@ -896,8 +897,12 @@ function AuthorSolution() {
                   src={s.src}
                   alt={s.alt}
                   loading="lazy"
+                  decoding="async"
+                  width={s.width}
+                  height={s.height}
                   className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
                     i === idx ? "opacity-100" : "opacity-0"
+
                   }`}
                 />
               ))}
