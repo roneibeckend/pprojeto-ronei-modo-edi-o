@@ -8,6 +8,9 @@ import { generateEditableMenuPPTX } from "@/lib/pptx-generator";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { getMaterialDownloadUrl } from "@/lib/materials.functions";
+
 
 export const Route = createFileRoute("/app/materiais")({
   head: () => ({ meta: [{ title: "Planilhas e materiais — Espetinho na Veia" }] }),
@@ -15,7 +18,9 @@ export const Route = createFileRoute("/app/materiais")({
 });
 
 function MaterialsPage() {
+  const fetchDownloadUrl = useServerFn(getMaterialDownloadUrl);
   const { data, isLoading, error } = useQuery({
+
     queryKey: ["platform-materials"],
     queryFn: async () => {
       const { data: materials, error } = await supabase
@@ -46,10 +51,22 @@ function MaterialsPage() {
     }
 
     if (fileUrl) {
-      window.open(fileUrl, "_blank");
-      toast.success(`Download de "${title}" iniciado!`);
+      try {
+        // Extrair o nome do arquivo da URL pública atual
+        // Ex: https://.../platform-materials/filename.pdf -> filename.pdf
+        const urlParts = fileUrl.split('/');
+        const fileName = urlParts[urlParts.length - 1];
+        
+        const { url } = await fetchDownloadUrl({ data: { filePath: fileName } });
+        window.open(url, "_blank");
+        toast.success(`Download de "${title}" iniciado!`);
+      } catch (err) {
+        console.error("Erro ao obter link de download:", err);
+        toast.error("Erro ao acessar o arquivo. Tente novamente.");
+      }
       return;
     }
+
 
     try {
       // Verifica se o ID ou título corresponde a um gerador local conhecido
