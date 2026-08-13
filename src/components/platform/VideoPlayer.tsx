@@ -116,11 +116,15 @@ export function VideoPlayer({
     const video = videoRef.current;
     if (!video) return;
 
+    // Timeout to prevent infinite loading if video data doesn't load
+    const loadingTimeout = setTimeout(() => {
+      if (isLoading) {
+        console.warn("Video loading timeout reached, clearing loading state");
+        setIsLoading(false);
+      }
+    }, 15000); // 15 seconds
+
     // Load saved position
-    const savedTime = localStorage.getItem(`video_progress_${videoId}`);
-    if (savedTime) {
-      video.currentTime = parseFloat(savedTime);
-    }
 
     const handleTimeUpdate = () => {
       localStorage.setItem(`video_progress_${videoId}`, video.currentTime.toString());
