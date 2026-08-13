@@ -11,6 +11,7 @@ export function useProgress() {
 
   const { data: lessonProgress, isLoading: isLoadingLessonProgress } = useQuery({
     queryKey: ["lesson-progress", user?.id],
+    staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
