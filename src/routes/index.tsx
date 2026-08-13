@@ -665,15 +665,6 @@ function Hero() {
       </div>
 
       <div className="mx-auto flex max-w-3xl flex-col items-center px-4 text-center sm:px-6">
-        <Reveal variant="clip">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--ember)] shadow-[0_0_20px_-4px_var(--ember)] backdrop-blur">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--ember)]" />
-            </span>
-            Edição 2026 · Método completo
-          </span>
-        </Reveal>
 
         <Reveal variant="blur" delay={1} as="h1" className="mt-4 text-3xl font-black leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl">
           Do zero ao <span className="animated-fire-text">próprio negócio</span>
@@ -1918,7 +1909,7 @@ function Objection() {
     <section className="relative py-12 sm:py-16">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Quebrando objeções</SectionTag>
+          
           <h2 className="mt-4 max-w-2xl h-fluid-h2 font-black">
             "Mas eu vou <span className="text-gradient-fire">conseguir mesmo</span>?"
           </h2>
@@ -2009,7 +2000,7 @@ function ForYou() {
     <section className="relative py-10 sm:py-14">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Isso é pra você se…</SectionTag>
+          
           <h2 className="mt-4 max-w-2xl text-2xl sm:text-3xl font-black">
             Você se <span className="text-gradient-fire">identifica</span>?
           </h2>
