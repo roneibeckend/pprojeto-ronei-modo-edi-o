@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, FileSpreadsheet } from "lucide-react";
+import { Download, FileSpreadsheet, FileText, Layout, Package, Calculator, ClipboardList, Share2, TrendingUp } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { materials } from "@/lib/platform-data";
+import { generateCostSpreadsheet, generatePricingCalculator, generateInventoryControl } from "@/lib/materials-generator";
+import { generateShoppingListPDF, generateEquipmentChecklistPDF } from "@/lib/pdf-generator";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/materiais")({
   head: () => ({ meta: [{ title: "Planilhas e materiais — Espetinho na Veia" }] }),
@@ -9,21 +12,81 @@ export const Route = createFileRoute("/app/materiais")({
 });
 
 function MaterialsPage() {
+  const handleDownload = async (materialId: string, title: string) => {
+    try {
+      switch (materialId) {
+        case "m1":
+          await generateCostSpreadsheet();
+          break;
+        case "m2":
+          await generatePricingCalculator();
+          break;
+        case "m3":
+          await generateInventoryControl();
+          break;
+        case "m4":
+          generateShoppingListPDF();
+          break;
+        case "m5":
+          generateEquipmentChecklistPDF();
+          break;
+        case "m6":
+          window.open("https://www.canva.com/design/play?category=tACFasY85_A&type=TAB79-58_M0", "_blank");
+          break;
+        default:
+          toast.info(`O material "${title}" está sendo preparado e estará disponível em breve!`);
+          return;
+      }
+      toast.success(`Download de "${title}" iniciado com sucesso!`);
+    } catch (error) {
+      console.error("Erro no download:", error);
+      toast.error("Ocorreu um erro ao gerar o arquivo. Tente novamente.");
+    }
+  };
+
+  const getIcon = (id: string, type: string) => {
+    if (type === "XLSX") return <FileSpreadsheet className="h-6 w-6" />;
+    if (type === "PDF") return <FileText className="h-6 w-6" />;
+    if (type === "CANVA") return <Layout className="h-6 w-6" />;
+    if (id === "m7") return <Share2 className="h-6 w-6" />;
+    return <Package className="h-6 w-6" />;
+  };
+
   return (
     <div>
-      <PageHeader title="Planilhas e materiais" subtitle="Ferramentas prontas para acelerar seu negócio." />
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <PageHeader 
+        title="Planilhas e materiais" 
+        subtitle="Materiais profissionais e funcionais para gestão completa do seu negócio de espetinhos." 
+      />
+      
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {materials.map((m) => (
-          <div key={m.id} className="glass card-tilt rounded-2xl p-5">
+          <div key={m.id} className="glass card-tilt group flex flex-col rounded-2xl p-6 transition-all hover:border-fire/50">
             <div className="flex items-start justify-between gap-3">
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-fire/20 text-primary">
-                <FileSpreadsheet className="h-6 w-6" />
+              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-fire/10 text-primary ring-1 ring-fire/20 transition-transform group-hover:scale-110">
+                {getIcon(m.id, m.type)}
               </div>
-              <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">{m.type}</span>
+              <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                {m.type}
+              </span>
             </div>
-            <h3 className="mt-4 font-display text-lg font-bold break-words">{m.title}</h3>
-            <p className="mt-1 text-sm text-muted-foreground break-words">{m.description}</p>
-            <button className="btn-fire mt-4 w-full text-sm"><Download className="h-4 w-4" /> Baixar material</button>
+            
+            <div className="mt-5 flex-grow">
+              <h3 className="font-display text-xl font-bold text-white group-hover:text-primary transition-colors">
+                {m.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                {m.description}
+              </p>
+            </div>
+
+            <button 
+              onClick={() => handleDownload(m.id, m.title)}
+              className="btn-fire mt-6 w-full py-3 text-sm font-bold flex items-center justify-center gap-2 group/btn"
+            >
+              <Download className="h-4 w-4 transition-transform group-hover/btn:-translate-y-0.5" /> 
+              Baixar material
+            </button>
           </div>
         ))}
       </div>
