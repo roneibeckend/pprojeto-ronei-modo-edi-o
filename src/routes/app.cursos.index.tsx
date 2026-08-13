@@ -25,7 +25,7 @@ export const Route = createFileRoute("/app/cursos/")({
 
 function CoursesPage() {
   const { courseEnrollments, ebookEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
-  const { startedCount, finishedCount, isLoading: isLoadingProgress } = useProgress();
+  const { startedCount, finishedCount, totalProgress, isLoading: isLoadingProgress } = useProgress();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [offerContext, setOfferContext] = useState<{ item: any; type: 'course' | 'ebook' } | null>(null);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
