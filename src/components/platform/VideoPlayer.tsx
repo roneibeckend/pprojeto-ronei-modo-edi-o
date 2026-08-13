@@ -89,7 +89,7 @@ export function VideoPlayer({
       }
       
       if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&vq=hd1080`;
+        return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&vq=hd1080&controls=1&disablekb=0&fs=1&playsinline=1`;
       }
     }
 
@@ -158,8 +158,8 @@ export function VideoPlayer({
   if (isYouTube || isGoogleDrive) {
     const embedUrl = getEmbedUrl(src);
     const finalUrl = hideAllUI 
-      ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1`
-      : embedUrl;
+      ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0`
+      : `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}showinfo=0&rel=0&iv_load_policy=3&modestbranding=1`;
 
     return (
       <div className={cn("relative aspect-[9/16] max-h-[85vh] w-full mx-auto bg-black rounded-xl overflow-hidden glass", className)}>
@@ -184,6 +184,7 @@ export function VideoPlayer({
     >
 
       <video
+        key={src}
         ref={videoRef}
         src={src}
         poster={poster}
