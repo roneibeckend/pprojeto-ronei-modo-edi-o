@@ -298,6 +298,8 @@
     opacity 0.35s ease-out,
     transform 0.35s ease-out;
   will-change: opacity, transform;
+  contain: content;
+
 }
 [data-reveal][data-visible="true"] {
   opacity: 1;

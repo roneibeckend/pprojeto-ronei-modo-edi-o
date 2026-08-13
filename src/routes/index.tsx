@@ -190,7 +190,7 @@ function Reveal({
           }
         }
       },
-      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" },
+      { threshold: 0.1, rootMargin: "0px 0px 50px 0px" },
     );
     io.observe(node);
     return () => io.disconnect();
@@ -1803,9 +1803,13 @@ function FinalCTA() {
             src={skewersFlat.url}
             alt=""
             aria-hidden
-            className="absolute inset-0 -z-10 h-full w-full object-cover opacity-20"
             loading="lazy"
+            decoding="async"
+            width={1280}
+            height={800}
+            className="absolute inset-0 -z-10 h-full w-full object-cover opacity-20"
           />
+
           <div className="absolute inset-0 -z-10 bg-gradient-to-br from-background/90 via-background/80 to-[color:var(--ember)]/50" />
           <SectionTag>Última chamada</SectionTag>
           <h2 className="mx-auto mt-6 max-w-3xl h-fluid-h2 font-black">
