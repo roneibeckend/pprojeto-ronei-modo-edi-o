@@ -12,13 +12,21 @@ export function useNotifications() {
   const { data: notifications = [], isLoading } = useQuery({
     queryKey: ["notifications"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("notifications")
-        .select("*")
-        .order("created_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("notifications")
+          .select("*")
+          .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return data;
+        if (error) {
+          console.error("[useNotifications] Error fetching notifications:", error);
+          return [];
+        }
+        return data || [];
+      } catch (err) {
+        console.error("[useNotifications] Unexpected error:", err);
+        return [];
+      }
     },
     enabled: !!user,
   });
@@ -26,13 +34,21 @@ export function useNotifications() {
   const { data: userNotifications = [] } = useQuery({
     queryKey: ["user_notifications", user?.id || "anonymous"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_notifications")
-        .select("*")
-        .eq("user_id", user?.id as string);
+      try {
+        const { data, error } = await supabase
+          .from("user_notifications")
+          .select("*")
+          .eq("user_id", user?.id as string);
 
-      if (error) throw error;
-      return data;
+        if (error) {
+          console.error("[useNotifications] Error fetching user_notifications:", error);
+          return [];
+        }
+        return data || [];
+      } catch (err) {
+        console.error("[useNotifications] Unexpected error user_notifications:", err);
+        return [];
+      }
     },
     enabled: !!user,
   });
