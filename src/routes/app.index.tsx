@@ -38,13 +38,13 @@ function Dashboard() {
           .from("courses")
           .select("id, title, description, price, cover_url, created_at, badge, is_locked, status")
           .eq("is_locked", false)
-          .eq("status", "active")
+          .in("status", ["active", "published"])
           .limit(10),
         supabase
           .from("ebooks")
           .select("id, title, description, price, cover_url, created_at, badge, is_locked, status")
           .eq("is_locked", false)
-          .eq("status", "active")
+          .in("status", ["active", "published"])
           .limit(10),
       ]);
 
