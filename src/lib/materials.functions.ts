@@ -77,8 +77,13 @@ export const upsertMaterial = createServerFn({ method: "POST" })
 export const deleteMaterial = createServerFn({ method: "POST" })
   .inputValidator((data: any) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data }) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Não autenticado");
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      console.error("Server side: Auth error or user not found:", authError);
+      throw new Error("Sessão expirada ou não autenticada");
+    }
+
 
     const { data: hasRole } = await supabase.rpc("has_role", { 
       _user_id: user.id, 
