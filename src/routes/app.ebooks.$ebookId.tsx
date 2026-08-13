@@ -481,15 +481,18 @@ function EbookReaderPage() {
                           className="h-[100.5%] w-[100.5%] -left-[0.25%] -top-[0.25%] scale-[1.12]"
                           allowFullScreen
                         />
+                      ) : (isLoadingSignedChapter || !signedChapterUrl) ? (
+                        <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>
                       ) : (
                         <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
                           <VideoPlayer
                             videoId={`chapter-${activeChapter.id}`}
-                            src={signedChapterUrl || activeChapter.video_url}
+                            src={signedChapterUrl}
                             className="w-full h-full"
                           />
                         </Suspense>
                       )}
+
                       <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-none sm:rounded-2xl"></div>
                     </div>
                   </div>
