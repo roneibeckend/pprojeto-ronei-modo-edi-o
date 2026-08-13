@@ -110,8 +110,8 @@ export function PostPurchaseOffer({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onProceedWithoutOffers()}>
-      <DialogContent className="max-w-2xl glass border-white/10 p-0 overflow-hidden sm:rounded-3xl w-[90vw] sm:w-full fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[85vh] overflow-y-auto outline-none z-[9999]">
-        <div className="relative p-6 sm:p-8">
+      <DialogContent className="max-w-2xl glass border-white/10 p-0 overflow-hidden sm:rounded-3xl w-[95vw] sm:w-full fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90vh] overflow-y-auto outline-none z-[9999] custom-scrollbar">
+        <div className="relative p-4 sm:p-8">
           <button 
             onClick={onProceedWithoutOffers}
             className="absolute right-4 top-4 text-white/40 hover:text-white transition-colors"
@@ -153,13 +153,13 @@ export function PostPurchaseOffer({
                   <div 
                     key={offer.id}
                     onClick={() => toggleSelection(offer.id)}
-                    className={`flex items-center gap-4 p-4 rounded-2xl border transition-all cursor-pointer ${
+                    className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-all cursor-pointer ${
                       isSelected 
                         ? 'bg-gold/10 border-gold shadow-lg shadow-gold/5' 
                         : 'bg-white/5 border-white/5 hover:border-white/10'
                     }`}
                   >
-                    <div className="h-16 w-24 sm:h-20 sm:w-32 rounded-lg overflow-hidden shrink-0 bg-muted/20">
+                    <div className="h-14 w-20 sm:h-20 sm:w-32 rounded-lg overflow-hidden shrink-0 bg-muted/20">
                       <img 
                         src={offer.cover_url || IMG.hero} 
                         alt={offer.title} 
@@ -193,18 +193,18 @@ export function PostPurchaseOffer({
             </div>
           )}
 
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="mt-8 flex flex-col sm:grid sm:grid-cols-2 gap-3 items-center sm:items-stretch">
             <Button 
               variant="outline" 
               onClick={onProceedWithoutOffers}
-              className="w-full rounded-xl border-white/10 hover:bg-white/5 h-12"
+              className="w-full sm:w-auto rounded-xl border-white/10 hover:bg-white/5 h-12 order-2 sm:order-1"
             >
               Prosseguir sem Ofertas
             </Button>
             <Button 
               disabled={selectedIds.length === 0}
               onClick={handleAddAndProceed}
-              className="w-full btn-fire rounded-xl font-bold h-12 shadow-lg shadow-fire/20"
+              className="w-full sm:w-auto btn-fire rounded-xl font-bold h-12 shadow-lg shadow-fire/20 order-1 sm:order-2"
             >
               Adicionar Ofertas e Prosseguir
             </Button>
