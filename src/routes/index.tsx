@@ -2020,9 +2020,6 @@ function NotForYou() {
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur sm:p-8">
           <div className="flex flex-col items-center text-center">
             <SectionTag>Para quem NÃO é</SectionTag>
-              <X className="h-3 w-3" />
-              Este método NÃO é para
-            </span>
             <h2 className="mt-4 max-w-xl text-xl font-black sm:text-2xl">
               Seja <span className="text-gradient-fire">honesto</span> com você mesmo
             </h2>
