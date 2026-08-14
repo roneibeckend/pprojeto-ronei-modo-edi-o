@@ -153,12 +153,20 @@ export function VideoPlayer({
       clearTimeout(loadingTimeout);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       listeners.forEach(([name, fn]) => video.removeEventListener(name, fn));
-      
-      // Cleanup for memory
-      video.pause();
-      video.removeAttribute('src');
-      video.load();
     };
+  }, [src, videoId, isYouTube, isGoogleDrive]);
+
+  // Dedicated unmount effect for heavy cleanup
+  useEffect(() => {
+    return () => {
+      const video = videoRef.current;
+      if (video) {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      }
+    };
+  }, []);
 
   }, [src, videoId, isYouTube, isGoogleDrive]);
 
