@@ -345,7 +345,7 @@ export function VideoPlayer({
             }
           }
         }}
-        onClick={useNativeControls ? undefined : (e) => {
+        onClick={(e) => {
           e.stopPropagation();
           togglePlay(e);
         }}
