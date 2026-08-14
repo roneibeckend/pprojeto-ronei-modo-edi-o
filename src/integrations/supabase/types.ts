@@ -258,6 +258,39 @@ export type Database = {
           },
         ]
       }
+      asaas_webhook_events: {
+        Row: {
+          claimed_at: string | null
+          event_id: string
+          event_type: string
+          last_error: string | null
+          payload: Json | null
+          payment_id: string
+          processed_at: string | null
+          status: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          event_id: string
+          event_type: string
+          last_error?: string | null
+          payload?: Json | null
+          payment_id: string
+          processed_at?: string | null
+          status?: string
+        }
+        Update: {
+          claimed_at?: string | null
+          event_id?: string
+          event_type?: string
+          last_error?: string | null
+          payload?: Json | null
+          payment_id?: string
+          processed_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       course_enrollments: {
         Row: {
           course_id: string
