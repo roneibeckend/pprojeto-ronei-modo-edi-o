@@ -655,6 +655,7 @@ function Nav() {
 
 function Hero() {
   const [videoOpen, setVideoOpen] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
