@@ -111,7 +111,10 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
           muted
           playsInline
           onEnded={onClose}
-          onClick={togglePlay}
+          onClick={(e) => {
+            e.stopPropagation();
+            togglePlay();
+          }}
         />
         
         {/* Play/Pause Overlay Indicator (shows temporarily) */}
