@@ -16,8 +16,8 @@ export const Route = createFileRoute("/politica-de-privacidade")({
 
 function PrivacyPage() {
   const lastUpdate = "14/08/2026";
-  const companyName = "[PREENCHER RAZÃO SOCIAL]";
-  const dpoName = "[PREENCHER NOME DPO/ENCARREGADO]";
+  const companyName = "RONNEI";
+  const dpoName = "Ronnei";
   const contactEmail = "contato@espetinhonaveia.com";
 
   return (
