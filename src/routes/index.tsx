@@ -1368,7 +1368,7 @@ function Bonuses() {
                 Valor total
               </span>
               <span className="font-display text-2xl font-black text-muted-foreground/80 line-through decoration-[color:var(--ember)]/60 decoration-2 sm:text-3xl">
-                R$ 170,00
+                R$ 97,90
               </span>
               <span className="rounded-full bg-fire px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-white shadow-fire">
                 GRÁTIS hoje
