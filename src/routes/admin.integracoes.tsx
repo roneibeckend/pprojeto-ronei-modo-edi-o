@@ -1009,7 +1009,7 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
       setIntegration(JSON.parse(JSON.stringify(initialIntegration)));
     } else {
       setIntegration({
-        id: '',
+        id: undefined,
         name: 'Resend',
         type: 'ia' as any,
         category: 'resend',

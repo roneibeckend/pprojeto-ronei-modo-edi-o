@@ -182,7 +182,7 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
 export const saveIntegration = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
-    id: z.string().nullable().optional(),
+    id: z.string().nullable().optional().or(z.literal('')),
     name: z.string(),
     type: z.enum(['ia', 'payment']),
     category: z.string(),
