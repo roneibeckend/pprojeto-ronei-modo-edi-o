@@ -268,14 +268,26 @@ export function VideoPlayer({
         <div className="absolute inset-0 z-10 overflow-hidden">
           <iframe
             src={finalUrl}
-            className="absolute inset-0 w-full h-full object-cover border-0 scale-[1.4] origin-center"
+            className="absolute inset-0 w-full h-full object-cover border-0 scale-[1.3] origin-center"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             title={title || "Video Player"}
           />
         </div>
 
-        {hideAllUI && <div className="absolute inset-0 z-50 bg-transparent" onClick={() => {}} />}
+        {/* User Interaction Layer - Block native controls and handle play/pause if needed */}
+        <div 
+          className="absolute inset-0 z-50 bg-transparent cursor-pointer" 
+          onClick={(e) => {
+            // Since we can't easily control iframe playback from here without postMessage,
+            // we let the user interact with the iframe if they want, but this layer
+            // helps keep the "clean" feel. If it's the landing page intro, we want it clean.
+            if (hideAllUI) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          }} 
+        />
       </div>
     );
   }
