@@ -330,7 +330,11 @@ export function VideoPlayer({
         onLoadStart={() => setIsLoading(true)}
         onLoadedMetadata={() => {
           setIsLoading(false);
-          videoRef.current?.play().catch(err => console.warn("Autoplay failed on metadata", err));
+          if (isIntro) {
+            tryAutoplay();
+          } else {
+            videoRef.current?.play().catch(err => console.warn("Autoplay failed on metadata", err));
+          }
         }}
         onCanPlay={() => {
           setIsLoading(false);
