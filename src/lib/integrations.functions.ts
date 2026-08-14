@@ -197,6 +197,26 @@ export const saveIntegration = createServerFn({ method: "POST" })
     });
     if (!isAdmin) throw new Error("Acesso negado.");
 
+    // Fail-safe: if credentials fields are empty strings and it's an update, don't overwrite with empty
+    let finalCredentials = data.credentials;
+    if (data.id) {
+       const { data: existing } = await supabaseAdmin
+         .from('integrations')
+         .select('credentials')
+         .eq('id', data.id)
+         .single();
+       
+       if (existing) {
+         const merged = { ...(existing.credentials as object) };
+         for (const [key, value] of Object.entries(data.credentials)) {
+           if (value !== "") {
+             (merged as any)[key] = value;
+           }
+         }
+         finalCredentials = merged;
+       }
+    }
+
     const { error } = await supabaseAdmin
       .from('integrations')
       .upsert({
@@ -205,10 +225,11 @@ export const saveIntegration = createServerFn({ method: "POST" })
         type: data.type,
         category: data.category,
         status: data.status,
-        credentials: data.credentials,
+        credentials: finalCredentials,
         settings: data.settings,
         updated_at: new Date().toISOString()
       });
+
 
     if (error) throw new Error(error.message);
     
