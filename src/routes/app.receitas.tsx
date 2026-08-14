@@ -68,7 +68,7 @@ function RecipesPage() {
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((r: any) => (
-            <article key={r.id} className="glass card-tilt overflow-hidden rounded-2xl">
+            <article key={r.id} className="glass card-tilt overflow-hidden rounded-2xl flex flex-col h-full">
               <div className="aspect-video overflow-hidden">
                 <img src={r.image_url || "/placeholder.svg"} alt={r.name} className="h-full w-full object-cover" loading="lazy" />
                 {r.video_url && (
@@ -85,7 +85,7 @@ function RecipesPage() {
                   </button>
                 )}
               </div>
-              <div className="p-5">
+              <div className="p-5 flex flex-col flex-1">
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">{r.category}</div>
                 <h3 className="mt-1 font-display text-lg font-bold whitespace-normal">{r.name}</h3>
                 <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
@@ -107,7 +107,7 @@ function RecipesPage() {
                     <div className="mt-0.5 font-bold">{r.difficulty}</div>
                   </div>
                 </div>
-                <button onClick={() => setOpen(r)} className="btn-fire mt-4 w-full text-sm">Ver receita</button>
+                <button onClick={() => setOpen(r)} className="btn-fire mt-auto w-full text-sm active:scale-[0.98] touch-action-manipulation">Ver receita</button>
               </div>
             </article>
           ))}
