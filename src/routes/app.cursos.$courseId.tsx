@@ -299,7 +299,7 @@ function CoursePage() {
     if (nextLesson?.video_url && !nextLesson.video_url.includes('youtube') && !nextLesson.video_url.includes('drive')) {
       const prefetchNext = async () => {
         try {
-          const result = await getSignedUrl({ data: { path: nextLesson.video_url, bucket: nextLesson.video_url.includes("ebook-assets") ? "ebook-assets" : "course-assets" } });
+          const result = await getSignedUrl({ data: { lessonId: nextLesson.id } });
           const link = document.createElement('link');
           link.rel = 'prefetch';
           link.as = 'video';
@@ -319,7 +319,7 @@ function CoursePage() {
       const loadSignedUrl = async () => {
         try {
           setIsLoadingSignedUrl(true);
-          const result = await getSignedUrl({ data: { path: activeLesson.video_url, bucket: activeLesson.video_url.includes("ebook-assets") ? "ebook-assets" : "course-assets" } });
+          const result = await getSignedUrl({ data: { lessonId: activeLesson.id } });
           setSignedLessonUrl(result.signedUrl);
         } catch (error) {
           console.error("Failed to sign lesson video URL:", error);
