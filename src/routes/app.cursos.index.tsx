@@ -427,7 +427,7 @@ function CoursesPage() {
                   <button 
                     onClick={() => handlePurchase(e, 'ebook')}
                     disabled={processingId === e.id}
-                    className="btn-ghost-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg disabled:opacity-50"
+                    className="btn-ghost-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg disabled:opacity-50 active:scale-[0.98] touch-action-manipulation"
                   >
                     {processingId === e.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-4 w-4" />}
                     {processingId === e.id ? "Processando..." : "Comprar e Liberar"}
