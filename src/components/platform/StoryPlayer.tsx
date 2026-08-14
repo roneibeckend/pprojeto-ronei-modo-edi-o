@@ -37,8 +37,11 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
       
       if (video.paused) {
         try {
-          await video.play();
-          setIsPlaying(true);
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            await playPromise;
+            setIsPlaying(true);
+          }
         } catch (err: any) {
           console.warn("Story play failed on unmute", err.name);
         }
