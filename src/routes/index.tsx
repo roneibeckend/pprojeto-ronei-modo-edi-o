@@ -643,7 +643,7 @@ function Nav() {
         scrolled ? "backdrop-blur-xl bg-background/70 border-b border-border" : ""
       }`}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-4 py-3 sm:px-6 3xl:max-w-[1800px]">
         <a href="#top" className="flex min-w-0 items-center gap-2">
           <img
             src={logo}
@@ -704,7 +704,7 @@ function Hero() {
         <div className="absolute right-0 top-40 h-[280px] w-[280px] rounded-full bg-[color:var(--gold)]/15 blur-3xl" />
       </div>
 
-      <div className="mx-auto flex max-w-3xl flex-col items-center px-4 text-center sm:px-6">
+      <div className="mx-auto flex max-w-[1200px] flex-col items-center px-4 text-center sm:px-6 3xl:max-w-[1500px]">
 
         <Reveal variant="blur" delay={1} as="h1" className="mt-4 text-3xl font-black leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl">
           Do zero ao <span className="animated-fire-text">próprio negócio</span>
@@ -720,9 +720,9 @@ function Hero() {
 
 
         {/* Video + CTA row */}
-        <div className="mt-6 grid w-full items-center gap-6 sm:mt-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8">
+        <div className="mt-6 grid w-full items-center gap-6 sm:mt-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8 2xl:gap-16">
           {/* Compact video trigger */}
-          <Reveal variant="scale" delay={3} className="w-full lg:ml-auto lg:max-w-md">
+          <Reveal variant="scale" delay={3} className="w-full lg:ml-auto lg:max-w-xl">
             <button
               type="button"
               onClick={() => setVideoOpen(true)}
