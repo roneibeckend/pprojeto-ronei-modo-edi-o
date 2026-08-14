@@ -115,6 +115,7 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
           className="h-full w-full object-contain"
           autoPlay
           muted={false}
+          loop
           playsInline
           onEnded={onClose}
           onClick={(e) => {
