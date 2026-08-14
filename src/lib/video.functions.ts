@@ -2,6 +2,91 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+/**
+ * Internal helper to safely resolve the physical location of a video file.
+ * Handles:
+ * 1. Absolute Supabase URLs (public, sign, authenticated)
+ * 2. Relative paths with cross-bucket fallback for legacy content.
+ */
+async function resolveStoredVideoLocation(
+  supabaseAdmin: any,
+  rawUrl: string,
+  preferredBucket: "course-assets" | "ebook-assets"
+): Promise<{ bucket: string; path: string }> {
+  const VIDEO_BUCKETS = ["course-assets", "ebook-assets"];
+  
+  let bucket: string | null = null;
+  let path: string | null = null;
+
+  // Case 1: Absolute Supabase URL
+  if (rawUrl.startsWith("http")) {
+    try {
+      const url = new URL(rawUrl);
+      const pathParts = url.pathname.split('/');
+      
+      // Look for /storage/v1/object/ marker
+      const markerIndex = pathParts.findIndex(p => p === 'object');
+      if (markerIndex !== -1 && pathParts.length > markerIndex + 2) {
+        // format is .../object/{type}/{bucket}/{path...}
+        const detectedBucket = pathParts[markerIndex + 2];
+        const detectedPath = pathParts.slice(markerIndex + 3).join('/');
+        
+        if (VIDEO_BUCKETS.includes(detectedBucket)) {
+          bucket = detectedBucket;
+          path = decodeURIComponent(detectedPath).split('?')[0];
+        }
+      }
+    } catch (e) {
+      console.error("[VideoResolution] Failed to parse absolute URL:", e);
+    }
+  }
+
+  // Case 2: Relative Path (or failed absolute parse)
+  if (!bucket || !path) {
+    // Clean the path: remove leading slash, remove query params, decode
+    let cleanedPath = rawUrl.split('?')[0].replace(/^\//, "");
+    cleanedPath = decodeURIComponent(cleanedPath);
+
+    // Security check for relative path
+    if (cleanedPath.includes('..') || cleanedPath === "") {
+      throw new Error("Caminho de vídeo malformado.");
+    }
+
+    // Try candidates starting with preferred bucket
+    const candidates = [preferredBucket, ...VIDEO_BUCKETS.filter(b => b !== preferredBucket)];
+    
+    for (const cand of candidates) {
+      const { data: files } = await supabaseAdmin.storage
+        .from(cand)
+        .list(cleanedPath.includes('/') ? cleanedPath.substring(0, cleanedPath.lastIndexOf('/')) : '', {
+          search: cleanedPath.includes('/') ? cleanedPath.substring(cleanedPath.lastIndexOf('/') + 1) : cleanedPath,
+          limit: 1
+        });
+      
+      if (files && files.length > 0) {
+        // Verify exact match to avoid partial search hits
+        const fileName = cleanedPath.includes('/') ? cleanedPath.substring(cleanedPath.lastIndexOf('/') + 1) : cleanedPath;
+        if (files.some((f: any) => f.name === fileName)) {
+          bucket = cand;
+          path = cleanedPath;
+          break;
+        }
+      }
+    }
+  }
+
+  if (!bucket || !path) {
+    throw new Error("Arquivo de vídeo não encontrado no armazenamento.");
+  }
+
+  // Final validation against allowlist (safety layer)
+  if (!VIDEO_BUCKETS.includes(bucket)) {
+    throw new Error("Localização de armazenamento não permitida.");
+  }
+
+  return { bucket, path };
+}
+
 export const getSignedVideoUrl = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .validator((data: any) => z.object({ 
@@ -14,11 +99,12 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
 
-    let storagePath: string | null = null;
+    let rawVideoUrl: string | null = null;
     let targetCourseId: string | null = null;
     let targetEbookId: string | null = null;
+    let preferredBucket: "course-assets" | "ebook-assets" = "course-assets";
 
-    // 1. Resolve storage path and content association
+    // 1. Fetch record from DB to get the raw video source and verify ownership context
     if (data.lessonId) {
       const { data: lesson } = await supabaseAdmin
         .from("course_lessons")
@@ -27,8 +113,9 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
         .single();
       
       if (!lesson || !lesson.video_url) throw new Error("Aula ou vídeo não encontrado.");
-      storagePath = lesson.video_url;
+      rawVideoUrl = lesson.video_url;
       targetCourseId = (lesson.module as any)?.course_id;
+      preferredBucket = "course-assets";
     } 
     else if (data.chapterId) {
       const { data: chapter } = await supabaseAdmin
@@ -38,8 +125,9 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
         .single();
       
       if (!chapter || !chapter.video_url) throw new Error("Capítulo ou vídeo não encontrado.");
-      storagePath = chapter.video_url;
+      rawVideoUrl = chapter.video_url;
       targetEbookId = chapter.ebook_id;
+      preferredBucket = "ebook-assets";
     }
     else if (data.contentId && data.contentType) {
       if (data.contentType === 'course') {
@@ -49,8 +137,9 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
           .eq("id", data.contentId)
           .single();
         if (!course || !course.intro_video_url) throw new Error("Vídeo de introdução não encontrado.");
-        storagePath = course.intro_video_url;
+        rawVideoUrl = course.intro_video_url;
         targetCourseId = data.contentId;
+        preferredBucket = "course-assets";
       } else if (data.contentType === 'ebook') {
         const { data: ebook } = await supabaseAdmin
           .from("ebooks")
@@ -58,16 +147,17 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
           .eq("id", data.contentId)
           .single();
         if (!ebook || !ebook.opening_video_url) throw new Error("Vídeo de introdução não encontrado.");
-        storagePath = ebook.opening_video_url;
+        rawVideoUrl = ebook.opening_video_url;
         targetEbookId = data.contentId;
+        preferredBucket = "ebook-assets";
       }
     }
 
-    if (!storagePath) {
-      throw new Error("Acesso negado: Caminho de vídeo não vinculado a conteúdo válido.");
+    if (!rawVideoUrl) {
+      throw new Error("Nenhuma fonte de vídeo encontrada para o ID fornecido.");
     }
 
-    // 2. Authorization Gate
+    // 2. Authorization Gate (Admin or Enrolled)
     const { data: isAdmin } = await context.supabase.rpc("has_role", {
       _user_id: userId,
       _role: "admin"
@@ -93,35 +183,20 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
 
         if (!enrollment) throw new Error("Acesso negado: Você não possui acesso a este e-book.");
       } else {
-        // Safety: If somehow storagePath exists but no target was found, block.
         throw new Error("Acesso negado: Conteúdo não autorizado.");
       }
     }
 
-    // 3. Final path cleaning and signing
-    let relativePath = storagePath;
-    // Derive bucket server-side ONLY
-    const bucket = targetEbookId || data.chapterId ? "ebook-assets" : "course-assets";
+    // 3. Resolve physical location (bucket and path)
+    const resolved = await resolveStoredVideoLocation(supabaseAdmin, rawVideoUrl, preferredBucket);
 
-    if (storagePath.includes('/storage/v1/object/public/')) {
-        const parts = storagePath.split(`${bucket}/`);
-        if (parts.length > 1) relativePath = parts[parts.length - 1];
-    } else if (storagePath.includes('/storage/v1/object/sign/')) {
-        const parts = storagePath.split(`${bucket}/`);
-        if (parts.length > 1) relativePath = parts[parts.length - 1].split('?')[0];
-    }
-    
-    // Strict normalization and safety
-    if (relativePath.includes('..') || relativePath.startsWith('/') || relativePath.includes('://')) {
-      throw new Error("Caminho de vídeo inválido ou malformado.");
-    }
-
+    // 4. Generate the secure signed URL
     const { data: signedData, error } = await supabaseAdmin.storage
-      .from(bucket)
-      .createSignedUrl(relativePath, 21600); // 6 hours
+      .from(resolved.bucket)
+      .createSignedUrl(resolved.path, 21600); // 6 hours
 
-    if (error) {
-      console.error("Error generating signed URL:", error);
+    if (error || !signedData?.signedUrl) {
+      console.error("[VideoResolution] Error generating signed URL:", error);
       throw new Error("Falha ao gerar URL de acesso ao vídeo.");
     }
 
