@@ -185,7 +185,7 @@ function ProfilePage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Telefone</div>
-                  <div className="text-sm font-medium break-words">{profile?.phone || "Não informado"}</div>
+                  <div className="text-sm font-medium truncate">{profile?.phone || "Não informado"}</div>
                 </div>
               </div>
             </div>
