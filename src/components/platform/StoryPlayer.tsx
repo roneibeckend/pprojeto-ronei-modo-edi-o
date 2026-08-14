@@ -37,8 +37,11 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
       
       if (video.paused) {
         try {
-          await video.play();
-          setIsPlaying(true);
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            await playPromise;
+            setIsPlaying(true);
+          }
         } catch (err: any) {
           console.warn("Story play failed on unmute", err.name);
         }
@@ -112,6 +115,16 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
         />
         
         {/* Play/Pause Overlay Indicator (shows temporarily) */}
+        {isMuted && isPlaying && (
+          <button
+            onClick={togglePlay}
+            className="absolute bottom-24 left-1/2 -translate-x-1/2 z-[120] flex items-center gap-2 rounded-full bg-black/60 px-4 py-2.5 text-xs font-bold text-white backdrop-blur-sm transition active:scale-95 border border-white/10"
+          >
+            <VolumeX className="w-4 h-4" />
+            Toque para ativar o som
+          </button>
+        )}
+        
         {!isPlaying && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
             <div className="grid h-20 w-20 place-items-center rounded-full bg-white/10 backdrop-blur-md">

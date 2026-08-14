@@ -26,7 +26,7 @@ export function VideoPlayer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showControls, setShowControls] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   
@@ -90,7 +90,7 @@ export function VideoPlayer({
       }
       
       if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&vq=hd1080&controls=1&disablekb=0&fs=1&playsinline=1`;
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&vq=hd1080&controls=1&disablekb=0&fs=1&playsinline=1&mute=1`;
       }
     }
 
@@ -99,7 +99,7 @@ export function VideoPlayer({
       if (url.includes('/preview')) return url;
       const match = url.match(/\/file\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
       if (match && match[1]) {
-        return `https://drive.google.com/file/d/${match[1]}/preview`;
+        return `https://drive.google.com/file/d/${match[1]}/preview?autoplay=1&mute=1`;
       }
     }
     
@@ -239,14 +239,18 @@ export function VideoPlayer({
     handleInteraction();
   };
 
-  const unmute = (e: React.MouseEvent) => {
+  const unmute = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     const video = videoRef.current;
     if (!video) return;
     video.muted = false;
     video.volume = 1;
     setIsMuted(false);
-    if (video.paused) video.play().catch(() => {});
+    if (video.paused) {
+      video.play().catch(err => {
+        console.warn("Unmute play failed", err);
+      });
+    }
     handleInteraction();
   };
 
@@ -294,18 +298,19 @@ export function VideoPlayer({
         webkit-playsinline="true"
         x5-playsinline="true"
         controls={useNativeControls}
-        preload={isIntro ? "auto" : "metadata"}
+        preload="auto"
         controlsList="nodownload"
-        muted={isMuted}
+        muted={true}
+        autoPlay={true}
         loop={false}
         onLoadStart={() => setIsLoading(true)}
         onLoadedMetadata={() => {
           setIsLoading(false);
-          tryAutoplay();
+          videoRef.current?.play().catch(() => {});
         }}
         onCanPlay={() => {
           setIsLoading(false);
-          tryAutoplay();
+          videoRef.current?.play().catch(() => {});
         }}
         onPlaying={() => {
           setIsPlaying(true);
@@ -412,7 +417,7 @@ export function VideoPlayer({
       {isMuted && isPlaying && (
         <button
           onClick={unmute}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full bg-black/60 px-4 py-2.5 text-sm font-bold text-white backdrop-blur-sm transition active:scale-95"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full bg-fire px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-fire/20 transition active:scale-95 animate-in fade-in zoom-in duration-500"
         >
           <VolumeX className="w-4 h-4" />
           Toque para ativar o som
