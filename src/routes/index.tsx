@@ -1345,7 +1345,7 @@ function Bonuses() {
       </div>
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1600px]">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Para quem é</SectionTag>
+          <SectionTag>Bônus Exclusivos</SectionTag>
           <h2 className="mt-4 max-w-3xl h-fluid-h3 font-black">
             4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
           </h2>
