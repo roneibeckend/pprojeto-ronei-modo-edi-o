@@ -174,7 +174,8 @@ export function VideoPlayer({
 
   const tryAutoplay = async () => {
     const video = videoRef.current;
-    if (!video || !isIntro || autoplayTriedRef.current) return;
+    if (!video || !isIntro) return;
+    if (!video.paused) return; // Already playing
     
     autoplayTriedRef.current = true;
     
