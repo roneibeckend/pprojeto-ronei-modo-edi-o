@@ -90,7 +90,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             }
             
             // If it's 'processing', check for timeout (e.g., 5 minutes) to allow retry of stuck processes
-            const claimedAt = new Date(existingEvent.claimed_at).getTime();
+            const claimedAt = new Date(existingEvent.claimed_at || new Date().toISOString()).getTime();
             const now = Date.now();
             const leaseTimeout = 5 * 60 * 1000; // 5 minutes
             
