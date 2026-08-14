@@ -1082,7 +1082,7 @@ function ProfitCalculator() {
 
   return (
     <section id="calculadora" className="relative py-10 sm:py-14">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 3xl:max-w-[1500px]">
         <div className="flex flex-col items-center text-center">
           <SectionTag>O que você aprende</SectionTag>
           <h2 className="mt-4 max-w-2xl h-fluid-h3 font-black">
@@ -1339,11 +1339,11 @@ function Bonuses() {
     { icon: Calculator, title: "Calculadora de Venda", tag: "Bônus 04", value: "R$ 30,00", desc: "Ferramenta prática para calcular custos e garantir sua margem de lucro em cada venda." },
   ];
   return (
-    <section id="bonus" className="relative py-10 sm:py-14">
+    <section id="bonus" className="relative py-14 sm:py-20">
       <div className="pointer-events-none absolute inset-0 -z-10 opacity-30">
         <div className="absolute right-0 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-[color:var(--flame)]/40 blur-3xl" />
       </div>
-      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1600px]">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Para quem é</SectionTag>
           <h2 className="mt-4 max-w-3xl h-fluid-h3 font-black">
@@ -2016,7 +2016,7 @@ function NotForYou() {
   ];
   return (
     <section className="relative py-10 sm:py-14">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 3xl:max-w-[1500px]">
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur sm:p-8">
           <div className="flex flex-col items-center text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
@@ -2060,7 +2060,7 @@ function ForYou() {
   ];
   return (
     <section className="relative py-10 sm:py-14">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 3xl:max-w-[1500px]">
         <div className="flex flex-col items-center text-center">
           
           <h2 className="mt-4 max-w-2xl text-2xl sm:text-3xl font-black">
