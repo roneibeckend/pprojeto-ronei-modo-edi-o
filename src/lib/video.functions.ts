@@ -3,10 +3,80 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /**
+ * Normalizes a video path:
+ * 1. Decodes URL components
+ * 2. Removes query strings and leading slashes
+ * 3. Splits into segments and blocks empty segments, "." or ".."
+ */
+function normalizeVideoPath(rawPath: string): string {
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(rawPath);
+  } catch {
+    throw new Error("Caminho de vídeo inválido.");
+  }
+
+  // Remove query params and leading slashes
+  decoded = decoded.split("?")[0].replace(/^\/+/, "");
+
+  const segments = decoded.split("/");
+  
+  if (
+    segments.length === 0 ||
+    segments.some(segment =>
+      segment.length === 0 ||
+      segment === "." ||
+      segment === ".."
+    )
+  ) {
+    throw new Error("Caminho de vídeo inválido.");
+  }
+
+  return segments.join("/");
+}
+
+/**
+ * Paginates through storage to verify exact existence of a file.
+ */
+async function objectExists(
+  supabaseAdmin: any,
+  bucket: string,
+  path: string
+): Promise<boolean> {
+  const lastSlashIndex = path.lastIndexOf('/');
+  const dir = lastSlashIndex !== -1 ? path.substring(0, lastSlashIndex) : '';
+  const fileName = lastSlashIndex !== -1 ? path.substring(lastSlashIndex + 1) : path;
+
+  const PAGE_SIZE = 100;
+  let offset = 0;
+
+  while (true) {
+    const { data: files, error } = await supabaseAdmin.storage
+      .from(bucket)
+      .list(dir, {
+        limit: PAGE_SIZE,
+        offset
+      });
+
+    if (error) {
+      console.error(`[VideoResolution] Storage list error in ${bucket}/${dir}:`, error);
+      throw new Error("Falha ao consultar armazenamento.");
+    }
+
+    if (files?.some((file: any) => file.name === fileName)) {
+      return true;
+    }
+
+    if (!files || files.length < PAGE_SIZE) {
+      return false;
+    }
+
+    offset += PAGE_SIZE;
+  }
+}
+
+/**
  * Internal helper to safely resolve the physical location of a video file.
- * Handles:
- * 1. Absolute Supabase URLs (public, sign, authenticated)
- * 2. Relative paths with cross-bucket fallback for legacy content.
  */
 async function resolveStoredVideoLocation(
   supabaseAdmin: any,
@@ -14,81 +84,58 @@ async function resolveStoredVideoLocation(
   preferredBucket: "course-assets" | "ebook-assets"
 ): Promise<{ bucket: string; path: string }> {
   const VIDEO_BUCKETS = ["course-assets", "ebook-assets"];
+  const VALID_ACCESS_TYPES = ["public", "sign", "authenticated"];
   
-  let bucket: string | null = null;
-  let path: string | null = null;
-
-  // Case 1: Absolute Supabase URL Parse
-  if (rawUrl.startsWith("http")) {
+  // Case 1: Absolute URL
+  if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
     try {
       const url = new URL(rawUrl);
-      const pathParts = url.pathname.split('/');
+      const pathParts = url.pathname.split('/'); // e.g. ["", "storage", "v1", "object", "public", "bucket", "path..."]
       
       const markerIndex = pathParts.findIndex(p => p === 'object');
-      if (markerIndex !== -1 && pathParts.length > markerIndex + 2) {
-        const detectedBucket = pathParts[markerIndex + 2];
-        const detectedPath = pathParts.slice(markerIndex + 3).join('/');
-        
-        if (VIDEO_BUCKETS.includes(detectedBucket)) {
-          bucket = detectedBucket;
-          path = decodeURIComponent(detectedPath).split('?')[0].replace(/^\//, "");
-        }
+      if (markerIndex === -1 || pathParts.length <= markerIndex + 2) {
+        throw new Error("Estrutura de URL absoluta inválida.");
       }
-    } catch (e) {
-      console.error("[VideoResolution] Failed to parse absolute URL:", e);
-    }
-  } else {
-    // Case 2: Relative Path
-    path = rawUrl.split('?')[0].replace(/^\//, "");
-    path = decodeURIComponent(path);
-  }
 
-  if (!path || path === "") {
-    throw new Error("Caminho de vídeo malformado ou vazio.");
-  }
+      const accessType = pathParts[markerIndex + 1];
+      const detectedBucket = pathParts[markerIndex + 2];
+      const rawPath = pathParts.slice(markerIndex + 3).join('/');
 
-  // Security: Block path traversal for ALL inputs (Absolute or Relative)
-  if (path.includes('..') || path.includes('./')) {
-    throw new Error("Caminho de vídeo inválido (traversal detectado).");
-  }
-
-  // Common verification for existence (Handles Absolute URL verify AND Relative fallback)
-  const candidates = bucket 
-    ? [bucket] // If we parsed a bucket from absolute URL, we must verify it exists there
-    : [preferredBucket, ...VIDEO_BUCKETS.filter(b => b !== preferredBucket)];
-    
-  let resolvedBucket: string | null = null;
-  let resolvedPath: string | null = null;
-
-  for (const cand of candidates) {
-    const dir = path.includes('/') ? path.substring(0, path.lastIndexOf('/')) : '';
-    const fileName = path.includes('/') ? path.substring(path.lastIndexOf('/') + 1) : path;
-
-    // We don't use 'search' to avoid partial hits; we list and find exact match
-    const { data: files } = await supabaseAdmin.storage
-      .from(cand)
-      .list(dir, { limit: 100 }); // List current directory
-    
-    if (files && files.length > 0) {
-      const exactMatch = files.find((f: any) => f.name === fileName);
-      if (exactMatch) {
-        resolvedBucket = cand;
-        resolvedPath = path;
-        break;
+      if (!VALID_ACCESS_TYPES.includes(accessType)) {
+        throw new Error(`Tipo de acesso inválido: ${accessType}`);
       }
+
+      if (!VIDEO_BUCKETS.includes(detectedBucket)) {
+        throw new Error(`Bucket não permitido: ${detectedBucket}`);
+      }
+
+      const normalizedPath = normalizeVideoPath(rawPath);
+      
+      const exists = await objectExists(supabaseAdmin, detectedBucket, normalizedPath);
+      if (!exists) {
+        throw new Error("Arquivo da URL absoluta não encontrado no armazenamento.");
+      }
+
+      return { bucket: detectedBucket, path: normalizedPath };
+    } catch (e: any) {
+      console.error("[VideoResolution] Absolute URL error:", e.message);
+      throw new Error(e.message || "URL de vídeo inválida.");
     }
   }
 
-  if (!resolvedBucket || !resolvedPath) {
-    throw new Error("Arquivo de vídeo não encontrado no armazenamento.");
+  // Case 2: Relative Path
+  const normalizedPath = normalizeVideoPath(rawUrl);
+  
+  // Try preferred bucket first, then fall back
+  const buckets = [preferredBucket, ...VIDEO_BUCKETS.filter(b => b !== preferredBucket)];
+  
+  for (const bucket of buckets) {
+    if (await objectExists(supabaseAdmin, bucket, normalizedPath)) {
+      return { bucket, path: normalizedPath };
+    }
   }
 
-  // Safety layer re-validation
-  if (!VIDEO_BUCKETS.includes(resolvedBucket)) {
-    throw new Error("Localização de armazenamento não permitida.");
-  }
-
-  return { bucket: resolvedBucket, path: resolvedPath };
+  throw new Error("Arquivo de vídeo não encontrado no armazenamento.");
 }
 
 export const getSignedVideoUrl = createServerFn({ method: "GET" })
@@ -108,7 +155,7 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
     let targetEbookId: string | null = null;
     let preferredBucket: "course-assets" | "ebook-assets" = "course-assets";
 
-    // 1. Fetch record from DB to get the raw video source and verify ownership context
+    // 1. Fetch record from DB
     if (data.lessonId) {
       const { data: lesson } = await supabaseAdmin
         .from("course_lessons")
@@ -184,14 +231,14 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
           .eq("ebook_id", targetEbookId)
           .eq("user_id", userId)
           .maybeSingle();
-
+ 
         if (!enrollment) throw new Error("Acesso negado: Você não possui acesso a este e-book.");
       } else {
         throw new Error("Acesso negado: Conteúdo não autorizado.");
       }
     }
 
-    // 3. Resolve physical location (bucket and path)
+    // 3. Resolve physical location
     const resolved = await resolveStoredVideoLocation(supabaseAdmin, rawVideoUrl, preferredBucket);
 
     // 4. Generate the secure signed URL
