@@ -1213,7 +1213,7 @@ function SocialProof() {
     <section id="depoimentos" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1800px]">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Bônus Exclusivos</SectionTag>
+          <SectionTag>Resultados Reais</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             Alunos que <span className="text-gradient-fire">colocaram a mão na brasa</span> e viram resultado
           </h2>
@@ -1345,7 +1345,7 @@ function Bonuses() {
       </div>
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1600px]">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Para quem é</SectionTag>
+          <SectionTag>Bônus Exclusivos</SectionTag>
           <h2 className="mt-4 max-w-3xl h-fluid-h3 font-black">
             4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
           </h2>
@@ -1659,7 +1659,7 @@ function Offer() {
             <div className="flex justify-center lg:justify-start">
               <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3.5 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[color:var(--gold)]">
                 <ShieldCheck className="h-3 w-3" />
-                &#x2063;
+                Satisfação Garantida
               </span>
             </div>
 
@@ -1939,7 +1939,7 @@ function Footer() {
       </div>
       <div className="mx-auto mt-10 max-w-6xl border-t border-border/60 px-4 pt-6 text-center text-xs leading-relaxed text-muted-foreground sm:px-6">
         <p className="mb-2 uppercase tracking-widest font-semibold text-[10px]">
-          [PREENCHER RAZÃO SOCIAL] · CNPJ [PREENCHER CNPJ] · contato@espetinhonaveia.com
+          RONNEI · CNPJ 45.680.415/0001-91 · ronneivml122@gmail.com
         </p>
         <p className="mb-2 opacity-80">
           Suporte de segunda a sexta, das 9h às 18h.
@@ -2019,10 +2019,7 @@ function NotForYou() {
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 3xl:max-w-[1500px]">
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur sm:p-8">
           <div className="flex flex-col items-center text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
-              <X className="h-3 w-3" />
-              Este método NÃO é para
-            </span>
+            <SectionTag>Para quem NÃO é</SectionTag>
             <h2 className="mt-4 max-w-xl text-xl font-black sm:text-2xl">
               Seja <span className="text-gradient-fire">honesto</span> com você mesmo
             </h2>
@@ -2062,7 +2059,7 @@ function ForYou() {
     <section className="relative py-10 sm:py-14">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 3xl:max-w-[1500px]">
         <div className="flex flex-col items-center text-center">
-          
+          <SectionTag>Para quem é</SectionTag>
           <h2 className="mt-4 max-w-2xl text-2xl sm:text-3xl font-black">
             Você se <span className="text-gradient-fire">identifica</span>?
           </h2>
@@ -2221,16 +2218,17 @@ function LandingPage() {
     // Assign varied reveal variants per section so animations don't all feel the same.
     // Order below matches <main> children.
     const variantsBySection: Array<{ headline: string; card: string }> = [
-      { headline: "up",    card: "up"     }, // Hero (mostly handled by <Reveal>)
-      { headline: "clip",  card: "left"   }, // BrasaTicker (no h2)
+      { headline: "up",    card: "up"     }, // Hero
       { headline: "clip",  card: "scale"  }, // ForYou
+      { headline: "up",    card: "left"   }, // Objection
       { headline: "up",    card: "tilt"   }, // Benefits
-      { headline: "left",  card: "rotate" }, // Modules
+      { headline: "up",    card: "up"     }, // ProfitCalculator
       { headline: "right", card: "right"  }, // AuthorSolution
       { headline: "clip",  card: "tilt"   }, // SocialProof
+      { headline: "left",  card: "rotate" }, // Modules
       { headline: "clip",  card: "scale"  }, // Bonuses
+      { headline: "up",    card: "blur"   }, // NotForYou
       { headline: "up",    card: "blur"   }, // Offer
-
       { headline: "up",    card: "up"     }, // FAQ
     ];
 
