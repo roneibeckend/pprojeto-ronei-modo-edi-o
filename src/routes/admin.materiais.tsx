@@ -175,7 +175,7 @@ function AdminMaterialsPage() {
           <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
           {filteredMaterials.map((m: any) => (
             <div key={m.id} className="group relative overflow-hidden rounded-2xl border border-white/5 bg-[#111] p-5 transition-all hover:border-[#ff6a00]/30">
               <div className="flex items-start justify-between gap-3">

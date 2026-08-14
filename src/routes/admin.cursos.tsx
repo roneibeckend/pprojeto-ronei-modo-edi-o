@@ -232,14 +232,14 @@ function AdminCursosPage() {
           </button>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-white/5 bg-[#111]">
+        <div className="overflow-x-auto rounded-xl border border-white/5 bg-[#111] w-full">
           <table className="w-full text-left text-sm">
             <thead className="bg-white/5 text-[10px] font-bold uppercase tracking-widest text-white/40">
               <tr>
-                <th className="px-6 py-4">Capa / Título</th>
-                <th className="px-6 py-4">Módulos/Aulas</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Ações</th>
+                <th className="px-6 py-4 w-[40%] min-w-[250px]">Capa / Título</th>
+                <th className="px-6 py-4 w-[20%] min-w-[150px]">Módulos/Aulas</th>
+                <th className="px-6 py-4 w-[15%] min-w-[100px]">Status</th>
+                <th className="px-6 py-4 text-right w-[25%] min-w-[200px]">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
