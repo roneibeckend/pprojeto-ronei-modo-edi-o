@@ -291,7 +291,7 @@ function BrasaTicker() {
   ];
   const loop = [...items, ...items];
   return (
-    <div className="relative overflow-hidden border-y border-[color:var(--gold)]/20 bg-gradient-to-r from-[color:var(--ember)]/10 via-transparent to-[color:var(--gold)]/10 py-4">
+    <div className="relative overflow-hidden border-y border-[color:var(--gold)]/20 bg-gradient-to-r from-[color:var(--ember)]/10 via-transparent to-[color:var(--gold)]/10 py-4 3xl:py-6">
       <div className="flex animate-marquee gap-8 whitespace-nowrap">
         {loop.map((t, i) => (
           <span key={i} className="flex items-center gap-3 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
