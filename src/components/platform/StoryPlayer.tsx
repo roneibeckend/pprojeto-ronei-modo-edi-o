@@ -33,6 +33,7 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
 
     if (video.muted) {
       video.muted = false;
+      video.removeAttribute('muted');
       setIsMuted(false);
       
       if (video.paused) {
@@ -66,6 +67,11 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
   const toggleMute = () => {
     if (videoRef.current) {
       videoRef.current.muted = !isMuted;
+      if (!videoRef.current.muted) {
+        videoRef.current.removeAttribute('muted');
+      } else {
+        videoRef.current.setAttribute('muted', '');
+      }
       setIsMuted(!isMuted);
     }
   };
@@ -102,11 +108,11 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
       </div>
 
       {/* Video Player */}
-      <div className="relative aspect-[9/16] h-full max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl shadow-fire/10">
+      <div className="relative aspect-[9/16] h-full max-h-[90vh] w-full max-w-full overflow-hidden rounded-2xl shadow-2xl shadow-fire/10 bg-black flex items-center justify-center">
         <video
           ref={videoRef}
           src={url}
-          className="h-full w-full object-contain bg-black"
+          className="h-full w-full object-contain"
           autoPlay
           muted={false}
           playsInline

@@ -302,7 +302,7 @@ export function VideoPlayer({
         playsInline
         webkit-playsinline="true"
         x5-playsinline="true"
-        controls={false}
+        controls={useNativeControls}
         preload="auto"
         controlsList="nodownload"
         muted={false}
