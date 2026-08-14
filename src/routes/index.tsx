@@ -45,8 +45,6 @@ import {
   User,
   Phone,
   X,
-  Facebook,
-  Instagram,
 } from "lucide-react";
 
 import heroChef from "@/assets/hero-chef.asset.json";
