@@ -1314,10 +1314,10 @@ function Modules() {
 
 function Bonuses() {
   const bonuses = [
-    { icon: Truck, title: "Contato com fornecedores", tag: "Bônus 01", value: "R$ 27", desc: "Acesso direto a fornecedores confiáveis para comprar melhor e mais barato." },
-    { icon: MessageCircle, title: "Grupo de WhatsApp", tag: "Bônus 02", value: "R$ 37", desc: "Comunidade exclusiva com outros alunos para trocar experiências e networking." },
+    { icon: Sparkles, title: "Artes para Divulgação", tag: "Bônus 01", value: "R$ 47", desc: "Artes profissionais prontas para você postar no Instagram e atrair clientes." },
+    { icon: BookOpen, title: "Cardápio Editável", tag: "Bônus 02", value: "R$ 37", desc: "Modelo profissional de cardápio para você apenas colocar seus preços e imprimir." },
     { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", value: "R$ 19", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
-    { icon: Sparkles, title: "Sorteio de faca profissional", tag: "Bônus 04", value: "R$ 67", desc: "Concorra a uma faca profissional para elevar o padrão da sua produção." },
+    { icon: Calculator, title: "Calculadora de Venda", tag: "Bônus 04", value: "R$ 67", desc: "Ferramenta prática para calcular custos e garantir sua margem de lucro em cada venda." },
   ];
   return (
     <section id="bonus" className="relative py-10 sm:py-14">
@@ -1535,7 +1535,7 @@ function Testimonials() {
 function Offer() {
   const features = [
     "eBook completo com 14 capítulos (+30 páginas)",
-    "4 bônus exclusivos (fornecedores, grupo VIP, certificado e sorteio)",
+    "4 bônus exclusivos (artes, cardápio, certificado e calculadora)",
     "Acesso imediato após o pagamento",
     "Garantia incondicional de 7 dias",
   ];
