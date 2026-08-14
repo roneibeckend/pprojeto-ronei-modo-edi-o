@@ -34,25 +34,45 @@ type Partner = { id: string; name: string; percent: number; user_id?: string | n
 
 function FinancePage() {
   const queryClient = useQueryClient();
+  const [period, setPeriod] = useState<string>(localStorage.getItem("finance-period") || "current-month");
   const [revenue, setRevenue] = useState<number>(0);
   const [costs, setCosts] = useState<Cost[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
 
   const fetchFinancialSummary = useServerFn(getFinancialSummary);
 
+  const getDates = (p: string) => {
+    const now = new Date();
+    switch(p) {
+        case "today": return { start: new Date(now.setHours(0,0,0,0)).toISOString(), end: new Date().toISOString() };
+        case "last-7-days": {
+            const start = new Date();
+            start.setDate(now.getDate() - 7);
+            return { start: start.toISOString(), end: new Date().toISOString() };
+        }
+        case "current-month": return { start: new Date(now.getFullYear(), now.getMonth(), 1).toISOString(), end: new Date().toISOString() };
+        case "previous-month": return { start: new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString(), end: new Date(now.getFullYear(), now.getMonth(), 0).toISOString() };
+        case "current-year": return { start: new Date(now.getFullYear(), 0, 1).toISOString(), end: new Date().toISOString() };
+        case "previous-year": return { start: new Date(now.getFullYear() - 1, 0, 1).toISOString(), end: new Date(now.getFullYear() - 1, 11, 31).toISOString() };
+        default: return { start: undefined, end: undefined };
+    }
+  }
+
   // Fetch initial data
-  const { isLoading } = useQuery({
-    queryKey: ["financial-config"],
+  const { isLoading, refetch } = useQuery({
+    queryKey: ["financial-config", period],
     queryFn: async () => {
+      localStorage.setItem("finance-period", period);
+      const dates = getDates(period);
+      
       const [settingsRes, costsRes, partnersRes, autoRevenue] = await Promise.all([
         supabase.from("financial_settings").select("*").single(),
         supabase.from("financial_costs").select("*").order("created_at"),
         supabase.from("financial_partners").select("*").order("created_at"),
-        fetchFinancialSummary()
+        fetchFinancialSummary({ data: { startDate: dates.start, endDate: dates.end } })
       ]);
 
       if (settingsRes.data) {
-        // Se temos receita automatizada, usamos ela, caso contrário o manual
         setRevenue(autoRevenue.totalNetRevenue || Number(settingsRes.data.manual_revenue));
       }
       if (costsRes.data) setCosts(costsRes.data.map(c => ({ id: c.id, label: c.label, value: Number(c.value) })));
