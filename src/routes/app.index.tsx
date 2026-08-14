@@ -111,7 +111,7 @@ function Dashboard() {
           <Link to="/app/cursos" className="text-sm font-medium text-gold hover:underline">Ver todos</Link>
         </div>
         
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 sm:gap-6">
           {showcaseItems
             ?.map(item => ({
               ...item,

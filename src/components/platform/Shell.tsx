@@ -223,7 +223,7 @@ export function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#0a0a0a] text-foreground">
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-white/5 lg:block">
+      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-white/5 lg:block transition-[width] duration-300 ease-in-out">
         {SidebarInner}
       </aside>
 
@@ -275,7 +275,7 @@ export function Shell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 overflow-y-auto px-4 py-4 pb-24 lg:px-8 lg:py-8 lg:pb-8">
+        <main className="min-w-0 flex-1 overflow-y-auto px-4 py-4 pb-24 lg:px-8 lg:py-8 lg:pb-8 3xl:max-w-[1800px] 3xl:mx-auto w-full">
           <Suspense fallback={
             <div className="animate-in fade-in duration-500 space-y-8">
               <Skeleton className="h-10 w-64" />

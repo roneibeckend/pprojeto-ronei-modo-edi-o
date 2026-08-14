@@ -66,7 +66,7 @@ function RecipesPage() {
           <Loader2 className="h-8 w-8 animate-spin text-fire" />
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((r: any) => (
             <article key={r.id} className="glass card-tilt overflow-hidden rounded-2xl flex flex-col h-full">
               <div className="aspect-video overflow-hidden">

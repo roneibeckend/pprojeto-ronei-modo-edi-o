@@ -77,7 +77,7 @@ function AdminRootLayout() {
     <div className="flex h-dvh bg-[#0a0a0a] text-white overflow-hidden safe-top safe-bottom">
       {/* Sidebar - Desktop */}
       <aside className="hidden lg:flex w-64 border-r border-white/10 flex-col shrink-0">
-        <div className="p-6 border-b border-white/10 flex items-center gap-2 shrink-0">
+        <div className="p-6 border-b border-white/10 flex items-center gap-2 shrink-0 h-20">
           <ShieldCheck className="h-6 w-6" style={{ color: ORANGE }} />
           <span className="font-bold tracking-widest text-sm uppercase truncate">
             {role === "student" ? "Painel Central" : "Painel Admin"}
@@ -96,12 +96,12 @@ function AdminRootLayout() {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition shrink-0 ${
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition shrink-0 ${
                   active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
                 }`}
               >
-                <Icon className="h-5 w-5" />
-                {item.label}
+                <Icon className="h-4 w-4" />
+                <span className="truncate">{item.label}</span>
               </Link>
             );
           })}
@@ -157,8 +157,8 @@ function AdminRootLayout() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pt-20 lg:pt-0 w-full">
-        <header className="p-8 border-b border-white/10 hidden lg:flex items-center justify-between shrink-0">
-          <h1 className="font-display text-2xl font-extrabold uppercase tracking-tight">
+        <header className="px-8 border-b border-white/10 hidden lg:flex items-center justify-between shrink-0 h-20">
+          <h1 className="font-display text-xl font-extrabold uppercase tracking-tight">
             {role === "student" ? "Painel Central" : (
               <>Painel Central <span style={{ color: ORANGE }}>Administrativo</span></>
             )}
@@ -173,7 +173,7 @@ function AdminRootLayout() {
             </Link>
           </div>
         </header>
-        <div className="p-4 sm:p-6 lg:p-8">
+        <div className="p-4 sm:p-6 lg:p-8 3xl:max-w-[1800px] 3xl:mx-auto">
           <Outlet />
         </div>
       </main>

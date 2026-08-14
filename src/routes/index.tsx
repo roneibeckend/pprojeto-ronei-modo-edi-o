@@ -291,7 +291,7 @@ function BrasaTicker() {
   ];
   const loop = [...items, ...items];
   return (
-    <div className="relative overflow-hidden border-y border-[color:var(--gold)]/20 bg-gradient-to-r from-[color:var(--ember)]/10 via-transparent to-[color:var(--gold)]/10 py-4">
+    <div className="relative overflow-hidden border-y border-[color:var(--gold)]/20 bg-gradient-to-r from-[color:var(--ember)]/10 via-transparent to-[color:var(--gold)]/10 py-4 3xl:py-6">
       <div className="flex animate-marquee gap-8 whitespace-nowrap">
         {loop.map((t, i) => (
           <span key={i} className="flex items-center gap-3 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
@@ -643,7 +643,7 @@ function Nav() {
         scrolled ? "backdrop-blur-xl bg-background/70 border-b border-border" : ""
       }`}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-4 py-3 sm:px-6 3xl:max-w-[1800px]">
         <a href="#top" className="flex min-w-0 items-center gap-2">
           <img
             src={logo}
@@ -704,7 +704,7 @@ function Hero() {
         <div className="absolute right-0 top-40 h-[280px] w-[280px] rounded-full bg-[color:var(--gold)]/15 blur-3xl" />
       </div>
 
-      <div className="mx-auto flex max-w-3xl flex-col items-center px-4 text-center sm:px-6">
+      <div className="mx-auto flex max-w-[1200px] flex-col items-center px-4 text-center sm:px-6 3xl:max-w-[1500px]">
 
         <Reveal variant="blur" delay={1} as="h1" className="mt-4 text-3xl font-black leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl">
           Do zero ao <span className="animated-fire-text">próprio negócio</span>
@@ -720,9 +720,9 @@ function Hero() {
 
 
         {/* Video + CTA row */}
-        <div className="mt-6 grid w-full items-center gap-6 sm:mt-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8">
+        <div className="mt-6 grid w-full items-center gap-6 sm:mt-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8 2xl:gap-16">
           {/* Compact video trigger */}
-          <Reveal variant="scale" delay={3} className="w-full lg:ml-auto lg:max-w-md">
+          <Reveal variant="scale" delay={3} className="w-full lg:ml-auto lg:max-w-xl">
             <button
               type="button"
               onClick={() => setVideoOpen(true)}
@@ -1082,7 +1082,7 @@ function ProfitCalculator() {
 
   return (
     <section id="calculadora" className="relative py-10 sm:py-14">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 3xl:max-w-[1500px]">
         <div className="flex flex-col items-center text-center">
           <SectionTag>O que você aprende</SectionTag>
           <h2 className="mt-4 max-w-2xl h-fluid-h3 font-black">
@@ -1211,7 +1211,7 @@ function SocialProof() {
   ];
   return (
     <section id="depoimentos" className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1800px]">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Bônus Exclusivos</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
@@ -1222,7 +1222,7 @@ function SocialProof() {
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-5 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-5 lg:grid-cols-4 3xl:grid-cols-5">
           {prints.map((p) => (
             <figure
               key={p.alt}
@@ -1274,7 +1274,7 @@ function Modules() {
   const [open, setOpen] = useState(false);
   return (
     <section id="modulos" className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1800px]">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Por dentro do eBook</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
@@ -1339,11 +1339,11 @@ function Bonuses() {
     { icon: Calculator, title: "Calculadora de Venda", tag: "Bônus 04", value: "R$ 30,00", desc: "Ferramenta prática para calcular custos e garantir sua margem de lucro em cada venda." },
   ];
   return (
-    <section id="bonus" className="relative py-10 sm:py-14">
+    <section id="bonus" className="relative py-14 sm:py-20">
       <div className="pointer-events-none absolute inset-0 -z-10 opacity-30">
         <div className="absolute right-0 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-[color:var(--flame)]/40 blur-3xl" />
       </div>
-      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1600px]">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Para quem é</SectionTag>
           <h2 className="mt-4 max-w-3xl h-fluid-h3 font-black">
@@ -1415,7 +1415,7 @@ function Results() {
   const after = ["Carnes escolhidas com estratégia", "Preços com margem garantida", "Cliente fiel toda semana", "Rotina fluida e organizada", "Lucro previsível e crescente"];
   return (
     <section className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-6xl 3xl:max-w-[1800px] px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Transformação</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
@@ -2016,7 +2016,7 @@ function NotForYou() {
   ];
   return (
     <section className="relative py-10 sm:py-14">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 3xl:max-w-[1500px]">
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur sm:p-8">
           <div className="flex flex-col items-center text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
@@ -2060,7 +2060,7 @@ function ForYou() {
   ];
   return (
     <section className="relative py-10 sm:py-14">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 3xl:max-w-[1500px]">
         <div className="flex flex-col items-center text-center">
           
           <h2 className="mt-4 max-w-2xl text-2xl sm:text-3xl font-black">
@@ -2156,7 +2156,7 @@ function LeadPopup() {
         onClick={close}
         aria-hidden="true"
       />
-      <div className="relative w-full max-w-md rounded-2xl border border-[color:var(--gold)]/40 bg-card p-5 shadow-fire sm:p-6">
+      <div className="relative w-full max-w-md 2xl:max-w-lg rounded-2xl border border-[color:var(--gold)]/40 bg-card p-5 shadow-fire sm:p-6 2xl:p-10">
         <button
           type="button"
           onClick={close}

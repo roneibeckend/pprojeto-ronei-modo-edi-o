@@ -488,7 +488,7 @@ function CoursePage() {
         )}
       </AnimatePresence>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_360px] 2xl:grid-cols-[1fr_400px]">
         {/* Player */}
         <div className="min-w-0 space-y-4">
           <motion.div 

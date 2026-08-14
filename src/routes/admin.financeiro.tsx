@@ -282,26 +282,26 @@ function FinancePage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Resumo */}
         <div className="lg:col-span-3">
-           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-left">
-              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5">
+           <div className="grid grid-cols-2 md:grid-cols-4 2xl:grid-cols-4 gap-3 sm:gap-4 text-left">
+              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5 2xl:p-8">
                 <div className="flex items-center justify-between mb-1">
                   <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40">Receita Bruta</div>
                   {period !== 'all' && <div className="text-[8px] font-bold text-orange-400/60 uppercase">Filtrado</div>}
                 </div>
-                <div className="text-lg sm:text-2xl font-display font-extrabold text-white">{brl(revenue)}</div>
+                <div className="text-lg sm:text-2xl 2xl:text-4xl font-display font-extrabold text-white">{brl(revenue)}</div>
               </div>
 
-              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5">
+              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5 2xl:p-8">
                 <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Custos Totais</div>
-                <div className="text-lg sm:text-2xl font-display font-extrabold text-red-400">{brl(totalCost)}</div>
+                <div className="text-lg sm:text-2xl 2xl:text-4xl font-display font-extrabold text-red-400">{brl(totalCost)}</div>
               </div>
-              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5">
+              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5 2xl:p-8">
                 <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Lucro Líquido</div>
-                <div className="text-lg sm:text-2xl font-display font-extrabold text-emerald-400">{brl(profit)}</div>
+                <div className="text-lg sm:text-2xl 2xl:text-4xl font-display font-extrabold text-emerald-400">{brl(profit)}</div>
               </div>
-              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5">
+              <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5 2xl:p-8">
                 <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Margem Líquida</div>
-                <div className={`text-lg sm:text-2xl font-display font-extrabold ${margin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{margin.toFixed(1)}%</div>
+                <div className={`text-lg sm:text-2xl 2xl:text-4xl font-display font-extrabold ${margin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{margin.toFixed(1)}%</div>
               </div>
            </div>
         </div>
