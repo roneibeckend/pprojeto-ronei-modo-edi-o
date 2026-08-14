@@ -35,6 +35,8 @@ type Partner = { id: string; name: string; percent: number; user_id?: string | n
 function FinancePage() {
   const queryClient = useQueryClient();
   const [period, setPeriod] = useState<string>(localStorage.getItem("finance-period") || "current-month");
+  const [customStartDate, setCustomStartDate] = useState<string>(localStorage.getItem("finance-custom-start") || "");
+  const [customEndDate, setCustomEndDate] = useState<string>(localStorage.getItem("finance-custom-end") || "");
   const [revenue, setRevenue] = useState<number>(0);
   const [costs, setCosts] = useState<Cost[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -54,9 +56,14 @@ function FinancePage() {
         case "previous-month": return { start: new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString(), end: new Date(now.getFullYear(), now.getMonth(), 0).toISOString() };
         case "current-year": return { start: new Date(now.getFullYear(), 0, 1).toISOString(), end: new Date().toISOString() };
         case "previous-year": return { start: new Date(now.getFullYear() - 1, 0, 1).toISOString(), end: new Date(now.getFullYear() - 1, 11, 31).toISOString() };
+        case "custom": return { 
+          start: customStartDate ? new Date(customStartDate).toISOString() : undefined, 
+          end: customEndDate ? new Date(customEndDate).toISOString() : undefined 
+        };
         default: return { start: undefined, end: undefined };
     }
   }
+
 
   // Fetch initial data
   const { isLoading, refetch } = useQuery({
