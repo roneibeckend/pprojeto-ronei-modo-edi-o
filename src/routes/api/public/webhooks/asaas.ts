@@ -115,7 +115,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             p_payment_id: paymentId,
             p_event_type: eventType,
             p_payload: body
-          });
+          }) as { data: any, error: any };
 
           if (claimError || !claim || !claim[0]?.claim_token) {
             // Check if already completed by reading directly
@@ -139,7 +139,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             });
           }
 
-          claimToken = claim[0].claim_token;
+          claimToken = claim[0].claim_token as string;
 
           // 8. Grant Access
           const granted = await grantAccess(productType, productId, userId);
@@ -170,7 +170,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             }, { onConflict: 'external_id' });
 
             const customerEmail = verifiedPayment.customerEmail;
-            if (customerEmail) {
+            if (customerEmail && userId) {
               const { data: profile } = await supabaseAdmin.from('profiles').select('name').eq('id', userId).maybeSingle();
               const userName = profile?.name || 'Cliente';
               const templateName = productType === 'course' ? 'course_access' : 'ebook_access';
