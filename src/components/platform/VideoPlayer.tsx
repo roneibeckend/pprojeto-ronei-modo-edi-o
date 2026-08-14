@@ -156,17 +156,6 @@ export function VideoPlayer({
     };
   }, [src, videoId, isYouTube, isGoogleDrive]);
 
-  // Dedicated unmount effect for heavy cleanup
-  useEffect(() => {
-    return () => {
-      const video = videoRef.current;
-      if (video) {
-        video.pause();
-        video.removeAttribute('src');
-        video.load();
-      }
-    };
-  }, []);
 
 
   // Intro videos: try a muted autoplay once the media is ready.
