@@ -59,7 +59,7 @@ export const upsertMaterial = createServerFn({ method: "POST" })
         updated_at: new Date().toISOString(),
       })
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Erro ao salvar material (Admin Client):", error);
@@ -107,7 +107,7 @@ export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
       .from("platform_materials")
       .select("*")
       .eq("id", data.materialId)
-      .single();
+      .maybeSingle();
 
     if (fetchError || !material) {
       throw new Error("Material não encontrado.");

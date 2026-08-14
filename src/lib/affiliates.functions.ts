@@ -21,7 +21,7 @@ export const deleteAffiliateMaterial = createServerFn({ method: "POST" })
         .from("affiliate_materials" as any)
         .select("owner_id")
         .eq("id", data.id)
-        .single();
+        .maybeSingle();
 
       if (!material || (material as any).owner_id !== userId) {
         throw new Error("Acesso negado: Você não tem permissão para excluir este material.");
@@ -69,7 +69,7 @@ export const saveAffiliateMaterial = createServerFn({ method: "POST" })
           .from("affiliate_materials" as any)
           .select("owner_id")
           .eq("id", data.id)
-          .single();
+          .maybeSingle();
         
         if (existing && (existing as any).owner_id !== userId) {
           throw new Error("Acesso negado: Você não pode alterar este material.");

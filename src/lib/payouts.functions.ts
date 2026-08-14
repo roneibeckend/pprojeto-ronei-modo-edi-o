@@ -20,7 +20,7 @@ export const requestPayout = createServerFn({ method: "POST" })
         .from('affiliates')
         .select('balance')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
       if (affError || !affiliate) throw new Error("Afiliado não encontrado.");
       if (affiliate.balance < data.amount) throw new Error("Saldo insuficiente.");
@@ -48,7 +48,7 @@ export const requestPayout = createServerFn({ method: "POST" })
         .from('partner_balances')
         .select('balance')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
       if (partError || !partner) throw new Error("Saldo de sócio não encontrado.");
       if (partner.balance < data.amount) throw new Error("Saldo insuficiente.");
@@ -101,7 +101,7 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
       .from('payout_requests')
       .select('*')
       .eq('id', data.payoutId)
-      .single();
+      .maybeSingle();
 
     if (fetchError || !payout) throw new Error("Solicitação não encontrada.");
     if (payout.status === 'paid') return { success: true }; // Já processado
