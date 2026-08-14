@@ -345,22 +345,21 @@ function CoursePage() {
   // Scroll to top when lesson changes (all devices)
   useLayoutEffect(() => {
     if (activeId) {
-      const scrollContainer = readerRef.current?.closest('main');
-      
-      const scrollToTop = () => {
+      // Pequeno delay para garantir que o DOM atualizou
+      const timer = setTimeout(() => {
+        const scrollContainer = readerRef.current?.closest('main');
+        
         if (scrollContainer) {
-          scrollContainer.scrollTop = 0;
+          scrollContainer.scrollTo({ top: 0, behavior: 'instant' });
         }
-        window.scrollTo({ top: 0, behavior: 'auto' });
+        window.scrollTo({ top: 0, behavior: 'instant' });
         
         if (lessonTopRef.current) {
-          lessonTopRef.current.scrollIntoView({ block: 'start', behavior: 'auto' });
+          lessonTopRef.current.scrollIntoView({ block: 'start', behavior: 'instant' });
         }
-      };
+      }, 50);
 
-      scrollToTop();
-      const rafId = requestAnimationFrame(scrollToTop);
-      return () => cancelAnimationFrame(rafId);
+      return () => clearTimeout(timer);
     }
   }, [activeId]);
 
