@@ -812,8 +812,6 @@ function Hero() {
                   <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-auto bg-black/5" onClick={(e) => {
                     const iframe = e.currentTarget.previousElementSibling as HTMLIFrameElement;
                     if (iframe) {
-                      // We re-set the src to trigger a reload/play if needed, 
-                      // or just rely on the initial autoplay=1
                       const currentSrc = iframe.src;
                       if (currentSrc.includes("autoplay=1")) {
                         iframe.src = currentSrc.replace("autoplay=1", "autoplay=0");
@@ -822,8 +820,11 @@ function Hero() {
                       }
                     }
                   }}>
-                    {/* Minimal custom controls for mobile */}
-                    <div className="flex gap-6 p-4 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
+                    {/* Minimal custom controls for mobile: 
+                        We only show them if they are definitely needed, 
+                        otherwise we rely on the iframe's native behavior if possible.
+                    */}
+                    <div className="flex gap-6 p-4 rounded-full bg-black/40 backdrop-blur-md border border-white/10 opacity-0 hover:opacity-100 transition-opacity">
                       <Play className="h-8 w-8 text-white fill-current" />
                       <div className="w-px h-8 bg-white/20" />
                       <div className="flex gap-1.5 items-center">
