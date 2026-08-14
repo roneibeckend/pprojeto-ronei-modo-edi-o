@@ -1415,7 +1415,7 @@ function Results() {
   const after = ["Carnes escolhidas com estratégia", "Preços com margem garantida", "Cliente fiel toda semana", "Rotina fluida e organizada", "Lucro previsível e crescente"];
   return (
     <section className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-6xl 3xl:max-w-[1800px] px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Transformação</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
