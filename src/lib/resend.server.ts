@@ -113,8 +113,18 @@ export async function sendResendEmail(params: {
 
     if (!response.ok) {
       console.error('[Resend] Erro na API:', data);
-      throw new Error(data.message || `Erro ${response.status} ao enviar email via Resend`);
+      const raw: string = data?.message || `Erro ${response.status} ao enviar email via Resend`;
+      // Domínio não verificado: o remetente de teste (onboarding@resend.dev) só entrega
+      // para o e-mail do dono da conta. Mensagem clara para o admin resolver.
+      const isUnverifiedDomain =
+        response.status === 403 || /testing emails|verify a domain/i.test(raw);
+      throw new Error(
+        isUnverifiedDomain
+          ? 'Envio bloqueado: o domínio do remetente não está verificado no Resend. Verifique um domínio em resend.com/domains e configure o e-mail remetente com esse domínio nas Integrações.'
+          : raw
+      );
     }
+
 
     try {
       await supabaseAdmin.from('email_logs').insert({
