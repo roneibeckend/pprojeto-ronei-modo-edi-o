@@ -655,6 +655,14 @@ function Nav() {
 
 function Hero() {
   const [videoOpen, setVideoOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     if (!videoOpen) return;
@@ -703,7 +711,7 @@ function Hero() {
               <div className="glass gradient-border relative overflow-hidden rounded-2xl p-1.5 shadow-fire">
                 <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
                   <img
-                    src={`https://i.ytimg.com/vi/ZowrRHEwP7I/hqdefault.jpg`}
+                    src={`https://img.youtube.com/vi/ZowrRHEwP7I/maxresdefault.jpg`}
                     alt="Ronnei — história do Espetos Grill"
                     loading="lazy"
                     decoding="async"
@@ -791,15 +799,40 @@ function Hero() {
             >
               <X className="h-5 w-5" />
             </button>
-            <div className="glass gradient-border overflow-hidden rounded-2xl p-2 shadow-fire">
+            <div className={`glass gradient-border overflow-hidden rounded-2xl p-2 shadow-fire ${isMobile ? "controls-limited" : ""}`}>
               <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
                 <iframe
-                  src="https://www.youtube.com/embed/ZowrRHEwP7I?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+                  src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview${isMobile ? "?autoplay=1&controls=0" : ""}`}
                   title="Ronnei — A história por trás do Espetos Grill"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                   className="absolute inset-0 h-full w-full"
                 />
+                {isMobile && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-auto bg-black/5" onClick={(e) => {
+                    const iframe = e.currentTarget.previousElementSibling as HTMLIFrameElement;
+                    if (iframe) {
+                      // We re-set the src to trigger a reload/play if needed, 
+                      // or just rely on the initial autoplay=1
+                      const currentSrc = iframe.src;
+                      if (currentSrc.includes("autoplay=1")) {
+                        iframe.src = currentSrc.replace("autoplay=1", "autoplay=0");
+                      } else {
+                        iframe.src = currentSrc.replace("autoplay=0", "autoplay=1");
+                      }
+                    }
+                  }}>
+                    {/* Minimal custom controls for mobile */}
+                    <div className="flex gap-6 p-4 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
+                      <Play className="h-8 w-8 text-white fill-current" />
+                      <div className="w-px h-8 bg-white/20" />
+                      <div className="flex gap-1.5 items-center">
+                        <div className="w-1.5 h-6 bg-white rounded-full" />
+                        <div className="w-1.5 h-6 bg-white rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
