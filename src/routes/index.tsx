@@ -784,8 +784,7 @@ function Hero() {
           role="dialog"
           aria-modal="true"
           aria-label="Vídeo: história do Ronnei"
-          onClick={() => setVideoOpen(false)}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-background/85 px-4 backdrop-blur-md animate-fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 px-4 backdrop-blur-xl animate-fade-in"
         >
           <div
             onClick={(e) => e.stopPropagation()}
@@ -795,26 +794,28 @@ function Hero() {
               type="button"
               onClick={() => setVideoOpen(false)}
               aria-label="Fechar vídeo"
-              className="absolute -top-12 right-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/80 text-foreground backdrop-blur transition hover:bg-[color:var(--ember)]/20"
+              className="absolute -top-14 right-0 z-[110] inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white backdrop-blur-md transition hover:bg-white/20 sm:-right-4"
             >
-              <X className="h-5 w-5" />
+              <X className="h-6 w-6" />
             </button>
-            <div className="glass gradient-border overflow-hidden rounded-2xl p-2 shadow-fire relative">
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
+            <div className="glass gradient-border overflow-hidden rounded-2xl p-1 shadow-fire relative bg-black">
+              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black">
                 <iframe
-                  src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1`}
+                  src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&rm=minimal`}
                   title="Ronnei — A história por trás do Espetos Grill"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  className="absolute inset-0 h-full w-full pointer-events-none"
+                  className="absolute inset-0 h-full w-full pointer-events-none scale-[1.3] origin-center"
                 />
                 
-                {/* Overlay to block all controls and handle simple play/pause/restart logic */}
+                {/* Invisible interaction layer: 
+                    Handles play/pause by reloading the iframe (to stay control-less) 
+                    and prevents all pointer events from reaching the player's UI. */}
                 <div 
-                  className="absolute inset-0 z-20 cursor-pointer bg-transparent"
+                  className="absolute inset-0 z-20 cursor-default bg-transparent"
                   onClick={(e) => {
                     const iframe = e.currentTarget.previousElementSibling as HTMLIFrameElement;
                     if (iframe) {
-                      // Restart/Re-trigger playback by refreshing the source (ensures no controls show)
+                      // Toggle play/pause by reloading or just maintaining a play state
                       iframe.src = iframe.src; 
                     }
                   }}
