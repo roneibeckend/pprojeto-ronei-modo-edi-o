@@ -7,12 +7,8 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
   .validator((data: any) => z.object({ 
     lessonId: z.string().uuid().optional(),
     chapterId: z.string().uuid().optional(),
-    contentId: z.string().uuid().optional(), // Generic intro videos
-    contentType: z.enum(['course', 'ebook', 'intro']).optional(),
-    // Path is only accepted as a fallback if specific ID is not provided, 
-    // but the server will still validate enrollment against content owning that path.
-    path: z.string().optional(),
-    bucket: z.string().default("course-assets")
+    contentId: z.string().uuid().optional(),
+    contentType: z.enum(['course', 'ebook']).optional(),
   }).parse(data))
   .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -66,36 +62,6 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
         targetEbookId = data.contentId;
       }
     }
-    else if (data.path) {
-      // Fallback: Resolve which content owns this path to validate enrollment
-      // Check courses (intro)
-      const { data: courseIntro } = await supabaseAdmin.from("courses").select("id").eq("intro_video_url", data.path).maybeSingle();
-      if (courseIntro) {
-        targetCourseId = courseIntro.id;
-        storagePath = data.path;
-      } else {
-        // Check lessons
-        const { data: lesson } = await supabaseAdmin.from("course_lessons").select("module:course_modules(course_id)").eq("video_url", data.path).maybeSingle();
-        if (lesson) {
-          targetCourseId = (lesson.module as any)?.course_id;
-          storagePath = data.path;
-        } else {
-          // Check ebooks (opening)
-          const { data: ebookIntro } = await supabaseAdmin.from("ebooks").select("id").eq("opening_video_url", data.path).maybeSingle();
-          if (ebookIntro) {
-            targetEbookId = ebookIntro.id;
-            storagePath = data.path;
-          } else {
-            // Check chapters
-            const { data: chapter } = await supabaseAdmin.from("ebook_chapters").select("ebook_id").eq("video_url", data.path).maybeSingle();
-            if (chapter) {
-              targetEbookId = chapter.ebook_id;
-              storagePath = data.path;
-            }
-          }
-        }
-      }
-    }
 
     if (!storagePath) {
       throw new Error("Acesso negado: Caminho de vídeo não vinculado a conteúdo válido.");
@@ -134,7 +100,8 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
 
     // 3. Final path cleaning and signing
     let relativePath = storagePath;
-    const bucket = data.bucket || (storagePath.includes("ebook-assets") ? "ebook-assets" : "course-assets");
+    // Derive bucket server-side ONLY
+    const bucket = targetEbookId || data.chapterId ? "ebook-assets" : "course-assets";
 
     if (storagePath.includes('/storage/v1/object/public/')) {
         const parts = storagePath.split(`${bucket}/`);
@@ -144,8 +111,10 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
         if (parts.length > 1) relativePath = parts[parts.length - 1].split('?')[0];
     }
     
-    // Prevent path traversal
-    if (relativePath.includes('..')) throw new Error("Caminho inválido.");
+    // Strict normalization and safety
+    if (relativePath.includes('..') || relativePath.startsWith('/') || relativePath.includes('://')) {
+      throw new Error("Caminho de vídeo inválido ou malformado.");
+    }
 
     const { data: signedData, error } = await supabaseAdmin.storage
       .from(bucket)
