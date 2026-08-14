@@ -73,7 +73,7 @@ export const getEmailSettings = createServerFn({ method: "GET" })
     const { data, error } = await supabase
       .from('email_settings')
       .select('*')
-      .single();
+      .maybeSingle();
 
     if (error) throw new Error(error.message);
     return data;
