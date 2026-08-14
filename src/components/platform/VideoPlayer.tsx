@@ -282,7 +282,7 @@ export function VideoPlayer({
 
   return (
     <div 
-      className={cn("relative group aspect-[9/16] max-h-[85vh] mx-auto bg-black rounded-xl overflow-hidden glass", !useNativeControls && "cursor-pointer", className)}
+      className={cn("relative group aspect-[9/16] max-h-[85vh] mx-auto bg-black rounded-xl overflow-hidden glass", "cursor-pointer", className)}
       onMouseMove={handleInteraction}
       onTouchStart={handleInteraction}
     >
@@ -297,7 +297,7 @@ export function VideoPlayer({
         playsInline
         webkit-playsinline="true"
         x5-playsinline="true"
-        controls={useNativeControls}
+        controls={false}
         preload="auto"
         controlsList="nodownload"
         muted={true}
@@ -345,7 +345,7 @@ export function VideoPlayer({
             }
           }
         }}
-        onClick={useNativeControls ? undefined : (e) => {
+        onClick={(e) => {
           e.stopPropagation();
           togglePlay(e);
         }}

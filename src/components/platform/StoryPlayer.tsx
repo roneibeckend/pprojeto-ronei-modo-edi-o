@@ -111,7 +111,10 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
           muted
           playsInline
           onEnded={onClose}
-          onClick={togglePlay}
+          onClick={(e) => {
+            e.stopPropagation();
+            togglePlay();
+          }}
         />
         
         {/* Play/Pause Overlay Indicator (shows temporarily) */}
@@ -128,7 +131,10 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
         {!isPlaying && (
           <div 
             className="absolute inset-0 flex items-center justify-center bg-black/20"
-            onClick={togglePlay}
+            onClick={(e) => {
+              e.stopPropagation();
+              togglePlay();
+            }}
           >
             <div className="grid h-20 w-20 place-items-center rounded-full bg-white/10 backdrop-blur-md pointer-events-none">
               <Play className="h-10 w-10 text-white fill-white" />
