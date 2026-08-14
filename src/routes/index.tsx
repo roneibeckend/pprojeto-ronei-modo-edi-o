@@ -2062,7 +2062,7 @@ function ForYou() {
     <section className="relative py-10 sm:py-14">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 3xl:max-w-[1500px]">
         <div className="flex flex-col items-center text-center">
-          
+          <SectionTag>Para quem é</SectionTag>
           <h2 className="mt-4 max-w-2xl text-2xl sm:text-3xl font-black">
             Você se <span className="text-gradient-fire">identifica</span>?
           </h2>
