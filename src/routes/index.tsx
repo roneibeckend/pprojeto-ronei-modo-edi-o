@@ -1571,7 +1571,7 @@ function Offer() {
                 <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[color:var(--ember)]">Preço de lançamento</span>
               </div>
               <div className="text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
-                De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 97,00</span> por apenas
+                De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 97,90</span> por apenas
               </div>
               <p className="mx-auto mt-2 max-w-xs text-[11px] leading-relaxed text-muted-foreground">
                 Estamos formando a maior comunidade de espeteiros do Brasil — por isso o valor está simbólico no lançamento.
