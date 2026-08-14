@@ -53,8 +53,9 @@ export const upsertCourse = createServerFn({ method: "POST" })
 export const upsertModule = createServerFn({ method: "POST" })
   .validator((data: any) => ModuleSchema.parse(data))
   .handler(async ({ data }) => {
-    const { data: result, error } = await supabase
-      .from('course_modules' as any)
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: result, error } = await supabaseAdmin
+      .from('course_modules')
       .upsert(data)
       .select()
       .single();
@@ -66,8 +67,9 @@ export const upsertModule = createServerFn({ method: "POST" })
 export const upsertLesson = createServerFn({ method: "POST" })
   .validator((data: any) => LessonSchema.parse(data))
   .handler(async ({ data }) => {
-    const { data: result, error } = await supabase
-      .from('course_lessons' as any)
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: result, error } = await supabaseAdmin
+      .from('course_lessons')
       .upsert(data)
       .select()
       .single();
