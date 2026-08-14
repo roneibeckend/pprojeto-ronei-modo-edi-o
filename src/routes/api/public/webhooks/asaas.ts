@@ -32,9 +32,9 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             return new Response('Bad Request', { status: 400 });
           }
 
-          eventId = body.id;
-          const paymentId = body.payment.id;
-          const eventType = body.event;
+          eventId = body.id as string;
+          const paymentId = body.payment.id as string;
+          const eventType = body.event as string;
 
           // 2. Webhook Token Validation
           const { data: integration, error: intError } = await supabaseAdmin
@@ -111,9 +111,9 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
 
           // 7. Atomic Idempotency Claim (Postgres RPC)
           const { data: claim, error: claimError } = await supabaseAdmin.rpc('acquire_asaas_webhook_claim', {
-            p_event_id: eventId,
-            p_payment_id: paymentId,
-            p_event_type: eventType,
+            p_event_id: eventId as string,
+            p_payment_id: paymentId as string,
+            p_event_type: eventType as string,
             p_payload: body
           }) as { data: any, error: any };
 
@@ -203,8 +203,8 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
               status: 'completed',
               processed_at: new Date().toISOString()
             })
-            .eq('event_id', eventId)
-            .eq('claim_token', claimToken)
+            .eq('event_id', eventId as string)
+            .eq('claim_token', claimToken as string)
             .eq('status', 'processing');
 
           if (completeError) {
@@ -225,8 +225,8 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                 status: 'failed',
                 last_error: error.message
               })
-              .eq('event_id', eventId)
-              .eq('claim_token', claimToken)
+              .eq('event_id', eventId as string)
+              .eq('claim_token', claimToken as string)
               .eq('status', 'processing');
           }
 
