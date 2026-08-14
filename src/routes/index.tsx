@@ -1837,7 +1837,7 @@ function FAQ() {
                 <span className="truncate">Selecione uma pergunta ao lado…</span>
               </div>
               <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                Ainda com dúvida? Fale com a gente pelo WhatsApp após a compra.
+                Ainda com dúvida? Fale com a gente pelas redes sociais.
               </p>
             </div>
           </div>
