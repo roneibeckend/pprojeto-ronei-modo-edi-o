@@ -314,7 +314,7 @@ export function VideoPlayer({
           "w-full h-full", 
           useNativeControls 
             ? "object-contain bg-black" 
-            : "object-cover scale-[1.12]"
+            : "object-cover scale-[1.01]"
         )}
         playsInline
         webkit-playsinline="true"
