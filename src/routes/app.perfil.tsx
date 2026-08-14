@@ -196,7 +196,7 @@ function ProfilePage() {
         <div className="space-y-8 min-w-0">
           {/* Personal Data Form */}
           <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
-            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
               <div>
                 <h3 className="font-display text-xl font-bold text-white">Dados da Conta</h3>
                 <p className="text-sm text-white/40">Mantenha suas informações sempre atualizadas.</p>
