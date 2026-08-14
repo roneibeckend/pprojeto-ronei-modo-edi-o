@@ -168,8 +168,6 @@ export function VideoPlayer({
     };
   }, []);
 
-  }, [src, videoId, isYouTube, isGoogleDrive]);
-
 
   // Intro videos: try a muted autoplay once the media is ready.
   // If the browser blocks it (mobile policies), fall back to tap-to-play.
