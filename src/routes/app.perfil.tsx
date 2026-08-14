@@ -151,8 +151,8 @@ function ProfilePage() {
                   <User className="h-4 w-4" />
                 </button>
               </div>
-              <h3 className="mt-4 font-display text-xl font-bold">{profile?.name || profile?.full_name || "Estudante"}</h3>
-              <p className="text-sm text-white/40">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
+              <h3 className="mt-4 font-display text-xl font-bold truncate w-full px-2">{profile?.name || profile?.full_name || "Estudante"}</h3>
+              <p className="text-sm text-white/40 whitespace-nowrap">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
               
               <div className="mt-6 grid w-full grid-cols-2 gap-2">
                 <div className="rounded-xl bg-white/[0.03] p-3 text-center">
