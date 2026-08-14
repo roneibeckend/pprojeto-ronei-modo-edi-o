@@ -1,27 +1,59 @@
-# Plano: Implementação de Vídeos Curtos (Stories) para Receitas
 
-Adicionar funcionalidade de upload e exibição de vídeos curtos no formato "story" (9:16) para receitas, permitindo demonstrações visuais do preparo.
+### Objective
+Fix recipe deletion behavior to ensure it's permanent, immediate, and consistent across all views.
 
-## Mudanças
+### Proposed Changes
 
-### Backend (Supabase)
-- Criar bucket de storage `recipe-videos` para armazenar os arquivos de vídeo.
-- Garantir que a coluna `video_url` (já existente no frontend) esteja presente na tabela `recipes`.
-- Configurar políticas RLS para o bucket `recipe-videos` (acesso público para leitura, restrito a administradores para escrita).
+#### 1. Database Security (RLS)
+- Update RLS policies for the `recipes` table to explicitly allow `DELETE` and `UPDATE` for authenticated users (admins). Currently, only `SELECT` is explicitly granted in the policy list despite the `authenticated` role being used.
+- Add `GRANT DELETE ON public.recipes TO authenticated;` to ensure the Data API allows the operation.
 
-### Frontend
-- **Admin**: Refinar a interface de upload de vídeo em `src/routes/admin.receitas.tsx` para garantir que o bucket correto seja utilizado e os limites de tamanho/tipo sejam validados.
-- **StoryPlayer**: Otimizar o componente `src/components/platform/StoryPlayer.tsx` para melhor experiência mobile e carregamento.
-- **Listagem de Receitas**: Garantir que o botão de "Play" apareça apenas em receitas que possuem vídeo em `src/routes/app.receitas.tsx`.
+#### 2. Admin Interface Improvements
+- Optimize the `handleDelete` function in `src/routes/admin.receitas.tsx` to optimisticly update the UI state before the background refresh, preventing the "flicker" where the item reappears momentarily.
+- Ensure the `fetchData` call correctly handles the post-deletion state.
 
-## Detalhes Técnicos
-- Formato recomendado: Vertical (9:16).
-- Armazenamento: Supabase Storage.
-- Validação: Apenas arquivos de vídeo, limite sugerido de 50MB.
-- Interface: Botão de ação direta sobre a capa da receita para abrir o player.
+#### 3. Student View Consistency
+- Verify that the student view in `src/routes/app.receitas.tsx` correctly filters out any recipes that might have been soft-deleted (though the request specifies permanent deletion, we will ensure the `SELECT` query is robust).
 
-## Verificação
-- [ ] Criar uma nova receita no admin com upload de vídeo.
-- [ ] Verificar se o vídeo é carregado corretamente no storage.
-- [ ] Acessar como aluno e abrir o StoryPlayer.
-- [ ] Testar controles de play/pause e progresso no player.
+### Technical Details
+
+#### SQL Migration
+```sql
+-- Ensure RLS is enabled
+ALTER TABLE public.recipes ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing restricted policies if necessary and add comprehensive ones
+DROP POLICY IF EXISTS "Recipes are viewable by authenticated users" ON public.recipes;
+
+CREATE POLICY "Recipes are viewable by all authenticated users" 
+ON public.recipes FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY "Admins can manage recipes" 
+ON public.recipes FOR ALL TO authenticated 
+USING (public.has_role(auth.uid(), 'admin'));
+
+-- Explicitly grant permissions to the authenticated role
+GRANT ALL ON public.recipes TO authenticated;
+GRANT ALL ON public.recipes TO service_role;
+```
+
+#### Frontend Refactor (`src/routes/admin.receitas.tsx`)
+```typescript
+async function handleDelete(id: string) {
+  if (!confirm("Tem certeza que deseja excluir esta receita?")) return;
+  
+  // Optimistic update
+  const originalRecipes = [...recipes];
+  setRecipes(recipes.filter(r => r.id !== id));
+  
+  try {
+    const { error } = await supabase.from('recipes').delete().eq('id', id);
+    if (error) throw error;
+    toast.success("Receita excluída permanentemente");
+  } catch (error: any) {
+    // Rollback on error
+    setRecipes(originalRecipes);
+    toast.error("Erro ao excluir: " + error.message);
+  }
+}
+```
