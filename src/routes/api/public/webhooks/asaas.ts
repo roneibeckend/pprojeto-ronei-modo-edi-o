@@ -68,21 +68,75 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             return new Response('Bad Request', { status: 400 });
           }
 
-          // 4. Idempotency Check
-          const { data: existingEvent } = await supabaseAdmin
-            .from('asaas_webhook_events' as any)
-
-            .select('event_id')
-            .eq('event_id', body.id) // body.id é o ID único do evento do Asaas
+          // 4. Atomic Idempotency Claim
+          // We use a lease-like approach to prevent concurrent processing.
+          // If the event exists and is 'completed', we stop.
+          // If it's 'processing', we check if the lease is old (stuck).
+          // If it doesn't exist, we insert 'processing'.
+          
+          const { data: existingEvent, error: claimFetchError } = await supabaseAdmin
+            .from('asaas_webhook_events')
+            .select('event_id, status, claimed_at')
+            .eq('event_id', body.id)
             .maybeSingle();
 
           if (existingEvent) {
-            console.log(`[Webhook Asaas] Evento ${body.id} já processado. Ignorando.`);
-            return new Response(JSON.stringify({ received: true, message: 'Already processed' }), {
-              status: 200,
-              headers: { 'Content-Type': 'application/json' },
-            });
+            if (existingEvent.status === 'completed') {
+              console.log(`[Webhook Asaas] Evento ${body.id} já concluído. Ignorando.`);
+              return new Response(JSON.stringify({ received: true, message: 'Already processed' }), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+              });
+            }
+            
+            // If it's 'processing', check for timeout (e.g., 5 minutes) to allow retry of stuck processes
+            const claimedAt = new Date(existingEvent.claimed_at).getTime();
+            const now = Date.now();
+            const leaseTimeout = 5 * 60 * 1000; // 5 minutes
+            
+            if (now - claimedAt < leaseTimeout) {
+              console.warn(`[Webhook Asaas] Evento ${body.id} está sendo processado por outra instância.`);
+              return new Response(JSON.stringify({ received: true, message: 'Processing in progress' }), {
+                status: 202, // Accepted for processing (in progress)
+                headers: { 'Content-Type': 'application/json' },
+              });
+            }
+            
+            // If timed out or failed, we re-claim by updating status to 'processing' and resetting claimed_at
+            const { error: reClaimError } = await supabaseAdmin
+              .from('asaas_webhook_events')
+              .update({ status: 'processing', claimed_at: new Date().toISOString(), last_error: null })
+              .eq('event_id', body.id)
+              .eq('status', existingEvent.status); // Optimistic lock
+
+            if (reClaimError) {
+               console.error('[Webhook Asaas] Falha ao re-adquirir evento:', reClaimError);
+               return new Response('Conflict', { status: 409 });
+            }
+          } else {
+            // New event: Atomic INSERT to claim
+            const { error: insertError } = await supabaseAdmin
+              .from('asaas_webhook_events')
+              .insert({
+                event_id: body.id,
+                payment_id: paymentId,
+                event_type: body.event,
+                status: 'processing',
+                payload: body
+              });
+
+            if (insertError) {
+              // If insert fails due to PK, it means another request just won the race
+              console.warn(`[Webhook Asaas] Evento ${body.id} conquistado por outra requisição concorrente.`);
+              return new Response(JSON.stringify({ received: true, message: 'Claim lost' }), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+              });
+            }
           }
+
+          // From this point, only ONE instance (the winner of the claim) continues.
+
 
           // 5. Server-to-Server Confirmation
           console.log(`[Webhook Asaas] Verificando pagamento ${paymentId} via API...`);
@@ -206,13 +260,15 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             console.error('[Webhook Asaas] Erro em efeitos secundários (matrícula OK):', secondaryError);
           }
 
-          // 10. Mark as Processed (Idempotency)
-          await supabaseAdmin.from('asaas_webhook_events' as any).insert({
-            event_id: body.id,
-            payment_id: paymentId,
-            event_type: body.event,
-            payload: body
-          });
+          // 10. Mark as Completed (Idempotency Success)
+          await supabaseAdmin
+            .from('asaas_webhook_events')
+            .update({
+              status: 'completed',
+              processed_at: new Date().toISOString()
+            })
+            .eq('event_id', body.id);
+
 
           return new Response(JSON.stringify({ received: true, processed: true }), {
             status: 200,
@@ -220,11 +276,26 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
           });
         } catch (error: any) {
           console.error('[Webhook Asaas] Erro crítico:', error);
+          
+          // Mark event as failed if we had a claim
+          const eventId = (await request.clone().json().catch(() => ({}))).id;
+          if (eventId) {
+            await supabaseAdmin
+              .from('asaas_webhook_events')
+              .update({
+                status: 'failed',
+                last_error: error.message
+              })
+              .eq('event_id', eventId)
+              .eq('status', 'processing'); // Only if we were the ones processing it
+          }
+
           return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
           });
         }
+
       },
     },
   },
