@@ -1314,10 +1314,10 @@ function Modules() {
 
 function Bonuses() {
   const bonuses = [
-    { icon: Sparkles, title: "Artes para Divulgação", tag: "Bônus 01", value: "R$ 47", desc: "Artes profissionais prontas para você postar no Instagram e atrair clientes." },
-    { icon: BookOpen, title: "Cardápio Editável", tag: "Bônus 02", value: "R$ 37", desc: "Modelo profissional de cardápio para você apenas colocar seus preços e imprimir." },
-    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", value: "R$ 19", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
-    { icon: Calculator, title: "Calculadora de Venda", tag: "Bônus 04", value: "R$ 67", desc: "Ferramenta prática para calcular custos e garantir sua margem de lucro em cada venda." },
+    { icon: Sparkles, title: "Artes para Divulgação", tag: "Bônus 01", value: "R$ 27,90", desc: "Artes profissionais prontas para você postar no Instagram e atrair clientes." },
+    { icon: BookOpen, title: "Cardápio Editável", tag: "Bônus 02", value: "R$ 25,00", desc: "Modelo profissional de cardápio para você apenas colocar seus preços e imprimir." },
+    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", value: "R$ 15,00", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
+    { icon: Calculator, title: "Calculadora de Venda", tag: "Bônus 04", value: "R$ 30,00", desc: "Ferramenta prática para calcular custos e garantir sua margem de lucro em cada venda." },
   ];
   return (
     <section id="bonus" className="relative py-10 sm:py-14">
@@ -1368,7 +1368,7 @@ function Bonuses() {
                 Valor total
               </span>
               <span className="font-display text-2xl font-black text-muted-foreground/80 line-through decoration-[color:var(--ember)]/60 decoration-2 sm:text-3xl">
-                R$ 170,00
+                R$ 97,90
               </span>
               <span className="rounded-full bg-fire px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-white shadow-fire">
                 GRÁTIS hoje
@@ -1571,7 +1571,7 @@ function Offer() {
                 <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[color:var(--ember)]">Preço de lançamento</span>
               </div>
               <div className="text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
-                De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 97,00</span> por apenas
+                De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 97,90</span> por apenas
               </div>
               <p className="mx-auto mt-2 max-w-xs text-[11px] leading-relaxed text-muted-foreground">
                 Estamos formando a maior comunidade de espeteiros do Brasil — por isso o valor está simbólico no lançamento.
@@ -1588,7 +1588,7 @@ function Offer() {
               <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-3 py-1">
                 <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[color:var(--gold)]">Economize 76%</span>
                 <span className="h-3 w-px bg-[color:var(--gold)]/40" />
-                <span className="text-xs font-bold text-[color:var(--gold)]">R$ 149,10 OFF</span>
+                <span className="text-xs font-bold text-[color:var(--gold)]">R$ 50,00 OFF</span>
               </div>
 
               <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5">
