@@ -239,8 +239,8 @@ function ProfilePage() {
                 <ShoppingBag className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-display text-xl font-bold text-white">Histórico de Pedidos</h3>
-                <p className="text-sm text-white/40">Acompanhe todos os seus investimentos na plataforma.</p>
+                <h3 className="font-display text-xl font-bold text-white whitespace-nowrap">Histórico de Pedidos</h3>
+                <p className="text-sm text-white/40 truncate">Acompanhe todos os seus investimentos na plataforma.</p>
               </div>
             </div>
 
