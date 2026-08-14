@@ -311,6 +311,7 @@ export function VideoPlayer({
 
 
       <video
+        key={src}
         ref={videoRef}
         src={src}
         poster={poster}
@@ -324,8 +325,8 @@ export function VideoPlayer({
         webkit-playsinline="true"
         x5-playsinline="true"
         controls={useNativeControls}
-        preload="metadata"
-        controlsList="nodownload"
+        preload="auto"
+        controlsList="nodownload noremoteplayback"
         muted={isIntro}
         autoPlay={isIntro}
         loop={isIntro}
