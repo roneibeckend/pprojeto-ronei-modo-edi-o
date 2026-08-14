@@ -829,9 +829,10 @@ function Hero() {
                       <div className="grid h-20 w-20 place-items-center rounded-full bg-fire shadow-fire">
                         <Play className="h-10 w-10 text-white ml-1" />
                       </div>
-                      <span className="rounded-full bg-black/60 px-4 py-2 text-sm font-bold text-white backdrop-blur">
+                      <span className="rounded-full bg-black/60 px-4 py-2 text-[10px] font-bold text-white backdrop-blur uppercase tracking-widest">
                         Vídeo pausado. Clique para retomar.
                       </span>
+
                     </div>
                   )}
                 </div>
