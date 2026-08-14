@@ -74,7 +74,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
+          "eBook prático com 7 Módulos e 27 Capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
       },
       { name: "keywords", content: "espetinho, ebook espetinho, como vender espetinho, negócio de espetinho, churrasco, renda extra, Ronnei" },
       { name: "author", content: "Ronnei" },
@@ -85,7 +85,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
+          "eBook prático com 7 Módulos e 27 Capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
       },
       { property: "og:image", content: OG_IMAGE },
       { property: "og:image:alt", content: "Chef especialista em espetinhos com espetos flamejantes" },
@@ -96,7 +96,7 @@ export const Route = createFileRoute("/")({
       {
         name: "twitter:description",
         content:
-          "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
+          "eBook prático com 7 Módulos e 27 Capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
       },
       { name: "twitter:image", content: OG_IMAGE },
       { name: "twitter:image:alt", content: "Chef especialista em espetinhos" },
@@ -110,7 +110,7 @@ export const Route = createFileRoute("/")({
           "@type": "Product",
           name: "Espetinho na Veia — Do Zero aos 10k",
           description:
-            "eBook com 14 capítulos + 4 bônus exclusivos para montar, temperar, precificar e vender espetinhos com alto lucro.",
+            "eBook com 7 Módulos e 27 Capítulos + 4 bônus exclusivos para montar, temperar, precificar e vender espetinhos com alto lucro.",
           image: [OG_IMAGE],
           brand: { "@type": "Brand", name: "Espetinho na Veia" },
           author: { "@type": "Person", name: "Ronnei" },
@@ -1277,7 +1277,7 @@ function Modules() {
         <div className="flex flex-col items-center text-center">
           <SectionTag>Por dentro do eBook</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
-            14 capítulos <span className="text-gradient-fire">práticos e diretos</span>
+            7 Módulos e 27 Capítulos <span className="text-gradient-fire">práticos e diretos</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
             Cada módulo foi pensado para você aplicar hoje mesmo — sem enrolação, sem teoria desnecessária.
