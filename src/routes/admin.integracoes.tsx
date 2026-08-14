@@ -131,10 +131,18 @@ function IntegrationsPage() {
   const { data: integrations, isLoading } = useQuery({
     queryKey: ['integrations'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('integrations').select('*');
+      // Select safe fields only - credentials are removed by RLS policy anyway if requested, 
+      // but we explicitly exclude them here too for safety.
+      const { data, error } = await supabase.from('integrations').select('id, name, type, category, status, settings, updated_at');
       if (error) throw error;
-      return data as Integration[];
+      
+      // Map safe data back to Integration interface for compatibility
+      return data.map(item => ({
+        ...item,
+        credentials: {} // Never send back to browser
+      })) as Integration[];
     }
+
   });
 
   const { data: historyLogs, refetch: refetchHistory } = useQuery({

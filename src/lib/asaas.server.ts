@@ -140,6 +140,21 @@ export async function resolveUserFromPayment(payment: any, baseUrl: string, apiK
   return profile?.id || null;
 }
 
+export async function fetchPaymentFromAsaas(paymentId: string) {
+  const { apiKey, baseUrl } = await getAsaasConfig();
+  const res = await fetch(`${baseUrl}/payments/${paymentId}`, {
+    headers: asaasHeaders(apiKey),
+  });
+
+  if (!res.ok) {
+    const errorBody = await res.text().catch(() => "Unknown error");
+    throw new Error(`Asaas API error (${res.status}): ${errorBody}`);
+  }
+
+  return await res.json();
+}
+
+
 /** Consulta o Asaas por pagamentos confirmados de um produto para um usuário. */
 export async function findConfirmedPayment(params: {
   productType: string;

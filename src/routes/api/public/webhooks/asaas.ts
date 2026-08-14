@@ -7,6 +7,7 @@ import {
   grantAccess,
   parseExternalReference,
   resolveUserFromPayment,
+  fetchPaymentFromAsaas,
 } from "@/lib/asaas.server";
 
 export const Route = createFileRoute('/api/public/webhooks/asaas')({
@@ -14,217 +15,213 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
     handlers: {
       POST: async ({ request }) => {
         try {
+          if (request.method !== 'POST') {
+             return new Response('Method Not Allowed', { status: 405 });
+          }
+
           const body = await request.json();
           const token = request.headers.get('asaas-access-token');
 
-          console.log('[Webhook Asaas] Recebido:', {
-            event: body.event,
-            id: body.payment?.id,
-            status: body.payment?.status,
-            externalReference: body.payment?.externalReference,
-          });
-
-          // Buscar integração para validar token
+          // 1. Webhook Token Validation
           const { data: integration, error: intError } = await supabaseAdmin
             .from('integrations')
             .select('credentials')
             .eq('category', 'asaas')
             .single();
 
-          if (intError) {
-            console.error('[Webhook Asaas] Erro ao buscar credenciais:', intError);
+          if (intError || !integration) {
+            console.error('[Webhook Asaas] Fail closed: Integração não encontrada ou erro:', intError);
+            return new Response('Configuration Error', { status: 500 });
           }
 
-          const credentials = (integration?.credentials || {}) as Record<string, any>;
-          const expectedToken = credentials?.webhookToken || credentials?.apiKey;
+          const credentials = (integration.credentials || {}) as Record<string, any>;
+          const expectedToken = credentials?.webhookToken; // Usando explicitamente webhookToken conforme solicitado
 
-          if (!expectedToken || token !== expectedToken) {
-            console.error('[Webhook Asaas] Token de acesso inválido ou ausente.');
+          if (!expectedToken) {
+            console.error('[Webhook Asaas] Fail closed: webhookToken não configurado.');
+            return new Response('Forbidden', { status: 403 });
+          }
+
+          if (token !== expectedToken) {
+            console.error('[Webhook Asaas] Token de acesso inválido.');
             return new Response('Unauthorized', { status: 401 });
           }
 
+          // 2. Event Validation
           const confirmEvents = [
             'PAYMENT_RECEIVED',
             'PAYMENT_CONFIRMED',
             'PAYMENT_APPROVED_BY_RISK_ANALYSIS',
           ];
 
-          if (confirmEvents.includes(body.event)) {
-            const parsed = parseExternalReference(body.payment?.externalReference);
+          if (!confirmEvents.includes(body.event)) {
+             return new Response(JSON.stringify({ received: true, event: body.event }), {
+               status: 200,
+               headers: { 'Content-Type': 'application/json' },
+             });
+          }
 
-            if (!parsed?.productType || !parsed?.productId) {
-              console.warn('[Webhook Asaas] Referência externa ausente/inválida — nada a liberar.');
-            } else {
-              const { productType, productId, affiliateCode } = parsed;
-              const customerEmail = body.payment?.customerEmail;
-              const amount = body.value || body.payment?.value;
+          // 3. Extract Payment ID
+          const paymentId = body.payment?.id;
+          if (!paymentId) {
+            console.error('[Webhook Asaas] Payment ID ausente no payload.');
+            return new Response('Bad Request', { status: 400 });
+          }
 
-              // 1) id do usuário embutido na referência externa
-              let userId: string | null = parsed.userId;
+          // 4. Idempotency Check
+          const { data: existingEvent } = await supabaseAdmin
+            .from('asaas_webhook_events' as any)
 
-              // 2) Fallback: resolver pelo e-mail (payload ou API de clientes do Asaas)
-              if (!userId) {
-                try {
-                  const { apiKey, baseUrl } = await getAsaasConfig();
-                  userId = await resolveUserFromPayment(body.payment, baseUrl, apiKey);
-                } catch (e) {
-                  console.error('[Webhook Asaas] Falha ao resolver usuário:', e);
-                }
-              }
+            .select('event_id')
+            .eq('event_id', body.id) // body.id é o ID único do evento do Asaas
+            .maybeSingle();
 
-              if (!userId) {
-                console.warn(`[Webhook Asaas] Usuário não identificado (email: ${customerEmail ?? 'n/d'}).`);
-              } else {
-                const granted = await grantAccess(productType, productId, userId);
-                console.log(
-                  `[Webhook Asaas] Acesso ${granted ? 'liberado' : 'NÃO liberado'}: ${productType}/${productId} -> ${userId}`,
-                );
-                
-                // --- REGISTRO DE PAGAMENTO AUTOMATIZADO ---
-                try {
-                  const { apiKey, baseUrl } = await getAsaasConfig();
-                  const res = await fetch(`${baseUrl}/payments/${body.payment?.id}`, {
-                    headers: asaasHeaders(apiKey)
-                  });
-                  
-                  if (res.ok) {
-                    const fullPayment = await res.json();
-                    
-                    // Cálculo de taxas Asaas: 
-                    // Se o Asaas não retornar netValue, calculamos estimativa
-                    // Geralmente Asaas retorna: value (bruto), netValue (líquido)
-                    const amount = fullPayment.value || body.payment?.value || 0;
-                    const netAmount = fullPayment.netValue || (amount * 0.97 - 0.50); // Fallback 3% + 0.50 se não disponível
-                    const fee = amount - netAmount;
+          if (existingEvent) {
+            console.log(`[Webhook Asaas] Evento ${body.id} já processado. Ignorando.`);
+            return new Response(JSON.stringify({ received: true, message: 'Already processed' }), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            });
+          }
 
-                    await supabaseAdmin.from('payments').upsert({
-                      external_id: body.payment?.id,
-                      user_id: userId,
-                      amount: amount,
-                      net_amount: netAmount,
-                      fee: fee,
-                      status: body.payment?.status || 'CONFIRMED',
-                      billing_type: fullPayment.billingType,
-                      external_reference: body.payment?.externalReference,
-                      customer_id: fullPayment.customer,
-                      confirmed_at: fullPayment.confirmedDate || new Date().toISOString(),
-                      updated_at: new Date().toISOString()
-                    }, { onConflict: 'external_id' });
-                    
-                    console.log(`[Webhook Asaas] Pagamento registrado: R$ ${netAmount.toFixed(2)} (Líquido)`);
-                    
-                    // --- ENVIO DE EMAIL AUTOMATIZADO ---
-                    if (customerEmail && granted) {
-                      try {
-                        const { data: profile } = await supabaseAdmin
-                          .from('profiles')
-                          .select('name')
-                          .eq('id', userId)
-                          .maybeSingle();
+          // 5. Server-to-Server Confirmation
+          console.log(`[Webhook Asaas] Verificando pagamento ${paymentId} via API...`);
+          const verifiedPayment = await fetchPaymentFromAsaas(paymentId);
 
-                        const userName = profile?.name || 'Cliente';
-                        const templateName = productType === 'course' ? 'course_access' : 'ebook_access';
-                        
-                        // Busca o título do produto para o e-mail
-                        const { data: product } = await supabaseAdmin
-                          .from(productType === 'course' ? 'courses' : 'ebooks')
-                          .select('title')
-                          .eq('id', productId)
-                          .maybeSingle();
+          // 6. Validate Verified Payment Status
+          const validStatuses = ['RECEIVED', 'CONFIRMED', 'RECEIVED_IN_CASH'];
+          if (!validStatuses.includes(verifiedPayment.status)) {
+            console.warn(`[Webhook Asaas] Pagamento ${paymentId} com status inválido para liberação: ${verifiedPayment.status}`);
+            return new Response(JSON.stringify({ received: true, message: 'Payment not confirmed' }), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            });
+          }
 
-                        await triggerEmailEvent({
-                          event: templateName,
-                          to: customerEmail,
-                          data: {
-                            name: userName,
-                            product_name: product?.title || (productType === 'course' ? 'Treinamento' : 'E-book'),
-                            access_link: 'https://lovable.app/app'
-                          },
-                          idempotencyKey: `access_${body.payment?.id}`
-                        });
+          // 7. Match User and Product
+          const parsed = parseExternalReference(verifiedPayment.externalReference);
+          if (!parsed?.productType || !parsed?.productId) {
+            console.error('[Webhook Asaas] Referência externa inválida no pagamento verificado.');
+            return new Response('Invalid Reference', { status: 400 });
+          }
 
-                        // Também envia confirmação de pagamento genérica
-                        await triggerEmailEvent({
-                          event: 'payment_confirmed',
-                          to: customerEmail,
-                          data: {
-                            name: userName,
-                            amount: amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-                            payment_id: body.payment?.id
-                          },
-                          idempotencyKey: `payment_${body.payment?.id}`
-                        });
+          const { productType, productId, affiliateCode } = parsed;
+          let userId: string | null = parsed.userId;
 
-                        console.log(`[Webhook Asaas] E-mails de automação disparados para ${customerEmail}`);
-                      } catch (emailErr) {
-                        console.error('[Webhook Asaas] Erro nas automações de e-mail:', emailErr);
-                      }
-                    }
-                  }
-                } catch (e) {
-                  console.error('[Webhook Asaas] Erro ao registrar pagamento:', e);
-                }
-                // ------------------------------------------
+          if (!userId) {
+            const { apiKey, baseUrl } = await getAsaasConfig();
+            userId = await resolveUserFromPayment(verifiedPayment, baseUrl, apiKey);
+          }
 
-                // Comissão de afiliado
-                if (affiliateCode) {
-                  const { data: linkData } = await supabaseAdmin
-                    .from('affiliate_links')
-                    .select('affiliate_id')
-                    .eq('code', affiliateCode)
-                    .maybeSingle();
+          if (!userId) {
+            console.error(`[Webhook Asaas] Usuário não identificado para o pagamento ${paymentId}`);
+            return new Response('User Not Found', { status: 404 });
+          }
 
-                  if (linkData) {
-                    const affiliateId = linkData.affiliate_id;
+          // 8. Grant Access
+          const granted = await grantAccess(productType, productId, userId);
+          if (!granted) {
+            throw new Error('Falha ao liberar acesso no banco de dados.');
+          }
 
-                    const { data: affiliate } = await supabaseAdmin
-                      .from('affiliates')
-                      .select('commission_rate')
-                      .eq('id', affiliateId)
-                      .eq('status', 'active')
-                      .maybeSingle();
+          console.log(`[Webhook Asaas] Acesso liberado: ${productType}/${productId} -> ${userId}`);
 
-                    if (affiliate) {
-                      const commissionRate = affiliate.commission_rate || 30;
-                      const commissionAmount = ((amount || 0) * commissionRate) / 100;
+          // 9. Process Secondary Effects (Financial Logs, Emails, Affiliate)
+          try {
+            const amount = verifiedPayment.value || 0;
+            const netAmount = verifiedPayment.netValue || (amount * 0.97 - 0.50);
+            const fee = amount - netAmount;
 
-                      const saleData: any = {
-                        affiliate_id: affiliateId,
-                        amount: amount,
-                        commission: commissionAmount,
-                        status: 'pending',
-                        metadata: {
-                          payment_id: body.payment?.id,
-                          customer_email: customerEmail,
-                        },
-                      };
+            await supabaseAdmin.from('payments').upsert({
+              external_id: paymentId,
+              user_id: userId,
+              amount: amount,
+              net_amount: netAmount,
+              fee: fee,
+              status: verifiedPayment.status,
+              billing_type: verifiedPayment.billingType,
+              external_reference: verifiedPayment.externalReference,
+              customer_id: verifiedPayment.customer,
+              confirmed_at: verifiedPayment.confirmedDate || new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }, { onConflict: 'external_id' });
 
-                      if (productType === 'course') {
-                        saleData.course_id = productId;
-                      }
+            const customerEmail = verifiedPayment.customerEmail || body.payment?.customerEmail;
+            if (customerEmail) {
+              const { data: profile } = await supabaseAdmin.from('profiles').select('name').eq('id', userId).maybeSingle();
+              const userName = profile?.name || 'Cliente';
+              const templateName = productType === 'course' ? 'course_access' : 'ebook_access';
+              
+              const { data: product } = await supabaseAdmin
+                .from(productType === 'course' ? 'courses' : 'ebooks')
+                .select('title')
+                .eq('id', productId)
+                .maybeSingle();
 
-                      await supabaseAdmin.from('affiliate_sales').insert(saleData);
+              await triggerEmailEvent({
+                event: templateName,
+                to: customerEmail,
+                data: {
+                  name: userName,
+                  product_name: product?.title || (productType === 'course' ? 'Treinamento' : 'E-book'),
+                  access_link: 'https://lovable.app/app'
+                },
+                idempotencyKey: `access_${paymentId}`
+              });
 
-                      await supabaseAdmin.rpc('increment_affiliate_earnings', {
-                        aff_id: affiliateId,
-                        amount_to_add: commissionAmount,
-                      });
-                      console.log(`[Webhook Asaas] Comissão processada: R$ ${commissionAmount.toFixed(2)}`);
-                    }
-                  }
+              await triggerEmailEvent({
+                event: 'payment_confirmed',
+                to: customerEmail,
+                data: {
+                  name: userName,
+                  amount: amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+                  payment_id: paymentId
+                },
+                idempotencyKey: `payment_${paymentId}`
+              });
+            }
+
+            if (affiliateCode) {
+              const { data: linkData } = await supabaseAdmin.from('affiliate_links').select('affiliate_id').eq('code', affiliateCode).maybeSingle();
+              if (linkData) {
+                const affiliateId = linkData.affiliate_id;
+                const { data: affiliate } = await supabaseAdmin.from('affiliates').select('commission_rate').eq('id', affiliateId).eq('status', 'active').maybeSingle();
+                if (affiliate) {
+                  const commissionRate = affiliate.commission_rate || 30;
+                  const commissionAmount = (amount * commissionRate) / 100;
+                  const saleData: any = {
+                    affiliate_id: affiliateId,
+                    amount: amount,
+                    commission: commissionAmount,
+                    status: 'pending',
+                    metadata: { payment_id: paymentId, customer_email: customerEmail },
+                  };
+                  if (productType === 'course') saleData.course_id = productId;
+                  await supabaseAdmin.from('affiliate_sales').insert(saleData);
+                  await supabaseAdmin.rpc('increment_affiliate_earnings', { aff_id: affiliateId, amount_to_add: commissionAmount });
                 }
               }
             }
+          } catch (secondaryError) {
+            console.error('[Webhook Asaas] Erro em efeitos secundários (matrícula OK):', secondaryError);
           }
 
-          return new Response(JSON.stringify({ received: true, event: body.event }), {
+          // 10. Mark as Processed (Idempotency)
+          await supabaseAdmin.from('asaas_webhook_events' as any).insert({
+            event_id: body.id,
+            payment_id: paymentId,
+            event_type: body.event,
+            payload: body
+          });
+
+          return new Response(JSON.stringify({ received: true, processed: true }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
           });
-        } catch (error) {
-          console.error('[Webhook Asaas] Erro crítico no processamento:', error);
-          return new Response(JSON.stringify({ error: 'Internal logic failure' }), {
-            status: 200,
+        } catch (error: any) {
+          console.error('[Webhook Asaas] Erro crítico:', error);
+          return new Response(JSON.stringify({ error: error.message }), {
+            status: 500,
             headers: { 'Content-Type': 'application/json' },
           });
         }
@@ -232,3 +229,4 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
     },
   },
 });
+

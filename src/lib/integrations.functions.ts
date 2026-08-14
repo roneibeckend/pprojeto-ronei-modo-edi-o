@@ -1,12 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
 
 // Schema for credentials validation
 const CredentialsSchema = z.record(z.string());
 
 // Server function for comprehensive connection testing
 export const testIntegrationConnection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     id: z.string(),
     category: z.string(),
@@ -14,7 +17,13 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
     settings: z.any(),
     environment: z.string().default('sandbox')
   }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin"
+    });
+    if (!isAdmin) throw new Error("Acesso negado.");
+
     const { category, credentials, settings } = data;
     let environment = (String(settings?.testMode) === 'true' || settings?.environment === 'sandbox') ? 'sandbox' : 'production';
     
@@ -171,6 +180,7 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
 
 // Server function for saving integrations
 export const saveIntegration = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     id: z.string().optional(),
     name: z.string(),
@@ -180,7 +190,33 @@ export const saveIntegration = createServerFn({ method: "POST" })
     credentials: z.any(),
     settings: z.any()
   }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin"
+    });
+    if (!isAdmin) throw new Error("Acesso negado.");
+
+    // Fail-safe: if credentials fields are empty strings and it's an update, don't overwrite with empty
+    let finalCredentials = data.credentials;
+    if (data.id) {
+       const { data: existing } = await supabaseAdmin
+         .from('integrations')
+         .select('credentials')
+         .eq('id', data.id)
+         .single();
+       
+       if (existing) {
+         const merged = { ...(existing.credentials as object) };
+         for (const [key, value] of Object.entries(data.credentials)) {
+           if (value !== "") {
+             (merged as any)[key] = value;
+           }
+         }
+         finalCredentials = merged;
+       }
+    }
+
     const { error } = await supabaseAdmin
       .from('integrations')
       .upsert({
@@ -189,10 +225,11 @@ export const saveIntegration = createServerFn({ method: "POST" })
         type: data.type,
         category: data.category,
         status: data.status,
-        credentials: data.credentials,
+        credentials: finalCredentials,
         settings: data.settings,
         updated_at: new Date().toISOString()
       });
+
 
     if (error) throw new Error(error.message);
     

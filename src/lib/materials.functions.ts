@@ -97,21 +97,71 @@ export const deleteMaterial = createServerFn({ method: "POST" })
 
 export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: any) => z.object({ filePath: z.string() }).parse(data))
-  .handler(async ({ data }) => {
+  .inputValidator((data: any) => z.object({ materialId: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    
-    // filePath is expected to be just the name of the file in the 'platform-materials' bucket
-    const { data: signedData, error } = await supabaseAdmin.storage
-      .from("platform-materials")
-      .createSignedUrl(data.filePath, 60 * 5); // 5 minutes
+    const userId = context.userId;
 
-    if (error) {
-      console.error("Erro ao gerar URL assinada:", error);
-      throw error;
+    // 1. Fetch material to identify associations
+    const { data: material, error: fetchError } = await supabaseAdmin
+      .from("platform_materials")
+      .select("*")
+      .eq("id", data.materialId)
+      .single();
+
+    if (fetchError || !material) {
+      throw new Error("Material não encontrado.");
+    }
+
+    // 2. Authorization check
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: userId,
+      _role: "admin"
+    });
+
+    if (!isAdmin) {
+    // Check if material is assigned to a course/ebook the user is enrolled in
+    const mAny = material as any;
+    if (mAny.course_id) {
+        const { data: enrollment } = await supabaseAdmin
+          .from("course_enrollments")
+          .select("id")
+          .eq("course_id", mAny.course_id)
+          .eq("user_id", userId)
+          .maybeSingle();
+        
+        if (!enrollment) throw new Error("Acesso negado: Você não possui matrícula neste curso.");
+      } else if (mAny.ebook_id) {
+        const { data: enrollment } = await supabaseAdmin
+          .from("ebook_enrollments")
+          .select("id")
+          .eq("ebook_id", mAny.ebook_id)
+          .eq("user_id", userId)
+          .maybeSingle();
+
+        if (!enrollment) throw new Error("Acesso negado: Você não possui acesso a este e-book.");
+      } else {
+
+        // Generic material check if no specific association (maybe public if is_active)
+        if (!material.is_active) throw new Error("Material indisponível.");
+      }
+    }
+
+    // 3. Generate Signed URL
+    const filePath = material.file_url;
+    if (!filePath) throw new Error("Este material não possui um arquivo para download.");
+
+    const { data: signedData, error: signedError } = await supabaseAdmin.storage
+      .from("platform-materials")
+      .createSignedUrl(filePath, 60 * 5); // 5 minutes
+
+    if (signedError) {
+      console.error("Erro ao gerar URL assinada:", signedError);
+      throw signedError;
     }
 
     return { url: signedData.signedUrl };
   });
+
 
 
