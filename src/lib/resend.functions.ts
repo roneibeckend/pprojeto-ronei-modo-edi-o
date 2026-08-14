@@ -109,10 +109,13 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
     is_enabled: z.boolean()
   }).parse(data))
   .handler(async ({ data }) => {
+    const settings = await getEmailSettings();
+    if (!settings) throw new Error("Configurações de e-mail não encontradas.");
+
     const { error } = await supabase
       .from('email_settings')
       .update(data)
-      .eq('id', (await getEmailSettings()).id);
+      .eq('id', settings.id);
 
     if (error) throw new Error(error.message);
     
