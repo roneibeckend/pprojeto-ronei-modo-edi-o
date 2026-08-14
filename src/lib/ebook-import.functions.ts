@@ -167,7 +167,7 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
         .select()
         .maybeSingle();
 
-      if (moduleError) throw new Error("Erro ao criar módulo: " + moduleError.message);
+      if (moduleError || !module) throw new Error("Erro ao criar módulo: " + (moduleError?.message || "Módulo não retornado após inserção"));
 
       const chaptersToInsert = processedSections.map((section: ProcessedSection) => ({
         ebook_id: data.ebook_id,

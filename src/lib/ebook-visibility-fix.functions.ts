@@ -42,7 +42,7 @@ export const fixEbookVisibility = createServerFn({ method: "POST" })
         })
         .select()
         .maybeSingle();
-      if (modError) throw new Error("Error creating module: " + modError.message);
+      if (modError || !newModule) throw new Error("Error creating module: " + (modError?.message || "Module creation returned no data"));
       moduleId = newModule.id;
     } else {
       moduleId = modules[0].id;
