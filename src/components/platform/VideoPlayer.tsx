@@ -143,7 +143,7 @@ export function VideoPlayer({
 
     // Safety net: never leave the spinner up forever. Never call load() here,
     // as that restarts the download and creates the mobile loading loop.
-    const loadingTimeout = setTimeout(() => setIsLoading(false), 12000);
+    const loadingTimeout = setTimeout(() => setIsLoading(false), 20000);
 
     const handleTimeUpdate = () => {
       localStorage.setItem(`video_progress_${videoId}`, video.currentTime.toString());
@@ -319,15 +319,15 @@ export function VideoPlayer({
         controlsList="nodownload"
         muted={false}
         autoPlay={true}
-        loop={false}
+        loop={isIntro}
         onLoadStart={() => setIsLoading(true)}
         onLoadedMetadata={() => {
           setIsLoading(false);
-          videoRef.current?.play().catch(() => {});
+          videoRef.current?.play().catch(err => console.warn("Autoplay failed on metadata", err));
         }}
         onCanPlay={() => {
           setIsLoading(false);
-          videoRef.current?.play().catch(() => {});
+          videoRef.current?.play().catch(err => console.warn("Autoplay failed on canplay", err));
         }}
         onPlaying={() => {
           setIsPlaying(true);
@@ -337,7 +337,7 @@ export function VideoPlayer({
         onWaiting={() => {
           const video = videoRef.current;
           // Only show the spinner for a genuine buffer underrun.
-          if (video && video.readyState < video.HAVE_FUTURE_DATA) setIsLoading(true);
+          if (video && video.readyState < video.HAVE_ENOUGH_DATA) setIsLoading(true);
         }}
         onStalled={() => {
           console.warn('[VideoPlayer:onStalled] Video stalled');
