@@ -126,11 +126,14 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
       if (config.apiKey) {
         const { validateResendSender } = await import("./resend.server");
         const result = await validateResendSender(config.apiKey, data.from_email);
-        await supabase.from('email_settings').update({
-          validation_status: result.status,
-          last_validation_at: new Date().toISOString(),
-          validation_error: result.error
-        }).eq('id', (await getEmailSettings()).id);
+        const currentSettings = await getEmailSettings();
+        if (currentSettings) {
+          await supabase.from('email_settings').update({
+            validation_status: result.status,
+            last_validation_at: new Date().toISOString(),
+            validation_error: result.error
+          }).eq('id', currentSettings.id);
+        }
       }
     } catch (e) {
       console.warn("Could not auto-validate sender:", e);
