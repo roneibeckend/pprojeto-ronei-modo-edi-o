@@ -799,41 +799,26 @@ function Hero() {
             >
               <X className="h-5 w-5" />
             </button>
-            <div className={`glass gradient-border overflow-hidden rounded-2xl p-2 shadow-fire ${isMobile ? "controls-limited" : ""}`}>
+            <div className="glass gradient-border overflow-hidden rounded-2xl p-2 shadow-fire relative">
               <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
                 <iframe
-                  src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview${isMobile ? "?autoplay=1&controls=0" : ""}`}
+                  src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1`}
                   title="Ronnei — A história por trás do Espetos Grill"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="absolute inset-0 h-full w-full"
+                  className="absolute inset-0 h-full w-full pointer-events-none"
                 />
-                {isMobile && (
-                  <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-auto bg-black/5" onClick={(e) => {
+                
+                {/* Overlay to block all controls and handle simple play/pause/restart logic */}
+                <div 
+                  className="absolute inset-0 z-20 cursor-pointer bg-transparent"
+                  onClick={(e) => {
                     const iframe = e.currentTarget.previousElementSibling as HTMLIFrameElement;
                     if (iframe) {
-                      const currentSrc = iframe.src;
-                      if (currentSrc.includes("autoplay=1")) {
-                        iframe.src = currentSrc.replace("autoplay=1", "autoplay=0");
-                      } else {
-                        iframe.src = currentSrc.replace("autoplay=0", "autoplay=1");
-                      }
+                      // Restart/Re-trigger playback by refreshing the source (ensures no controls show)
+                      iframe.src = iframe.src; 
                     }
-                  }}>
-                    {/* Minimal custom controls for mobile: 
-                        We only show them if they are definitely needed, 
-                        otherwise we rely on the iframe's native behavior if possible.
-                    */}
-                    <div className="flex gap-6 p-4 rounded-full bg-black/40 backdrop-blur-md border border-white/10 opacity-0 hover:opacity-100 transition-opacity">
-                      <Play className="h-8 w-8 text-white fill-current" />
-                      <div className="w-px h-8 bg-white/20" />
-                      <div className="flex gap-1.5 items-center">
-                        <div className="w-1.5 h-6 bg-white rounded-full" />
-                        <div className="w-1.5 h-6 bg-white rounded-full" />
-                      </div>
-                    </div>
-                  </div>
-                )}
+                  }}
+                />
               </div>
             </div>
           </div>
