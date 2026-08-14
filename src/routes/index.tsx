@@ -2035,10 +2035,15 @@ function LeadPopup() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (sessionStorage.getItem("espetinho_lead_popup_dismissed") === "1") return;
+    if (sessionStorage.getItem("espetinho_lead_popup_shown") === "1") return;
     if (localStorage.getItem("espetinho_lead_sent") === "1") return;
 
-    const trigger = () => setOpen(true);
+    const trigger = () => {
+      setOpen(true);
+      try {
+        sessionStorage.setItem("espetinho_lead_popup_shown", "1");
+      } catch {}
+    };
 
     // Exit-intent (desktop): cursor sobe além do topo da viewport
     const onMouseLeave = (e: MouseEvent) => {
@@ -2081,11 +2086,6 @@ function LeadPopup() {
   }, [open]);
 
   const close = () => {
-    try {
-      sessionStorage.setItem("espetinho_lead_popup_dismissed", "1");
-    } catch {
-      // ignore
-    }
     setOpen(false);
   };
 
