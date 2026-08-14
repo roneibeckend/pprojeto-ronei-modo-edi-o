@@ -89,7 +89,7 @@ export const validateSender = createServerFn({ method: "POST" })
     const result = await validateResendSender(data.apiKey, data.email);
     
     // Update settings with validation result
-    const { data: settings } = await supabase.from('email_settings').select('id').single();
+    const { data: settings } = await supabase.from('email_settings').select('id').maybeSingle();
     if (settings) {
       await supabase.from('email_settings').update({
         validation_status: result.status,
