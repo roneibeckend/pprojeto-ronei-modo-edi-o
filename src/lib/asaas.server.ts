@@ -11,7 +11,7 @@ export async function getAsaasConfig() {
     .select("*")
     .eq("category", "asaas")
     .eq("status", true)
-    .single();
+    .maybeSingle();
 
   if (error || !integration) {
     throw new Error("Integração com Asaas não está configurada ou ativa.");
