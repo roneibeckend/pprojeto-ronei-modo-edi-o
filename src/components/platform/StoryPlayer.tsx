@@ -27,19 +27,36 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
     return () => video.removeEventListener("timeupdate", updateProgress);
   }, []);
 
-  const togglePlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        videoRef.current.play().then(() => {
+  const togglePlay = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.muted) {
+      video.muted = false;
+      setIsMuted(false);
+      
+      if (video.paused) {
+        try {
+          await video.play();
           setIsPlaying(true);
-        }).catch((err) => {
-          console.warn("Story play failed", err.name);
-          setIsPlaying(false);
-        });
+        } catch (err: any) {
+          console.warn("Story play failed on unmute", err.name);
+        }
       }
+      return;
+    }
+
+    if (video.paused) {
+      try {
+        await video.play();
+        setIsPlaying(true);
+      } catch (err: any) {
+        console.warn("Story play failed", err.name);
+        setIsPlaying(false);
+      }
+    } else {
+      video.pause();
+      setIsPlaying(false);
     }
   };
 
