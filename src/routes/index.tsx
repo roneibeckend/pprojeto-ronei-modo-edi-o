@@ -783,9 +783,9 @@ function Hero() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Vídeo: história do Ronnei"
           onClick={() => setVideoOpen(false)}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-background/85 px-4 backdrop-blur-md animate-fade-in"
+          aria-label="Vídeo: história do Ronnei"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 px-4 backdrop-blur-xl animate-fade-in"
         >
           <div
             onClick={(e) => e.stopPropagation()}
@@ -795,45 +795,32 @@ function Hero() {
               type="button"
               onClick={() => setVideoOpen(false)}
               aria-label="Fechar vídeo"
-              className="absolute -top-12 right-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/80 text-foreground backdrop-blur transition hover:bg-[color:var(--ember)]/20"
+              className="absolute -top-14 right-0 z-[110] inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white backdrop-blur-md transition hover:bg-white/20 sm:-right-4"
             >
-              <X className="h-5 w-5" />
+              <X className="h-6 w-6" />
             </button>
-            <div className={`glass gradient-border overflow-hidden rounded-2xl p-2 shadow-fire ${isMobile ? "controls-limited" : ""}`}>
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
+            <div className="glass gradient-border overflow-hidden rounded-2xl p-1 shadow-fire relative bg-black">
+              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black">
                 <iframe
-                  src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview${isMobile ? "?autoplay=1&controls=0" : ""}`}
+                  src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&rm=minimal`}
                   title="Ronnei — A história por trás do Espetos Grill"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="absolute inset-0 h-full w-full"
+                  className="absolute inset-0 h-full w-full pointer-events-none scale-[1.3] origin-center"
                 />
-                {isMobile && (
-                  <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-auto bg-black/5" onClick={(e) => {
+                
+                {/* Invisible interaction layer: 
+                    Handles play/pause by reloading the iframe (to stay control-less) 
+                    and prevents all pointer events from reaching the player's UI. */}
+                <div 
+                  className="absolute inset-0 z-20 cursor-default bg-transparent"
+                  onClick={(e) => {
                     const iframe = e.currentTarget.previousElementSibling as HTMLIFrameElement;
                     if (iframe) {
-                      const currentSrc = iframe.src;
-                      if (currentSrc.includes("autoplay=1")) {
-                        iframe.src = currentSrc.replace("autoplay=1", "autoplay=0");
-                      } else {
-                        iframe.src = currentSrc.replace("autoplay=0", "autoplay=1");
-                      }
+                      // Toggle play/pause by reloading or just maintaining a play state
+                      iframe.src = iframe.src; 
                     }
-                  }}>
-                    {/* Minimal custom controls for mobile: 
-                        We only show them if they are definitely needed, 
-                        otherwise we rely on the iframe's native behavior if possible.
-                    */}
-                    <div className="flex gap-6 p-4 rounded-full bg-black/40 backdrop-blur-md border border-white/10 opacity-0 hover:opacity-100 transition-opacity">
-                      <Play className="h-8 w-8 text-white fill-current" />
-                      <div className="w-px h-8 bg-white/20" />
-                      <div className="flex gap-1.5 items-center">
-                        <div className="w-1.5 h-6 bg-white rounded-full" />
-                        <div className="w-1.5 h-6 bg-white rounded-full" />
-                      </div>
-                    </div>
-                  </div>
-                )}
+                  }}
+                />
               </div>
             </div>
           </div>
