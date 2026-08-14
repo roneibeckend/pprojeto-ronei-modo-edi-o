@@ -1,0 +1,1 @@
+UPDATE public.partner_balances SET balance = 0.00 WHERE user_id = 'ec84815b-72c1-469d-a642-acc1ee16473f';
