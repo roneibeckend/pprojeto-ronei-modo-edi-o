@@ -1290,7 +1290,7 @@ function Modules() {
             aria-controls="modulos-lista"
             className="mt-8 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-fire/10 px-5 py-3 text-sm font-bold uppercase tracking-widest text-[color:var(--gold)] transition hover:bg-fire/20"
           >
-            {open ? "Ocultar capítulos" : "Ver os 14 capítulos"}
+            {open ? "Ocultar capítulos" : "Ver os 7 Módulos e 27 Capítulos"}
             <ChevronDown
               className={`h-4 w-4 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
             />
@@ -1552,7 +1552,7 @@ function Testimonials() {
 
 function Offer() {
   const features = [
-    "eBook completo com 14 capítulos (+30 páginas)",
+    "eBook completo com 7 Módulos e 27 Capítulos",
     "4 bônus exclusivos (artes, cardápio, certificado e calculadora)",
     "Acesso imediato após o pagamento",
     "Garantia incondicional de 7 dias",
