@@ -73,7 +73,7 @@ export const getEmailSettings = createServerFn({ method: "GET" })
     const { data, error } = await supabase
       .from('email_settings')
       .select('*')
-      .single();
+      .maybeSingle();
 
     if (error) throw new Error(error.message);
     return data;
@@ -89,7 +89,7 @@ export const validateSender = createServerFn({ method: "POST" })
     const result = await validateResendSender(data.apiKey, data.email);
     
     // Update settings with validation result
-    const { data: settings } = await supabase.from('email_settings').select('id').single();
+    const { data: settings } = await supabase.from('email_settings').select('id').maybeSingle();
     if (settings) {
       await supabase.from('email_settings').update({
         validation_status: result.status,
@@ -109,10 +109,13 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
     is_enabled: z.boolean()
   }).parse(data))
   .handler(async ({ data }) => {
+    const settings = await getEmailSettings();
+    if (!settings) throw new Error("Configurações de e-mail não encontradas.");
+
     const { error } = await supabase
       .from('email_settings')
       .update(data)
-      .eq('id', (await getEmailSettings()).id);
+      .eq('id', settings.id);
 
     if (error) throw new Error(error.message);
     
@@ -123,11 +126,14 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
       if (config.apiKey) {
         const { validateResendSender } = await import("./resend.server");
         const result = await validateResendSender(config.apiKey, data.from_email);
-        await supabase.from('email_settings').update({
-          validation_status: result.status,
-          last_validation_at: new Date().toISOString(),
-          validation_error: result.error
-        }).eq('id', (await getEmailSettings()).id);
+        const currentSettings = await getEmailSettings();
+        if (currentSettings) {
+          await supabase.from('email_settings').update({
+            validation_status: result.status,
+            last_validation_at: new Date().toISOString(),
+            validation_error: result.error
+          }).eq('id', currentSettings.id);
+        }
       }
     } catch (e) {
       console.warn("Could not auto-validate sender:", e);
