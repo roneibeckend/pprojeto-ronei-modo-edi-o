@@ -208,9 +208,11 @@ function CoursePage() {
       if (introNeedsSigning) {
         try {
           const result = await getSignedUrl({ data: { contentId: course.id, contentType: 'course' } });
-          if (!cancelled) setSignedIntroUrl(result.signedUrl);
+          if (!cancelled && result?.signedUrl) setSignedIntroUrl(result.signedUrl);
         } catch (error) {
           console.error("Failed to sign intro video URL:", error);
+          // Fallback to raw URL if signing fails
+          if (!cancelled) setSignedIntroUrl(course.intro_video_url);
         }
       }
     };

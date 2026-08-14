@@ -165,6 +165,11 @@ export function VideoPlayer({
   const autoplayTriedRef = useRef(false);
   useEffect(() => {
     autoplayTriedRef.current = false;
+    if (src && !isYouTube && !isGoogleDrive) {
+      // Small delay to allow browser to settle
+      const timer = setTimeout(tryAutoplay, 800);
+      return () => clearTimeout(timer);
+    }
   }, [src]);
 
   const tryAutoplay = async () => {
@@ -173,12 +178,12 @@ export function VideoPlayer({
     
     autoplayTriedRef.current = true;
     
-    // Explicitly set muted properties on the DOM element for mobile reliability
-    video.muted = false;
-    video.defaultMuted = false;
-    video.removeAttribute('muted');
+    // Critical: Mobile autoplay MUST be muted.
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
-    setIsMuted(false);
+    setIsMuted(true);
     
     console.log(`[VideoPlayer:tryAutoplay] Attempting muted play for intro video: ${videoId}`);
     
@@ -275,12 +280,14 @@ export function VideoPlayer({
           />
         </div>
 
-        {/* User Interaction Layer - Block native controls */}
+        {/* User Interaction Layer - Block native controls and allow toggle */}
         <div 
           className="absolute inset-0 z-50 bg-transparent cursor-pointer" 
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
+            // Since we can't easily control generic iframes, we just let it be,
+            // but for future-proofing we could add message passing here.
           }} 
         />
       </div>
