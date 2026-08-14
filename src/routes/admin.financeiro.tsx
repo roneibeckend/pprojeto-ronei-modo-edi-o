@@ -67,10 +67,13 @@ function FinancePage() {
 
   // Fetch initial data
   const { isLoading, refetch } = useQuery({
-    queryKey: ["financial-config", period],
+    queryKey: ["financial-config", period, customStartDate, customEndDate],
     queryFn: async () => {
       localStorage.setItem("finance-period", period);
+      if (customStartDate) localStorage.setItem("finance-custom-start", customStartDate);
+      if (customEndDate) localStorage.setItem("finance-custom-end", customEndDate);
       const dates = getDates(period);
+
       
       const [settingsRes, costsRes, partnersRes, autoRevenue] = await Promise.all([
         supabase.from("financial_settings").select("*").single(),
