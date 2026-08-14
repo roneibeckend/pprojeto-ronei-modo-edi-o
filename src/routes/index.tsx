@@ -1211,7 +1211,7 @@ function SocialProof() {
   ];
   return (
     <section id="depoimentos" className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1800px]">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Bônus Exclusivos</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
@@ -1222,7 +1222,7 @@ function SocialProof() {
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-5 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-5 lg:grid-cols-4 3xl:grid-cols-5">
           {prints.map((p) => (
             <figure
               key={p.alt}
@@ -1274,7 +1274,7 @@ function Modules() {
   const [open, setOpen] = useState(false);
   return (
     <section id="modulos" className="relative py-14 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1800px]">
         <div className="flex flex-col items-center text-center">
           <SectionTag>Por dentro do eBook</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
