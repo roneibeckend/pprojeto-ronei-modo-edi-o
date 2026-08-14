@@ -26,7 +26,7 @@ export function VideoPlayer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showControls, setShowControls] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   
@@ -45,8 +45,10 @@ export function VideoPlayer({
     window.addEventListener('resize', checkMobile);
 
     const handleInitialControls = () => {
-      setShowControls(true);
-      startControlsTimer();
+      if (!isMobileDevice) {
+        setShowControls(true);
+        startControlsTimer();
+      }
     };
     handleInitialControls();
 
@@ -172,11 +174,11 @@ export function VideoPlayer({
     autoplayTriedRef.current = true;
     
     // Explicitly set muted properties on the DOM element for mobile reliability
-    video.muted = true;
-    video.defaultMuted = true;
-    video.setAttribute('muted', '');
+    video.muted = false;
+    video.defaultMuted = false;
+    video.removeAttribute('muted');
     video.setAttribute('playsinline', '');
-    setIsMuted(true);
+    setIsMuted(false);
     
     console.log(`[VideoPlayer:tryAutoplay] Attempting muted play for intro video: ${videoId}`);
     
@@ -293,14 +295,19 @@ export function VideoPlayer({
         ref={videoRef}
         src={src}
         poster={poster}
-        className={cn("w-full h-full", useNativeControls ? "object-contain" : "object-cover scale-[1.12]")}
+        className={cn(
+          "w-full h-full", 
+          useNativeControls 
+            ? "object-contain bg-black" 
+            : "object-cover scale-[1.12]"
+        )}
         playsInline
         webkit-playsinline="true"
         x5-playsinline="true"
-        controls={false}
+        controls={useNativeControls}
         preload="auto"
         controlsList="nodownload"
-        muted={true}
+        muted={false}
         autoPlay={true}
         loop={false}
         onLoadStart={() => setIsLoading(true)}
