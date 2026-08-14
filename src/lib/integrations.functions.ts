@@ -101,6 +101,9 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
         }
         
         try {
+          // Use a dummy email post with dry_run or domains check
+          // Since some keys are restricted to sending, we check domains first 
+          // but handle the 401 restricted_api_key as a success for the key itself.
           const response = await fetch('https://api.resend.com/domains', {
             method: 'GET',
             headers: {
@@ -109,10 +112,18 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
           });
           
           httpCode = response.status;
-          responseBody = await response.json();
+          responseBody = await response.json().catch(() => ({}));
           
           if (!response.ok) {
-            throw new Error(`Erro ${response.status} na API do Resend`);
+            const resData = responseBody as any;
+            if (response.status === 401 && resData.name === 'restricted_api_key') {
+              // Key is valid but restricted to sending. This is a success for the connection test.
+              status = 'success';
+              message = 'Conexão validada. Chave ativa (Restrita a envio de e-mails).';
+              httpCode = 200; 
+            } else {
+              throw new Error(resData.message || `Erro ${response.status} na API do Resend`);
+            }
           }
         } catch (fetchError: any) {
           throw new Error(`Falha ao conectar com Resend: ${fetchError.message}`);
