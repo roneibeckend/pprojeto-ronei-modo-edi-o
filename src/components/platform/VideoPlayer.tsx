@@ -265,17 +265,24 @@ export function VideoPlayer({
 
     return (
       <div className={cn("relative aspect-[9/16] max-h-[85vh] w-full mx-auto bg-black rounded-xl overflow-hidden glass", className)}>
-        <div className="absolute inset-0 z-10 overflow-hidden">
+        <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">
           <iframe
             src={finalUrl}
-            className="absolute inset-0 w-full h-full object-cover border-0 scale-[1.4] origin-center"
+            className="absolute inset-0 w-full h-full object-contain border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             title={title || "Video Player"}
           />
         </div>
 
-        {hideAllUI && <div className="absolute inset-0 z-50 bg-transparent" onClick={() => {}} />}
+        {/* User Interaction Layer - Block native controls */}
+        <div 
+          className="absolute inset-0 z-50 bg-transparent cursor-pointer" 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }} 
+        />
       </div>
     );
   }
@@ -300,9 +307,9 @@ export function VideoPlayer({
         poster={poster}
         className={cn(
           "w-full h-full", 
-          useNativeControls 
+          (useNativeControls || isIntro)
             ? "object-contain bg-black" 
-            : "object-cover scale-[1.12]"
+            : "object-cover"
         )}
         playsInline
         webkit-playsinline="true"
