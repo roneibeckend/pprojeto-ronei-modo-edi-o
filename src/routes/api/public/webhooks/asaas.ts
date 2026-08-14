@@ -207,7 +207,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
           }
 
           // 10. Mark as Processed (Idempotency)
-          await supabaseAdmin.from('asaas_webhook_events').insert({
+          await supabaseAdmin.from('asaas_webhook_events' as any).insert({
             event_id: body.id,
             payment_id: paymentId,
             event_type: body.event,
