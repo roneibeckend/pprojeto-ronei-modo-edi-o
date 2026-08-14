@@ -783,6 +783,7 @@ function Hero() {
         <div
           role="dialog"
           aria-modal="true"
+          onClick={() => setVideoOpen(false)}
           aria-label="Vídeo: história do Ronnei"
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 px-4 backdrop-blur-xl animate-fade-in"
         >
