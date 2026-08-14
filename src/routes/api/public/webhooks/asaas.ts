@@ -70,7 +70,8 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
 
           // 4. Idempotency Check
           const { data: existingEvent } = await supabaseAdmin
-            .from('asaas_webhook_events')
+            .from('asaas_webhook_events' as any)
+
             .select('event_id')
             .eq('event_id', body.id) // body.id é o ID único do evento do Asaas
             .maybeSingle();
