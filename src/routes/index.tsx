@@ -2019,7 +2019,7 @@ function NotForYou() {
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 3xl:max-w-[1500px]">
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur sm:p-8">
           <div className="flex flex-col items-center text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+            <SectionTag>Para quem NÃO é</SectionTag>
               <X className="h-3 w-3" />
               Este método NÃO é para
             </span>
