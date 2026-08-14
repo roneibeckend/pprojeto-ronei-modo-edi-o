@@ -106,9 +106,9 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
         <video
           ref={videoRef}
           src={url}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-contain bg-black"
           autoPlay
-          muted
+          muted={false}
           playsInline
           onEnded={onClose}
           onClick={(e) => {
