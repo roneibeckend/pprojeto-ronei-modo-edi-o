@@ -18,7 +18,7 @@ function PrivacyPage() {
   const lastUpdate = "14/08/2026";
   const companyName = "RONNEI";
   const dpoName = "Ronnei";
-  const contactEmail = "contato@espetinhonaveia.com";
+  const contactEmail = "ronneivml122@gmail.com";
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-24">
