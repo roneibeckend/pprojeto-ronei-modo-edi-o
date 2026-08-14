@@ -37,31 +37,39 @@ export async function getResendConfig() {
 
 export async function validateResendSender(apiKey: string, email: string) {
   try {
-    const domain = email.split('@')[1];
-    const response = await fetch(`https://api.resend.com/domains`, {
-      method: 'GET',
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`
-      }
+      },
+      body: JSON.stringify({
+        from: 'onboarding@resend.dev',
+        to: 'test@resend.dev',
+        subject: 'Validation',
+        html: 'Validation',
+        dry_run: true
+      })
     });
+
+    if (response.status === 401) {
+      const data = await response.json().catch(() => ({}));
+      if (data.name === 'restricted_api_key') {
+         return {
+           status: 'verified',
+           message: 'Chave de API validada com sucesso (Restrita a envio).'
+         };
+      }
+      throw new Error(`Chave de API Inválida (401)`);
+    }
 
     if (!response.ok) {
       throw new Error(`Erro API Resend: ${response.status}`);
     }
 
-    const { data } = await response.json();
-    const foundDomain = (data || []).find((d: any) => d.name === domain);
-
-    if (foundDomain) {
-      return {
-        status: foundDomain.status === 'verified' ? 'verified' : 'pending',
-        error: foundDomain.status !== 'verified' ? 'Domínio encontrado mas não verificado no Resend.' : null
-      };
-    }
-
     return {
-      status: 'not_found',
-      error: 'Domínio não configurado no seu painel Resend.'
+      status: 'verified',
+      message: 'Chave de API validada com sucesso.'
     };
   } catch (error: any) {
     return {
