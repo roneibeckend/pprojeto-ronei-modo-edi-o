@@ -90,9 +90,11 @@ function EbookReaderPage() {
       if (introNeedsSigning) {
         try {
           const result = await getSignedUrl({ data: { contentId: ebook.id, contentType: 'ebook' } });
-          if (!cancelled) setSignedIntroUrl(result.signedUrl);
+          if (!cancelled && result?.signedUrl) setSignedIntroUrl(result.signedUrl);
         } catch (error) {
           console.error("Failed to sign intro video URL:", error);
+          // Fallback to raw URL if signing fails
+          if (!cancelled) setSignedIntroUrl(ebook.opening_video_url);
         }
       }
     };
