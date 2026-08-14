@@ -135,7 +135,7 @@ export function Shell({ children }: { children: ReactNode }) {
       {/* Nav */}
       <nav 
         aria-label="Menu principal"
-        className="scrollbar-hidden flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 py-4"
+        className="scrollbar-hidden flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 py-4 [WebkitOverflowScrolling:touch]"
       >
         {navGroups.map((group) => {
           // Filtra itens do grupo com base nas permissões
