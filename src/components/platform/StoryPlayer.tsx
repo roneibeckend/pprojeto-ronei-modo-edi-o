@@ -133,6 +133,7 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
           loop
           playsInline
           webkit-playsinline="true"
+          x5-playsinline="true"
           onEnded={onClose}
           onClick={(e) => {
             e.stopPropagation();

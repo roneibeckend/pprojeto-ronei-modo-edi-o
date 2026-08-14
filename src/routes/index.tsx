@@ -825,10 +825,10 @@ function Hero() {
                 {/* Overlay to block interaction and hide UI parts */}
                 <div className="absolute inset-0 z-10 overflow-hidden">
                   <iframe
-                    src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&rm=minimal&mute=1`}
+                    src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&rm=minimal&mute=1&enablejsapi=1`}
                     title="Ronnei — A história por trás do Espetos Grill"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    className={`absolute inset-0 h-full w-full pointer-events-none scale-[1.3] origin-center transition-opacity duration-300 ${isPlaying ? "opacity-100" : "opacity-0"} bg-black`}
+                    className={`absolute inset-0 h-full w-full pointer-events-none scale-[1.4] origin-center transition-opacity duration-300 ${isPlaying ? "opacity-100" : "opacity-0"} bg-black`}
                   />
                 </div>
 
