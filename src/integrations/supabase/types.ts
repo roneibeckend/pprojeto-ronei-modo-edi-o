@@ -260,6 +260,7 @@ export type Database = {
       }
       asaas_webhook_events: {
         Row: {
+          claim_token: string | null
           claimed_at: string | null
           event_id: string
           event_type: string
@@ -270,6 +271,7 @@ export type Database = {
           status: string
         }
         Insert: {
+          claim_token?: string | null
           claimed_at?: string | null
           event_id: string
           event_type: string
@@ -280,6 +282,7 @@ export type Database = {
           status?: string
         }
         Update: {
+          claim_token?: string | null
           claimed_at?: string | null
           event_id?: string
           event_type?: string
@@ -1865,6 +1868,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      acquire_asaas_webhook_claim: {
+        Args: {
+          p_event_id: string
+          p_event_type: string
+          p_lease_interval?: string
+          p_payload: Json
+          p_payment_id: string
+        }
+        Returns: {
+          claim_token: string
+          claimed_at: string
+          status: string
+        }[]
+      }
       award_points: {
         Args: { p_points: number; p_user_id: string }
         Returns: undefined
