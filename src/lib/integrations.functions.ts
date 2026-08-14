@@ -233,7 +233,7 @@ export const saveIntegration = createServerFn({ method: "POST" })
 
     if (error) throw new Error(error.message);
     
-    return { success: true };
+    return { success: true, id: (data.id && data.id !== "") ? data.id : undefined };
   });
 
 // Fetch integration history
