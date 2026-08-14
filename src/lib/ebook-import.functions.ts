@@ -165,7 +165,7 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
           order_index: 0
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (moduleError) throw new Error("Erro ao criar módulo: " + moduleError.message);
 

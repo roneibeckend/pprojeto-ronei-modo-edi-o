@@ -6,7 +6,7 @@ export async function getResendConfig() {
     .select("*")
     .eq("category", "resend")
     .eq("status", true)
-    .single();
+    .maybeSingle();
 
   if (error || !integration) {
     const envApiKey = process.env['RESEND_API_KEY'];
