@@ -147,7 +147,7 @@ function MaterialsPage() {
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : materials.map((m: any) => (
-          <div key={m.id} className="glass card-tilt group flex flex-col rounded-2xl p-6 transition-all hover:border-fire/50">
+          <div key={m.id} className="glass card-tilt group flex flex-col rounded-2xl p-6 transition-all hover:border-fire/50 h-full">
             <div className="flex items-start justify-between gap-3">
               <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-fire/10 text-primary ring-1 ring-fire/20 transition-transform group-hover:scale-110">
                 {getIcon(m.id, m.type, m.title)}
@@ -168,7 +168,7 @@ function MaterialsPage() {
 
             <button 
               onClick={() => handleDownload(m.id, m.title, m.file_url, m.external_url)}
-              className="btn-fire mt-6 w-full py-3 text-sm font-bold flex items-center justify-center gap-2 group/btn"
+              className="btn-fire mt-auto w-full py-3 text-sm font-bold flex items-center justify-center gap-2 group/btn active:scale-[0.98] touch-action-manipulation"
             >
               <Download className="h-4 w-4 transition-transform group-hover/btn:-translate-y-0.5" /> 
               Baixar material
