@@ -16,8 +16,8 @@ export const Route = createFileRoute("/termos-de-uso")({
 
 function TermsPage() {
   const lastUpdate = "14/08/2026";
-  const companyName = "[PREENCHER RAZÃO SOCIAL]";
-  const cnpj = "[PREENCHER CNPJ]";
+  const companyName = "RONNEI";
+  const cnpj = "45.680.415/0001-91";
   const contactEmail = "contato@espetinhonaveia.com";
 
   return (
