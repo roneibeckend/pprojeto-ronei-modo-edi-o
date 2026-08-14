@@ -34,7 +34,6 @@ import {
   ArrowRight,
   ChevronDown,
   Play,
-  // Instagram and Youtube are missing in some lucide versions
   MessageCircle,
   Mail,
   Beef,
@@ -547,7 +546,7 @@ function LeadForm() {
       className="w-full max-w-md rounded-2xl border border-border bg-background/40 p-5 text-left"
     >
       <p className="mb-4 text-center text-sm font-semibold text-[color:var(--gold)]">
-        Receba o cupom de desconto no seu WhatsApp
+        Receba seu cupom de desconto exclusivo
       </p>
 
       <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -1838,7 +1837,7 @@ function FAQ() {
                 <span className="truncate">Selecione uma pergunta ao lado…</span>
               </div>
               <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                Ainda com dúvida? Fale com a gente pelo WhatsApp após a compra.
+                Ainda com dúvida? Fale com a gente pelas redes sociais.
               </p>
             </div>
           </div>
@@ -1916,23 +1915,40 @@ function Footer() {
           </ul>
         </div>
         <div>
-          <h4 className="text-sm font-bold uppercase tracking-widest text-[color:var(--gold)]">Contato</h4>
-          <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-            <li className="flex items-center gap-2"><Mail className="h-4 w-4" /> contato@espetinhonaveia.com</li>
-            <li className="flex items-center gap-2"><MessageCircle className="h-4 w-4" /> Suporte via WhatsApp</li>
-          </ul>
+          <h4 className="text-sm font-bold uppercase tracking-widest text-[color:var(--gold)]">Redes Sociais</h4>
           <div className="mt-4 flex flex-wrap gap-3">
-            <a href="#" aria-label="Instagram" className="grid h-10 w-10 place-items-center rounded-full border border-border hover:border-[color:var(--gold)]/60">
-              <MessageCircle className="h-4 w-4" />
+            <a 
+              href="https://www.tiktok.com/@espetinhonaveiacomronne3" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              aria-label="TikTok" 
+              className="grid h-10 w-10 place-items-center rounded-full border border-border transition-colors hover:border-[color:var(--gold)]/60 hover:text-[color:var(--gold)]"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+                <path d="M19.6 6.8a5.4 5.4 0 0 1-3.2-1.1 5.4 5.4 0 0 1-2-3.7h-3.1v13.1a2.8 2.8 0 1 1-2-2.7V9.1a5.9 5.9 0 1 0 5.1 5.9V9.3a8.5 8.5 0 0 0 5.2 1.8V8a5.4 5.4 0 0 1 0-1.2z"/>
+              </svg>
             </a>
-            <a href="#" aria-label="WhatsApp" className="grid h-10 w-10 place-items-center rounded-full border border-border hover:border-[color:var(--gold)]/60">
-              <MessageCircle className="h-4 w-4" />
+            <a 
+              href="https://www.instagram.com/espetinhonaveiacomronnei/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              aria-label="Instagram" 
+              className="grid h-10 w-10 place-items-center rounded-full border border-border transition-colors hover:border-[color:var(--gold)]/60 hover:text-[color:var(--gold)]"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
             </a>
-            <a href="#" aria-label="YouTube" className="grid h-10 w-10 place-items-center rounded-full border border-border hover:border-[color:var(--gold)]/60">
-              <MessageCircle className="h-4 w-4" />
-            </a>
-            <a href="#" aria-label="TikTok" className="grid h-10 w-10 place-items-center rounded-full border border-border hover:border-[color:var(--gold)]/60">
-              <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true"><path d="M19.6 6.8a5.4 5.4 0 0 1-3.2-1.1 5.4 5.4 0 0 1-2-3.7h-3.1v13.1a2.8 2.8 0 1 1-2-2.7V9.1a5.9 5.9 0 1 0 5.1 5.9V9.3a8.5 8.5 0 0 0 5.2 1.8V8a5.4 5.4 0 0 1 0-1.2z"/></svg>
+            <a 
+              href="#" 
+              aria-label="Facebook" 
+              className="grid h-10 w-10 place-items-center rounded-full border border-border transition-colors hover:border-[color:var(--gold)]/60 hover:text-[color:var(--gold)]"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+              </svg>
             </a>
           </div>
         </div>
@@ -2170,7 +2186,7 @@ function LeadPopup() {
             Espera! Garanta seu <span className="text-gradient-fire">cupom de desconto</span>
           </h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            Deixe seu nome e WhatsApp e receba um cupom exclusivo antes de sair.
+            Deixe seus dados e receba um cupom exclusivo antes de sair.
           </p>
         </div>
         <div className="mt-4">
