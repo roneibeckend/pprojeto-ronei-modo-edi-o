@@ -353,13 +353,13 @@ function EbookReaderPage() {
           Este e-book é exclusivo para alunos. Adquira agora para liberar o acesso imediato ao conteúdo completo.
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-          <Link to="/app/cursos" className="btn-ghost-fire px-8 py-3 font-bold">
+          <Link to="/app/cursos" className="btn-ghost-fire px-8 py-3 font-bold active:scale-[0.98] touch-action-manipulation">
             Voltar
           </Link>
           <button 
             onClick={handlePurchase}
             disabled={isProcessing}
-            className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] touch-action-manipulation"
           >
             {isProcessing ? (
               <Loader2 className="h-5 w-5 animate-spin" />
