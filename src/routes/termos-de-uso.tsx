@@ -15,80 +15,125 @@ export const Route = createFileRoute("/termos-de-uso")({
 });
 
 function TermsPage() {
+  const lastUpdate = "14/08/2026";
+  const companyName = "[PREENCHER RAZÃO SOCIAL]";
+  const cnpj = "[PREENCHER CNPJ]";
+  const contactEmail = "contato@espetinhonaveia.com";
+
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-24">
-      <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+    <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-24">
+      <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
         <ArrowLeft className="h-4 w-4" /> Voltar para o início
       </Link>
-      <div className="mt-8 flex items-center gap-3">
-        <span className="grid h-11 w-11 place-items-center rounded-xl bg-fire shadow-fire">
-          <FileText className="h-5 w-5 text-white" />
-        </span>
-        <h1 className="font-display text-3xl sm:text-5xl">Termos de Uso</h1>
+      
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-3">
+          <span className="grid h-12 w-12 place-items-center rounded-xl bg-fire shadow-fire">
+            <FileText className="h-6 w-6 text-white" />
+          </span>
+          <div>
+            <h1 className="font-display text-4xl sm:text-5xl text-foreground tracking-tight">TERMOS DE USO</h1>
+            <p className="font-medium text-lg text-[color:var(--gold)] mt-1">Regras para utilização da plataforma</p>
+          </div>
+        </div>
+        
+        <div className="flex flex-wrap gap-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground border-b border-white/10 pb-6">
+          <span>Versão: 2.0</span>
+          <span className="text-white/20">|</span>
+          <span>Última atualização: {lastUpdate}</span>
+        </div>
       </div>
-      <p className="mt-3 text-sm text-muted-foreground">Última atualização: {new Date().toLocaleDateString("pt-BR")}</p>
 
-      <div className="mt-10 space-y-8 text-[15px] leading-relaxed text-muted-foreground">
-        <section>
-          <h2 className="font-display text-xl text-foreground">1. Sobre o produto</h2>
-          <p className="mt-2">
-            O <strong className="text-foreground">Espetinho na Veia — Do Zero aos 10k</strong> é um eBook digital com conteúdo educacional sobre montagem, produção,
-            venda e crescimento de um negócio de espetinhos. Ao comprar, você concorda com estes Termos.
+      <div className="mt-10 space-y-12 text-[15px] leading-relaxed text-muted-foreground">
+        <section className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 sm:p-8">
+          <h2 className="font-display text-2xl text-foreground mb-4">1. Aceitação dos Termos</h2>
+          <p>
+            Ao acessar e utilizar a plataforma <strong className="text-foreground">Espetinho na Veia</strong>, de propriedade de {companyName}, inscrita no CNPJ sob o nº {cnpj}, você concorda integralmente com estes Termos de Uso. Se você não concorda com qualquer parte destes termos, não deverá utilizar nossos serviços.
+          </p>
+          <p className="mt-4 italic">
+            Estes termos podem ser atualizados periodicamente para refletir mudanças legais ou melhorias operacionais, sempre com a data da última atualização visível no topo da página.
           </p>
         </section>
 
         <section>
-          <h2 className="font-display text-xl text-foreground">2. Acesso ao conteúdo</h2>
-          <p className="mt-2">
-            Após a confirmação do pagamento, você recebe por e-mail o acesso ao eBook e aos bônus. O acesso é pessoal e intransferível.
-            Você não deve compartilhar, revender ou redistribuir o material.
+          <h2 className="font-display text-2xl text-foreground mb-4 border-l-4 border-fire pl-4">2. Objeto e Acesso</h2>
+          <div className="space-y-4">
+            <p>
+              A plataforma consiste em um ambiente de aprendizado digital (LMS) que oferece cursos e e-books especializados no mercado de espetinhos, incluindo, mas não se limitando ao e-book "Do Zero aos 10k".
+            </p>
+            <p>
+              <strong className="text-foreground">Cadastro:</strong> O acesso a conteúdos adquiridos exige a criação de uma conta pessoal. Você é responsável por manter a confidencialidade de sua senha e por todas as atividades que ocorram em sua conta.
+            </p>
+            <p>
+              <strong className="text-foreground">Uso Pessoal:</strong> O acesso é individual, exclusivo e intransferível. O compartilhamento de credenciais de acesso ou a distribuição não autorizada do conteúdo é estritamente proibida e sujeita a bloqueio imediato da conta sem direito a reembolso.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl text-foreground mb-4 border-l-4 border-fire pl-4">3. Pagamentos, Assinaturas e Reembolso</h2>
+          <div className="space-y-4">
+            <p>
+              Os pagamentos são processados via parceiros especializados (como Asaas). A plataforma não armazena dados de cartão de crédito.
+            </p>
+            <p>
+              <strong className="text-foreground">Direito de Arrependimento:</strong> Em conformidade com o Código de Defesa do Consumidor (CDC), você tem o direito de desistir da compra e solicitar o reembolso integral no prazo de <strong className="text-foreground">7 (sete) dias corridos</strong> após a confirmação do pagamento, independente do motivo.
+            </p>
+            <p>
+              <strong className="text-foreground">Procedimento:</strong> Para solicitar o reembolso dentro do prazo legal, entre em contato através do e-mail {contactEmail}.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl text-foreground mb-4 border-l-4 border-fire pl-4">4. Propriedade Intelectual</h2>
+          <p>
+            Todo o conteúdo disponibilizado (vídeos, textos, receitas, planilhas, designs e logotipos) é de propriedade exclusiva da {companyName} ou de seus licenciantes e está protegido pelas leis de direitos autorais e propriedade intelectual.
+          </p>
+          <p className="mt-4">
+            A reprodução, cópia, alteração, venda ou distribuição de qualquer material da plataforma, no todo ou em parte, é proibida nos termos da legislação brasileira vigente.
           </p>
         </section>
 
         <section>
-          <h2 className="font-display text-xl text-foreground">3. Pagamento</h2>
-          <p className="mt-2">
-            O pagamento é processado por plataforma parceira e pode ser feito à vista ou parcelado, conforme as opções exibidas no checkout.
-            O preço vigente é o exibido no momento da compra.
+          <h2 className="font-display text-2xl text-foreground mb-4 border-l-4 border-fire pl-4">5. Programa de Afiliados</h2>
+          <p>
+            Caso você participe do nosso programa de afiliados, concorda em utilizar práticas de divulgação éticas e transparentes. É proibido o uso de spam, promessas falsas de ganhos ou práticas que lesem a imagem da marca. A plataforma reserva-se o direito de auditar e suspender contas de afiliados em caso de suspeita de fraude ou violação destes termos.
           </p>
         </section>
 
         <section>
-          <h2 className="font-display text-xl text-foreground">4. Garantia de 7 dias</h2>
-          <p className="mt-2">
-            Você tem <strong className="text-foreground">7 dias corridos</strong> a partir da compra para pedir reembolso integral, sem burocracia.
-            Basta enviar um e-mail para <span className="text-foreground">contato@espetinhonaveia.com</span>.
+          <h2 className="font-display text-2xl text-foreground mb-4 border-l-4 border-fire pl-4">6. Isenção de Resultados e Responsabilidade</h2>
+          <p>
+            Os métodos ensinados são baseados em experiências reais, porém, <strong className="text-foreground">não garantimos resultados financeiros específicos</strong>. O sucesso do seu negócio depende da sua execução, dedicação e fatores externos de mercado.
+          </p>
+          <p className="mt-4">
+            A plataforma e seus autores não serão responsáveis por danos indiretos, lucros cessantes ou qualquer perda decorrente da utilização das informações, <strong className="text-foreground">nos limites permitidos pela legislação aplicável</strong>.
           </p>
         </section>
 
         <section>
-          <h2 className="font-display text-xl text-foreground">5. Propriedade intelectual</h2>
-          <p className="mt-2">
-            Todo o conteúdo do eBook, textos, imagens e materiais complementares são protegidos por direitos autorais.
-            É proibida a reprodução total ou parcial sem autorização.
+          <h2 className="font-display text-2xl text-foreground mb-4 border-l-4 border-fire pl-4">7. Conduta do Usuário</h2>
+          <p>
+            Você concorda em não utilizar a plataforma para fins ilícitos, não tentar burlar sistemas de segurança, não realizar engenharia reversa e não proferir ofensas ou discursos de ódio em áreas de feedback ou suporte.
           </p>
         </section>
 
-        <section>
-          <h2 className="font-display text-xl text-foreground">6. Isenção de resultados</h2>
-          <p className="mt-2">
-            O eBook oferece um método com base em experiência real, mas os resultados dependem da aplicação, dedicação e contexto de cada aluno.
-            Não garantimos ganhos financeiros específicos.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display text-xl text-foreground">7. Alterações</h2>
-          <p className="mt-2">
-            Estes Termos podem ser atualizados a qualquer momento para refletir melhorias no produto ou obrigações legais. A versão vigente é sempre a publicada nesta página.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display text-xl text-foreground">8. Contato</h2>
-          <p className="mt-2">
-            Dúvidas? Escreva para <span className="text-foreground">contato@espetinhonaveia.com</span> ou fale com o suporte via WhatsApp.
-          </p>
+        <section className="border-t border-white/10 pt-12">
+          <div className="bg-fire/5 border border-fire/20 rounded-2xl p-6">
+            <h2 className="font-display text-2xl text-foreground mb-2 text-gradient-fire">Dúvidas ou Suporte?</h2>
+            <p className="mb-4">Se você tiver qualquer dúvida sobre estes termos, entre em contato conosco:</p>
+            <ul className="space-y-2 font-medium">
+              <li className="flex items-center gap-2">
+                <span className="text-[color:var(--gold)]">Email:</span>
+                <span className="text-foreground">{contactEmail}</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-[color:var(--gold)]">WhatsApp:</span>
+                <span className="text-foreground">Suporte integrado na plataforma</span>
+              </li>
+            </ul>
+          </div>
         </section>
       </div>
     </main>
