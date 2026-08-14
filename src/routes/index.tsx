@@ -34,7 +34,6 @@ import {
   ArrowRight,
   ChevronDown,
   Play,
-  // Instagram and Youtube are missing in some lucide versions
   MessageCircle,
   Mail,
   Beef,
