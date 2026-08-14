@@ -41,7 +41,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             .from('integrations')
             .select('credentials')
             .eq('category', 'asaas')
-            .single();
+            .maybeSingle();
 
           if (intError || !integration) {
             console.error('[Webhook Asaas] Fail closed: Integração não encontrada ou erro:', intError);

@@ -247,7 +247,7 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
         .from("course_lessons")
         .select("video_url, module:course_modules(course_id)")
         .eq("id", data.lessonId)
-        .single();
+        .maybeSingle();
       
       if (!lesson || !lesson.video_url) throw new Error("Aula ou vídeo não encontrado.");
       rawVideoUrl = lesson.video_url;
@@ -259,7 +259,7 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
         .from("ebook_chapters")
         .select("video_url, ebook_id")
         .eq("id", data.chapterId)
-        .single();
+        .maybeSingle();
       
       if (!chapter || !chapter.video_url) throw new Error("Capítulo ou vídeo não encontrado.");
       rawVideoUrl = chapter.video_url;
@@ -272,7 +272,7 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
           .from("courses")
           .select("intro_video_url")
           .eq("id", data.contentId)
-          .single();
+          .maybeSingle();
         if (!course || !course.intro_video_url) throw new Error("Vídeo de introdução não encontrado.");
         rawVideoUrl = course.intro_video_url;
         targetCourseId = data.contentId;
@@ -282,7 +282,7 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
           .from("ebooks")
           .select("opening_video_url")
           .eq("id", data.contentId)
-          .single();
+          .maybeSingle();
         if (!ebook || !ebook.opening_video_url) throw new Error("Vídeo de introdução não encontrado.");
         rawVideoUrl = ebook.opening_video_url;
         targetEbookId = data.contentId;
