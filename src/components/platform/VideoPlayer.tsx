@@ -153,14 +153,20 @@ export function VideoPlayer({
       clearTimeout(loadingTimeout);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       listeners.forEach(([name, fn]) => video.removeEventListener(name, fn));
-      
-      // Cleanup for memory
-      video.pause();
-      video.removeAttribute('src');
-      video.load();
     };
-
   }, [src, videoId, isYouTube, isGoogleDrive]);
+
+  // Dedicated unmount effect for heavy cleanup
+  useEffect(() => {
+    return () => {
+      const video = videoRef.current;
+      if (video) {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      }
+    };
+  }, []);
 
 
   // Intro videos: try a muted autoplay once the media is ready.
@@ -200,18 +206,9 @@ export function VideoPlayer({
         setIsLoading(false);
       }
     } catch (err: any) {
-      console.error(`[VideoPlayer:tryAutoplay] Playback rejected for: ${videoId}`, {
-        name: err.name,
-        message: err.message,
-        readyState: video.readyState,
-        networkState: video.networkState
-      });
+      console.warn(`[VideoPlayer:tryAutoplay] Playback rejected for: ${videoId}`, err.name);
       setIsPlaying(false);
       setIsLoading(false);
-      
-      // Fallback: if it was a NotAllowedError, it might be due to a weird state where
-      // the browser thinks it's not muted or doesn't have a gesture.
-      // We'll keep it paused and let the user tap.
     }
   };
 
@@ -234,12 +231,16 @@ export function VideoPlayer({
             setIsLoading(false);
           })
           .catch((err) => {
-            // Some mobile browsers only allow unmuted playback after a gesture on
-            // the media element itself; retry muted as a last resort.
-            console.error('Playback failed:', err);
+            console.warn('Playback failed:', err.name);
+            // Retry muted only as fallback
             video.muted = true;
             setIsMuted(true);
-            video.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+            video.play().then(() => {
+              setIsPlaying(true);
+              setIsLoading(false);
+            }).catch(() => {
+              setIsPlaying(false);
+            });
           });
       }
     } else {
@@ -328,7 +329,7 @@ export function VideoPlayer({
           if (video && video.readyState < video.HAVE_FUTURE_DATA) setIsLoading(true);
         }}
         onStalled={() => {
-          console.warn('[VideoPlayer:onStalled] Video stalled, attempting to resume...');
+          console.warn('[VideoPlayer:onStalled] Video stalled');
           const video = videoRef.current;
           if (video && video.paused && isPlaying) {
              video.play().catch(() => {});
@@ -390,10 +391,10 @@ export function VideoPlayer({
           className={cn(
             "absolute inset-0 flex items-center justify-center bg-black/10 transition-all duration-300 z-30",
             useNativeControls
-              ? (isPlaying ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible")
+              ? (isPlaying ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible pointer-events-none")
               : ((!isPlaying || showControls) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none")
           )}
-          onClick={(e) => {
+          onClick={useNativeControls ? undefined : (e) => {
             e.stopPropagation();
             e.preventDefault();
             togglePlay(e);
