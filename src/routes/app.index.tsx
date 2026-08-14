@@ -119,11 +119,7 @@ function Dashboard() {
                 ? isEnrolledInCourse(item.id) || (item.price || 0) === 0
                 : isEnrolledInEbook(item.id) || (item.price || 0) === 0
             }))
-            .sort((a, b) => {
-              if (a.isEnrolled && !b.isEnrolled) return -1;
-              if (!a.isEnrolled && b.isEnrolled) return 1;
-              return 0;
-            })
+            .filter(item => !item.isEnrolled) // Oculta itens que o aluno já possui ou que são gratuitos
             .map((item) => (
               <CourseShowcaseCard 
                 key={`${item.type}-${item.id}`} 
