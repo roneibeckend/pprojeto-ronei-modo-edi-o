@@ -1213,7 +1213,7 @@ function SocialProof() {
     <section id="depoimentos" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1800px]">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Bônus Exclusivos</SectionTag>
+          <SectionTag>Resultados Reais</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             Alunos que <span className="text-gradient-fire">colocaram a mão na brasa</span> e viram resultado
           </h2>
