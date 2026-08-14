@@ -2221,16 +2221,17 @@ function LandingPage() {
     // Assign varied reveal variants per section so animations don't all feel the same.
     // Order below matches <main> children.
     const variantsBySection: Array<{ headline: string; card: string }> = [
-      { headline: "up",    card: "up"     }, // Hero (mostly handled by <Reveal>)
-      { headline: "clip",  card: "left"   }, // BrasaTicker (no h2)
+      { headline: "up",    card: "up"     }, // Hero
       { headline: "clip",  card: "scale"  }, // ForYou
+      { headline: "up",    card: "left"   }, // Objection
       { headline: "up",    card: "tilt"   }, // Benefits
-      { headline: "left",  card: "rotate" }, // Modules
+      { headline: "up",    card: "up"     }, // ProfitCalculator
       { headline: "right", card: "right"  }, // AuthorSolution
       { headline: "clip",  card: "tilt"   }, // SocialProof
+      { headline: "left",  card: "rotate" }, // Modules
       { headline: "clip",  card: "scale"  }, // Bonuses
+      { headline: "up",    card: "blur"   }, // NotForYou
       { headline: "up",    card: "blur"   }, // Offer
-
       { headline: "up",    card: "up"     }, // FAQ
     ];
 
