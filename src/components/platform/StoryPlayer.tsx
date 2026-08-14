@@ -31,10 +31,15 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        setIsPlaying(false);
       } else {
-        videoRef.current.play();
+        videoRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch((err) => {
+          console.warn("Story play failed", err.name);
+          setIsPlaying(false);
+        });
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -83,6 +88,7 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
           src={url}
           className="h-full w-full object-cover"
           autoPlay
+          muted
           playsInline
           onEnded={onClose}
           onClick={togglePlay}
@@ -90,7 +96,7 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
         
         {/* Play/Pause Overlay Indicator (shows temporarily) */}
         {!isPlaying && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20" onClick={togglePlay}>
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
             <div className="grid h-20 w-20 place-items-center rounded-full bg-white/10 backdrop-blur-md">
               <Play className="h-10 w-10 text-white fill-white" />
             </div>
