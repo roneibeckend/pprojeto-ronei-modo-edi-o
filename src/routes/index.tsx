@@ -111,7 +111,7 @@ export const Route = createFileRoute("/")({
           "@type": "Product",
           name: "Espetinho na Veia — Do Zero aos 10k",
           description:
-            "eBook com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro.",
+            "eBook com 14 capítulos + 4 bônus exclusivos para montar, temperar, precificar e vender espetinhos com alto lucro.",
           image: [OG_IMAGE],
           brand: { "@type": "Brand", name: "Espetinho na Veia" },
           author: { "@type": "Person", name: "Ronnei" },
