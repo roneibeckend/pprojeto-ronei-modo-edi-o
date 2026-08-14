@@ -126,8 +126,11 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
         )}
         
         {!isPlaying && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-            <div className="grid h-20 w-20 place-items-center rounded-full bg-white/10 backdrop-blur-md">
+          <div 
+            className="absolute inset-0 flex items-center justify-center bg-black/20"
+            onClick={togglePlay}
+          >
+            <div className="grid h-20 w-20 place-items-center rounded-full bg-white/10 backdrop-blur-md pointer-events-none">
               <Play className="h-10 w-10 text-white fill-white" />
             </div>
           </div>

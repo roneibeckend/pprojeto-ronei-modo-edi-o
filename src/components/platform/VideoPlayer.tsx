@@ -378,24 +378,27 @@ export function VideoPlayer({
         </div>
       )}
 
-      {/* Tap-to-play overlay: on mobile it only shows while the video has never started,
-          so it never blocks the native controls. */}
+      {/* UI Overlay: only visible on desktop OR when the video is not yet playing on mobile.
+          We hide it entirely on mobile while playing to avoid blocking native controls. */}
       {(!useNativeControls || !isPlaying) && (
         <div
           className={cn(
             "absolute inset-0 flex items-center justify-center bg-black/10 transition-all duration-300 z-30",
             useNativeControls
-              ? (isPlaying ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible pointer-events-none")
+              ? (isPlaying ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible")
               : ((!isPlaying || showControls) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none")
           )}
-          onClick={useNativeControls ? undefined : (e) => {
+          onClick={useNativeControls ? (isPlaying ? undefined : togglePlay) : (e) => {
             e.stopPropagation();
             e.preventDefault();
             togglePlay(e);
           }}
         >
           {!isLoading ? (
-            <div className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition active:scale-95 hover:scale-110 pointer-events-none">
+            <div className={cn(
+              "w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition active:scale-95 hover:scale-110",
+              useNativeControls && isPlaying && "hidden" // Extra safety for mobile persistent buttons
+            )}>
               {isPlaying ? (
                 <div className="flex gap-1.5">
                   <div className="w-2 h-8 bg-white rounded-full" />
@@ -406,7 +409,10 @@ export function VideoPlayer({
               )}
             </div>
           ) : (
-            <div className="w-20 h-20 rounded-full bg-fire/20 flex items-center justify-center pointer-events-none">
+            <div className={cn(
+              "w-20 h-20 rounded-full bg-fire/20 flex items-center justify-center",
+              useNativeControls && isPlaying && "hidden"
+            )}>
               <Loader2 className="w-10 h-10 animate-spin text-fire" />
             </div>
           )}
