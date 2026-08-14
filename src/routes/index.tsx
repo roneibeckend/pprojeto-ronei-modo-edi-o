@@ -810,22 +810,27 @@ function Hero() {
                   src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&rm=minimal`}
                   title="Ronnei — A história por trás do Espetos Grill"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  className="absolute inset-0 h-full w-full pointer-events-none scale-[1.3] origin-center"
+                  className={`absolute inset-0 h-full w-full pointer-events-none scale-[1.3] origin-center transition-opacity duration-300 ${isPlaying ? "opacity-100" : "opacity-0"}`}
                 />
                 
-                {/* Invisible interaction layer: 
-                    Handles play/pause by reloading the iframe (to stay control-less) 
-                    and prevents all pointer events from reaching the player's UI. */}
+                {/* Interaction layer: 
+                    Blocks all pointer events from reaching Google player.
+                    Clicking toggles visibility, effectively pausing/resuming. */}
                 <div 
-                  className="absolute inset-0 z-20 cursor-default bg-transparent"
-                  onClick={(e) => {
-                    const iframe = e.currentTarget.previousElementSibling as HTMLIFrameElement;
-                    if (iframe) {
-                      // Toggle play/pause by reloading or just maintaining a play state
-                      iframe.src = iframe.src; 
-                    }
-                  }}
-                />
+                  className="absolute inset-0 z-20 cursor-pointer flex flex-col items-center justify-center bg-transparent"
+                  onClick={() => setIsPlaying(!isPlaying)}
+                >
+                  {!isPlaying && (
+                    <div className="flex flex-col items-center gap-4 animate-scale-in">
+                      <div className="grid h-20 w-20 place-items-center rounded-full bg-fire shadow-fire">
+                        <Play className="h-10 w-10 text-white ml-1" />
+                      </div>
+                      <span className="rounded-full bg-black/60 px-4 py-2 text-sm font-bold text-white backdrop-blur">
+                        Vídeo pausado. Clique para retomar.
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
