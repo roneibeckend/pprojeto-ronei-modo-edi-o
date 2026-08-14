@@ -1659,7 +1659,7 @@ function Offer() {
             <div className="flex justify-center lg:justify-start">
               <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3.5 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[color:var(--gold)]">
                 <ShieldCheck className="h-3 w-3" />
-                &#x2063;
+                Garantia Legal
               </span>
             </div>
 
