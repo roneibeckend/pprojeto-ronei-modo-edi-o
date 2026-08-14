@@ -546,7 +546,7 @@ function LeadForm() {
       className="w-full max-w-md rounded-2xl border border-border bg-background/40 p-5 text-left"
     >
       <p className="mb-4 text-center text-sm font-semibold text-[color:var(--gold)]">
-        Receba o cupom de desconto no seu WhatsApp
+        Receba seu cupom de desconto exclusivo
       </p>
 
       <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
