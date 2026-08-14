@@ -806,12 +806,16 @@ function Hero() {
             </button>
             <div className="glass gradient-border overflow-hidden rounded-2xl p-1 shadow-fire relative bg-black">
               <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black">
-                <iframe
-                  src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&rm=minimal`}
-                  title="Ronnei — A história por trás do Espetos Grill"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  className={`absolute inset-0 h-full w-full pointer-events-none scale-[1.3] origin-center transition-opacity duration-300 ${isPlaying ? "opacity-100" : "opacity-0"}`}
-                />
+                {/* Overlay to block interaction and hide UI parts */}
+                <div className="absolute inset-0 z-10 overflow-hidden">
+                  <iframe
+                    src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&rm=minimal`}
+                    title="Ronnei — A história por trás do Espetos Grill"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    className={`absolute inset-0 h-full w-full pointer-events-none scale-[1.3] origin-center transition-opacity duration-300 ${isPlaying ? "opacity-100" : "opacity-0"}`}
+                  />
+                </div>
+
                 
                 {/* Interaction layer: 
                     Blocks all pointer events from reaching Google player.
@@ -825,9 +829,10 @@ function Hero() {
                       <div className="grid h-20 w-20 place-items-center rounded-full bg-fire shadow-fire">
                         <Play className="h-10 w-10 text-white ml-1" />
                       </div>
-                      <span className="rounded-full bg-black/60 px-4 py-2 text-sm font-bold text-white backdrop-blur">
+                      <span className="rounded-full bg-black/60 px-4 py-2 text-[10px] font-bold text-white backdrop-blur uppercase tracking-widest">
                         Vídeo pausado. Clique para retomar.
                       </span>
+
                     </div>
                   )}
                 </div>
