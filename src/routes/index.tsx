@@ -2086,11 +2086,6 @@ function LeadPopup() {
   }, [open]);
 
   const close = () => {
-    try {
-      sessionStorage.setItem("espetinho_lead_popup_dismissed", "1");
-    } catch {
-      // ignore
-    }
     setOpen(false);
   };
 
