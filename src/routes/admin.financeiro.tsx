@@ -220,19 +220,41 @@ function FinancePage() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2">
-          <select
-            value={period}
-            onChange={(e) => setPeriod(e.target.value)}
-            className="rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white outline-none focus:border-orange-500/50"
-          >
-            <option value="today">Hoje</option>
-            <option value="last-7-days">Últimos 7 dias</option>
-            <option value="current-month">Mês Atual</option>
-            <option value="previous-month">Mês Anterior</option>
-            <option value="current-year">Ano Atual</option>
-            <option value="previous-year">Ano Anterior</option>
-            <option value="all">Todo o Período</option>
-          </select>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <select
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+              className="rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white outline-none focus:border-orange-500/50"
+            >
+              <option value="today">Hoje</option>
+              <option value="last-7-days">Últimos 7 dias</option>
+              <option value="current-month">Mês Atual</option>
+              <option value="previous-month">Mês Anterior</option>
+              <option value="current-year">Ano Atual</option>
+              <option value="previous-year">Ano Anterior</option>
+              <option value="all">Todo o Período</option>
+              <option value="custom">Personalizado</option>
+            </select>
+
+            {period === "custom" && (
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={customStartDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                  className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-[10px] text-white outline-none focus:border-orange-500/50"
+                />
+                <span className="text-white/20 text-[10px]">até</span>
+                <input
+                  type="date"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-[10px] text-white outline-none focus:border-orange-500/50"
+                />
+              </div>
+            )}
+          </div>
+
 
           <button
             onClick={handleDistribute}
