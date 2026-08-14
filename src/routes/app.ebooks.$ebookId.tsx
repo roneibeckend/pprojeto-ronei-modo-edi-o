@@ -89,7 +89,7 @@ function EbookReaderPage() {
     const loadSignedUrl = async () => {
       if (introNeedsSigning) {
         try {
-          const result = await getSignedUrl({ data: { path: ebook.opening_video_url, bucket: ebook.opening_video_url.includes("ebook-assets") ? "ebook-assets" : "course-assets" } });
+          const result = await getSignedUrl({ data: { contentId: ebook.id, contentType: 'ebook' } });
           if (!cancelled) setSignedIntroUrl(result.signedUrl);
         } catch (error) {
           console.error("Failed to sign intro video URL:", error);
@@ -137,8 +137,7 @@ function EbookReaderPage() {
       // Prefetch signed URL for next chapter
       const prefetchUrl = async () => {
         try {
-          const bucket = nextChapter.video_url.includes('ebook-assets') ? 'ebook-assets' : 'course-assets';
-          const result = await getSignedUrl({ data: { path: nextChapter.video_url, bucket } });
+          const result = await getSignedUrl({ data: { chapterId: nextChapter.id } });
           const link = document.createElement('link');
           link.rel = 'prefetch';
           link.as = 'video';
@@ -198,9 +197,7 @@ function EbookReaderPage() {
       if (activeChapter?.video_url && !activeChapter.video_url.includes('youtube') && !activeChapter.video_url.includes('drive')) {
         try {
           setIsLoadingSignedChapter(true);
-          // Determine bucket - fallback to course-assets if it's an old URL
-          const bucket = activeChapter.video_url.includes('ebook-assets') ? 'ebook-assets' : 'course-assets';
-          const result = await getSignedUrl({ data: { path: activeChapter.video_url, bucket } });
+          const result = await getSignedUrl({ data: { chapterId: activeChapter.id } });
           setSignedChapterUrl(result.signedUrl);
         } catch (error) {
           console.error("Failed to sign chapter video URL:", error);
