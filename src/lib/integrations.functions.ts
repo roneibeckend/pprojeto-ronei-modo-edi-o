@@ -217,7 +217,7 @@ export const saveIntegration = createServerFn({ method: "POST" })
        }
     }
 
-    const { error } = await supabaseAdmin
+    const { data: result, error } = await supabaseAdmin
       .from('integrations')
       .upsert({
         id: (data.id && data.id !== "") ? data.id : undefined,
@@ -228,7 +228,9 @@ export const saveIntegration = createServerFn({ method: "POST" })
         credentials: finalCredentials,
         settings: data.settings,
         updated_at: new Date().toISOString()
-      }, { onConflict: 'category' });
+      }, { onConflict: 'category' })
+      .select('id')
+      .maybeSingle();
 
 
     if (error) throw new Error(error.message);
