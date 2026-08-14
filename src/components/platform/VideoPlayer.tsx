@@ -417,7 +417,7 @@ export function VideoPlayer({
       {isMuted && isPlaying && (
         <button
           onClick={unmute}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full bg-black/60 px-4 py-2.5 text-sm font-bold text-white backdrop-blur-sm transition active:scale-95"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full bg-fire px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-fire/20 transition active:scale-95 animate-in fade-in zoom-in duration-500"
         >
           <VolumeX className="w-4 h-4" />
           Toque para ativar o som
