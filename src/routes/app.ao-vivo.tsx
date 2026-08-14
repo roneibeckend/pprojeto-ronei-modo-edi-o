@@ -88,7 +88,7 @@ function LiveClassCard({ live, isPast = false }: { live: any; isPast?: boolean }
   const isLive = live.status === 'live';
 
   return (
-    <div className={`glass overflow-hidden rounded-2xl border transition-all duration-300 ${isLive ? 'border-primary ring-1 ring-primary/20' : 'border-white/5'}`}>
+    <div className={`glass overflow-hidden rounded-2xl border transition-all duration-300 flex flex-col h-full ${isLive ? 'border-primary ring-1 ring-primary/20' : 'border-white/5'}`}>
       <div className="relative aspect-video bg-muted/20">
         <div className="absolute inset-0 flex items-center justify-center">
           <Video className={`h-12 w-12 ${isLive ? 'text-primary animate-pulse' : 'text-muted-foreground/20'}`} />
@@ -108,7 +108,7 @@ function LiveClassCard({ live, isPast = false }: { live: any; isPast?: boolean }
         )}
       </div>
 
-      <div className="p-5 space-y-4">
+      <div className="p-5 space-y-4 flex flex-col flex-1">
         <div>
           <h3 className="font-display text-lg font-bold line-clamp-1">{live.title}</h3>
           <p className="mt-1 text-sm text-muted-foreground line-clamp-2 min-h-[40px]">
@@ -127,7 +127,7 @@ function LiveClassCard({ live, isPast = false }: { live: any; isPast?: boolean }
           </div>
         </div>
 
-        <div className="pt-2">
+        <div className="pt-2 mt-auto">
           {isPast ? (
             <button 
               disabled 
@@ -140,9 +140,9 @@ function LiveClassCard({ live, isPast = false }: { live: any; isPast?: boolean }
               href={live.link || "#"}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex w-full items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
+              className={`flex w-full items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all active:scale-[0.98] touch-action-manipulation ${
                 isLive 
-                  ? 'btn-fire shadow-lg shadow-primary/20 scale-[1.02]' 
+                  ? 'btn-fire shadow-lg shadow-primary/20' 
                   : 'bg-white/5 border border-white/10 hover:border-primary/50 text-foreground'
               }`}
             >
