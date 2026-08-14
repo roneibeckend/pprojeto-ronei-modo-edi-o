@@ -809,18 +809,27 @@ function Hero() {
                   className="absolute inset-0 h-full w-full"
                 />
                 {isMobile && (
-                  <div className="absolute inset-0 z-10 pointer-events-auto" onClick={(e) => {
+                  <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-auto bg-black/5" onClick={(e) => {
                     const iframe = e.currentTarget.previousElementSibling as HTMLIFrameElement;
-                    if (iframe && iframe.contentWindow) {
-                      // Note: Google Drive preview iframe doesn't support easy programmatic play/pause via postMessage easily
-                      // but we can toggle the overlay or provide instructions. 
-                      // The requirements ask for ONLY Play/Pause buttons.
+                    if (iframe) {
+                      // We re-set the src to trigger a reload/play if needed, 
+                      // or just rely on the initial autoplay=1
+                      const currentSrc = iframe.src;
+                      if (currentSrc.includes("autoplay=1")) {
+                        iframe.src = currentSrc.replace("autoplay=1", "autoplay=0");
+                      } else {
+                        iframe.src = currentSrc.replace("autoplay=0", "autoplay=1");
+                      }
                     }
                   }}>
-                    {/* Play/Pause custom controls for mobile */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-4 pointer-events-auto">
-                       {/* Since we can't easily control the Drive iframe playback state via JS due to origin restrictions,
-                           we provide a minimal UI that mimics the requirement while acknowledging the technical limitation of the source. */}
+                    {/* Minimal custom controls for mobile */}
+                    <div className="flex gap-6 p-4 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
+                      <Play className="h-8 w-8 text-white fill-current" />
+                      <div className="w-px h-8 bg-white/20" />
+                      <div className="flex gap-1.5 items-center">
+                        <div className="w-1.5 h-6 bg-white rounded-full" />
+                        <div className="w-1.5 h-6 bg-white rounded-full" />
+                      </div>
                     </div>
                   </div>
                 )}
