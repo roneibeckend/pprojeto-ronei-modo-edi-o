@@ -2156,7 +2156,7 @@ function LeadPopup() {
         onClick={close}
         aria-hidden="true"
       />
-      <div className="relative w-full max-w-md rounded-2xl border border-[color:var(--gold)]/40 bg-card p-5 shadow-fire sm:p-6">
+      <div className="relative w-full max-w-md 2xl:max-w-lg rounded-2xl border border-[color:var(--gold)]/40 bg-card p-5 shadow-fire sm:p-6 2xl:p-10">
         <button
           type="button"
           onClick={close}
