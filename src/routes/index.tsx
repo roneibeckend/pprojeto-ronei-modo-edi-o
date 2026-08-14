@@ -959,7 +959,7 @@ function AuthorSolution() {
 
           {/* Copy */}
           <div>
-            <SectionTag>&#x2063;</SectionTag>
+            <SectionTag>Oportunidade</SectionTag>
             <h2 className="mt-5 h-fluid-h2 font-black">
               De açougueiro sem R$ 1.000 no bolso a dono do <span className="text-gradient-fire">Espetos Grill</span>.
             </h2>
@@ -1011,7 +1011,7 @@ function Benefits() {
     <section id="beneficios" className="relative py-10 sm:py-14">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>&#x2063;</SectionTag>
+          <SectionTag>Metodologia</SectionTag>
           <h2 className="mt-4 max-w-2xl text-2xl sm:text-3xl font-black">
             O que vai <span className="text-gradient-fire">mudar no seu bolso</span>
           </h2>
@@ -1067,7 +1067,7 @@ function ProfitCalculator() {
     <section id="calculadora" className="relative py-10 sm:py-14">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>&#x2063;</SectionTag>
+          <SectionTag>O que você aprende</SectionTag>
           <h2 className="mt-4 max-w-2xl h-fluid-h3 font-black">
             Faça a <span className="text-gradient-fire">conta na sua tela</span> agora
           </h2>
@@ -1196,7 +1196,7 @@ function SocialProof() {
     <section id="depoimentos" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>&#x2063;</SectionTag>
+          <SectionTag>Bônus Exclusivos</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             Alunos que <span className="text-gradient-fire">colocaram a mão na brasa</span> e viram resultado
           </h2>
@@ -1259,7 +1259,7 @@ function Modules() {
     <section id="modulos" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>&#x2063;</SectionTag>
+          <SectionTag>Por dentro do eBook</SectionTag>
           <h2 className="mt-6 max-w-3xl h-fluid-h2 font-black">
             14 capítulos <span className="text-gradient-fire">práticos e diretos</span>
           </h2>
@@ -1328,7 +1328,7 @@ function Bonuses() {
       </div>
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>&#x2063;</SectionTag>
+          <SectionTag>Para quem é</SectionTag>
           <h2 className="mt-4 max-w-3xl h-fluid-h3 font-black">
             4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
           </h2>
@@ -1720,7 +1720,7 @@ function FAQ() {
     <section id="faq" className="relative py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>&#x2063;</SectionTag>
+          <SectionTag>FAQ</SectionTag>
           <h2 className="mt-6 h-fluid-h2 font-black">
             Tire suas dúvidas com a <span className="text-gradient-fire">assistente</span>
           </h2>
@@ -1921,8 +1921,8 @@ function Footer() {
         </div>
       </div>
       <div className="mx-auto mt-10 max-w-6xl border-t border-border/60 px-4 pt-6 text-center text-xs leading-relaxed text-muted-foreground sm:px-6">
-        <p className="mb-2">
-          <strong className="text-foreground">Espetinho na Veia</strong> · CNPJ 00.000.000/0001-00 · contato@espetinhonaveia.com
+        <p className="mb-2 uppercase tracking-widest font-semibold text-[10px]">
+          [PREENCHER RAZÃO SOCIAL] · CNPJ [PREENCHER CNPJ] · contato@espetinhonaveia.com
         </p>
         <p className="mb-2 opacity-80">
           Suporte de segunda a sexta, das 9h às 18h.
