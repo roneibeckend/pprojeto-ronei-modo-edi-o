@@ -122,6 +122,24 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: auto;
+    
+    /* Previne atrasos de clique em mobile */
+    touch-action: manipulation;
+  }
+  
+  /* Desabilita gradientes pesados no mobile para performance de scroll */
+  @media (max-width: 768px) {
+    body {
+      background-attachment: scroll;
+      background-image: none;
+      background-color: var(--color-background);
+    }
+    
+    /* Remove filtros de desfoque pesados em containers de scroll */
+    .glass, .backdrop-blur, .backdrop-blur-xl {
+      backdrop-filter: none !important;
+      background: var(--color-card) !important;
+    }
   }
   h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.005em; }
 
@@ -296,15 +314,23 @@
   opacity: 0;
   transform: translate3d(0, 16px, 0);
   transition:
-    opacity 0.35s ease-out,
-    transform 0.35s ease-out;
+    opacity 0.35s cubic-bezier(0.2, 0, 0.2, 1),
+    transform 0.35s cubic-bezier(0.2, 0, 0.2, 1);
   will-change: opacity, transform;
   contain: content;
-
 }
+
+/* No mobile, simplificamos ainda mais para garantir performance e visibilidade imediata */
+@media (max-width: 768px) {
+  [data-reveal] {
+    transition-duration: 0.25s;
+    transform: translate3d(0, 8px, 0);
+  }
+}
+
 [data-reveal][data-visible="true"] {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 [data-reveal-delay="1"] { transition-delay: 0.04s; }
 [data-reveal-delay="2"] { transition-delay: 0.08s; }

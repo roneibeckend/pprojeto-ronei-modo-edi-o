@@ -260,13 +260,13 @@ function CoursePage() {
           Este conteúdo é exclusivo para alunos deste treinamento. Adquira agora para liberar o acesso imediato.
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-          <Link to="/app/cursos" className="btn-ghost-fire px-8 py-3 font-bold">
+          <Link to="/app/cursos" className="btn-ghost-fire px-8 py-3 font-bold active:scale-[0.98] touch-action-manipulation">
             Voltar aos cursos
           </Link>
           <button 
             onClick={handlePurchase}
             disabled={isProcessing}
-            className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] touch-action-manipulation"
           >
             {isProcessing ? (
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -345,22 +345,21 @@ function CoursePage() {
   // Scroll to top when lesson changes (all devices)
   useLayoutEffect(() => {
     if (activeId) {
-      const scrollContainer = readerRef.current?.closest('main');
-      
-      const scrollToTop = () => {
+      // Pequeno delay para garantir que o DOM atualizou
+      const timer = setTimeout(() => {
+        const scrollContainer = readerRef.current?.closest('main');
+        
         if (scrollContainer) {
-          scrollContainer.scrollTop = 0;
+          scrollContainer.scrollTo({ top: 0, behavior: 'instant' });
         }
-        window.scrollTo({ top: 0, behavior: 'auto' });
+        window.scrollTo({ top: 0, behavior: 'instant' });
         
         if (lessonTopRef.current) {
-          lessonTopRef.current.scrollIntoView({ block: 'start', behavior: 'auto' });
+          lessonTopRef.current.scrollIntoView({ block: 'start', behavior: 'instant' });
         }
-      };
+      }, 50);
 
-      scrollToTop();
-      const rafId = requestAnimationFrame(scrollToTop);
-      return () => cancelAnimationFrame(rafId);
+      return () => clearTimeout(timer);
     }
   }, [activeId]);
 

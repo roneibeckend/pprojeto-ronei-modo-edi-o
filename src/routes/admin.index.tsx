@@ -46,11 +46,11 @@ function AdminDashboard() {
         ticketsRes,
         recentLogsRes
       ] = await Promise.all([
-        supabase.from('profiles').select('*', { count: 'exact', head: true }),
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'aluno'),
         supabase.from('courses').select('id'),
         supabase.from('payments').select('net_amount').in('status', ['CONFIRMED', 'RECEIVED', 'RECEIVED_IN_CASH']),
         supabase.from('support_tickets').select('id', { count: 'exact', head: true }).eq('status', 'open'),
-        supabase.from('integration_logs' as any).select('*').order('created_at', { ascending: false }).limit(3)
+        supabase.from('integration_logs' as any).select('id, integration_name, status, created_at').order('created_at', { ascending: false }).limit(3)
       ]);
 
       const totalRevenue = paymentsRes.data?.reduce((acc, p) => acc + Number(p.net_amount), 0) || 0;
@@ -142,7 +142,7 @@ function AdminDashboard() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card, i) => (
-          <div key={i} className="p-4 sm:p-6 rounded-xl border border-white/5 bg-[#111] group hover:border-white/10 transition">
+          <div key={i} className="p-4 sm:p-6 rounded-xl border border-white/5 bg-[#111] group hover:border-white/10 transition active:scale-[0.98] touch-action-manipulation">
             <div className="flex items-center justify-between mb-4">
               <div className={`p-2 rounded-lg bg-white/5 ${card.color}`}>
                 <card.icon className="h-5 w-5" />

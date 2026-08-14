@@ -253,8 +253,8 @@ function CoursesPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 sm:gap-6">
             {/* Renderizar Cursos */}
             {ownedCourses.map((c) => (
-              <article key={c.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30">
-                <div className="relative aspect-video bg-muted/20">
+              <article key={c.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30 flex flex-col h-full">
+                <div className="relative aspect-video bg-muted/20 shrink-0">
                   <img 
                     src={c.cover_url || IMG.hero} 
                     alt={c.title} 
@@ -274,14 +274,14 @@ function CoursesPage() {
                   )}
                 </div>
                 
-                <div className="p-4 sm:p-5">
+                <div className="p-4 sm:p-5 flex flex-col flex-1">
                   <h3 className="font-display text-base sm:text-lg font-bold leading-tight line-clamp-2 break-words">{c.title}</h3>
                   <p className="mt-2 line-clamp-3 text-xs sm:text-sm text-muted-foreground break-words">{c.description}</p>
                   
                   <Link
                     to="/app/cursos/$courseId"
                     params={{ courseId: c.id }}
-                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-xs sm:text-sm font-bold bg-fire text-white shadow-lg shadow-fire/20 hover:brightness-110 transition-all"
+                    className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl py-3 text-xs sm:text-sm font-bold bg-fire text-white shadow-lg shadow-fire/20 hover:brightness-110 transition-all active:scale-[0.98] touch-action-manipulation"
                   >
                     <Play className="h-4 w-4 fill-current" /> 
                     Acessar curso
@@ -292,8 +292,8 @@ function CoursesPage() {
 
             {/* Renderizar E-books */}
             {ownedEbooks.map((e) => (
-              <article key={e.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30">
-                <div className="relative aspect-video bg-muted/20">
+              <article key={e.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30 flex flex-col h-full">
+                <div className="relative aspect-video bg-muted/20 shrink-0">
                   <img 
                     src={e.cover_url || e.cover || IMG.hero} 
                     alt={e.title} 
@@ -303,7 +303,7 @@ function CoursesPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" />
                 </div>
                 
-                <div className="p-5">
+                <div className="p-5 flex flex-col flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-gold bg-gold/10 px-2 py-0.5 rounded">E-book</span>
                   </div>
@@ -313,7 +313,7 @@ function CoursesPage() {
                   <Link
                     to="/app/ebooks/$ebookId"
                     params={{ ebookId: e.id }}
-                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold border border-fire/50 text-fire hover:bg-fire/10 transition-all"
+                    className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold border border-fire/50 text-fire hover:bg-fire/10 transition-all active:scale-[0.98] touch-action-manipulation"
                   >
                     <Play className="h-4 w-4 fill-current" /> 
                     Ler e-book
@@ -372,7 +372,7 @@ function CoursesPage() {
                   <button 
                     onClick={() => handlePurchase(c, 'course')}
                     disabled={processingId === c.id}
-                    className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10 disabled:opacity-50"
+                    className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10 disabled:opacity-50 active:scale-[0.98] touch-action-manipulation"
                   >
                     {processingId === c.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-4 w-4" />}
                     {processingId === c.id ? "Processando..." : "Comprar e Liberar"}
@@ -427,7 +427,7 @@ function CoursesPage() {
                   <button 
                     onClick={() => handlePurchase(e, 'ebook')}
                     disabled={processingId === e.id}
-                    className="btn-ghost-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg disabled:opacity-50"
+                    className="btn-ghost-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg disabled:opacity-50 active:scale-[0.98] touch-action-manipulation"
                   >
                     {processingId === e.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-4 w-4" />}
                     {processingId === e.id ? "Processando..." : "Comprar e Liberar"}

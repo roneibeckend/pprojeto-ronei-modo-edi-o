@@ -135,7 +135,7 @@ export function Shell({ children }: { children: ReactNode }) {
       {/* Nav */}
       <nav 
         aria-label="Menu principal"
-        className="scrollbar-hidden flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 py-4"
+        className="scrollbar-hidden flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 py-4 [WebkitOverflowScrolling:touch]"
       >
         {navGroups.map((group) => {
           // Filtra itens do grupo com base nas permissões
@@ -177,7 +177,7 @@ export function Shell({ children }: { children: ReactNode }) {
                       to={item.to}
                       aria-current={active ? "page" : undefined}
                       onClick={() => setOpen(false)}
-                      className={`group relative flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none ${
+                      className={`group relative flex h-12 sm:h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none active:scale-[0.98] touch-action-manipulation ${
                         active
                           ? "bg-primary text-primary-foreground"
                           : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"

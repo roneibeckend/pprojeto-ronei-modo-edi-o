@@ -323,10 +323,10 @@ export function VideoPlayer({
         webkit-playsinline="true"
         x5-playsinline="true"
         controls={useNativeControls}
-        preload="auto"
+        preload="metadata"
         controlsList="nodownload"
-        muted={false}
-        autoPlay={true}
+        muted={isIntro}
+        autoPlay={isIntro}
         loop={isIntro}
         onLoadStart={() => setIsLoading(true)}
         onLoadedMetadata={() => {

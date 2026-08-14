@@ -8,8 +8,8 @@ interface StoryPlayerProps {
 }
 
 export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -23,8 +23,23 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
       }
     };
 
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+
     video.addEventListener("timeupdate", updateProgress);
-    return () => video.removeEventListener("timeupdate", updateProgress);
+    video.addEventListener("play", handlePlay);
+    video.addEventListener("pause", handlePause);
+
+    // Muted autoplay strategy for mobile
+    video.muted = true;
+    setIsMuted(true);
+    video.play().catch(err => console.warn("Story initial play failed", err));
+
+    return () => {
+      video.removeEventListener("timeupdate", updateProgress);
+      video.removeEventListener("play", handlePlay);
+      video.removeEventListener("pause", handlePause);
+    };
   }, []);
 
   const togglePlay = async () => {
@@ -112,11 +127,12 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
         <video
           ref={videoRef}
           src={url}
-          className="h-full w-full object-contain"
+          className="h-full w-full object-contain bg-black"
           autoPlay
-          muted={false}
+          muted={true}
           loop
           playsInline
+          webkit-playsinline="true"
           onEnded={onClose}
           onClick={(e) => {
             e.stopPropagation();

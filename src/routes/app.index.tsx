@@ -214,8 +214,8 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
         onProceedWithoutOffers={() => executeCheckout([])}
         originalProductId={item.id}
       />
-      <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"}`}>
-      <div className="relative aspect-video bg-muted/20">
+      <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"} flex flex-col h-full active:scale-[0.99] touch-action-manipulation`}>
+      <div className="relative aspect-video bg-muted/20 shrink-0">
         <img 
           src={item.cover_url || IMG.hero} 
           alt={item.title} 
@@ -243,12 +243,12 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
         )}
       </div>
 
-      <div className="p-4 sm:p-5">
+      <div className="p-4 sm:p-5 flex flex-col flex-1">
         <h3 className="font-display text-base sm:text-lg font-bold line-clamp-2 break-words">{item.title}</h3>
         <p className="mt-1 line-clamp-3 text-xs sm:text-sm text-muted-foreground min-h-[48px] sm:min-h-[60px] break-words">{item.description}</p>
         
         {isLocked ? (
-          <div className="mt-4">
+          <div className="mt-auto pt-4">
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Acesso imediato</span>
@@ -257,7 +257,7 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
               <button 
                 onClick={handlePurchase}
                 disabled={isProcessing}
-                className="btn-fire px-4 py-2 text-xs flex items-center gap-1.5 disabled:opacity-50"
+                className="btn-fire px-4 py-2 text-xs flex items-center gap-1.5 disabled:opacity-50 active:scale-[0.98] touch-action-manipulation"
               >
                 {isProcessing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}
                 {isProcessing ? "..." : "Comprar"}
@@ -265,11 +265,11 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
             </div>
           </div>
         ) : (
-          <div className="mt-4">
+          <div className="mt-auto pt-4">
             <Link
               to={linkTo}
               params={linkParams}
-              className="btn-fire flex w-full items-center justify-center gap-2 py-2.5 text-xs font-bold uppercase tracking-widest"
+              className="btn-fire flex w-full items-center justify-center gap-2 py-2.5 text-xs font-bold uppercase tracking-widest active:scale-[0.98] touch-action-manipulation"
             >
               <Play className="h-3.5 w-3.5" /> {item.type === 'course' ? 'Continuar Aluno' : 'Acessar E-book'}
             </Link>

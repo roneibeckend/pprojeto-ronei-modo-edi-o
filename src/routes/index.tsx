@@ -188,6 +188,12 @@ function Reveal({
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
+
+    // Aumentamos a margem de detecção no mobile para o conteúdo aparecer antes de entrar na tela
+    const isMobile = window.innerWidth < 768;
+    const rootMargin = isMobile ? "0px 0px 300px 0px" : "0px 0px 50px 0px";
+    const threshold = isMobile ? 0.01 : 0.1;
+
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -197,10 +203,21 @@ function Reveal({
           }
         }
       },
-      { threshold: 0.1, rootMargin: "0px 0px 50px 0px" },
+      { threshold, rootMargin },
     );
     io.observe(node);
-    return () => io.disconnect();
+    
+    // Fallback: Se após 2 segundos (mobile) ou 5 segundos (desktop) não aparecer, forçamos a visibilidade
+    const timeout = setTimeout(() => {
+      if (node && node.dataset.visible !== "true") {
+        node.dataset.visible = "true";
+      }
+    }, isMobile ? 1500 : 4000);
+
+    return () => {
+      io.disconnect();
+      clearTimeout(timeout);
+    };
   }, []);
   const props: Record<string, unknown> = {
     ref: ref as React.Ref<HTMLElement>,
