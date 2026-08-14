@@ -143,7 +143,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
         // Se falhou por RLS ou outro erro do Supabase, tentamos via Server Function
         console.warn("Retrying module save via Server Function due to:", error.message);
         const { upsertModule } = await import("@/lib/courses.functions");
-        await upsertModule(payload);
+        await upsertModule({ data: payload });
       }
       
       toast.success("Módulo salvo!");
@@ -177,7 +177,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
       if (error) {
         console.warn("Retrying lesson save via Server Function due to:", error.message);
         const { upsertLesson } = await import("@/lib/courses.functions");
-        await upsertLesson(payload);
+        await upsertLesson({ data: payload });
       }
       
       toast.success("Aula salva!");
