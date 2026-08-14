@@ -250,7 +250,7 @@ function CoursesPage() {
         </h2>
         
         {(ownedCourses.length > 0 || ownedEbooks.length > 0) ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 sm:gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 sm:gap-6">
             {/* Renderizar Cursos */}
             {ownedCourses.map((c) => (
               <article key={c.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30 flex flex-col h-full">
@@ -339,7 +339,7 @@ function CoursesPage() {
             <div className="h-px flex-1 bg-white/5" />
           </div>
           
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {otherCourses.map((c) => (
               <article key={c.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100">
                 <div className="relative aspect-video bg-muted/20 grayscale-[0.3]">
@@ -394,7 +394,7 @@ function CoursesPage() {
             <div className="h-px flex-1 bg-white/5" />
           </div>
           
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {otherEbooks.map((e) => (
               <article key={e.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100">
                 <div className="relative aspect-video bg-muted/20 grayscale-[0.3]">
