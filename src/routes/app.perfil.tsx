@@ -176,7 +176,7 @@ function ProfilePage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">E-mail</div>
-                  <div className="text-sm font-medium break-words">{user?.email || profile?.email || "—"}</div>
+                  <div className="text-sm font-medium truncate">{user?.email || profile?.email || "—"}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
