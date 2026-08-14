@@ -265,13 +265,16 @@ export function VideoPlayer({
 
     return (
       <div className={cn("relative aspect-[9/16] max-h-[85vh] w-full mx-auto bg-black rounded-xl overflow-hidden glass", className)}>
-        <iframe
-          src={finalUrl}
-          className="absolute inset-0 w-[100.5%] h-[100.5%] -left-[0.25%] -top-[0.25%] object-cover border-0 scale-[1.12]"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          title={title || "Video Player"}
-        />
+        <div className="absolute inset-0 z-10 overflow-hidden">
+          <iframe
+            src={finalUrl}
+            className="absolute inset-0 w-full h-full object-cover border-0 scale-[1.4] origin-center"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title={title || "Video Player"}
+          />
+        </div>
+
         {hideAllUI && <div className="absolute inset-0 z-50 bg-transparent" onClick={() => {}} />}
       </div>
     );

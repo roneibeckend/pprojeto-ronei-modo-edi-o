@@ -806,12 +806,16 @@ function Hero() {
             </button>
             <div className="glass gradient-border overflow-hidden rounded-2xl p-1 shadow-fire relative bg-black">
               <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black">
-                <iframe
-                  src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&rm=minimal`}
-                  title="Ronnei — A história por trás do Espetos Grill"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  className={`absolute inset-0 h-full w-full pointer-events-none scale-[1.3] origin-center transition-opacity duration-300 ${isPlaying ? "opacity-100" : "opacity-0"}`}
-                />
+                {/* Overlay to block interaction and hide UI parts */}
+                <div className="absolute inset-0 z-10 overflow-hidden">
+                  <iframe
+                    src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&rm=minimal`}
+                    title="Ronnei — A história por trás do Espetos Grill"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    className={`absolute inset-0 h-full w-full pointer-events-none scale-[1.3] origin-center transition-opacity duration-300 ${isPlaying ? "opacity-100" : "opacity-0"}`}
+                  />
+                </div>
+
                 
                 {/* Interaction layer: 
                     Blocks all pointer events from reaching Google player.
