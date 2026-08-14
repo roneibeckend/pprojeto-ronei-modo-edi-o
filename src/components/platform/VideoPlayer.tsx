@@ -45,8 +45,10 @@ export function VideoPlayer({
     window.addEventListener('resize', checkMobile);
 
     const handleInitialControls = () => {
-      setShowControls(true);
-      startControlsTimer();
+      if (!isMobileDevice) {
+        setShowControls(true);
+        startControlsTimer();
+      }
     };
     handleInitialControls();
 
