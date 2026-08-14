@@ -204,7 +204,7 @@ export const saveIntegration = createServerFn({ method: "POST" })
          .from('integrations')
          .select('credentials')
          .eq('id', data.id)
-         .single();
+         .maybeSingle();
        
        if (existing) {
          const merged = { ...(existing.credentials as object) };
