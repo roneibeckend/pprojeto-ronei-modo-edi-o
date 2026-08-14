@@ -34,25 +34,55 @@ type Partner = { id: string; name: string; percent: number; user_id?: string | n
 
 function FinancePage() {
   const queryClient = useQueryClient();
+  const [period, setPeriod] = useState<string>(localStorage.getItem("finance-period") || "current-month");
+  const [customStartDate, setCustomStartDate] = useState<string>(localStorage.getItem("finance-custom-start") || "");
+  const [customEndDate, setCustomEndDate] = useState<string>(localStorage.getItem("finance-custom-end") || "");
   const [revenue, setRevenue] = useState<number>(0);
   const [costs, setCosts] = useState<Cost[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
 
   const fetchFinancialSummary = useServerFn(getFinancialSummary);
 
+  const getDates = (p: string) => {
+    const now = new Date();
+    switch(p) {
+        case "today": return { start: new Date(now.setHours(0,0,0,0)).toISOString(), end: new Date().toISOString() };
+        case "last-7-days": {
+            const start = new Date();
+            start.setDate(now.getDate() - 7);
+            return { start: start.toISOString(), end: new Date().toISOString() };
+        }
+        case "current-month": return { start: new Date(now.getFullYear(), now.getMonth(), 1).toISOString(), end: new Date().toISOString() };
+        case "previous-month": return { start: new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString(), end: new Date(now.getFullYear(), now.getMonth(), 0).toISOString() };
+        case "current-year": return { start: new Date(now.getFullYear(), 0, 1).toISOString(), end: new Date().toISOString() };
+        case "previous-year": return { start: new Date(now.getFullYear() - 1, 0, 1).toISOString(), end: new Date(now.getFullYear() - 1, 11, 31).toISOString() };
+        case "custom": return { 
+          start: customStartDate ? new Date(customStartDate).toISOString() : undefined, 
+          end: customEndDate ? new Date(customEndDate).toISOString() : undefined 
+        };
+        default: return { start: undefined, end: undefined };
+    }
+  }
+
+
   // Fetch initial data
-  const { isLoading } = useQuery({
-    queryKey: ["financial-config"],
+  const { isLoading, refetch } = useQuery({
+    queryKey: ["financial-config", period, customStartDate, customEndDate],
     queryFn: async () => {
+      localStorage.setItem("finance-period", period);
+      if (customStartDate) localStorage.setItem("finance-custom-start", customStartDate);
+      if (customEndDate) localStorage.setItem("finance-custom-end", customEndDate);
+      const dates = getDates(period);
+
+      
       const [settingsRes, costsRes, partnersRes, autoRevenue] = await Promise.all([
         supabase.from("financial_settings").select("*").single(),
         supabase.from("financial_costs").select("*").order("created_at"),
         supabase.from("financial_partners").select("*").order("created_at"),
-        fetchFinancialSummary()
+        fetchFinancialSummary({ data: { startDate: dates.start, endDate: dates.end } })
       ]);
 
       if (settingsRes.data) {
-        // Se temos receita automatizada, usamos ela, caso contrário o manual
         setRevenue(autoRevenue.totalNetRevenue || Number(settingsRes.data.manual_revenue));
       }
       if (costsRes.data) setCosts(costsRes.data.map(c => ({ id: c.id, label: c.label, value: Number(c.value) })));
@@ -190,6 +220,42 @@ function FinancePage() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
+            <select
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+              className="rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white outline-none focus:border-orange-500/50"
+            >
+              <option value="today">Hoje</option>
+              <option value="last-7-days">Últimos 7 dias</option>
+              <option value="current-month">Mês Atual</option>
+              <option value="previous-month">Mês Anterior</option>
+              <option value="current-year">Ano Atual</option>
+              <option value="previous-year">Ano Anterior</option>
+              <option value="all">Todo o Período</option>
+              <option value="custom">Personalizado</option>
+            </select>
+
+            {period === "custom" && (
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={customStartDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                  className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-[10px] text-white outline-none focus:border-orange-500/50"
+                />
+                <span className="text-white/20 text-[10px]">até</span>
+                <input
+                  type="date"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-[10px] text-white outline-none focus:border-orange-500/50"
+                />
+              </div>
+            )}
+          </div>
+
+
           <button
             onClick={handleDistribute}
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 sm:px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest text-emerald-400 transition-all hover:bg-emerald-500/20 active:scale-[0.98]"
@@ -208,7 +274,7 @@ function FinancePage() {
             ) : (
               <Save className="h-4 w-4" />
             )}
-            Salvar Configurações
+            Salvar
           </button>
         </div>
       </div>
@@ -218,9 +284,13 @@ function FinancePage() {
         <div className="lg:col-span-3">
            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-left">
               <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5">
-                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Receita Bruta</div>
+                <div className="flex items-center justify-between mb-1">
+                  <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40">Receita Bruta</div>
+                  {period !== 'all' && <div className="text-[8px] font-bold text-orange-400/60 uppercase">Filtrado</div>}
+                </div>
                 <div className="text-lg sm:text-2xl font-display font-extrabold text-white">{brl(revenue)}</div>
               </div>
+
               <div className="border border-white/5 bg-white/[0.02] p-3 sm:p-5">
                 <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Custos Totais</div>
                 <div className="text-lg sm:text-2xl font-display font-extrabold text-red-400">{brl(totalCost)}</div>
