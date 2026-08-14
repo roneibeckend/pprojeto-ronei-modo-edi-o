@@ -120,26 +120,28 @@ export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
     });
 
     if (!isAdmin) {
-      // Check if material is assigned to a course/ebook the user is enrolled in
-      if (material.course_id) {
+    // Check if material is assigned to a course/ebook the user is enrolled in
+    const mAny = material as any;
+    if (mAny.course_id) {
         const { data: enrollment } = await supabaseAdmin
           .from("course_enrollments")
           .select("id")
-          .eq("course_id", material.course_id)
+          .eq("course_id", mAny.course_id)
           .eq("user_id", userId)
           .maybeSingle();
         
         if (!enrollment) throw new Error("Acesso negado: Você não possui matrícula neste curso.");
-      } else if (material.ebook_id) {
+      } else if (mAny.ebook_id) {
         const { data: enrollment } = await supabaseAdmin
           .from("ebook_enrollments")
           .select("id")
-          .eq("ebook_id", material.ebook_id)
+          .eq("ebook_id", mAny.ebook_id)
           .eq("user_id", userId)
           .maybeSingle();
 
         if (!enrollment) throw new Error("Acesso negado: Você não possui acesso a este e-book.");
       } else {
+
         // Generic material check if no specific association (maybe public if is_active)
         if (!material.is_active) throw new Error("Material indisponível.");
       }
