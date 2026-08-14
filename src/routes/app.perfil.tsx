@@ -193,7 +193,7 @@ function ProfilePage() {
         </aside>
 
         {/* Main Content */}
-        <div className="space-y-8">
+        <div className="space-y-8 min-w-0">
           {/* Personal Data Form */}
           <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
