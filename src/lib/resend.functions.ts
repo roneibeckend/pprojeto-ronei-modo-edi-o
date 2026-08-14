@@ -48,7 +48,9 @@ export const sendEmail = createServerFn({ method: "POST" })
         console.error(`[Resend] Fallback também falhou:`, e);
       }
       
-      throw error;
+      // Nunca propagar como exceção (quebra a UI). Retorna o erro tratado.
+      return { success: false, error: error?.message ?? 'Falha ao enviar e-mail' };
+
     }
   });
 
