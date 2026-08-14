@@ -666,7 +666,11 @@ function Hero() {
   }, []);
 
   useEffect(() => {
-    if (!videoOpen) return;
+    if (!videoOpen) {
+      setIsPlaying(false);
+      return;
+    }
+    setIsPlaying(true);
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setVideoOpen(false);
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
