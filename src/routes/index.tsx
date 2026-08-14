@@ -1588,7 +1588,7 @@ function Offer() {
               <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-3 py-1">
                 <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[color:var(--gold)]">Economize 76%</span>
                 <span className="h-3 w-px bg-[color:var(--gold)]/40" />
-                <span className="text-xs font-bold text-[color:var(--gold)]">R$ 149,10 OFF</span>
+                <span className="text-xs font-bold text-[color:var(--gold)]">R$ 50,00 OFF</span>
               </div>
 
               <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5">
