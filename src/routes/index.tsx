@@ -2186,7 +2186,7 @@ function LeadPopup() {
             Espera! Garanta seu <span className="text-gradient-fire">cupom de desconto</span>
           </h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            Deixe seu nome e WhatsApp e receba um cupom exclusivo antes de sair.
+            Deixe seus dados e receba um cupom exclusivo antes de sair.
           </p>
         </div>
         <div className="mt-4">
