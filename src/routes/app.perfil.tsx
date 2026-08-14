@@ -154,14 +154,14 @@ function ProfilePage() {
               <h3 className="mt-4 font-display text-xl font-bold truncate w-full px-2">{profile?.name || profile?.full_name || "Estudante"}</h3>
               <p className="text-sm text-white/40 whitespace-nowrap">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
               
-              <div className="mt-6 grid w-full grid-cols-2 gap-2">
-                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                  <div className="text-lg font-bold text-[#ff6a00]">{profile?.streak || 0}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Dias</div>
+              <div className="mt-6 flex w-full gap-2 px-2">
+                <div className="flex-1 rounded-xl bg-white/[0.03] p-3 text-center min-w-0">
+                  <div className="text-lg font-bold text-[#ff6a00] truncate">{profile?.streak || 0}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate">Dias</div>
                 </div>
-                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                  <div className="text-lg font-bold text-[#ff6a00]">{profile?.lessons_watched || 0}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Aulas</div>
+                <div className="flex-1 rounded-xl bg-white/[0.03] p-3 text-center min-w-0">
+                  <div className="text-lg font-bold text-[#ff6a00] truncate">{profile?.lessons_watched || 0}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate">Aulas</div>
                 </div>
               </div>
             </div>
