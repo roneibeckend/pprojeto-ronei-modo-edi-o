@@ -78,14 +78,21 @@ function AdminReceitasPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Tem certeza que deseja excluir esta receita?")) return;
+    if (!confirm("Tem certeza que deseja excluir esta receita permanentemente?")) return;
+    
+    // Optimistic update
+    const originalRecipes = [...recipes];
+    setRecipes(prev => prev.filter(r => r.id !== id));
+    
     try {
       const { error } = await supabase.from('recipes').delete().eq('id', id);
       if (error) throw error;
-      toast.success("Receita excluída");
-      fetchData();
+      toast.success("Receita excluída com sucesso");
     } catch (error: any) {
+      // Rollback on error
+      setRecipes(originalRecipes);
       toast.error("Erro ao excluir: " + error.message);
+      console.error("Delete error:", error);
     }
   }
 
