@@ -132,10 +132,10 @@ function ProfilePage() {
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-7xl mx-auto w-full">
       <PageHeader title="Meu perfil" subtitle="Gerencie seus dados e veja seu histórico de compras." />
 
-      <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
+      <div className="grid gap-8 lg:grid-cols-[320px_1fr] w-full items-start">
         {/* Sidebar Info */}
         <aside className="space-y-6">
           <section className="glass overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] shadow-sm">
