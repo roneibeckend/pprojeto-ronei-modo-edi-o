@@ -312,9 +312,9 @@ export function VideoPlayer({
         poster={poster}
         className={cn(
           "w-full h-full", 
-          useNativeControls 
+          (useNativeControls || isIntro)
             ? "object-contain bg-black" 
-            : "object-cover scale-[1.01]"
+            : "object-cover"
         )}
         playsInline
         webkit-playsinline="true"
