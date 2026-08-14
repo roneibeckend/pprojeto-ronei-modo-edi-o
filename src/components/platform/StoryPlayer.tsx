@@ -8,8 +8,8 @@ interface StoryPlayerProps {
 }
 
 export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -112,11 +112,12 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
         <video
           ref={videoRef}
           src={url}
-          className="h-full w-full object-contain"
+          className="h-full w-full object-contain bg-black"
           autoPlay
-          muted={false}
+          muted={true}
           loop
           playsInline
+          webkit-playsinline="true"
           onEnded={onClose}
           onClick={(e) => {
             e.stopPropagation();
