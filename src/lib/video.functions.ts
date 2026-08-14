@@ -18,73 +18,77 @@ async function resolveStoredVideoLocation(
   let bucket: string | null = null;
   let path: string | null = null;
 
-  // Case 1: Absolute Supabase URL
+  // Case 1: Absolute Supabase URL Parse
   if (rawUrl.startsWith("http")) {
     try {
       const url = new URL(rawUrl);
       const pathParts = url.pathname.split('/');
       
-      // Look for /storage/v1/object/ marker
       const markerIndex = pathParts.findIndex(p => p === 'object');
       if (markerIndex !== -1 && pathParts.length > markerIndex + 2) {
-        // format is .../object/{type}/{bucket}/{path...}
         const detectedBucket = pathParts[markerIndex + 2];
         const detectedPath = pathParts.slice(markerIndex + 3).join('/');
         
         if (VIDEO_BUCKETS.includes(detectedBucket)) {
           bucket = detectedBucket;
-          path = decodeURIComponent(detectedPath).split('?')[0];
+          path = decodeURIComponent(detectedPath).split('?')[0].replace(/^\//, "");
         }
       }
     } catch (e) {
       console.error("[VideoResolution] Failed to parse absolute URL:", e);
     }
+  } else {
+    // Case 2: Relative Path
+    path = rawUrl.split('?')[0].replace(/^\//, "");
+    path = decodeURIComponent(path);
   }
 
-  // Case 2: Relative Path (or failed absolute parse)
-  if (!bucket || !path) {
-    // Clean the path: remove leading slash, remove query params, decode
-    let cleanedPath = rawUrl.split('?')[0].replace(/^\//, "");
-    cleanedPath = decodeURIComponent(cleanedPath);
+  if (!path || path === "") {
+    throw new Error("Caminho de vídeo malformado ou vazio.");
+  }
 
-    // Security check for relative path
-    if (cleanedPath.includes('..') || cleanedPath === "") {
-      throw new Error("Caminho de vídeo malformado.");
-    }
+  // Security: Block path traversal for ALL inputs (Absolute or Relative)
+  if (path.includes('..') || path.includes('./')) {
+    throw new Error("Caminho de vídeo inválido (traversal detectado).");
+  }
 
-    // Try candidates starting with preferred bucket
-    const candidates = [preferredBucket, ...VIDEO_BUCKETS.filter(b => b !== preferredBucket)];
+  // Common verification for existence (Handles Absolute URL verify AND Relative fallback)
+  const candidates = bucket 
+    ? [bucket] // If we parsed a bucket from absolute URL, we must verify it exists there
+    : [preferredBucket, ...VIDEO_BUCKETS.filter(b => b !== preferredBucket)];
     
-    for (const cand of candidates) {
-      const { data: files } = await supabaseAdmin.storage
-        .from(cand)
-        .list(cleanedPath.includes('/') ? cleanedPath.substring(0, cleanedPath.lastIndexOf('/')) : '', {
-          search: cleanedPath.includes('/') ? cleanedPath.substring(cleanedPath.lastIndexOf('/') + 1) : cleanedPath,
-          limit: 1
-        });
-      
-      if (files && files.length > 0) {
-        // Verify exact match to avoid partial search hits
-        const fileName = cleanedPath.includes('/') ? cleanedPath.substring(cleanedPath.lastIndexOf('/') + 1) : cleanedPath;
-        if (files.some((f: any) => f.name === fileName)) {
-          bucket = cand;
-          path = cleanedPath;
-          break;
-        }
+  let resolvedBucket: string | null = null;
+  let resolvedPath: string | null = null;
+
+  for (const cand of candidates) {
+    const dir = path.includes('/') ? path.substring(0, path.lastIndexOf('/')) : '';
+    const fileName = path.includes('/') ? path.substring(path.lastIndexOf('/') + 1) : path;
+
+    // We don't use 'search' to avoid partial hits; we list and find exact match
+    const { data: files } = await supabaseAdmin.storage
+      .from(cand)
+      .list(dir, { limit: 100 }); // List current directory
+    
+    if (files && files.length > 0) {
+      const exactMatch = files.find((f: any) => f.name === fileName);
+      if (exactMatch) {
+        resolvedBucket = cand;
+        resolvedPath = path;
+        break;
       }
     }
   }
 
-  if (!bucket || !path) {
+  if (!resolvedBucket || !resolvedPath) {
     throw new Error("Arquivo de vídeo não encontrado no armazenamento.");
   }
 
-  // Final validation against allowlist (safety layer)
-  if (!VIDEO_BUCKETS.includes(bucket)) {
+  // Safety layer re-validation
+  if (!VIDEO_BUCKETS.includes(resolvedBucket)) {
     throw new Error("Localização de armazenamento não permitida.");
   }
 
-  return { bucket, path };
+  return { bucket: resolvedBucket, path: resolvedPath };
 }
 
 export const getSignedVideoUrl = createServerFn({ method: "GET" })
