@@ -23,8 +23,23 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
       }
     };
 
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+
     video.addEventListener("timeupdate", updateProgress);
-    return () => video.removeEventListener("timeupdate", updateProgress);
+    video.addEventListener("play", handlePlay);
+    video.addEventListener("pause", handlePause);
+
+    // Muted autoplay strategy for mobile
+    video.muted = true;
+    setIsMuted(true);
+    video.play().catch(err => console.warn("Story initial play failed", err));
+
+    return () => {
+      video.removeEventListener("timeupdate", updateProgress);
+      video.removeEventListener("play", handlePlay);
+      video.removeEventListener("pause", handlePause);
+    };
   }, []);
 
   const togglePlay = async () => {
