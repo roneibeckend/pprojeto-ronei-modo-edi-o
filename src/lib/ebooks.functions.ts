@@ -24,7 +24,7 @@ export const upsertEbook = createServerFn({ method: "POST" })
       .from('ebooks')
       .upsert(data as any)
       .select()
-      .single();
+      .maybeSingle();
     if (error) throw new Error(error.message);
     return result;
   });

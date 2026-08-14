@@ -44,7 +44,7 @@ export const upsertCourse = createServerFn({ method: "POST" })
       .from('courses')
       .upsert(data as any)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw new Error(error.message);
     return result;
@@ -58,7 +58,7 @@ export const upsertModule = createServerFn({ method: "POST" })
       .from('course_modules')
       .upsert(data)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw new Error(error.message);
     return result;
@@ -72,7 +72,7 @@ export const upsertLesson = createServerFn({ method: "POST" })
       .from('course_lessons')
       .upsert(data)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw new Error(error.message);
     return result;
