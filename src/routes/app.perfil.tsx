@@ -132,10 +132,10 @@ function ProfilePage() {
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-7xl mx-auto w-full">
       <PageHeader title="Meu perfil" subtitle="Gerencie seus dados e veja seu histórico de compras." />
 
-      <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
+      <div className="grid gap-8 lg:grid-cols-[320px_1fr] w-full items-start">
         {/* Sidebar Info */}
         <aside className="space-y-6">
           <section className="glass overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] shadow-sm">
@@ -151,17 +151,17 @@ function ProfilePage() {
                   <User className="h-4 w-4" />
                 </button>
               </div>
-              <h3 className="mt-4 font-display text-xl font-bold">{profile?.name || profile?.full_name || "Estudante"}</h3>
-              <p className="text-sm text-white/40">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
+              <h3 className="mt-4 font-display text-xl font-bold truncate w-full px-2">{profile?.name || profile?.full_name || "Estudante"}</h3>
+              <p className="text-sm text-white/40 whitespace-nowrap">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
               
-              <div className="mt-6 grid w-full grid-cols-2 gap-2">
-                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                  <div className="text-lg font-bold text-[#ff6a00]">{profile?.streak || 0}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Dias</div>
+              <div className="mt-6 flex w-full gap-2 px-2">
+                <div className="flex-1 rounded-xl bg-white/[0.03] p-3 text-center min-w-0">
+                  <div className="text-lg font-bold text-[#ff6a00] truncate">{profile?.streak || 0}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate">Dias</div>
                 </div>
-                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                  <div className="text-lg font-bold text-[#ff6a00]">{profile?.lessons_watched || 0}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Aulas</div>
+                <div className="flex-1 rounded-xl bg-white/[0.03] p-3 text-center min-w-0">
+                  <div className="text-lg font-bold text-[#ff6a00] truncate">{profile?.lessons_watched || 0}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate">Aulas</div>
                 </div>
               </div>
             </div>
@@ -176,7 +176,7 @@ function ProfilePage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">E-mail</div>
-                  <div className="text-sm font-medium break-words">{user?.email || profile?.email || "—"}</div>
+                  <div className="text-sm font-medium truncate">{user?.email || profile?.email || "—"}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -185,7 +185,7 @@ function ProfilePage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Telefone</div>
-                  <div className="text-sm font-medium break-words">{profile?.phone || "Não informado"}</div>
+                  <div className="text-sm font-medium truncate">{profile?.phone || "Não informado"}</div>
                 </div>
               </div>
             </div>
@@ -193,10 +193,10 @@ function ProfilePage() {
         </aside>
 
         {/* Main Content */}
-        <div className="space-y-8">
+        <div className="space-y-8 min-w-0">
           {/* Personal Data Form */}
           <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
-            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
               <div>
                 <h3 className="font-display text-xl font-bold text-white">Dados da Conta</h3>
                 <p className="text-sm text-white/40">Mantenha suas informações sempre atualizadas.</p>
@@ -239,8 +239,8 @@ function ProfilePage() {
                 <ShoppingBag className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-display text-xl font-bold text-white">Histórico de Pedidos</h3>
-                <p className="text-sm text-white/40">Acompanhe todos os seus investimentos na plataforma.</p>
+                <h3 className="font-display text-xl font-bold text-white whitespace-nowrap">Histórico de Pedidos</h3>
+                <p className="text-sm text-white/40 truncate">Acompanhe todos os seus investimentos na plataforma.</p>
               </div>
             </div>
 
@@ -299,8 +299,8 @@ function Field({
   icon?: any;
 } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <label className="block group">
-      <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 transition-colors group-focus-within:text-[#ff6a00]">
+    <label className="block group min-w-0">
+      <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 transition-colors group-focus-within:text-[#ff6a00] whitespace-nowrap overflow-hidden text-ellipsis">
         {label}
       </span>
       <div className="relative">
