@@ -1,12 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
 
 // Schema for credentials validation
 const CredentialsSchema = z.record(z.string());
 
 // Server function for comprehensive connection testing
 export const testIntegrationConnection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     id: z.string(),
     category: z.string(),
@@ -14,7 +17,13 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
     settings: z.any(),
     environment: z.string().default('sandbox')
   }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin"
+    });
+    if (!isAdmin) throw new Error("Acesso negado.");
+
     const { category, credentials, settings } = data;
     let environment = (String(settings?.testMode) === 'true' || settings?.environment === 'sandbox') ? 'sandbox' : 'production';
     
@@ -171,6 +180,7 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
 
 // Server function for saving integrations
 export const saveIntegration = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     id: z.string().optional(),
     name: z.string(),
@@ -180,7 +190,13 @@ export const saveIntegration = createServerFn({ method: "POST" })
     credentials: z.any(),
     settings: z.any()
   }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin"
+    });
+    if (!isAdmin) throw new Error("Acesso negado.");
+
     const { error } = await supabaseAdmin
       .from('integrations')
       .upsert({
