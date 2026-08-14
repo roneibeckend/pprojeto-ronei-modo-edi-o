@@ -182,7 +182,7 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
 export const saveIntegration = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
-    id: z.string().optional(),
+    id: z.string().nullable().optional().or(z.literal('')),
     name: z.string(),
     type: z.enum(['ia', 'payment']),
     category: z.string(),
@@ -220,7 +220,7 @@ export const saveIntegration = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin
       .from('integrations')
       .upsert({
-        id: data.id,
+        id: (data.id && data.id !== "") ? data.id : undefined,
         name: data.name,
         type: data.type,
         category: data.category,
@@ -228,7 +228,7 @@ export const saveIntegration = createServerFn({ method: "POST" })
         credentials: finalCredentials,
         settings: data.settings,
         updated_at: new Date().toISOString()
-      });
+      }, { onConflict: 'category' });
 
 
     if (error) throw new Error(error.message);
