@@ -124,14 +124,30 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
     if (!editingModule) return;
     try {
       setIsSaving(true);
+      console.log("Saving module:", editingModule);
+      
       const { error } = await supabase
         .from("course_modules" as any)
-        .upsert({ ...editingModule, course_id: courseId });
-      if (error) throw error;
+        .upsert({ 
+          id: editingModule.id,
+          title: editingModule.title,
+          description: editingModule.description,
+          video_url: editingModule.video_url,
+          order_index: editingModule.order_index,
+          course_id: courseId,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) {
+        console.error("Supabase error saving module:", error);
+        throw error;
+      }
+      
       toast.success("Módulo salvo!");
       setEditingModule(null);
       fetchData();
     } catch (error: any) {
+      console.error("Error in handleSaveModule:", error);
       toast.error("Erro ao salvar módulo: " + error.message);
     } finally {
       setIsSaving(false);
@@ -144,14 +160,25 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
     try {
       setIsSaving(true);
       const slug = editingLesson.slug || editingLesson.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-");
+      
       const { error } = await supabase
         .from("course_lessons" as any)
-        .upsert({ ...editingLesson, slug });
-      if (error) throw error;
+        .upsert({ 
+          ...editingLesson, 
+          slug,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) {
+        console.error("Supabase error saving lesson:", error);
+        throw error;
+      }
+      
       toast.success("Aula salva!");
       setEditingLesson(null);
       fetchData();
     } catch (error: any) {
+      console.error("Error in handleSaveLesson:", error);
       toast.error("Erro ao salvar aula: " + error.message);
     } finally {
       setIsSaving(false);
@@ -177,7 +204,17 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-bold">Conteúdo do Curso</h3>
         <button 
-          onClick={() => setEditingModule({ id: crypto.randomUUID(), title: "", description: "", video_url: "", order_index: modules.length })}
+          onClick={() => {
+            const newId = crypto.randomUUID();
+            console.log("Generating new module with ID:", newId);
+            setEditingModule({ 
+              id: newId, 
+              title: "", 
+              description: "", 
+              video_url: "", 
+              order_index: modules.length 
+            });
+          }}
           className="flex items-center gap-2 bg-[#ff6a00] px-4 py-2 rounded-lg text-xs font-bold text-black hover:bg-[#ff8c33] transition-colors"
         >
           <Plus className="h-4 w-4" /> Adicionar Módulo
