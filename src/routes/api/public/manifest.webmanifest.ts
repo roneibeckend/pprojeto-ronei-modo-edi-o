@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/api/public/manifest/webmanifest')({
+export const Route = createFileRoute('/api/public/manifest.webmanifest')({
   server: {
     handlers: {
       GET: async () => {
