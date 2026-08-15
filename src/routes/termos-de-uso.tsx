@@ -18,7 +18,7 @@ function TermsPage() {
   const lastUpdate = "14/08/2026";
   const companyName = "RONNEI";
   const cnpj = "45.680.415/0001-91";
-  const contactEmail = "ronneivml122@gmail.com";
+  
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-24">
