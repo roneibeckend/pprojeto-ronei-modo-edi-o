@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/platform/Shell";
-import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2, Loader2, Download, Smartphone } from "lucide-react";
+import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2, Loader2, Download, Smartphone, Camera, X } from "lucide-react";
 import { usePwaInstall } from "@/hooks/use-pwa-install";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
