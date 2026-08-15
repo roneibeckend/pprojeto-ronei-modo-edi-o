@@ -376,7 +376,8 @@ function CoursesPage() {
                   <img 
                     src={c.cover_url || IMG.hero} 
                     alt={c.title} 
-                    className="h-full w-full object-cover" 
+                    className="h-full w-full object-contain sm:object-cover" 
+
                     loading="lazy" 
                   />
                   <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
