@@ -164,19 +164,43 @@ export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
     }
 
     try {
+      // 3. Identificar o bucket e o path correto
+      let bucketName = "platform-materials";
+      
+      // Se o file_url for uma URL completa, extrair o bucket e o path
+      if (filePath.startsWith('http')) {
+        if (filePath.includes('/storage/v1/object/public/')) {
+          const parts = filePath.split('/storage/v1/object/public/');
+          const fullPath = parts[1]; // Ex: "platform-materials/filename.pdf"
+          const firstSlash = fullPath.indexOf('/');
+          bucketName = fullPath.substring(0, firstSlash);
+          filePath = fullPath.substring(firstSlash + 1);
+        } else {
+          // Fallback para extrair apenas o nome do arquivo se for outra URL
+          const simpleParts = filePath.split('/');
+          filePath = simpleParts[simpleParts.length - 1];
+        }
+      }
+
+      console.log(`Gerando link assinado para bucket: ${bucketName}, path: ${filePath}`);
+
       const { data: signedData, error: signedError } = await supabaseAdmin.storage
-        .from("platform-materials")
-        .createSignedUrl(filePath, 60 * 5); // 5 minutes
+        .from(bucketName)
+        .createSignedUrl(filePath, 60 * 5); // 5 minutos
 
       if (signedError) {
         console.error("Erro ao gerar URL assinada:", signedError);
-        throw new Error(`Erro ao gerar link de download: ${signedError.message}`);
+        throw new Error(`Erro no storage do provedor: ${signedError.message}`);
+      }
+
+      if (!signedData?.signedUrl) {
+        throw new Error("O link de download não pôde ser gerado.");
       }
 
       return { url: signedData.signedUrl };
     } catch (e: any) {
       console.error("Erro fatal ao gerar link de download:", e);
-      throw new Error(`Erro ao acessar o arquivo no storage: ${e.message || 'Desconhecido'}`);
+      throw new Error(`Erro ao acessar o arquivo: ${e.message || 'Desconhecido'}`);
     }
   });
 
