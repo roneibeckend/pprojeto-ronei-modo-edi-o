@@ -62,15 +62,6 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Debug: Monitorar estados de edição
-  useEffect(() => {
-    if (editingModule) console.log("CourseTreeEditor: editingModule set", editingModule);
-  }, [editingModule]);
-
-  useEffect(() => {
-    if (editingLesson) console.log("CourseTreeEditor: editingLesson set", editingLesson);
-  }, [editingLesson]);
-
   useEffect(() => {
     if (courseId) {
       fetchData();
