@@ -854,7 +854,7 @@ function Hero() {
             >
               <X className="h-6 w-6" />
             </button>
-            <div className="glass gradient-border overflow-hidden rounded-2xl p-1 shadow-fire relative bg-black">
+            <div className="glass gradient-border overflow-hidden rounded-2xl p-1 shadow-fire relative bg-black group/intro">
               <div className="relative aspect-[9/16] h-[80vh] w-full max-w-[420px] mx-auto overflow-hidden rounded-xl bg-black shadow-2xl">
                 <Suspense fallback={<div className="flex h-full items-center justify-center text-white"><Loader2 className="animate-spin" /></div>}>
                   <VideoPlayer 
