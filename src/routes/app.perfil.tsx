@@ -137,10 +137,10 @@ function ProfilePage() {
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-7xl mx-auto w-full">
       <PageHeader title="Meu perfil" subtitle="Gerencie seus dados e veja seu histórico de compras." />
 
-      <div className="grid gap-8 lg:grid-cols-[320px_1fr] w-full items-start">
+      <div className="grid gap-6 md:gap-8 lg:grid-cols-[320px_1fr] w-full items-start">
         {/* Sidebar Info */}
-        <aside className="space-y-6">
-          <section className="glass overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] shadow-sm">
+        <aside className="space-y-6 w-full max-w-full overflow-hidden">
+          <section className="glass overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] shadow-sm w-full">
             <div className="h-24 bg-gradient-to-br from-[#ff6a00] to-[#ff9500] opacity-20" />
             <div className="relative -mt-12 flex flex-col items-center p-6 text-center">
               <div className="relative group">
@@ -156,14 +156,14 @@ function ProfilePage() {
               <h3 className="mt-4 font-display text-xl font-bold truncate w-full px-2">{profile?.name || profile?.full_name || "Estudante"}</h3>
               <p className="text-sm text-white/40">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
               
-              <div className="mt-6 flex w-full gap-2 px-2">
-                <div className="flex-1 rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center">
-                  <div className="text-lg font-bold text-[#ff6a00] truncate">{profile?.streak || 0}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate">Dias</div>
+              <div className="mt-6 grid grid-cols-2 w-full gap-2 px-2">
+                <div className="rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center border border-white/5">
+                  <div className="text-lg font-bold text-[#ff6a00] truncate w-full">{profile?.streak || 0}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate w-full">Dias</div>
                 </div>
-                <div className="flex-1 rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center">
-                  <div className="text-lg font-bold text-[#ff6a00] truncate">{profile?.lessons_watched || 0}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate">Aulas</div>
+                <div className="rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center border border-white/5">
+                  <div className="text-lg font-bold text-[#ff6a00] truncate w-full">{profile?.lessons_watched || 0}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate w-full">Aulas</div>
                 </div>
               </div>
             </div>
@@ -223,13 +223,13 @@ function ProfilePage() {
         </aside>
 
         {/* Main Content */}
-        <div className="space-y-8 min-w-0">
+        <div className="space-y-6 md:space-y-8 min-w-0 w-full overflow-hidden">
           {/* Personal Data Form */}
-          <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
+          <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-5 sm:p-6 lg:p-8 w-full">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
-              <div>
-                <h3 className="font-display text-xl font-bold text-white">Dados da Conta</h3>
-                <p className="text-sm text-white/40">Mantenha suas informações sempre atualizadas.</p>
+              <div className="min-w-0">
+                <h3 className="font-display text-xl font-bold text-white truncate">Dados da Conta</h3>
+                <p className="text-sm text-white/40 truncate">Mantenha suas informações sempre atualizadas.</p>
               </div>
               <button 
                 onClick={handleSave}
@@ -263,14 +263,14 @@ function ProfilePage() {
           </section>
 
           {/* Order History */}
-          <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#ff6a00]/10 text-[#ff6a00]">
+          <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-5 sm:p-6 lg:p-8 w-full overflow-hidden">
+            <div className="mb-6 flex items-center gap-3 w-full">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#ff6a00]/10 text-[#ff6a00]">
                 <ShoppingBag className="h-5 w-5" />
               </div>
-              <div>
-                <h3 className="font-display text-xl font-bold text-white whitespace-nowrap">Histórico de Pedidos</h3>
-                <p className="text-sm text-white/40 truncate">Acompanhe todos os seus investimentos na plataforma.</p>
+              <div className="min-w-0">
+                <h3 className="font-display text-xl font-bold text-white truncate">Histórico de Pedidos</h3>
+                <p className="text-sm text-white/40 truncate">Acompanhe todos os seus investimentos.</p>
               </div>
             </div>
 
