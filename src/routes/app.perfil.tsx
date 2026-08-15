@@ -153,11 +153,11 @@ function ProfilePage() {
                   <User className="h-4 w-4" />
                 </button>
               </div>
-              <h3 className="mt-4 font-display text-xl font-bold truncate w-full px-2">{profile?.name || profile?.full_name || "Estudante"}</h3>
+              <h3 className="mt-4 font-display text-xl font-bold truncate w-full px-2 text-white">{profile?.name || profile?.full_name || "Estudante"}</h3>
               <p className="text-sm text-white/40">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
               
               <div className="mt-6 grid grid-cols-2 w-full gap-2 px-2">
-                <div className="rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center border border-white/5">
+                <div className="rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center border border-white/5 shadow-inner">
                   <div className="text-lg font-bold text-[#ff6a00] truncate w-full">{profile?.streak || 0}</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate w-full">Dias</div>
                 </div>
