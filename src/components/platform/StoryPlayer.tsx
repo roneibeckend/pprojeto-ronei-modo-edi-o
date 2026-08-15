@@ -149,6 +149,11 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
           playsInline
           webkit-playsinline="true"
           x5-playsinline="true"
+          onLoadedMetadata={(e) => {
+            const video = e.currentTarget;
+            video.muted = true;
+            video.play().catch(() => {});
+          }}
           onEnded={onClose}
           onClick={(e) => {
             e.stopPropagation();
