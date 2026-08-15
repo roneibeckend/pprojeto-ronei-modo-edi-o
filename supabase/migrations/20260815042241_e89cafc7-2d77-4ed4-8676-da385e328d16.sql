@@ -1,0 +1,1 @@
+UPDATE public.courses SET status = 'published' WHERE title = 'QA CURSO PRÉ-LANÇAMENTO';
