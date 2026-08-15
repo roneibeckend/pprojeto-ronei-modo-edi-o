@@ -120,7 +120,7 @@ const GUIDES: Record<string, string[]> = {
   ],
   interactive_previews: [
     "Ative o recurso de Prévias Interativas no interruptor acima.",
-    "Configure o 'Theme' (Tema) para combinar com a identidade visual da sua marca.",
+    "Configure o Tema para combinar com a identidade visual da sua marca.",
     "Ative 'Auto Sanitize' para remover códigos maliciosos automaticamente.",
     "Defina 'Allow Scripts' apenas se precisar executar JS personalizado nas prévias.",
     "Ajuste 'Max Depth' para controlar a complexidade das árvores de elementos renderizadas."
