@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { sendResendEmail } from "./resend.server";
 
 /**
@@ -83,16 +84,14 @@ export const getEmailSettings = createServerFn({ method: "GET" })
   });
 
 export const validateSender = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     apiKey: z.string(),
     email: z.string().email()
   }).parse(data))
-  .handler(async ({ data }) => {
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError || !userData.user) throw new Error("Unauthorized");
-
-    const { data: isAdmin } = await supabase.rpc('has_role', { 
-      _user_id: userData.user.id, 
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc('has_role', { 
+      _user_id: context.userId, 
       _role: 'admin' 
     });
 
@@ -115,18 +114,16 @@ export const validateSender = createServerFn({ method: "POST" })
   });
 
 export const updateEmailSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     from_name: z.string().min(2),
     from_email: z.string().email(),
     reply_to: z.string().email().optional().nullable(),
     is_enabled: z.boolean()
   }).parse(data))
-  .handler(async ({ data }) => {
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError || !userData.user) throw new Error("Unauthorized");
-
-    const { data: isAdmin } = await supabase.rpc('has_role', { 
-      _user_id: userData.user.id, 
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc('has_role', { 
+      _user_id: context.userId, 
       _role: 'admin' 
     });
 
