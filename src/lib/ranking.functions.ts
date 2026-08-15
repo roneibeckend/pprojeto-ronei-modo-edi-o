@@ -15,11 +15,11 @@ export const getRankingSettings = createServerFn({ method: "GET" })
   });
 
 export const updateRankingSettings = createServerFn({ method: "POST" })
-  .input(z.object({
+  .validator((data: any) => z.object({
     startDate: z.string().nullable(),
     endDate: z.string().nullable(),
     isGlobal: z.boolean()
-  }))
+  }).parse(data))
   .handler(async ({ data }) => {
     const { error } = await supabase
       .from("integrations")
@@ -27,7 +27,8 @@ export const updateRankingSettings = createServerFn({ method: "POST" })
         category: "ranking_settings",
         name: "Configuração de Ranking Global",
         status: true,
-        settings: data
+        type: "ia", // Using 'ia' as a generic type since it's required and we are storing config
+        settings: data as any
       }, { onConflict: "category,name" });
     
     if (error) throw error;
