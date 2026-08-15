@@ -26,6 +26,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
 import { FeedbackSummary } from "@/components/platform/FeedbackSummary";
+import { FeedbackList } from "@/components/platform/FeedbackList";
 import { FeedbackModal } from "@/components/platform/FeedbackModal";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 import { getSignedVideoUrl } from "@/lib/video.functions";
@@ -598,6 +599,7 @@ function EbookReaderPage() {
               </div>
             </button>
           </div>
+          <FeedbackList ebookId={ebook.id} />
         </div>
 
         {/* Sidebar Index */}
