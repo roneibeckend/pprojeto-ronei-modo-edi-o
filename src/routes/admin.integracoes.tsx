@@ -83,26 +83,47 @@ const WEBHOOKS = [
 
 const GUIDES: Record<string, string[]> = {
   openai: [
-    "Acesse a sua conta no dashboard da OpenAI.",
-    "Navegue até 'API Keys' nas configurações da conta.",
-    "Clique em 'Create new secret key'.",
-    "Copie a chave gerada e cole no campo 'API Key' abaixo.",
-    "Clique em 'Salvar' e depois em 'Testar Conexão'."
+    "Acesse a sua conta no dashboard da OpenAI (platform.openai.com).",
+    "Navegue até a seção 'API Keys' no menu lateral.",
+    "Clique em 'Create new secret key' e dê um nome à chave.",
+    "Copie a chave gerada imediatamente (ela não será exibida novamente).",
+    "Cole a chave no campo 'API Key' abaixo e clique em 'Salvar'."
   ],
   mercadopago: [
-    "Crie uma conta no Mercado Pago Developers.",
-    "Crie uma nova aplicação no painel.",
-    "Navegue até 'Credenciais de Produção' ou 'Credenciais de Teste'.",
+    "Acesse o painel do Mercado Pago Developers.",
+    "Vá em 'Suas aplicações' e selecione ou crie uma nova aplicação.",
+    "Clique em 'Credenciais de produção' no menu lateral.",
     "Copie o 'Access Token' e a 'Public Key'.",
-    "Configure os Webhooks apontando para as URLs mostradas na aba 'Webhooks'.",
-    "Salve e realize um teste de conexão."
+    "Configure os Webhooks apontando para as URLs da aba 'Webhooks' deste painel.",
+    "Ative a aplicação e realize um teste de conexão."
   ],
   asaas: [
     "Acesse sua conta Asaas e vá em 'Minha Conta' -> 'Integrações'.",
-    "Gere uma nova 'API Key'.",
-    "Copie a chave e cole no campo correspondente.",
-    "Configure a URL de Webhook para receber notificações de pagamento.",
-    "Salve e teste a conexão."
+    "Gere uma nova 'API Key' para o ambiente desejado (Produção ou Sandbox).",
+    "Copie a chave e cole no campo correspondente abaixo.",
+    "Para Webhooks: vá em 'Webhooks' no Asaas e cole a URL encontrada na aba 'Webhooks' deste painel.",
+    "Marque os eventos de pagamento desejados no Asaas e salve."
+  ],
+  stripe: [
+    "Acesse o Dashboard da Stripe e vá em 'Developers' -> 'API Keys'.",
+    "Copie a 'Secret Key' (sk_...) e a 'Publishable Key' (pk_...).",
+    "Para Webhooks: vá em 'Webhooks', adicione um endpoint com a URL da aba 'Webhooks'.",
+    "Selecione os eventos 'checkout.session.completed' e 'invoice.paid'.",
+    "Copie o 'Signing Secret' do Webhook se necessário para validação."
+  ],
+  resend: [
+    "Acesse resend.com e faça login no seu dashboard.",
+    "Vá em 'API Keys' e clique em 'Create API Key'.",
+    "Selecione a permissão 'Full Access' ou 'Sending Access'.",
+    "Copie a chave gerada e cole na aba 'API Key (Resend)' deste painel.",
+    "Importante: Verifique seu domínio em 'Domains' para garantir a entrega dos e-mails."
+  ],
+  interactive_previews: [
+    "Ative o recurso de Prévias Interativas no interruptor acima.",
+    "Configure o 'Theme' (Tema) para combinar com a identidade visual da sua marca.",
+    "Ative 'Auto Sanitize' para remover códigos maliciosos automaticamente.",
+    "Defina 'Allow Scripts' apenas se precisar executar JS personalizado nas prévias.",
+    "Ajuste 'Max Depth' para controlar a complexidade das árvores de elementos renderizadas."
   ]
 };
 
@@ -737,6 +758,9 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
         <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
           <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
             Identidade
+          </TabsTrigger>
+          <TabsTrigger value="guide" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+            Manual
           </TabsTrigger>
           <TabsTrigger value="templates" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
             Templates
