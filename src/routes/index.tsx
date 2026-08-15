@@ -6,7 +6,7 @@ Do not make any visual modifications. The phrases I write are commands to unders
                                             oi
 */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type JSX, Suspense, lazy } from "react";
+import { useEffect, useRef, useState, type JSX, Suspense, lazy, memo } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
@@ -877,7 +877,7 @@ function LogosBar() {
   );
 }
 
-function Pain() {
+const Pain = memo(function Pain() {
   const pains = [
     { icon: Beef, title: "Escolhe a carne errada", desc: "Compra caro, o cliente reclama e o lucro some." },
     { icon: Utensils, title: "Não sabe temperar", desc: "O sabor fica sem graça e o cliente não volta." },
