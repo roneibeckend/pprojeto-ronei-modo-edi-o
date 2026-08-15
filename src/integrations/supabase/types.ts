@@ -1602,7 +1602,7 @@ export type Database = {
           email: string | null
           id: string
           name: string
-          phone_e164: string
+          phone_e164: string | null
           report_types: string[]
         }
         Insert: {
@@ -1611,7 +1611,7 @@ export type Database = {
           email?: string | null
           id?: string
           name: string
-          phone_e164: string
+          phone_e164?: string | null
           report_types?: string[]
         }
         Update: {
@@ -1620,7 +1620,7 @@ export type Database = {
           email?: string | null
           id?: string
           name?: string
-          phone_e164?: string
+          phone_e164?: string | null
           report_types?: string[]
         }
         Relationships: []
