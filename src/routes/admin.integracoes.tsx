@@ -37,6 +37,7 @@ import {
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
 
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -1701,7 +1702,7 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
               {isActive && feature.settingsFields && (
                 <CardContent className="p-6 bg-white/[0.01]">
                   <div className="grid gap-6 md:grid-cols-2">
-                    {feature.settingsFields.map((field) => (
+                    {feature.settingsFields.map((field: any) => (
                       <div key={field.key} className="space-y-2">
                         <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">{field.label}</Label>
                         
@@ -1733,10 +1734,10 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
                         ) : field.type === 'select' ? (
                           <select 
                             className="w-full bg-black/40 border border-white/10 rounded-lg p-2 text-xs text-white outline-none focus:border-[#ff6a00]"
-                            value={integration?.settings?.[field.key] || field.default}
+                            value={String(integration?.settings?.[field.key] || field.default)}
                             onChange={(e) => handleUpdateSettings(feature, { [field.key]: e.target.value })}
                           >
-                            {field.options.map(opt => (
+                            {field.options?.map((opt: string) => (
                               <option key={opt} value={opt} className="bg-[#111]">{opt.toUpperCase()}</option>
                             ))}
                           </select>
@@ -1744,8 +1745,8 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
                           <Input 
                             type={field.type}
                             className="bg-black/40 border-white/10 h-9 text-xs focus:border-[#ff6a00]"
-                            defaultValue={integration?.settings?.[field.key] || field.default}
-                            onBlur={(e) => handleUpdateSettings(feature, { [field.key]: e.target.value })}
+                            value={String(integration?.settings?.[field.key] || field.default)}
+                            onChange={(e) => handleUpdateSettings(feature, { [field.key]: e.target.value })}
                           />
                         )}
                       </div>
