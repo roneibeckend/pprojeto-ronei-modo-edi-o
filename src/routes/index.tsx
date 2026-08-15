@@ -181,51 +181,62 @@ function Reveal({
   variant = "up",
   as: Tag = "div",
   className = "",
+  immediate = false,
 }: {
   children: React.ReactNode;
   delay?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
   variant?: RevealVariant;
   as?: keyof JSX.IntrinsicElements;
   className?: string;
+  immediate?: boolean;
 }) {
   const ref = useRef<HTMLElement | null>(null);
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
 
-    // Otimização: Delay de observer para não travar a thread principal no load
     const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+    if (immediate) {
+      node.dataset.visible = "true";
+      return;
+    }
+    
+    // Fallback: Check if element is likely in initial viewport
+    const rect = node.getBoundingClientRect();
+    const windowH = typeof window !== "undefined" ? window.innerHeight : 800;
+    if (rect.top >= 0 && rect.top < windowH + 100) {
+      node.dataset.visible = "true";
+      return;
+    }
+
     const rootMargin = isMobile ? "0px 0px 400px 0px" : "0px 0px 100px 0px";
     
-    const timeout = setTimeout(() => {
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (e.isIntersecting) {
-              (e.target as HTMLElement).dataset.visible = "true";
-              io.unobserve(e.target);
-            }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            (e.target as HTMLElement).dataset.visible = "true";
+            io.unobserve(e.target);
           }
-        },
-        { threshold: 0.01, rootMargin },
-      );
-      io.observe(node);
-      
-      // Fallback
-      const forceVisible = setTimeout(() => {
-        if (node && node.dataset.visible !== "true") {
-          node.dataset.visible = "true";
         }
-      }, 3000);
-      
-      return () => {
-        io.disconnect();
-        clearTimeout(forceVisible);
-      };
-    }, 100);
-
-    return () => clearTimeout(timeout);
-  }, []);
+      },
+      { threshold: 0.01, rootMargin },
+    );
+    io.observe(node);
+    
+    // Force visible after a reasonable time if observer fails
+    const forceVisible = setTimeout(() => {
+      if (node && node.dataset.visible !== "true") {
+        node.dataset.visible = "true";
+      }
+    }, 2000);
+    
+    return () => {
+      io.disconnect();
+      clearTimeout(forceVisible);
+    };
+  }, [immediate]);
   const props: Record<string, unknown> = {
     ref: ref as React.Ref<HTMLElement>,
     className,
@@ -727,14 +738,14 @@ function Hero() {
 
       <div className="mx-auto flex max-w-[1200px] flex-col items-center px-4 text-center sm:px-6 3xl:max-w-[1500px]">
 
-        <Reveal variant="blur" delay={1} as="h1" className="mt-4 text-3xl font-black leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl">
+        <Reveal variant="blur" delay={1} as="h1" immediate className="mt-4 text-3xl font-black leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl">
           Do zero ao <span className="animated-fire-text">próprio negócio de espetinhos</span>
         </Reveal>
-        <Reveal variant="up" delay={2} as="p" className="mt-3 max-w-2xl text-fluid-lead text-muted-foreground sm:mt-4">
+        <Reveal variant="up" delay={2} as="p" immediate className="mt-3 max-w-2xl text-fluid-lead text-muted-foreground sm:mt-4">
           O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
         </Reveal>
 
-        <Reveal variant="up" delay={2} className="mt-4 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-4 py-1.5 text-xs font-semibold text-[color:var(--gold)] sm:text-sm">
+        <Reveal variant="up" delay={2} immediate className="mt-4 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-4 py-1.5 text-xs font-semibold text-[color:var(--gold)] sm:text-sm">
           <Flame className="h-4 w-4" />
           Lucre até <span className="text-foreground">R$ 300 por dia</span> aplicando o método
         </Reveal>
@@ -743,7 +754,7 @@ function Hero() {
         {/* Video + CTA row */}
         <div className="mt-6 grid w-full items-center gap-6 sm:mt-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8 2xl:gap-16">
           {/* Compact video trigger */}
-          <Reveal variant="scale" delay={3} className="w-full lg:ml-auto lg:max-w-xl">
+          <Reveal variant="scale" delay={3} immediate className="w-full lg:ml-auto lg:max-w-xl">
             <button
               type="button"
               onClick={() => setVideoOpen(true)}
@@ -787,7 +798,7 @@ function Hero() {
           </Reveal>
 
           {/* CTAs on the right */}
-          <Reveal variant="up" delay={4} className="flex w-full flex-col items-stretch gap-3 sm:max-w-sm sm:mx-auto lg:mx-0 lg:max-w-xs lg:items-stretch lg:justify-self-start">
+          <Reveal variant="up" delay={4} immediate className="flex w-full flex-col items-stretch gap-3 sm:max-w-sm sm:mx-auto lg:mx-0 lg:max-w-xs lg:items-stretch lg:justify-self-start">
             <a href={CHECKOUT_URL} className="btn-fire shine-on-hover w-full justify-center !text-base !font-bold lg:min-h-[56px]">
               Quero começar agora
             </a>
@@ -798,7 +809,7 @@ function Hero() {
         </div>
 
 
-        <Reveal variant="up" delay={4} className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
+        <Reveal variant="up" delay={4} immediate className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
           <span className="inline-flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
@@ -808,7 +819,7 @@ function Hero() {
           </span>
         </Reveal>
 
-        <Reveal variant="up" delay={5} className="mt-6 grid w-full max-w-xl grid-cols-3 gap-3 sm:gap-4">
+        <Reveal variant="up" delay={5} immediate className="mt-6 grid w-full max-w-xl grid-cols-3 gap-3 sm:gap-4">
           {[
             { n: "300%", l: "margem" },
             { n: "14", l: "capítulos" },
@@ -893,7 +904,7 @@ function Pain() {
     { icon: Heart, title: "Medo de investir", desc: "Trava por não ter um método claro passo a passo." },
   ];
   return (
-    <section className="relative py-14 sm:py-20">
+    <section className="relative py-14 sm:py-20 bg-card/10">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>O problema</SectionTag>
@@ -2273,6 +2284,8 @@ function LandingPage() {
     const revealNow = (n: HTMLElement) => {
       if (n.dataset.visible !== "true") n.dataset.visible = "true";
     };
+
+    const isMobile = window.innerWidth < 768;
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -2282,18 +2295,29 @@ function LandingPage() {
           }
         }
       },
-      { threshold: 0, rootMargin: "0px 0px -10% 0px" },
+      { 
+        threshold: 0, 
+        rootMargin: isMobile ? "0px 0px 400px 0px" : "0px 0px -10% 0px" 
+      },
     );
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-    nodes.forEach((n) => io.observe(n));
 
-    // Scroll fallback: catch anything IO missed (fast scroll / initial paint races)
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    nodes.forEach((n) => {
+      // Immediate reveal for elements already in viewport
+      const r = n.getBoundingClientRect();
+      if (r.top < window.innerHeight) {
+        revealNow(n);
+      } else {
+        io.observe(n);
+      }
+    });
+
     const onScroll = () => {
       const vh = window.innerHeight;
       for (const n of nodes) {
         if (n.dataset.visible === "true") continue;
         const r = n.getBoundingClientRect();
-        if (r.top < vh * 0.92 && r.bottom > 0) {
+        if (r.top < vh * 0.95 && r.bottom > 0) {
           revealNow(n);
           io.unobserve(n);
         }
