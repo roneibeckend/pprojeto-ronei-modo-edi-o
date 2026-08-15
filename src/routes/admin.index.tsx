@@ -27,12 +27,11 @@ function AdminDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!authLoading && !["admin", "manager", "agent", "student"].includes(role || "")) {
+    if (!authLoading && !isAdmin && !hasModule("suporte") && !hasModule("conteudo") && !hasModule("alunos") && !hasModule("financeiro")) {
       toast.error("Sua conta não tem acesso a esta área.");
       navigate({ to: "/app" });
     }
-
-  }, [authLoading, role, navigate]);
+  }, [authLoading, isAdmin, hasModule, navigate]);
 
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
