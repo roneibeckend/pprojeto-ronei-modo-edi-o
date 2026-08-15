@@ -148,39 +148,34 @@ export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
     }
 
     // 3. Generate Signed URL
-    let filePath = material.file_url;
-    if (!filePath) throw new Error("Este material não possui um arquivo para download.");
-
-    // Se o file_url for uma URL completa, extrair apenas o path relativo ao bucket
-    if (filePath.startsWith('http')) {
-      const urlParts = filePath.split('/storage/v1/object/public/platform-materials/');
-      if (urlParts.length > 1) {
-        filePath = urlParts[1];
-      } else {
-        // Tentar extrair apenas o nome do arquivo da URL
-        const simpleParts = filePath.split('/');
-        filePath = simpleParts[simpleParts.length - 1];
-      }
-    }
+    const originalFileUrl = material.file_url;
+    if (!originalFileUrl) throw new Error("Este material não possui um arquivo para download.");
 
     try {
-      // 3. Identificar o bucket e o path correto
       let bucketName = "platform-materials";
-      
+      let filePath = originalFileUrl;
+
       // Se o file_url for uma URL completa, extrair o bucket e o path
-      if (filePath.startsWith('http')) {
-        if (filePath.includes('/storage/v1/object/public/')) {
-          const parts = filePath.split('/storage/v1/object/public/');
+      if (originalFileUrl.startsWith('http')) {
+        if (originalFileUrl.includes('/storage/v1/object/public/')) {
+          const parts = originalFileUrl.split('/storage/v1/object/public/');
           const fullPath = parts[1]; // Ex: "platform-materials/filename.pdf"
           const firstSlash = fullPath.indexOf('/');
-          bucketName = fullPath.substring(0, firstSlash);
-          filePath = fullPath.substring(firstSlash + 1);
+          if (firstSlash !== -1) {
+            bucketName = fullPath.substring(0, firstSlash);
+            filePath = fullPath.substring(firstSlash + 1);
+          } else {
+            bucketName = fullPath;
+            filePath = ""; // Caso inválido, mas tratamos abaixo
+          }
         } else {
           // Fallback para extrair apenas o nome do arquivo se for outra URL
-          const simpleParts = filePath.split('/');
+          const simpleParts = originalFileUrl.split('/');
           filePath = simpleParts[simpleParts.length - 1];
         }
       }
+
+      if (!filePath) throw new Error("Caminho do arquivo não identificado.");
 
       console.log(`Gerando link assinado para bucket: ${bucketName}, path: ${filePath}`);
 
