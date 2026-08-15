@@ -409,10 +409,10 @@ function CoursesPage() {
             <div className="h-px flex-1 bg-white/5" />
           </div>
           
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 sm:gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {otherEbooks.map((e) => (
               <article key={e.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100 flex flex-col h-full">
-                <div className="relative aspect-[3/4] bg-muted/20 grayscale-[0.3]">
+                <div className="relative aspect-video bg-muted/20 grayscale-[0.3]">
                   <img 
                     src={e.cover_url || e.cover || IMG.hero} 
                     alt={e.title} 
