@@ -2284,6 +2284,8 @@ function LandingPage() {
     const revealNow = (n: HTMLElement) => {
       if (n.dataset.visible !== "true") n.dataset.visible = "true";
     };
+
+    const isMobile = window.innerWidth < 768;
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -2293,18 +2295,29 @@ function LandingPage() {
           }
         }
       },
-      { threshold: 0, rootMargin: "0px 0px -10% 0px" },
+      { 
+        threshold: 0, 
+        rootMargin: isMobile ? "0px 0px 400px 0px" : "0px 0px -10% 0px" 
+      },
     );
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-    nodes.forEach((n) => io.observe(n));
 
-    // Scroll fallback: catch anything IO missed (fast scroll / initial paint races)
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    nodes.forEach((n) => {
+      // Immediate reveal for elements already in viewport
+      const r = n.getBoundingClientRect();
+      if (r.top < window.innerHeight) {
+        revealNow(n);
+      } else {
+        io.observe(n);
+      }
+    });
+
     const onScroll = () => {
       const vh = window.innerHeight;
       for (const n of nodes) {
         if (n.dataset.visible === "true") continue;
         const r = n.getBoundingClientRect();
-        if (r.top < vh * 0.92 && r.bottom > 0) {
+        if (r.top < vh * 0.95 && r.bottom > 0) {
           revealNow(n);
           io.unobserve(n);
         }
