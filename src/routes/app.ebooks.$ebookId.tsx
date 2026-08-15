@@ -67,6 +67,14 @@ function EbookReaderPage() {
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
+  const { data: interactivePreviewsStatus } = useQuery({
+    queryKey: ['interactive-previews-status'],
+    queryFn: async () => {
+      const { data } = await supabase.from('integrations').select('status').eq('category', 'interactive_previews').maybeSingle();
+      return data?.status ?? false;
+    }
+  });
+
   const readerRef = useRef<HTMLDivElement>(null);
   const chapterTopRef = useRef<HTMLDivElement>(null);
   
