@@ -10,7 +10,7 @@ export const getResendIntegration = createServerFn({ method: "GET" })
       _user_id: context.userId, 
       _role: 'admin' 
     });
-    if (!isAdmin) throw new Error("Forbidden");
+    if (!isAdmin) throw new Error("Proibido");
 
     const { data, error } = await supabaseAdmin
       .from('integrations')
@@ -52,7 +52,7 @@ export const saveIntegration = createServerFn({ method: "POST" })
       _user_id: context.userId, 
       _role: 'admin' 
     });
-    if (!isAdmin) throw new Error("Forbidden");
+    if (!isAdmin) throw new Error("Proibido");
 
     const payload = {
       name: data.name,
@@ -96,7 +96,7 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
       _user_id: context.userId, 
       _role: 'admin' 
     });
-    if (!isAdmin) throw new Error("Forbidden");
+    if (!isAdmin) throw new Error("Proibido");
 
     return {
       success: true,
