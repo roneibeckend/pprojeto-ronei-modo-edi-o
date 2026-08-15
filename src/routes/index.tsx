@@ -346,7 +346,7 @@ function CTAButton({
 
 // Configuração do checkout — redireciona para o checkout do ebook principal com flag de compra imediata.
 const MAIN_EBOOK_ID = "ee1a776c-6c7d-4a88-a980-7e671ad8d4fb";
-const CHECKOUT_URL = `/app/cursos?buy=${MAIN_EBOOK_ID}&type=ebook`;
+const CHECKOUT_URL = `/login?redirectTo=${encodeURIComponent(`/app/cursos?buy=${MAIN_EBOOK_ID}&type=ebook`)}`;
 
 function CheckoutButton({ className = "", label = "Quero garantir meu acesso" }: { className?: string; label?: string }) {
   const [loading, setLoading] = useState(false);
@@ -679,7 +679,7 @@ function Nav() {
           <a href="#bonus" className="hover:text-foreground transition">Bônus</a>
           <a href="#faq" className="hover:text-foreground transition">FAQ</a>
         </nav>
-        <a href="#oferta" onClick={() => trackInitiateCheckout("nav")} className="btn-fire shrink-0 !min-h-0 !py-2 !px-4 text-xs sm:!px-5 sm:text-sm">
+        <a href={CHECKOUT_URL} onClick={() => trackInitiateCheckout("nav")} className="btn-fire shrink-0 !min-h-0 !py-2 !px-4 text-xs sm:!px-5 sm:text-sm">
           Quero o eBook
         </a>
       </div>
@@ -784,9 +784,9 @@ function Hero() {
 
           {/* CTAs on the right */}
           <Reveal variant="up" delay={4} className="flex w-full flex-col items-stretch gap-3 sm:max-w-sm sm:mx-auto lg:mx-0 lg:max-w-xs lg:items-stretch lg:justify-self-start">
-            <CTAButton size="lg" className="w-full justify-center !text-base !font-bold lg:min-h-[56px]">
+            <a href={CHECKOUT_URL} className="btn-fire shine-on-hover w-full justify-center !text-base !font-bold lg:min-h-[56px]">
               Quero começar agora
-            </CTAButton>
+            </a>
             <a href="#beneficios" className="btn-ghost-fire w-full justify-center text-center !text-base !font-bold lg:min-h-[56px]">
               Ver o que aprendo
             </a>
@@ -997,10 +997,10 @@ function AuthorSolution() {
                 </div>
               ))}
               <div className="flex items-center justify-center sm:col-span-2 lg:col-span-1">
-                <CTAButton className="relative w-full justify-center text-center">
+                <a href={CHECKOUT_URL} className="btn-fire shine-on-hover relative w-full justify-center text-center">
                   <span>Quero o método</span>
                   <ArrowRight className="absolute right-5 h-4 w-4" />
-                </CTAButton>
+                </a>
               </div>
             </div>
           </div>
@@ -1185,7 +1185,7 @@ function ProfitCalculator() {
 
         {/* CTA pós-simulador */}
         <div className="mt-8 flex flex-col items-center gap-2">
-          <a href="#oferta" onClick={() => trackInitiateCheckout("post-calculator")} className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full max-w-sm justify-center">
+          <a href={CHECKOUT_URL} onClick={() => trackInitiateCheckout("post-calculator")} className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full max-w-sm justify-center">
             Quero faturar isso também <ArrowRight className="h-4 w-4" />
           </a>
           <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
@@ -1393,7 +1393,7 @@ function Bonuses() {
 
         {/* CTA pós-bônus */}
         <div className="mx-auto mt-6 flex max-w-xl flex-col items-center gap-2">
-          <a href="#oferta" onClick={() => trackInitiateCheckout("post-bonuses")} className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full justify-center">
+          <a href={CHECKOUT_URL} onClick={() => trackInitiateCheckout("post-bonuses")} className="btn-fire shine-on-hover !text-base !px-8 !py-4 w-full justify-center">
             Quero o eBook + os 4 bônus <ArrowRight className="h-4 w-4" />
           </a>
           <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
@@ -1869,9 +1869,9 @@ function FinalCTA() {
             Cada dia sem o método é dinheiro deixado na tábua. Comece hoje, com garantia de 7 dias.
           </p>
           <div className="mt-10 flex justify-center">
-            <CTAButton size="xl">
+            <a href={CHECKOUT_URL} className="btn-fire shine-on-hover w-full sm:w-auto text-base sm:text-lg sm:!px-10 sm:!py-5 justify-center">
               Quero o eBook agora <ArrowRight className="h-5 w-5" />
-            </CTAButton>
+            </a>
           </div>
         </div>
       </div>
@@ -2202,7 +2202,7 @@ function StickyMobileCTA() {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 pt-3 backdrop-blur-xl md:hidden safe-bottom"
       style={{ paddingBottom: "0.75rem" }}
     >
-      <a href="#oferta" onClick={() => trackInitiateCheckout("sticky-mobile")} className="btn-fire w-full !py-3 text-sm">
+      <a href={CHECKOUT_URL} onClick={() => trackInitiateCheckout("sticky-mobile")} className="btn-fire w-full !py-3 text-sm">
         Quero o eBook por R$ 47,90 <ArrowRight className="h-4 w-4" />
       </a>
     </div>

@@ -83,7 +83,7 @@ function LoginPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { error, data } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -92,9 +92,23 @@ function LoginPage() {
           },
         });
         if (error) throw error;
+        
+        // Auto-login logic: Supabase signUp returns session if auto-confirm is on,
+        // but often we need to explicitly sign in to get a full session if it doesn't.
+        // If session is present in data, it's already authenticated.
+        if (!data.session) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+          if (signInError) throw signInError;
+        }
+
         toast.success("Conta criada!", { description: "Você já pode acessar sua área de membros." });
-        const redirectTo = new URLSearchParams(window.location.search).get('redirectTo');
-        navigate({ to: redirectTo || "/inicio" });
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectTo = urlParams.get('redirectTo');
+        
+        // Se houver um redirecionamento (ex: vindo da Landing Page para compra), 
+        // mantemos o fluxo original que levará ao processamento de compra/upsell.
+        navigate({ to: redirectTo || "/inicio", replace: true });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
