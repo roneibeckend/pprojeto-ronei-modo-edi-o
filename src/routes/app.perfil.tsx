@@ -23,6 +23,7 @@ function ProfilePage() {
   const [userOrders, setUserOrders] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [newPhone, setNewPhone] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   const formatPhone = (value: string) => {
     // Remove non-digits
