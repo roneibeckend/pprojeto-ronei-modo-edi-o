@@ -804,42 +804,24 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome do Remetente</Label>
                   <Input 
-                    value={settings?.from_name || ''}
+                    defaultValue={settings?.from_name || ''}
                     id="from_name"
-                    onChange={(e) => {
-                      queryClient.setQueryData(['email_settings'], (old: any) => ({
-                        ...old,
-                        from_name: e.target.value
-                      }));
-                    }}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail do Remetente</Label>
                   <Input 
-                    value={settings?.from_email || ''}
+                    defaultValue={settings?.from_email || ''}
                     id="from_email"
-                    onChange={(e) => {
-                      queryClient.setQueryData(['email_settings'], (old: any) => ({
-                        ...old,
-                        from_email: e.target.value
-                      }));
-                    }}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail de Resposta (Reply-To)</Label>
                   <Input 
-                    value={settings?.reply_to || ""}
+                    defaultValue={settings?.reply_to || ""}
                     id="reply_to"
-                    onChange={(e) => {
-                      queryClient.setQueryData(['email_settings'], (old: any) => ({
-                        ...old,
-                        reply_to: e.target.value
-                      }));
-                    }}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
