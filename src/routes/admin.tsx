@@ -37,10 +37,18 @@ function AdminRootLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
-    if (!isLoading && !isAdmin && !["manager", "agent", "student"].includes(role || "")) {
+    if (isLoading) return;
+    const isStaff = isAdmin || ["manager", "agent"].includes(role || "");
+    if (!isStaff && role !== "student") {
       navigate({ to: "/app", replace: true });
+      return;
     }
-  }, [isAdmin, isLoading, navigate]);
+    // Aluno só pode ver o painel central (/admin); sub-rotas de gestão são exclusivas da equipe.
+    if (!isStaff && role === "student" && pathname !== "/admin") {
+      navigate({ to: "/admin", replace: true });
+    }
+  }, [isAdmin, role, isLoading, navigate, pathname]);
+
 
   if (isLoading) {
     return (
