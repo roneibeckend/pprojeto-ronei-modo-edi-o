@@ -59,7 +59,7 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
 function EbookReaderPage() {
   const { ebook } = Route.useLoaderData() as { ebook: any };
   const { isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
-  const { isChapterCompleted, completeChapter } = useProgress();
+  const { isChapterCompleted, completeChapter, ebookProgress } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
@@ -238,13 +238,30 @@ function EbookReaderPage() {
   }, [activeChapterId, hasAccess]);
 
   useEffect(() => {
-    if (!hasAccess || hasSubmittedFeedback || chapters.length === 0) return;
+    if (!hasAccess || hasSubmittedFeedback || chapters.length === 0 || isLoadingEnrollments) return;
+    
     const completedCount = chapters.filter((c: any) => isChapterCompleted(c.id)).length;
-    if (completedCount >= chapters.length) {
-      setShowFeedbackModal(true);
+    if (completedCount >= chapters.length && chapters.length > 0) {
+      const checkFeedback = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        
+        const { data } = await supabase
+          .from("course_feedback")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("ebook_id", ebook.id)
+          .maybeSingle();
+        
+        if (data) {
+          setHasSubmittedFeedback(true);
+        } else {
+          setShowFeedbackModal(true);
+        }
+      };
+      checkFeedback();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chapters.length, hasAccess, hasSubmittedFeedback, activeChapterId, isChapterCompleted]);
+  }, [ebookProgress, chapters.length, hasAccess, hasSubmittedFeedback, ebook.id, isLoadingEnrollments]);
 
 
   const handlePurchase = async () => {

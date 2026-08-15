@@ -66,7 +66,7 @@ function CoursePage() {
   const course = data?.course;
   const navigate = useNavigate();
   const { isEnrolledInCourse, isLoading: isLoadingEnrollments } = useEnrollments();
-  const { isLessonCompleted, toggleLessonProgress, isTogglingLesson } = useProgress();
+  const { isLessonCompleted, toggleLessonProgress, isTogglingLesson, lessonProgress } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
@@ -173,8 +173,14 @@ function CoursePage() {
   const isCompleted = flat.length > 0 && completedCount === flat.length;
 
   useEffect(() => {
-    if (isCompleted && !hasSubmittedFeedback && hasAccess) {
-      // Check if user already submitted feedback via DB to be sure
+    // Só dispara se estiver tudo carregado e o usuário tiver acesso
+    if (!hasAccess || hasSubmittedFeedback || isLoadingEnrollments || flat.length === 0) return;
+    
+    // Calcula o progresso real baseado no estado local (mais rápido que o banco)
+    const currentCompletedCount = flat.filter((l: any) => isLessonCompleted(l.id)).length;
+    const isActuallyCompleted = flat.length > 0 && currentCompletedCount === flat.length;
+
+    if (isActuallyCompleted) {
       const checkFeedback = async () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
@@ -194,7 +200,7 @@ function CoursePage() {
       };
       checkFeedback();
     }
-  }, [isCompleted, hasSubmittedFeedback, course.id, hasAccess]);
+  }, [lessonProgress, hasSubmittedFeedback, course.id, hasAccess, flat.length, isLoadingEnrollments]);
 
   const introNeedsSigning = Boolean(
     course?.intro_video_url &&
