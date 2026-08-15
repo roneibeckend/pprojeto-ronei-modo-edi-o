@@ -740,14 +740,14 @@ function Hero() {
 
       <div className="mx-auto flex max-w-[1200px] flex-col items-center px-4 text-center sm:px-6 3xl:max-w-[1500px]">
 
-        <Reveal variant="blur" delay={1} as="h1" className="mt-4 text-3xl font-black leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl">
+        <Reveal variant="blur" delay={1} as="h1" immediate className="mt-4 text-3xl font-black leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl">
           Do zero ao <span className="animated-fire-text">próprio negócio de espetinhos</span>
         </Reveal>
-        <Reveal variant="up" delay={2} as="p" className="mt-3 max-w-2xl text-fluid-lead text-muted-foreground sm:mt-4">
+        <Reveal variant="up" delay={2} as="p" immediate className="mt-3 max-w-2xl text-fluid-lead text-muted-foreground sm:mt-4">
           O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
         </Reveal>
 
-        <Reveal variant="up" delay={2} className="mt-4 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-4 py-1.5 text-xs font-semibold text-[color:var(--gold)] sm:text-sm">
+        <Reveal variant="up" delay={2} immediate className="mt-4 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-4 py-1.5 text-xs font-semibold text-[color:var(--gold)] sm:text-sm">
           <Flame className="h-4 w-4" />
           Lucre até <span className="text-foreground">R$ 300 por dia</span> aplicando o método
         </Reveal>
@@ -756,7 +756,7 @@ function Hero() {
         {/* Video + CTA row */}
         <div className="mt-6 grid w-full items-center gap-6 sm:mt-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8 2xl:gap-16">
           {/* Compact video trigger */}
-          <Reveal variant="scale" delay={3} className="w-full lg:ml-auto lg:max-w-xl">
+          <Reveal variant="scale" delay={3} immediate className="w-full lg:ml-auto lg:max-w-xl">
             <button
               type="button"
               onClick={() => setVideoOpen(true)}
@@ -800,7 +800,7 @@ function Hero() {
           </Reveal>
 
           {/* CTAs on the right */}
-          <Reveal variant="up" delay={4} className="flex w-full flex-col items-stretch gap-3 sm:max-w-sm sm:mx-auto lg:mx-0 lg:max-w-xs lg:items-stretch lg:justify-self-start">
+          <Reveal variant="up" delay={4} immediate className="flex w-full flex-col items-stretch gap-3 sm:max-w-sm sm:mx-auto lg:mx-0 lg:max-w-xs lg:items-stretch lg:justify-self-start">
             <a href={CHECKOUT_URL} className="btn-fire shine-on-hover w-full justify-center !text-base !font-bold lg:min-h-[56px]">
               Quero começar agora
             </a>
@@ -811,7 +811,7 @@ function Hero() {
         </div>
 
 
-        <Reveal variant="up" delay={4} className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
+        <Reveal variant="up" delay={4} immediate className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
           <span className="inline-flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
@@ -821,7 +821,7 @@ function Hero() {
           </span>
         </Reveal>
 
-        <Reveal variant="up" delay={5} className="mt-6 grid w-full max-w-xl grid-cols-3 gap-3 sm:gap-4">
+        <Reveal variant="up" delay={5} immediate className="mt-6 grid w-full max-w-xl grid-cols-3 gap-3 sm:gap-4">
           {[
             { n: "300%", l: "margem" },
             { n: "14", l: "capítulos" },
