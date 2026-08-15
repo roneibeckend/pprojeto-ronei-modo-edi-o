@@ -148,19 +148,36 @@ export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
     }
 
     // 3. Generate Signed URL
-    const filePath = material.file_url;
+    let filePath = material.file_url;
     if (!filePath) throw new Error("Este material não possui um arquivo para download.");
 
-    const { data: signedData, error: signedError } = await supabaseAdmin.storage
-      .from("platform-materials")
-      .createSignedUrl(filePath, 60 * 5); // 5 minutes
-
-    if (signedError) {
-      console.error("Erro ao gerar URL assinada:", signedError);
-      throw signedError;
+    // Se o file_url for uma URL completa, extrair apenas o path relativo ao bucket
+    if (filePath.startsWith('http')) {
+      const urlParts = filePath.split('/storage/v1/object/public/platform-materials/');
+      if (urlParts.length > 1) {
+        filePath = urlParts[1];
+      } else {
+        // Tentar extrair apenas o nome do arquivo da URL
+        const simpleParts = filePath.split('/');
+        filePath = simpleParts[simpleParts.length - 1];
+      }
     }
 
-    return { url: signedData.signedUrl };
+    try {
+      const { data: signedData, error: signedError } = await supabaseAdmin.storage
+        .from("platform-materials")
+        .createSignedUrl(filePath, 60 * 5); // 5 minutes
+
+      if (signedError) {
+        console.error("Erro ao gerar URL assinada:", signedError);
+        throw new Error(`Erro ao gerar link de download: ${signedError.message}`);
+      }
+
+      return { url: signedData.signedUrl };
+    } catch (e: any) {
+      console.error("Erro fatal ao gerar link de download:", e);
+      throw new Error(`Erro ao acessar o arquivo no storage: ${e.message || 'Desconhecido'}`);
+    }
   });
 
 
