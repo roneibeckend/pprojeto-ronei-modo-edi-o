@@ -311,7 +311,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
 
       {editingLesson && (
         <Dialog open={!!editingLesson} onOpenChange={(open) => !open && setEditingLesson(null)} modal={false}>
-          <DialogContent className="bg-[#0e0e0e] border-white/10 text-white max-w-2xl max-h-[90vh] overflow-y-auto text-left z-[70] fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full">
+          <DialogContent className="bg-[#0e0e0e] border-white/10 text-white max-w-2xl max-h-[90vh] overflow-y-auto text-left z-[90] fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full shadow-2xl">
             <DialogHeader><DialogTitle>Aula</DialogTitle></DialogHeader>
             <form onSubmit={handleSaveLesson} className="space-y-4 pt-4">
               <div className="grid grid-cols-2 gap-4">
