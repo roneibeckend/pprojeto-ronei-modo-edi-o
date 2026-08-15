@@ -103,6 +103,22 @@ function LoginPage() {
 
         toast.success("Conta criada!", { description: "Você já pode acessar sua área de membros." });
         
+        // Disparar e-mail de boas-vindas
+        try {
+          const { sendEmail } = await import("@/lib/resend.functions");
+          // @ts-ignore - trigger via server function
+          await sendEmail({
+            data: {
+              to: email,
+              template: 'boas_vindas',
+              data: { name: name || split_part(email, '@', 1) }
+            }
+          });
+          console.log("[Auth] E-mail de boas-vindas solicitado para", email);
+        } catch (emailErr) {
+          console.error("[Auth] Erro ao disparar e-mail de boas-vindas:", emailErr);
+        }
+        
         const urlParams = new URLSearchParams(window.location.search);
         const redirectTo = urlParams.get('redirectTo');
         
