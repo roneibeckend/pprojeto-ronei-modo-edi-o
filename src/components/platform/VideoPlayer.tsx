@@ -184,10 +184,17 @@ export function VideoPlayer({
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', 'true');
+    video.setAttribute('x5-playsinline', 'true'); // Support for some Android browsers
     setIsMuted(true);
     
     console.log(`[VideoPlayer:tryAutoplay] Attempting muted play for intro video: ${videoId}`);
     
+    // Safety check for mobile: avoid layout thrashing during autoplay
+    if (isMobileDevice) {
+      video.style.transform = 'translateZ(0)';
+      video.style.backfaceVisibility = 'hidden';
+    }
+
     try {
       // Force loading if needed
       if (video.readyState < 1) {
@@ -396,12 +403,18 @@ export function VideoPlayer({
           }
         }}
         onClick={(e) => {
-          // If native controls are on, clicking the video might interfere.
-          // We only intercept if it's our custom overlay or if native controls are off.
+          // Prevent default to avoid browser-specific tap behaviors
+          if (isMobileDevice) {
+            e.stopPropagation();
+          }
+          
           if (!useNativeControls) {
             e.stopPropagation();
             togglePlay(e);
           }
+        }}
+        onEnded={() => {
+          setIsPlaying(false);
         }}
       />
 
