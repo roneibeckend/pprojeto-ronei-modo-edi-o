@@ -64,7 +64,7 @@ const ORANGE = "#ff6a00";
 interface Integration {
   id: string;
   name: string;
-  type: 'ia' | 'payment';
+  type: 'ia' | 'payment' | 'feature';
   category: string;
   status: boolean;
   credentials: Record<string, string>;
