@@ -1380,6 +1380,21 @@ function EmailTemplatesTab() {
     const subject = (document.getElementById('temp_subject') as HTMLInputElement).value;
     const content_html = (document.getElementById('temp_html') as HTMLTextAreaElement).value;
     const description = (document.getElementById('temp_desc') as HTMLInputElement).value;
+    
+    if (!name || name.length < 2) {
+      toast.error("O nome do template deve ter pelo menos 2 caracteres.");
+      return;
+    }
+    
+    if (!subject || subject.length < 2) {
+      toast.error("O assunto deve ter pelo menos 2 caracteres.");
+      return;
+    }
+    
+    if (!content_html || content_html.length < 10) {
+      toast.error("O conteúdo HTML deve ter pelo menos 10 caracteres.");
+      return;
+    }
 
     saveMutation.mutate({ 
       data: {
