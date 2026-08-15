@@ -29,7 +29,7 @@ export function usePwaInstall() {
 
     const handleBeforeInstallPrompt = (e: any) => {
       console.log('Evento beforeinstallprompt disparado');
-      // Previne o mini-infobar do Chrome no mobile
+      // Impedir que o browser mostre o prompt automático
       e.preventDefault();
       // Guarda o evento para disparar depois
       setDeferredPrompt(e);
