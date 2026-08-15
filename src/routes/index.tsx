@@ -6,7 +6,7 @@ Do not make any visual modifications. The phrases I write are commands to unders
                                             oi
 */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type JSX } from "react";
+import { useEffect, useRef, useState, type JSX, Suspense, lazy } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
@@ -62,6 +62,11 @@ import printWhats2 from "@/assets/print-whats-2.jpg";
 import printWhats3 from "@/assets/print-whats-3.jpg";
 import printPix from "@/assets/print-pix.jpg";
 import logo from "@/assets/logo-mark.png";
+
+const VideoPlayer = lazy(() => 
+  import("@/components/platform/VideoPlayer")
+    .then(m => ({ default: m.VideoPlayer }))
+);
 
 const SITE_URL = "https://sizzling-story-maker.lovable.app";
 const OG_IMAGE = `${SITE_URL}${heroChef.url}`;
@@ -821,37 +826,15 @@ function Hero() {
               <X className="h-6 w-6" />
             </button>
             <div className="glass gradient-border overflow-hidden rounded-2xl p-1 shadow-fire relative bg-black">
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black">
-                {/* Overlay to block interaction and hide UI parts */}
-                <div className="absolute inset-0 z-10 overflow-hidden">
-                  <iframe
-                    src={`https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&rm=minimal&mute=1&enablejsapi=1`}
-                    title="Ronnei — A história por trás do Espetos Grill"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    className={`absolute inset-0 h-full w-full pointer-events-none scale-[1.4] origin-center transition-opacity duration-300 ${isPlaying ? "opacity-100" : "opacity-0"} bg-black`}
+              <div className="relative aspect-[9/16] h-[75vh] w-full max-w-[420px] mx-auto overflow-hidden rounded-xl bg-black">
+                <Suspense fallback={<div className="flex h-full items-center justify-center text-white"><Loader2 className="animate-spin" /></div>}>
+                  <VideoPlayer 
+                    src="https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview"
+                    videoId="ronnei-history"
+                    isIntro={true}
+                    className="w-full h-full"
                   />
-                </div>
-
-                
-                {/* Interaction layer: 
-                    Blocks all pointer events from reaching Google player.
-                    Clicking toggles visibility, effectively pausing/resuming. */}
-                <div 
-                  className="absolute inset-0 z-20 cursor-pointer flex flex-col items-center justify-center bg-transparent"
-                  onClick={() => setIsPlaying(!isPlaying)}
-                >
-                  {!isPlaying && (
-                    <div className="flex flex-col items-center gap-4 animate-scale-in">
-                      <div className="grid h-20 w-20 place-items-center rounded-full bg-fire shadow-fire">
-                        <Play className="h-10 w-10 text-white ml-1" />
-                      </div>
-                      <span className="rounded-full bg-black/60 px-4 py-2 text-[10px] font-bold text-white backdrop-blur uppercase tracking-widest">
-                        Vídeo pausado. Clique para retomar.
-                      </span>
-
-                    </div>
-                  )}
-                </div>
+                </Suspense>
               </div>
             </div>
           </div>

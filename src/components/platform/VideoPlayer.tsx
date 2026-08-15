@@ -190,12 +190,14 @@ export function VideoPlayer({
     console.log(`[VideoPlayer:tryAutoplay] Attempting muted play for intro video: ${videoId}`);
     
     try {
-      // Ensure the video is loaded enough to play
-      if (video.readyState < 2) {
-        console.log(`[VideoPlayer:tryAutoplay] Video not ready (readyState=${video.readyState}), waiting for loadedmetadata...`);
+      // For mobile compatibility, ensure we have at least metedata
+      if (video.readyState < 1) {
+        console.log(`[VideoPlayer:tryAutoplay] Video not ready (readyState=${video.readyState}), waiting...`);
         return;
       }
 
+      // Explicitly set muted again before playing to satisfy mobile policies
+      video.muted = true;
       const p = video.play();
       if (p !== undefined) {
         await p;
@@ -205,6 +207,7 @@ export function VideoPlayer({
       }
     } catch (err: any) {
       console.warn(`[VideoPlayer:tryAutoplay] Playback rejected for: ${videoId}`, err.name);
+      // If even muted autoplay fails, we just wait for a user gesture
       setIsPlaying(false);
       setIsLoading(false);
     }
@@ -221,24 +224,34 @@ export function VideoPlayer({
 
     if (video.paused) {
       // Critical for mobile: call play() synchronously inside the user gesture.
+      // Reset state for a fresh attempt
+      video.removeAttribute('muted');
+      video.muted = false;
+      video.volume = 1;
+      setIsMuted(false);
+      
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
+            console.log(`[VideoPlayer:togglePlay] Success`);
             setIsPlaying(true);
             setIsLoading(false);
           })
           .catch((err) => {
-            console.warn('Playback failed:', err.name);
-            // Retry muted only as fallback
+            console.warn('[VideoPlayer:togglePlay] Play failed, retrying muted:', err.name);
+            // Fallback: Try playing muted if unmuted is rejected (browser policy)
             video.muted = true;
             setIsMuted(true);
-            video.play().then(() => {
-              setIsPlaying(true);
-              setIsLoading(false);
-            }).catch(() => {
-              setIsPlaying(false);
-            });
+            video.play()
+              .then(() => {
+                setIsPlaying(true);
+                setIsLoading(false);
+              })
+              .catch((err2) => {
+                console.error('[VideoPlayer:togglePlay] Muted retry also failed:', err2.name);
+                setIsPlaying(false);
+              });
           });
       }
     } else {
