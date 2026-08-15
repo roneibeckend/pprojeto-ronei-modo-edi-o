@@ -25,7 +25,7 @@ import {
 import { PageHeader } from "@/components/platform/Shell";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { saveAffiliateMaterial, deleteAffiliateMaterial } from "@/lib/affiliates.functions";
+import { saveAffiliateMaterial, deleteAffiliateMaterial, updateAffiliateStatus } from "@/lib/affiliates.functions";
 
 export const Route = createFileRoute("/admin/afiliados")({
   component: AdminAffiliatesPage,
