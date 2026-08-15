@@ -220,7 +220,10 @@ function CoursesPage() {
         </div>
 
         <section>
-          <Skeleton className="mb-6 h-6 w-48" />
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-10 w-48" />
+          </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
               <CourseCardSkeleton key={i} />
