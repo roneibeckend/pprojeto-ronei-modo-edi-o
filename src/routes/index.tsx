@@ -877,7 +877,7 @@ function LogosBar() {
   );
 }
 
-const Pain = memo(function Pain() {
+function Pain() {
   const pains = [
     { icon: Beef, title: "Escolhe a carne errada", desc: "Compra caro, o cliente reclama e o lucro some." },
     { icon: Utensils, title: "Não sabe temperar", desc: "O sabor fica sem graça e o cliente não volta." },
