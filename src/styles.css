@@ -155,9 +155,32 @@
   }
 
   #lovable-badge { 
-
     display: none !important; 
   }
+}
+
+/* Route transition indicator */
+.loading-route {
+  cursor: wait;
+}
+
+.loading-route::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--grad-fire);
+  z-index: 9999;
+  animation: route-loader 2s ease-in-out infinite;
+  transform-origin: left;
+}
+
+@keyframes route-loader {
+  0% { transform: scaleX(0); }
+  50% { transform: scaleX(0.7); }
+  100% { transform: scaleX(1); opacity: 0; }
 }
 
 @layer utilities {
