@@ -31,6 +31,14 @@ function CoursesPage() {
   const [offerContext, setOfferContext] = useState<{ item: any; type: 'course' | 'ebook' } | null>(null);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
+  const { data: interactivePreviewsStatus } = useQuery({
+    queryKey: ['interactive-previews-status'],
+    queryFn: async () => {
+      const { data } = await supabase.from('integrations').select('status').eq('category', 'interactive_previews').maybeSingle();
+      return data?.status ?? false;
+    }
+  });
+
   useEffect(() => {
     syncWithDatabase();
   }, [syncWithDatabase]);
@@ -246,9 +254,11 @@ function CoursesPage() {
           title="Meus cursos"
           subtitle="Gerencie seus treinamentos e descubra novos conteúdos."
         />
-        <Link to="/app/cursos/preview" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto mt-2 sm:mt-0 py-3 sm:py-4 h-12 sm:h-auto">
-          <Sparkles className="h-4 w-4" /> Ver previews interativas
-        </Link>
+        {interactivePreviewsStatus && (
+          <Link to="/app/cursos/preview" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto mt-2 sm:mt-0 py-3 sm:py-4 h-12 sm:h-auto">
+            <Sparkles className="h-4 w-4" /> Ver previews interativas
+          </Link>
+        )}
       </div>
 
       <ProgressSummary 
