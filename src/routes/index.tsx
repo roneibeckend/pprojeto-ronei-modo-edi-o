@@ -181,20 +181,34 @@ function Reveal({
   variant = "up",
   as: Tag = "div",
   className = "",
+  immediate = false,
 }: {
   children: React.ReactNode;
   delay?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
   variant?: RevealVariant;
   as?: keyof JSX.IntrinsicElements;
   className?: string;
+  immediate?: boolean;
 }) {
   const ref = useRef<HTMLElement | null>(null);
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
 
-    // Otimização: Delay de observer para não travar a thread principal no load
+    if (immediate) {
+      node.dataset.visible = "true";
+      return;
+    }
+
     const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    
+    // Check if element is likely in initial viewport
+    const rect = node.getBoundingClientRect();
+    if (rect.top < (typeof window !== "undefined" ? window.innerHeight : 800)) {
+      node.dataset.visible = "true";
+      return;
+    }
+
     const rootMargin = isMobile ? "0px 0px 400px 0px" : "0px 0px 100px 0px";
     
     const timeout = setTimeout(() => {
@@ -211,21 +225,20 @@ function Reveal({
       );
       io.observe(node);
       
-      // Fallback
       const forceVisible = setTimeout(() => {
         if (node && node.dataset.visible !== "true") {
           node.dataset.visible = "true";
         }
-      }, 3000);
+      }, 2000);
       
       return () => {
         io.disconnect();
         clearTimeout(forceVisible);
       };
-    }, 100);
+    }, 50);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [immediate]);
   const props: Record<string, unknown> = {
     ref: ref as React.Ref<HTMLElement>,
     className,
