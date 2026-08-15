@@ -64,7 +64,7 @@ const ORANGE = "#ff6a00";
 interface Integration {
   id: string;
   name: string;
-  type: 'ia' | 'payment';
+  type: 'ia' | 'payment' | 'feature';
   category: string;
   status: boolean;
   credentials: Record<string, string>;
@@ -109,7 +109,7 @@ function IntegrationsPage() {
   const navigate = useNavigate();
   const { role, isLoading: isLoadingAuth } = useAuth();
   const queryClient = useQueryClient();
-  const [activeCategory, setActiveCategory] = useState<'ia' | 'payment' | 'email' | 'webhooks' | 'offers'>('ia');
+  const [activeCategory, setActiveCategory] = useState<'ia' | 'payment' | 'email' | 'webhooks' | 'offers' | 'feature'>('ia');
   const [selectedItem, setSelectedItem] = useState<Integration | null>(null);
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<any>(null);
@@ -280,6 +280,13 @@ function IntegrationsPage() {
           >
             <Percent className="h-3.5 w-3.5" /> Ofertas
           </Button>
+          <Button 
+            variant="ghost"
+            onClick={() => { setActiveCategory('feature'); setSelectedItem(null); }}
+            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'feature' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+          >
+            <Sparkles className="h-3.5 w-3.5" /> Recursos
+          </Button>
         </div>
       </div>
 
@@ -378,7 +385,7 @@ function IntegrationsPage() {
 
         {/* Detail Panel */}
         <div className="lg:col-span-8">
-          {activeCategory === 'email' ? <EmailIntegrationPanel integrations={integrations} /> : activeCategory === 'offers' ? <OffersIntegrationPanel /> : (selectedItem && selectedItem.category !== 'resend') ? (
+          {activeCategory === 'email' ? <EmailIntegrationPanel integrations={integrations} /> : activeCategory === 'offers' ? <OffersIntegrationPanel /> : (activeCategory === 'feature') ? <FeatureTogglePanel integrations={integrations} /> : (selectedItem && selectedItem.category !== 'resend') ? (
             <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
               <Tabs defaultValue="config" className="w-full">
                 <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
@@ -1559,6 +1566,94 @@ function EmailTemplatesTab() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function FeatureTogglePanel({ integrations }: { integrations: Integration[] | undefined }) {
+  const queryClient = useQueryClient();
+  const saveIntegrationFn = useServerFn(saveIntegration);
+
+  const features = [
+    {
+      id: 'interactive_previews',
+      name: 'Previews Interativas',
+      description: 'Habilita o modo de interação ao vivo e componentes dinâmicos nos capítulos dos E-books.',
+      icon: Sparkles,
+      category: 'interactive_previews'
+    }
+  ];
+
+  const handleToggle = async (feature: typeof features[0], currentStatus: boolean) => {
+    try {
+      const integration = integrations?.find(i => i.category === feature.category);
+      
+      await saveIntegrationFn({
+        data: {
+          id: integration?.id || '',
+          name: feature.name,
+          type: 'ia', // Fallback for enum
+          category: feature.category,
+          status: !currentStatus,
+          credentials: {},
+          settings: { description: feature.description, is_feature: 'true' }
+        }
+      });
+      
+      toast.success(`${feature.name} ${!currentStatus ? 'ativado' : 'desativado'} com sucesso!`);
+      queryClient.invalidateQueries({ queryKey: ['integrations'] });
+    } catch (err: any) {
+      toast.error("Erro ao alterar estado: " + err.message);
+    }
+  };
+
+  return (
+    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
+      <div className="grid gap-6">
+        {features.map((feature) => {
+          const integration = integrations?.find(i => i.category === feature.category);
+          const isActive = integration?.status ?? false;
+          
+          return (
+            <Card key={feature.id} className="bg-[#111] border-white/5 overflow-hidden">
+              <CardHeader className="border-b border-white/5 bg-white/[0.02] p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className={`p-3 rounded-xl ${isActive ? 'bg-[#ff6a00] text-black shadow-[0_0_20px_rgba(255,106,0,0.2)]' : 'bg-white/5 text-white/40'}`}>
+                      <feature.icon className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg font-bold uppercase tracking-tight">{feature.name}</CardTitle>
+                      <CardDescription className="text-xs text-white/40 mt-1 max-w-md">
+                        {feature.description}
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Badge variant="outline" className={`text-[9px] uppercase tracking-widest border-none ${isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-white/5 text-white/20'}`}>
+                      {isActive ? 'Ativado' : 'Desativado'}
+                    </Badge>
+                    <Button 
+                      onClick={() => handleToggle(feature, isActive)}
+                      className={`h-10 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${isActive ? 'bg-white/5 text-white hover:bg-white/10' : 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]/90'}`}
+                    >
+                      {isActive ? 'Desativar' : 'Ativar'}
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+          );
+        })}
+      </div>
+      
+      <Alert className="bg-orange-500/5 border-orange-500/20">
+        <Info className="h-4 w-4 text-[#ff6a00]" />
+        <AlertTitle className="text-xs font-bold uppercase tracking-widest text-[#ff6a00]">Informação</AlertTitle>
+        <AlertDescription className="text-[11px] text-white/60">
+          Ativar recursos beta ou em desenvolvimento pode afetar a experiência dos usuários finais. Use com cautela.
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }

@@ -67,6 +67,14 @@ function EbookReaderPage() {
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
+  const { data: interactivePreviewsStatus } = useQuery({
+    queryKey: ['interactive-previews-status'],
+    queryFn: async () => {
+      const { data } = await supabase.from('integrations').select('status').eq('category', 'interactive_previews').maybeSingle();
+      return data?.status ?? false;
+    }
+  });
+
   const readerRef = useRef<HTMLDivElement>(null);
   const chapterTopRef = useRef<HTMLDivElement>(null);
   
@@ -546,21 +554,28 @@ function EbookReaderPage() {
                 </div>
 
                 <div className="prose prose-invert prose-orange w-full max-w-full overflow-x-hidden">
-                  {activeChapter?.content ? (
-                    <div className="text-justify leading-[1.5] text-base sm:text-lg text-white/90 break-words 
-                      [&_p]:indent-[1.25cm] [&_p]:mb-6 [&_p]:text-justify
-                      [&_h1]:font-black [&_h1]:text-3xl [&_h1]:mt-12 [&_h1]:mb-6 [&_h1]:text-white [&_h1]:uppercase [&_h1]:tracking-tight
-                      [&_h2]:font-bold [&_h2]:text-2xl [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-white/95
-                      [&_h3]:font-bold [&_h3]:text-xl [&_h3]:mt-8 [&_h3]:mb-4 [&_h3]:text-white/90
-                      [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-2xl [&_img]:my-8 [&_img]:mx-auto [&_img]:shadow-2xl
-                      [&_table]:block [&_table]:overflow-x-auto [&_table]:w-full [&_table]:my-8 [&_table]:border-collapse [&_table]:rounded-xl [&_table]:bg-white/5
-                      [&_td]:p-4 [&_td]:border [&_td]:border-white/10 [&_td]:text-sm
-                      [&_th]:p-4 [&_th]:border [&_th]:border-white/10 [&_th]:bg-white/10 [&_th]:font-bold [&_th]:text-sm
-                      [&_figcaption]:text-sm [&_figcaption]:text-muted-foreground [&_figcaption]:text-center [&_figcaption]:mt-2 [&_figcaption]:mb-8
-                      [&_.table-wrapper]:overflow-x-auto [&_.table-wrapper]:max-w-full [&_.table-wrapper]:mb-8" 
-                      dangerouslySetInnerHTML={{ __html: activeChapter.content }} 
-                    />
-
+                  {interactivePreviewsStatus ? (
+                    activeChapter?.content ? (
+                      <div className="text-justify leading-[1.5] text-base sm:text-lg text-white/90 break-words 
+                        [&_p]:indent-[1.25cm] [&_p]:mb-6 [&_p]:text-justify
+                        [&_h1]:font-black [&_h1]:text-3xl [&_h1]:mt-12 [&_h1]:mb-6 [&_h1]:text-white [&_h1]:uppercase [&_h1]:tracking-tight
+                        [&_h2]:font-bold [&_h2]:text-2xl [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-white/95
+                        [&_h3]:font-bold [&_h3]:text-xl [&_h3]:mt-8 [&_h3]:mb-4 [&_h3]:text-white/90
+                        [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-2xl [&_img]:my-8 [&_img]:mx-auto [&_img]:shadow-2xl
+                        [&_table]:block [&_table]:overflow-x-auto [&_table]:w-full [&_table]:my-8 [&_table]:border-collapse [&_table]:rounded-xl [&_table]:bg-white/5
+                        [&_td]:p-4 [&_td]:border [&_td]:border-white/10 [&_td]:text-sm
+                        [&_th]:p-4 [&_th]:border [&_th]:border-white/10 [&_th]:bg-white/10 [&_th]:font-bold [&_th]:text-sm
+                        [&_figcaption]:text-sm [&_figcaption]:text-muted-foreground [&_figcaption]:text-center [&_figcaption]:mt-2 [&_figcaption]:mb-8
+                        [&_.table-wrapper]:overflow-x-auto [&_.table-wrapper]:max-w-full [&_.table-wrapper]:mb-8" 
+                        dangerouslySetInnerHTML={{ __html: activeChapter.content }} 
+                      />
+                    ) : (
+                      <p className="italic opacity-50">Conteúdo em breve...</p>
+                    )
+                  ) : activeChapter?.content ? (
+                    <div className="text-justify leading-[1.6] text-base sm:text-lg text-white/80 break-words whitespace-pre-line">
+                      {activeChapter.content.replace(/<[^>]*>/g, '')}
+                    </div>
                   ) : (
                     <p className="italic opacity-50">Conteúdo em breve...</p>
                   )}
