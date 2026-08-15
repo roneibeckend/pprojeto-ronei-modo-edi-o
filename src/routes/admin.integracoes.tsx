@@ -882,6 +882,11 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                       toast.error("Configure o remetente primeiro.");
                       return;
                     }
+                    if (!resendIntegration?.credentials?.apiKey && !settings.is_enabled) {
+                      toast.error("Configure a API Key do Resend antes de ativar.");
+                      setActiveTab('resend');
+                      return;
+                    }
                     updateSettingsMutation.mutate({ 
                       data: {
                         from_name: settings.from_name,
@@ -891,7 +896,12 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                       }
                     });
                   }}
-                  className="bg-white/5 border-white/10 hover:bg-white/10 font-bold uppercase tracking-widest text-[10px] h-10 px-6"
+                  className={cn(
+                    "font-bold uppercase tracking-widest text-[10px] h-10 px-6 transition-all",
+                    settings?.is_enabled 
+                      ? "bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20" 
+                      : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20"
+                  )}
                 >
                   {settings?.is_enabled ? 'Desativar Envio' : 'Ativar Envio'}
                 </Button>
