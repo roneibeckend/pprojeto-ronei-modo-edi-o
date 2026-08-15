@@ -117,17 +117,17 @@ function AffiliateLinksPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <section className="glass p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
-          <h3 className="font-bold mb-4 flex items-center gap-2">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <section className="glass p-5 sm:p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
+          <h3 className="font-bold mb-4 flex items-center gap-2 text-base">
             <Plus className="w-4 h-4 text-fire" /> Gerar Link por Curso
           </h3>
           <div className="space-y-3">
             {courses?.map(course => {
               const hasLink = links?.some(l => l.course_id === course.id);
               return (
-                <div key={course.id} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
-                  <span className="text-sm font-medium truncate mr-4">{course.title}</span>
+                <div key={course.id} className="flex items-center justify-between p-3.5 rounded-xl bg-white/5 border border-white/5 gap-3">
+                  <span className="text-sm font-medium truncate flex-1 min-w-0">{course.title}</span>
                   <button 
                     disabled={hasLink || createLinkMutation.isPending}
                     onClick={() => createLinkMutation.mutate(course.id)}
@@ -144,44 +144,46 @@ function AffiliateLinksPage() {
         <section className="space-y-4">
           {links && links.length > 0 ? (
             links.map((link) => (
-              <div key={link.id} className="glass p-5 rounded-2xl border border-white/5 bg-white/[0.02]">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="bg-fire/20 p-2 rounded-lg">
+              <div key={link.id} className="glass p-5 rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className="bg-fire/20 p-2.5 rounded-lg shrink-0">
                       <LinkIcon className="w-4 h-4 text-fire" />
                     </div>
-                    <div>
-                      <h4 className="font-bold text-sm">
+                    <div className="min-w-0 overflow-hidden">
+                      <h4 className="font-bold text-sm truncate leading-tight mb-1">
                         {link.course ? `Curso: ${link.course.title}` : "Link Global / Home"}
                       </h4>
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground truncate">
                         Código: {link.code}
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-lg font-display font-black text-white">{link.clicks || 0}</div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Cliques</div>
+                  <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-0 shrink-0 bg-white/5 sm:bg-transparent p-2 sm:p-0 rounded-lg">
+                    <div className="text-xl sm:text-2xl font-display font-black text-white leading-none">{link.clicks || 0}</div>
+                    <div className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Cliques</div>
                   </div>
                 </div>
 
-                <div className="flex gap-2">
-                  <div className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs text-white/40 truncate flex items-center">
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-3 sm:py-2 text-xs text-white/40 truncate flex items-center min-h-[44px]">
                     {window.location.origin}/?ref={link.code}
                   </div>
-                  <button 
-                    onClick={() => copyToClipboard(link.code, link.id)}
-                    className="p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-white transition shrink-0"
-                  >
-                    {copiedId === link.id ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                  </button>
-                  <a 
-                    href={`${window.location.origin}/?ref=${link.code}`}
-                    target="_blank"
-                    className="p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-white transition shrink-0"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => copyToClipboard(link.code, link.id)}
+                      className="flex-1 sm:flex-none p-3 sm:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-white transition flex items-center justify-center min-w-[44px] min-h-[44px]"
+                    >
+                      {copiedId === link.id ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                    <a 
+                      href={`${window.location.origin}/?ref=${link.code}`}
+                      target="_blank"
+                      className="flex-1 sm:flex-none p-3 sm:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-white transition flex items-center justify-center min-w-[44px] min-h-[44px]"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
                 </div>
               </div>
             ))
