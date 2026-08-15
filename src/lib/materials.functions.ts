@@ -148,19 +148,55 @@ export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
     }
 
     // 3. Generate Signed URL
-    const filePath = material.file_url;
-    if (!filePath) throw new Error("Este material não possui um arquivo para download.");
+    const originalFileUrl = material.file_url;
+    if (!originalFileUrl) throw new Error("Este material não possui um arquivo para download.");
 
-    const { data: signedData, error: signedError } = await supabaseAdmin.storage
-      .from("platform-materials")
-      .createSignedUrl(filePath, 60 * 5); // 5 minutes
+    try {
+      let bucketName = "platform-materials";
+      let filePath = originalFileUrl;
 
-    if (signedError) {
-      console.error("Erro ao gerar URL assinada:", signedError);
-      throw signedError;
+      // Se o file_url for uma URL completa, extrair o bucket e o path
+      if (originalFileUrl.startsWith('http')) {
+        if (originalFileUrl.includes('/storage/v1/object/public/')) {
+          const parts = originalFileUrl.split('/storage/v1/object/public/');
+          const fullPath = parts[1]; // Ex: "platform-materials/filename.pdf"
+          const firstSlash = fullPath.indexOf('/');
+          if (firstSlash !== -1) {
+            bucketName = fullPath.substring(0, firstSlash);
+            filePath = fullPath.substring(firstSlash + 1);
+          } else {
+            bucketName = fullPath;
+            filePath = ""; // Caso inválido, mas tratamos abaixo
+          }
+        } else {
+          // Fallback para extrair apenas o nome do arquivo se for outra URL
+          const simpleParts = originalFileUrl.split('/');
+          filePath = simpleParts[simpleParts.length - 1];
+        }
+      }
+
+      if (!filePath) throw new Error("Caminho do arquivo não identificado.");
+
+      console.log(`Gerando link assinado para bucket: ${bucketName}, path: ${filePath}`);
+
+      const { data: signedData, error: signedError } = await supabaseAdmin.storage
+        .from(bucketName)
+        .createSignedUrl(filePath, 60 * 5); // 5 minutos
+
+      if (signedError) {
+        console.error("Erro ao gerar URL assinada:", signedError);
+        throw new Error(`Erro no storage do provedor: ${signedError.message}`);
+      }
+
+      if (!signedData?.signedUrl) {
+        throw new Error("O link de download não pôde ser gerado.");
+      }
+
+      return { url: signedData.signedUrl };
+    } catch (e: any) {
+      console.error("Erro fatal ao gerar link de download:", e);
+      throw new Error(`Erro ao acessar o arquivo: ${e.message || 'Desconhecido'}`);
     }
-
-    return { url: signedData.signedUrl };
   });
 
 

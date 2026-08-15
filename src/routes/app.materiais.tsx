@@ -52,17 +52,13 @@ function MaterialsPage() {
 
     if (fileUrl) {
       try {
-        // Extrair o nome do arquivo da URL pública atual
-        // Ex: https://.../platform-materials/filename.pdf -> filename.pdf
-        const urlParts = fileUrl.split('/');
-        const fileName = urlParts[urlParts.length - 1];
-        
-        const { url } = await fetchDownloadUrl({ data: { filePath: fileName } });
+        const { url } = await fetchDownloadUrl({ data: { materialId } });
         window.open(url, "_blank");
         toast.success(`Download de "${title}" iniciado!`);
-      } catch (err) {
+      } catch (err: any) {
         console.error("Erro ao obter link de download:", err);
-        toast.error("Erro ao acessar o arquivo. Tente novamente.");
+        const errorMessage = err.message || "Erro ao acessar o arquivo. Tente novamente mais tarde.";
+        toast.error(errorMessage);
       }
       return;
     }
