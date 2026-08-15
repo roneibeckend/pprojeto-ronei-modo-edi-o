@@ -708,11 +708,29 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
   const [isSendingTest, setIsSendingTest] = useState(false);
   const [testTo, setTestTo] = useState('');
   const [testTemplate, setTestTemplate] = useState('boas_vindas');
+  
+  // Local state for form inputs to ensure persistence and React-controlled behavior
+  const [formData, setFormData] = useState({
+    from_name: '',
+    from_email: '',
+    reply_to: ''
+  });
 
   const { data: settings, isLoading: loadingSettings } = useQuery({
     queryKey: ['email_settings'],
     queryFn: async () => await getEmailSettings()
   });
+
+  // Sync local form state with fetched data
+  useEffect(() => {
+    if (settings) {
+      setFormData({
+        from_name: settings.from_name || '',
+        from_email: settings.from_email || '',
+        reply_to: settings.reply_to || ''
+      });
+    }
+  }, [settings]);
 
   const { data: resendIntegration, isLoading: loadingResend } = useQuery({
     queryKey: ['resend_integration'],
@@ -745,6 +763,50 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
       setIsSendingTest(false);
     }
   });
+
+  const handleManualSave = () => {
+    if (!formData.from_name || formData.from_name.length < 2) {
+      toast.error("O Nome do Remetente deve ter pelo menos 2 caracteres.");
+      return;
+    }
+
+    if (!formData.from_email || !formData.from_email.includes('@')) {
+      toast.error("Insira um e-mail de remetente válido.");
+      return;
+    }
+
+    updateSettingsMutation.mutate({ 
+      data: {
+        from_name: formData.from_name, 
+        from_email: formData.from_email, 
+        reply_to: formData.reply_to || null,
+        is_enabled: settings?.is_enabled ?? true
+      }
+    });
+  };
+
+  const handleToggleActivation = () => {
+    if (!settings && (!formData.from_name || !formData.from_email)) {
+      toast.error("Configure o remetente primeiro.");
+      return;
+    }
+    
+    const apiKey = resendIntegration?.credentials?.apiKey;
+    if (!apiKey && !settings?.is_enabled) {
+      toast.error("Configure a API Key do Resend antes de ativar.");
+      setActiveTab('resend');
+      return;
+    }
+
+    updateSettingsMutation.mutate({ 
+      data: {
+        from_name: formData.from_name || settings?.from_name || '',
+        from_email: formData.from_email || settings?.from_email || '',
+        reply_to: formData.reply_to || settings?.reply_to || null,
+        is_enabled: !settings?.is_enabled 
+      }
+    });
+  };
 
   if (loadingSettings) return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" /></div>;
 
@@ -797,31 +859,28 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
               </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
-              {/* Alerta removido - chave agora centralizada aqui */}
-
-
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome do Remetente</Label>
                   <Input 
-                    defaultValue={settings?.from_name || ''}
-                    id="from_name"
+                    value={formData.from_name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, from_name: e.target.value }))}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail do Remetente</Label>
                   <Input 
-                    defaultValue={settings?.from_email || ''}
-                    id="from_email"
+                    value={formData.from_email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, from_email: e.target.value }))}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail de Resposta (Reply-To)</Label>
                   <Input 
-                    defaultValue={settings?.reply_to || ""}
-                    id="reply_to"
+                    value={formData.reply_to}
+                    onChange={(e) => setFormData(prev => ({ ...prev, reply_to: e.target.value }))}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
@@ -829,58 +888,17 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
 
               <div className="flex items-center gap-2 pt-4 border-t border-white/5">
                 <Button 
-                  onClick={() => {
-                    const from_name = (document.getElementById('from_name') as HTMLInputElement).value;
-                    const from_email = (document.getElementById('from_email') as HTMLInputElement).value;
-                    const reply_to = (document.getElementById('reply_to') as HTMLInputElement).value;
-                    
-                    if (!from_name || from_name.length < 2) {
-                      toast.error("O Nome do Remetente deve ter pelo menos 2 caracteres.");
-                      return;
-                    }
-
-                    if (!from_email || !from_email.includes('@')) {
-                      toast.error("Insira um e-mail de remetente válido.");
-                      return;
-                    }
-
-                    updateSettingsMutation.mutate({ 
-                      data: {
-                        from_name, 
-                        from_email, 
-                        reply_to: reply_to || null,
-                        is_enabled: settings?.is_enabled ?? true
-                      }
-                    });
-                  }}
+                  onClick={handleManualSave}
+                  disabled={updateSettingsMutation.isPending}
                   className="bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-10 px-8"
                 >
-                  <Save className="h-4 w-4 mr-2" /> Salvar Configurações
+                  {updateSettingsMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                  Salvar Configurações
                 </Button>
                 <Button 
                   variant="outline"
-                  onClick={() => {
-                    const from_name = (document.getElementById('from_name') as HTMLInputElement)?.value;
-                    const from_email = (document.getElementById('from_email') as HTMLInputElement)?.value;
-                    
-                    if (!settings && (!from_name || !from_email)) {
-                      toast.error("Configure o remetente primeiro.");
-                      return;
-                    }
-                    if (!resendIntegration?.credentials?.apiKey && !settings?.is_enabled) {
-                      toast.error("Configure a API Key do Resend antes de ativar.");
-                      setActiveTab('resend');
-                      return;
-                    }
-                    updateSettingsMutation.mutate({ 
-                      data: {
-                        from_name: from_name || settings?.from_name || '',
-                        from_email: from_email || settings?.from_email || '',
-                        reply_to: (document.getElementById('reply_to') as HTMLInputElement)?.value || settings?.reply_to || null,
-                        is_enabled: !settings?.is_enabled 
-                      }
-                    });
-                  }}
+                  disabled={updateSettingsMutation.isPending}
+                  onClick={handleToggleActivation}
                   className={cn(
                     "font-bold uppercase tracking-widest text-[10px] h-10 px-6 transition-all",
                     settings?.is_enabled 
@@ -888,7 +906,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                       : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20"
                   )}
                 >
-                  {settings?.is_enabled ? 'Desativar Envio' : 'Ativar Envio'}
+                  {updateSettingsMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : (settings?.is_enabled ? 'Desativar Envio' : 'Ativar Envio')}
                 </Button>
               </div>
             </CardContent>

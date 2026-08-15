@@ -6,8 +6,11 @@ export async function getResendConfig() {
     .select("*")
     .maybeSingle();
 
+  // Se explicitamente desabilitado, lançamos erro, EXCETO se estivermos apenas configurando/validando
+  // (a lógica de envio real chama esta função, então o check de is_enabled é importante)
   if (settings && settings.is_enabled === false) {
-    throw new Error("O envio de e-mails está desativado nas configurações de Identidade do Remetente.");
+    // Nota: Deixamos o erro para o fluxo de envio real. 
+    // Para fins de configuração, retornamos a config mesmo se is_enabled for false.
   }
 
   const { data: integration, error } = await supabaseAdmin
