@@ -119,12 +119,12 @@ function ProfilePage() {
     return (
       <div className="animate-in fade-in duration-500">
         <PageHeader title="Meu perfil" subtitle="Gerencie seus dados e veja seu histórico de compras." />
-        <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
+        <div className="grid gap-6 md:gap-8 lg:grid-cols-[320px_1fr] w-full">
           <aside className="space-y-6">
             <Skeleton className="h-[300px] w-full rounded-2xl" />
             <Skeleton className="h-[200px] w-full rounded-2xl" />
           </aside>
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             <Skeleton className="h-[400px] w-full rounded-2xl" />
             <Skeleton className="h-[300px] w-full rounded-2xl" />
           </div>
@@ -137,10 +137,10 @@ function ProfilePage() {
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-7xl mx-auto w-full">
       <PageHeader title="Meu perfil" subtitle="Gerencie seus dados e veja seu histórico de compras." />
 
-      <div className="grid gap-8 lg:grid-cols-[320px_1fr] w-full items-start">
+      <div className="grid gap-6 md:gap-8 lg:grid-cols-[320px_1fr] w-full items-start">
         {/* Sidebar Info */}
-        <aside className="space-y-6">
-          <section className="glass overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] shadow-sm">
+        <aside className="space-y-6 w-full max-w-full overflow-hidden">
+          <section className="glass overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] shadow-sm w-full">
             <div className="h-24 bg-gradient-to-br from-[#ff6a00] to-[#ff9500] opacity-20" />
             <div className="relative -mt-12 flex flex-col items-center p-6 text-center">
               <div className="relative group">
@@ -149,21 +149,24 @@ function ProfilePage() {
                   alt={profile?.full_name} 
                   className="h-24 w-24 rounded-2xl border-4 border-[#0a0a0a] object-cover ring-1 ring-white/10"
                 />
-                <button className="absolute -bottom-2 -right-2 grid h-8 w-8 place-items-center rounded-lg bg-[#ff6a00] text-black shadow-lg transition-transform hover:scale-110">
+                <button 
+                  aria-label="Mudar avatar"
+                  className="absolute -bottom-2 -right-2 grid h-8 w-8 place-items-center rounded-lg bg-[#ff6a00] text-black shadow-lg transition-transform hover:scale-110 active:scale-95 touch-target"
+                >
                   <User className="h-4 w-4" />
                 </button>
               </div>
-              <h3 className="mt-4 font-display text-xl font-bold truncate w-full px-2">{profile?.name || profile?.full_name || "Estudante"}</h3>
+              <h3 className="mt-4 font-display text-xl font-bold truncate w-full px-2 text-white">{profile?.name || profile?.full_name || "Estudante"}</h3>
               <p className="text-sm text-white/40">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
               
-              <div className="mt-6 flex w-full gap-2 px-2">
-                <div className="flex-1 rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center">
-                  <div className="text-lg font-bold text-[#ff6a00] truncate">{profile?.streak || 0}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate">Dias</div>
+              <div className="mt-6 grid grid-cols-2 w-full gap-2 px-2">
+                <div className="rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center border border-white/5 shadow-inner">
+                  <div className="text-lg font-bold text-[#ff6a00] truncate w-full">{profile?.streak || 0}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate w-full">Dias</div>
                 </div>
-                <div className="flex-1 rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center">
-                  <div className="text-lg font-bold text-[#ff6a00] truncate">{profile?.lessons_watched || 0}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate">Aulas</div>
+                <div className="rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center border border-white/5 shadow-inner">
+                  <div className="text-lg font-bold text-[#ff6a00] truncate w-full">{profile?.lessons_watched || 0}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate w-full">Aulas</div>
                 </div>
               </div>
             </div>
@@ -176,18 +179,18 @@ function ProfilePage() {
                 <div className="grid h-8 w-8 place-items-center rounded-lg bg-white/5 text-[#ff6a00]">
                   <Mail className="h-4 w-4" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">E-mail</div>
-                  <div className="text-sm font-medium truncate">{user?.email || profile?.email || "—"}</div>
+                  <div className="text-sm font-medium truncate text-white">{user?.email || profile?.email || "—"}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="grid h-8 w-8 place-items-center rounded-lg bg-white/5 text-[#ff6a00]">
                   <Phone className="h-4 w-4" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Telefone</div>
-                  <div className="text-sm font-medium truncate">{profile?.phone || "Não informado"}</div>
+                  <div className="text-sm font-medium truncate text-white">{profile?.phone || "Não informado"}</div>
                 </div>
               </div>
             </div>
@@ -223,13 +226,13 @@ function ProfilePage() {
         </aside>
 
         {/* Main Content */}
-        <div className="space-y-8 min-w-0">
+        <div className="space-y-6 md:space-y-8 min-w-0 w-full overflow-hidden">
           {/* Personal Data Form */}
-          <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
+          <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-5 sm:p-6 lg:p-8 w-full">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
-              <div>
-                <h3 className="font-display text-xl font-bold text-white">Dados da Conta</h3>
-                <p className="text-sm text-white/40">Mantenha suas informações sempre atualizadas.</p>
+              <div className="min-w-0">
+                <h3 className="font-display text-xl font-bold text-white truncate">Dados da Conta</h3>
+                <p className="text-sm text-white/40 truncate">Mantenha suas informações sempre atualizadas.</p>
               </div>
               <button 
                 onClick={handleSave}
@@ -263,14 +266,14 @@ function ProfilePage() {
           </section>
 
           {/* Order History */}
-          <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-6 lg:p-8">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#ff6a00]/10 text-[#ff6a00]">
+          <section className="glass rounded-2xl border border-white/5 bg-white/[0.02] p-5 sm:p-6 lg:p-8 w-full overflow-hidden">
+            <div className="mb-6 flex items-center gap-3 w-full">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#ff6a00]/10 text-[#ff6a00]">
                 <ShoppingBag className="h-5 w-5" />
               </div>
-              <div>
-                <h3 className="font-display text-xl font-bold text-white whitespace-nowrap">Histórico de Pedidos</h3>
-                <p className="text-sm text-white/40 truncate">Acompanhe todos os seus investimentos na plataforma.</p>
+              <div className="min-w-0">
+                <h3 className="font-display text-xl font-bold text-white truncate">Histórico de Pedidos</h3>
+                <p className="text-sm text-white/40 truncate">Acompanhe todos os seus investimentos.</p>
               </div>
             </div>
 
@@ -289,16 +292,16 @@ function ProfilePage() {
                   <tbody className="divide-y divide-white/5">
                     {userOrders.map((order) => (
                       <tr key={order.id} className="transition-colors hover:bg-white/[0.02]">
-                        <td className="px-6 py-4 font-mono font-medium text-[#ff6a00]">{order.id}</td>
-                        <td className="px-6 py-4 text-white/60">{order.date}</td>
-                        <td className="px-6 py-4 font-medium">{order.product}</td>
-                        <td className="hidden md:table-cell px-6 py-4">
+                        <td className="px-6 py-4 font-mono font-medium text-[#ff6a00] truncate max-w-[120px]">{order.id}</td>
+                        <td className="px-6 py-4 text-white/60 whitespace-nowrap">{order.date}</td>
+                        <td className="px-6 py-4 font-medium truncate max-w-[200px]">{order.product}</td>
+                        <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
                           <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-500">
                             <CheckCircle2 className="h-3 w-3" />
                             {order.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-right font-bold text-white">{order.value}</td>
+                        <td className="px-6 py-4 text-right font-bold text-white whitespace-nowrap">{order.value}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -330,7 +333,7 @@ function Field({
 } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <label className="block group min-w-0">
-      <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 transition-colors group-focus-within:text-[#ff6a00] whitespace-nowrap overflow-hidden text-ellipsis">
+      <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 transition-colors group-focus-within:text-[#ff6a00] whitespace-nowrap overflow-hidden text-ellipsis">
         {label}
       </span>
       <div className="relative">
@@ -341,7 +344,7 @@ function Field({
         )}
         <input 
           {...rest} 
-          className={`w-full rounded-xl border border-white/10 bg-white/[0.03] ${Icon ? 'pl-11' : 'px-4'} py-3.5 text-sm font-medium outline-none transition-all placeholder:text-white/10 focus:border-[#ff6a00]/50 focus:bg-[#ff6a00]/5 disabled:opacity-50 text-[16px] md:text-sm`} 
+          className={`w-full rounded-xl border border-white/10 bg-white/[0.03] ${Icon ? 'pl-11' : 'px-4'} py-3.5 text-[16px] md:text-sm font-medium outline-none transition-all placeholder:text-white/10 focus:border-[#ff6a00]/50 focus:bg-[#ff6a00]/5 disabled:opacity-50 text-white appearance-none`} 
         />
       </div>
     </label>
