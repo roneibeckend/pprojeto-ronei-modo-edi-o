@@ -181,16 +181,16 @@ function AffiliateLayout() {
         </div>
       </div>
 
-      <nav className="flex flex-wrap gap-2 p-1 bg-white/5 rounded-xl border border-white/5">
+      <nav className="flex items-center gap-2 p-1 bg-white/5 rounded-xl border border-white/5 overflow-x-auto no-scrollbar scroll-smooth">
         {navItems.map((item) => (
           <Link
             key={item.to}
             to={item.to}
             activeProps={{ className: "bg-fire text-white" }}
             inactiveProps={{ className: "text-muted-foreground hover:bg-white/5" }}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all"
+            className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all whitespace-nowrap flex-shrink-0"
           >
-            <item.icon className="w-4 h-4" />
+            <item.icon className="w-3.5 h-3.5 sm:w-4 h-4" />
             {item.label}
           </Link>
         ))}
