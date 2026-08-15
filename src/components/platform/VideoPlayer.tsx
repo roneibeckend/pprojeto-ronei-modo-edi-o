@@ -184,6 +184,7 @@ export function VideoPlayer({
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', 'true');
+    video.setAttribute('x5-playsinline', 'true'); // Support for some Android browsers
     setIsMuted(true);
     
     console.log(`[VideoPlayer:tryAutoplay] Attempting muted play for intro video: ${videoId}`);
