@@ -17,6 +17,7 @@ export const Route = createFileRoute("/app/perfil")({
 
 function ProfilePage() {
   const { user } = useAuth();
+  const { canInstall, isStandalone, installPwa } = usePwaInstall();
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [userOrders, setUserOrders] = useState<any[]>([]);
