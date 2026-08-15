@@ -91,17 +91,18 @@ function LoginPage() {
             emailRedirectTo: `${window.location.origin}/inicio`,
           },
         });
-        if (error) throw error;
-        
-        // Auto-login logic: Supabase signUp returns session if auto-confirm is on,
-        // but often we need to explicitly sign in to get a full session if it doesn't.
-        // If session is present in data, it's already authenticated.
+        // Login automático se o Supabase não o fizer (auto-confirmação ativada/desativada)
         if (!data.session) {
-          const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+          const { error: signInError, data: signInData } = await supabase.auth.signInWithPassword({ email, password });
           if (signInError) throw signInError;
+          
+          // Se logou com sucesso, a sessão está em signInData.session
+          if (signInData.session) {
+            toast.success("Conta criada!", { description: "Você já pode acessar sua área de membros." });
+          }
+        } else {
+          toast.success("Conta criada!", { description: "Você já pode acessar sua área de membros." });
         }
-
-        toast.success("Conta criada!", { description: "Você já pode acessar sua área de membros." });
         
         // Disparar e-mail de boas-vindas
         try {
@@ -114,7 +115,6 @@ function LoginPage() {
               data: { name: name || email.split('@')[0] }
             }
           });
-          console.log("[Auth] E-mail de boas-vindas solicitado para", email);
         } catch (emailErr) {
           console.error("[Auth] Erro ao disparar e-mail de boas-vindas:", emailErr);
         }
@@ -122,8 +122,8 @@ function LoginPage() {
         const urlParams = new URLSearchParams(window.location.search);
         const redirectTo = urlParams.get('redirectTo');
         
-        // Se houver um redirecionamento (ex: vindo da Landing Page para compra), 
-        // mantemos o fluxo original que levará ao processamento de compra/upsell.
+        // Redireciona para /app/inicio (que processa a oferta) ou para o redirectTo
+        // Note: removi a verificação redundante e forço o replace para evitar voltar para a tela de login
         navigate({ to: redirectTo || "/inicio", replace: true });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });

@@ -24,10 +24,90 @@ export const Route = createFileRoute("/app/")({
 function Dashboard() {
   const { isEnrolledInCourse, isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
   const { syncWithDatabase } = usePostPurchaseOfferStore();
+  const [showOffer, setShowOffer] = useState(false);
+  const [offerItem, setOfferItem] = useState<any>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [discountPercentage, setDiscountPercentage] = useState(15);
+  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
+  const createPaymentLink = useServerFn(createAsaasPaymentLink);
+  const { openPayment } = usePaymentModal();
+
+  const executeCheckout = async (targetItem: any, additionalItems: any[]) => {
+    try {
+      setIsProcessing(true);
+      
+      const products = [
+        {
+          productId: targetItem.id,
+          productType: targetItem.type,
+          title: targetItem.title,
+          description: targetItem.description,
+          value: targetItem.price || 0,
+        },
+        ...additionalItems.map(off => ({
+          productId: off.id,
+          productType: off.type,
+          title: off.title,
+          description: off.description,
+          value: (off.price || 0) * (1 - (discountPercentage / 100)),
+        }))
+      ];
+
+      const result = await createPaymentLink({
+        data: {
+          products,
+          affiliateRef: getAffiliateRef() || undefined,
+          paymentType: targetItem.payment_type || 'unique',
+          dueDays: targetItem.due_days || 3,
+        }
+      });
+      
+      if (result.url) {
+        openPayment(result.url, targetItem.title, targetItem.id, targetItem.type);
+      }
+    } catch (error: any) {
+      console.error("Erro ao processar compra:", error);
+      toast.error(error.message || "Erro ao gerar link de pagamento.");
+    } finally {
+      setIsProcessing(false);
+      setShowOffer(false);
+    }
+  };
 
   useEffect(() => {
     syncWithDatabase();
-  }, [syncWithDatabase]);
+
+    // Lógica para exibir oferta automática pós-cadastro
+    const checkFirstAccess = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const isFirstAccess = localStorage.getItem(`first_access_offer_${user.id}`);
+      if (!isFirstAccess) {
+        // Busca o ebook principal "Do Zero aos 10k" (id fixo ou busca por slug se disponível)
+        // Aqui buscamos o primeiro ebook disponível para ofertar
+        const { data: ebook } = await supabase
+          .from('ebooks')
+          .select('id, title, description, price, cover_url')
+          .eq('status', 'published')
+          .limit(1)
+          .maybeSingle();
+
+        if (ebook && !isEnrolledInEbook(ebook.id)) {
+          setOfferItem({ ...ebook, type: 'ebook' });
+          // Pequeno delay para a UI carregar
+          setTimeout(() => {
+            setShowOffer(true);
+            localStorage.setItem(`first_access_offer_${user.id}`, 'true');
+          }, 1500);
+        }
+      }
+    };
+
+    if (!isLoadingEnrollments) {
+      checkFirstAccess();
+    }
+  }, [syncWithDatabase, isLoadingEnrollments, isEnrolledInEbook]);
 
   const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
     queryKey: ["showcase-items"],
@@ -105,6 +185,16 @@ function Dashboard() {
 
   return (
     <div className="space-y-8">
+      {/* Oferta Automática Pós-Cadastro */}
+      {showOffer && offerItem && (
+        <PostPurchaseOffer
+          isOpen={showOffer}
+          onClose={() => setShowOffer(false)}
+          onProceedWithOffers={(selected) => executeCheckout(offerItem, selected)}
+          onProceedWithoutOffers={() => executeCheckout(offerItem, [])}
+          originalProductId={offerItem.id}
+        />
+      )}
       {/* Showcase / Cursos */}
       <section>
         <div className="mb-6 flex items-center justify-between">
