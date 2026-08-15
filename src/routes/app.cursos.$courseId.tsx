@@ -14,6 +14,7 @@ import { useProgress } from "@/hooks/use-progress";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { FeedbackModal } from "@/components/platform/FeedbackModal";
 import { FeedbackSummary } from "@/components/platform/FeedbackSummary";
+import { FeedbackList } from "@/components/platform/FeedbackList";
 import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 import { getSignedVideoUrl } from "@/lib/video.functions";
@@ -600,6 +601,8 @@ function CoursePage() {
               />
             )}
           </div>
+
+          <FeedbackList courseId={course.id} />
         </div>
 
         {/* Modules */}
