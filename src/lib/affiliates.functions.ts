@@ -91,8 +91,17 @@ export const saveAffiliateMaterial = createServerFn({ method: "POST" })
 
 
 export const getAffiliateNetwork = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({ id: z.string() }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    if (data.id !== context.userId) {
+      const { data: isAdmin } = await context.supabase.rpc("has_role", {
+        _user_id: context.userId,
+        _role: "admin"
+      });
+      if (!isAdmin) throw new Error("Acesso negado.");
+    }
+
     const { data: network, error } = await supabaseAdmin
       .from("affiliates")
       .select(`

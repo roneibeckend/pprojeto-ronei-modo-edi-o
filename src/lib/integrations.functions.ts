@@ -251,11 +251,18 @@ export const saveIntegration = createServerFn({ method: "POST" })
 
 // Fetch integration history
 export const getIntegrationHistory = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     category: z.string().optional(),
     limit: z.number().default(20)
   }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin, error: roleError } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (roleError || !isAdmin) throw new Error("Acesso negado: permissão de administrador necessária.");
+
     let query = supabaseAdmin
       .from('integration_logs')
       .select('*')
