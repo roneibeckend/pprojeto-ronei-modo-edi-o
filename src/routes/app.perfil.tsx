@@ -119,12 +119,12 @@ function ProfilePage() {
     return (
       <div className="animate-in fade-in duration-500">
         <PageHeader title="Meu perfil" subtitle="Gerencie seus dados e veja seu histórico de compras." />
-        <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
+        <div className="grid gap-6 md:gap-8 lg:grid-cols-[320px_1fr] w-full">
           <aside className="space-y-6">
             <Skeleton className="h-[300px] w-full rounded-2xl" />
             <Skeleton className="h-[200px] w-full rounded-2xl" />
           </aside>
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             <Skeleton className="h-[400px] w-full rounded-2xl" />
             <Skeleton className="h-[300px] w-full rounded-2xl" />
           </div>
