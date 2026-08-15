@@ -205,15 +205,15 @@ function CoursesPage() {
           <Skeleton className="h-10 w-48" />
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-24 w-full rounded-2xl" />
           ))}
         </div>
 
         <section>
           <Skeleton className="mb-6 h-6 w-48" />
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
               <CourseCardSkeleton key={i} />
             ))}
