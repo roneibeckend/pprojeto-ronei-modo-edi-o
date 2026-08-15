@@ -161,7 +161,7 @@ function ProfilePage() {
                   <div className="text-lg font-bold text-[#ff6a00] truncate w-full">{profile?.streak || 0}</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate w-full">Dias</div>
                 </div>
-                <div className="rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center border border-white/5">
+                <div className="rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center border border-white/5 shadow-inner">
                   <div className="text-lg font-bold text-[#ff6a00] truncate w-full">{profile?.lessons_watched || 0}</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate w-full">Aulas</div>
                 </div>
