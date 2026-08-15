@@ -79,6 +79,7 @@ function AdminRootLayout() {
     { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
     { to: "/admin/materiais", label: "Materiais", icon: Library },
+    { to: "/admin/ranking", label: "Configuração Ranking", icon: Star },
   ];
 
   return (
