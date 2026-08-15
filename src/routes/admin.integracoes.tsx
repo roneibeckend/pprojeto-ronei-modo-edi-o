@@ -280,6 +280,13 @@ function IntegrationsPage() {
           >
             <Percent className="h-3.5 w-3.5" /> Ofertas
           </Button>
+          <Button 
+            variant="ghost"
+            onClick={() => { setActiveCategory('feature'); setSelectedItem(null); }}
+            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'feature' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+          >
+            <Sparkles className="h-3.5 w-3.5" /> Recursos
+          </Button>
         </div>
       </div>
 
