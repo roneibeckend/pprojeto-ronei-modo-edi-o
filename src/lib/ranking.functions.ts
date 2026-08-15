@@ -29,7 +29,7 @@ export const updateRankingSettings = createServerFn({ method: "POST" })
         status: true,
         type: "ia", // Using 'ia' as a generic type since it's required and we are storing config
         settings: data as any
-      }, { onConflict: "category,name" });
+      }, { onConflict: "category" });
     
     if (error) throw error;
     return { success: true };
