@@ -17,7 +17,7 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
       productType: z.enum(['course', 'ebook']),
       title: z.string(),
       description: z.string().optional().nullable(),
-      value: z.number(),
+      value: z.number().optional(),
     })),
     affiliateRef: z.string().optional(),
     paymentType: z.enum(['unique', 'recurring']).optional(),
@@ -29,9 +29,30 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
     console.log(`[Asaas] Ambiente: ${isTestMode ? 'SANDBOX' : 'PRODUCTION'} | URL: ${baseUrl}`);
 
     try {
-      const totalValue = data.products.reduce((acc, p) => acc + p.value, 0);
-      const mainProduct = data.products[0];
-      const titles = data.products.map(p => p.title).join(' + ');
+      // SECURITY: preços autoritativos vêm do banco, nunca do cliente.
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const pricedProducts: { productId: string; productType: 'course' | 'ebook'; title: string; value: number }[] = [];
+      for (const p of data.products) {
+        const table = p.productType === 'course' ? 'courses' : 'ebooks';
+        const { data: row, error: priceError } = await supabaseAdmin
+          .from(table)
+          .select('price, title')
+          .eq('id', p.productId)
+          .maybeSingle();
+        if (priceError || !row) throw new Error("Produto não encontrado.");
+        const price = Number((row as any).price ?? 0);
+        if (!(price > 0)) throw new Error("Produto sem preço válido para checkout.");
+        pricedProducts.push({
+          productId: p.productId,
+          productType: p.productType,
+          title: (row as any).title || p.title,
+          value: price,
+        });
+      }
+
+      const totalValue = pricedProducts.reduce((acc, p) => acc + p.value, 0);
+      const mainProduct = pricedProducts[0];
+      const titles = pricedProducts.map(p => p.title).join(' + ');
 
       const response = await fetch(`${baseUrl}/paymentLinks`, {
         method: 'POST',
