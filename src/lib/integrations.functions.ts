@@ -23,11 +23,14 @@ export const getResendIntegration = createServerFn({ method: "GET" })
     if (!data) return undefined;
 
     return {
-      ...data,
+      id: data.id,
+      name: data.name,
+      category: data.category,
       status: data.status ?? false,
       credentials: (data.credentials || {}) as Record<string, string>,
       settings: (data.settings || {}) as Record<string, string>,
-      type: data.type as 'ia' | 'payment'
+      type: data.type as 'ia' | 'payment',
+      updated_at: data.updated_at || undefined
     };
   });
 
@@ -53,7 +56,7 @@ export const saveIntegration = createServerFn({ method: "POST" })
 
     const payload = {
       name: data.name,
-      type: data.type === 'feature' ? 'ia' : data.type as 'ia' | 'payment', // fallback to ia if feature since DB enum is restricted
+      type: data.type === 'feature' ? 'ia' : data.type as 'ia' | 'payment',
       category: data.category,
       status: data.status,
       credentials: data.credentials,
