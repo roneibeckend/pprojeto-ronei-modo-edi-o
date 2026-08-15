@@ -326,7 +326,8 @@ function CoursesPage() {
                   <img 
                     src={e.cover_url || e.cover || IMG.hero} 
                     alt={e.title} 
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                    className="h-full w-full object-contain sm:object-cover transition-transform duration-500 group-hover:scale-110" 
+
                     loading="lazy" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" />
