@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { IMG } from "@/lib/platform-data";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { validatePassword } from "@/lib/password-validation";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -210,7 +211,7 @@ function LoginPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  minLength={6}
+                  minLength={8}
                   className="w-full rounded-xl border border-white/10 bg-secondary/50 px-10 py-3 outline-none focus:border-primary"
                   required
                   autoComplete={isSignup ? "new-password" : "current-password"}
