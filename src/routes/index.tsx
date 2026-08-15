@@ -317,7 +317,7 @@ function SectionTag({ children }: { children: React.ReactNode }) {
   if (isHidden) return null;
 
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--gold)] sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs sm:tracking-[0.2em]">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--gold)] sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs sm:tracking-[0.2em]">
       <Flame className="h-3 w-3 animate-flicker sm:h-3.5 sm:w-3.5" />
       {children}
     </span>
@@ -427,7 +427,7 @@ function Countdown({ hours = 72 }: { hours?: number }) {
             <span className="font-display text-2xl font-black leading-none text-gradient-fire [font-variant-numeric:tabular-nums] sm:text-3xl">
               {String(c.v).padStart(2, "0")}
             </span>
-            <span className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{c.l}</span>
+            <span className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{c.l}</span>
           </div>
           {i < cells.length - 1 && <span className="text-base font-black text-[color:var(--gold)]/40 sm:text-lg">:</span>}
         </div>
@@ -442,7 +442,7 @@ function GuaranteeSeal({ className = "" }: { className?: string }) {
       <span className="grid h-7 w-7 place-items-center rounded-full border border-dashed border-[color:var(--gold)]/60 bg-[color:var(--gold)]/10">
         <ShieldCheck className="h-3.5 w-3.5 text-[color:var(--gold)]" />
       </span>
-      <span className="text-[10px] font-black uppercase leading-tight tracking-[0.2em] text-[color:var(--gold)]">
+      <span className="text-[11px] font-black uppercase leading-tight tracking-[0.2em] text-[color:var(--gold)]">
         7 dias<br />
         <span className="text-muted-foreground">risco zero</span>
       </span>
@@ -812,7 +812,7 @@ function Hero() {
           ].map((s) => (
             <div key={s.l} className="glass gradient-border rounded-xl px-3 py-3 text-center transition hover:-translate-y-0.5">
               <div className="font-display text-xl leading-none text-gradient-fire sm:text-2xl">{s.n}</div>
-              <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-xs">{s.l}</div>
+              <div className="mt-1 text-[11px] uppercase tracking-widest text-muted-foreground sm:text-xs">{s.l}</div>
             </div>
           ))}
         </Reveal>
@@ -993,7 +993,7 @@ function AuthorSolution() {
               ].map((s) => (
                 <div key={s.l} className="glass flex flex-col items-center justify-center rounded-2xl p-3 text-center">
                   <div className="text-xl font-black text-gradient-fire sm:text-2xl">{s.n}</div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.l}</div>
+                  <div className="text-[11px] uppercase tracking-widest text-muted-foreground">{s.l}</div>
                 </div>
               ))}
               <div className="flex items-center justify-center sm:col-span-2 lg:col-span-1">
@@ -1167,11 +1167,11 @@ function ProfitCalculator() {
 
               <div className="mt-4 grid grid-cols-2 gap-2">
                 <div className="rounded-xl border border-border bg-background/40 p-3">
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Semana</div>
+                  <div className="text-[11px] uppercase tracking-widest text-muted-foreground">Semana</div>
                   <div className="mt-0.5 text-lg font-black">{fmt(profitDay * 6)}</div>
                 </div>
                 <div className="rounded-xl border border-[color:var(--gold)]/40 bg-fire/10 p-3">
-                  <div className="text-[10px] uppercase tracking-widest text-[color:var(--gold)]">Mês (26d)</div>
+                  <div className="text-[11px] uppercase tracking-widest text-[color:var(--gold)]">Mês (26d)</div>
                   <div className="mt-0.5 text-lg font-black text-gradient-fire">{fmt(profitMonth)}</div>
                 </div>
               </div>
@@ -1233,7 +1233,7 @@ function SocialProof() {
                   className="aspect-[9/16] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <span className="absolute bottom-2 left-2 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[color:var(--gold)] backdrop-blur-sm sm:text-xs">
+                <span className="absolute bottom-2 left-2 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-[color:var(--gold)] backdrop-blur-sm sm:text-xs">
                   🔥 {p.tag}
                 </span>
               </div>
@@ -1312,7 +1312,7 @@ function Modules() {
                   <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-fire text-white shadow-fire sm:h-7 sm:w-7">
                     <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--gold)]">
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-[color:var(--gold)]">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="text-xs font-semibold sm:text-sm">{title}</span>
@@ -1358,14 +1358,14 @@ function Bonuses() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="text-sm font-bold sm:text-base">{title}</h3>
-                    <span className="shrink-0 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-2 py-0.5 text-[10px] font-bold text-[color:var(--gold)]">
+                    <span className="shrink-0 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-2 py-0.5 text-[11px] font-bold text-[color:var(--gold)]">
                       {tag}
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">{desc}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
                     <span className="text-muted-foreground line-through">De {value}</span>
-                    <span className="rounded-full bg-fire px-2 py-0.5 text-[10px] font-bold text-white">GRÁTIS hoje</span>
+                    <span className="rounded-full bg-fire px-2 py-0.5 text-[11px] font-bold text-white">GRÁTIS hoje</span>
                   </div>
                 </div>
               </div>
@@ -1378,13 +1378,13 @@ function Bonuses() {
           <div className="relative overflow-hidden rounded-xl border border-[color:var(--gold)]/40 bg-gradient-to-br from-[color:var(--gold)]/10 via-transparent to-[color:var(--ember)]/10 p-4 text-center backdrop-blur">
             <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--gold)]/70 to-transparent" />
             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-muted-foreground">
+              <span className="text-[11px] font-bold uppercase tracking-[0.24em] text-muted-foreground">
                 Valor total
               </span>
               <span className="font-display text-2xl font-black text-muted-foreground/80 line-through decoration-[color:var(--ember)]/60 decoration-2 sm:text-3xl">
                 R$ 97,90
               </span>
-              <span className="rounded-full bg-fire px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-white shadow-fire">
+              <span className="rounded-full bg-fire px-2.5 py-0.5 text-[11px] font-black uppercase tracking-widest text-white shadow-fire">
                 GRÁTIS hoje
               </span>
             </div>
@@ -1569,7 +1569,7 @@ function Offer() {
 
             {/* Tag */}
             <div className="flex justify-center">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--ember)]/25 bg-[color:var(--ember)]/10 px-3.5 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[color:var(--ember)]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--ember)]/25 bg-[color:var(--ember)]/10 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-[color:var(--ember)]">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--ember)]" />
@@ -1582,9 +1582,9 @@ function Offer() {
             <div className="mt-8 text-center [font-variant-numeric:tabular-nums]">
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--ember)]" />
-                <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[color:var(--ember)]">Preço de lançamento</span>
+                <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--ember)]">Preço de lançamento</span>
               </div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
+              <div className="text-[11px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
                 De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 97,90</span> por apenas
               </div>
               <p className="mx-auto mt-2 max-w-xs text-[11px] leading-relaxed text-muted-foreground">
@@ -1600,15 +1600,15 @@ function Offer() {
               </div>
 
               <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-3 py-1">
-                <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[color:var(--gold)]">Economize 76%</span>
+                <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--gold)]">Economize 76%</span>
                 <span className="h-3 w-px bg-[color:var(--gold)]/40" />
                 <span className="text-xs font-bold text-[color:var(--gold)]">R$ 50,00 OFF</span>
               </div>
 
               <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">ou</span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">ou</span>
                 <span className="text-sm font-bold text-[color:var(--gold)]">3x de R$ 17,00</span>
-                <span className="text-[10px] text-muted-foreground">no cartão</span>
+                <span className="text-[11px] text-muted-foreground">no cartão</span>
               </div>
             </div>
 
@@ -1627,7 +1627,7 @@ function Offer() {
 
             {/* Countdown */}
             <div className="mt-7 rounded-2xl border border-[color:var(--ember)]/25 bg-[color:var(--ember)]/[0.05] p-4">
-              <div className="mb-2.5 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[color:var(--ember)]">
+              <div className="mb-2.5 flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[color:var(--ember)]">
                 <Clock className="h-3 w-3" />
                 Promoção termina em
               </div>
@@ -1652,7 +1652,7 @@ function Offer() {
             <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--gold)]/70 to-transparent" />
 
             <div className="flex justify-center lg:justify-start">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3.5 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[color:var(--gold)]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/30 bg-[color:var(--gold)]/10 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-[color:var(--gold)]">
                 <ShieldCheck className="h-3 w-3" />
                 Satisfação Garantida
               </span>
@@ -1787,7 +1787,7 @@ function FAQ() {
                   <div className="text-xs text-muted-foreground">Online • responde na hora</div>
                 </div>
               </div>
-              <div className="hidden items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:flex">
+              <div className="hidden items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[11px] uppercase tracking-widest text-muted-foreground sm:flex">
                 <Sparkles className="h-3 w-3 text-[color:var(--gold)]" /> IA
               </div>
             </div>
@@ -1953,7 +1953,7 @@ function Footer() {
         </div>
       </div>
       <div className="mx-auto mt-10 max-w-6xl border-t border-border/60 px-4 pt-6 text-center text-xs leading-relaxed text-muted-foreground sm:px-6">
-        <p className="mb-2 uppercase tracking-widest font-semibold text-[10px]">
+        <p className="mb-2 uppercase tracking-widest font-semibold text-[11px]">
           RONNEI · CNPJ 45.680.415/0001-91 · ronneivml122@gmail.com
         </p>
         <p className="mb-2 opacity-80">
