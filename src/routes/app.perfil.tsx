@@ -158,6 +158,16 @@ function ProfilePage() {
 
 
   useEffect(() => {
+    const handleProfileUpdate = (event: any) => {
+      const { avatar_url } = event.detail;
+      setProfile((prev: any) => prev ? { ...prev, avatar_url } : null);
+    };
+
+    window.addEventListener("profile-updated", handleProfileUpdate);
+    return () => window.removeEventListener("profile-updated", handleProfileUpdate);
+  }, []);
+
+  useEffect(() => {
     async function loadProfileData() {
       if (!user) return;
       
