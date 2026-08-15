@@ -6,11 +6,38 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
     handlers: {
       POST: async ({ request }) => {
         try {
-          // Security Check
+          // Security Check: Allow internal cron secret OR authenticated admin session
           const authHeader = request.headers.get("Authorization");
           const internalSecret = process.env["REPORT_INTERNAL_SECRET"];
           
-          if (!internalSecret || authHeader !== `Bearer ${internalSecret}`) {
+          let isAuthorized = false;
+          
+          // 1. Check internal secret (from pg_cron)
+          if (internalSecret && authHeader === `Bearer ${internalSecret}`) {
+            isAuthorized = true;
+          }
+          
+          // 2. Check for authenticated session (from UI preview/test)
+          if (!isAuthorized && authHeader) {
+            const token = authHeader.replace("Bearer ", "");
+            const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+            
+            if (!authError && user) {
+              // Verify if user is admin
+              const { data: roleData } = await supabaseAdmin
+                .from("user_roles")
+                .select("role")
+                .eq("user_id", user.id)
+                .eq("role", "admin")
+                .maybeSingle();
+                
+              if (roleData) {
+                isAuthorized = true;
+              }
+            }
+          }
+
+          if (!isAuthorized) {
             return new Response("Unauthorized", { status: 401 });
           }
 

@@ -90,7 +90,15 @@ function AdminRelatoriosPage() {
     e.preventDefault();
     try {
       setIsSaving(true);
-      const { error } = await supabase.from('report_recipients').upsert(editingRecipient);
+      
+      // Ensure phone_e164 is null if empty, to avoid constraint issues 
+      // although we made it nullable in DB, sending empty string might still be an issue if we had a check
+      const payload = { 
+        ...editingRecipient,
+        phone_e164: editingRecipient.phone_e164 || null 
+      };
+
+      const { error } = await supabase.from('report_recipients').upsert(payload);
       if (error) throw error;
       
       toast.success("Destinatário salvo!");
@@ -137,9 +145,13 @@ function AdminRelatoriosPage() {
 
       // Se der erro 404 na Edge Function (não implantada), tentamos o Server Route
       if (error || !data) {
+        const session = await supabase.auth.getSession();
         const response = await fetch('/api/public/daily-financial-report', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.data.session?.access_token}`
+          },
           body: JSON.stringify({ recipient_id: recipientId, test: true })
         });
         
@@ -200,9 +212,13 @@ function AdminRelatoriosPage() {
       setIsLoadingPreview(true);
       setIsPreviewOpen(true);
       
+      const session = await supabase.auth.getSession();
       const response = await fetch('/api/public/daily-financial-report', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.data.session?.access_token}`
+        },
         body: JSON.stringify({ preview: true })
       });
       

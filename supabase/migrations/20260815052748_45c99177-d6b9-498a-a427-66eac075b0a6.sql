@@ -1,0 +1,1 @@
+UPDATE public.report_settings SET enabled = true, updated_at = now() WHERE id = '00000000-0000-0000-0000-000000000000';
