@@ -50,19 +50,27 @@ function MaterialsPage() {
       return;
     }
 
-    if (fileUrl) {
+    if (file_url) {
       try {
-        // Extrair o nome do arquivo da URL pública atual
-        // Ex: https://.../platform-materials/filename.pdf -> filename.pdf
-        const urlParts = fileUrl.split('/');
-        const fileName = urlParts[urlParts.length - 1];
+        // Obter o caminho relativo se for uma URL completa do Supabase
+        let filePath = file_url;
+        if (file_url.includes('/storage/v1/object/public/')) {
+          const parts = file_url.split('/storage/v1/object/public/');
+          if (parts.length > 1) {
+            // O caminho geralmente é 'bucket-name/filename'
+            const bucketPath = parts[1];
+            // Removemos o nome do bucket do início se estivermos passando apenas o path para a função que já sabe o bucket
+            // Mas a função getMaterialDownloadUrl no servidor usa material.file_url diretamente
+            // então vamos passar o materialId para que o servidor resolva corretamente.
+          }
+        }
         
-        const { url } = await fetchDownloadUrl({ data: { filePath: fileName } });
+        const { url } = await fetchDownloadUrl({ data: { materialId } });
         window.open(url, "_blank");
         toast.success(`Download de "${title}" iniciado!`);
       } catch (err) {
         console.error("Erro ao obter link de download:", err);
-        toast.error("Erro ao acessar o arquivo. Tente novamente.");
+        toast.error("Erro ao acessar o arquivo. Tente novamente mais tarde.");
       }
       return;
     }
