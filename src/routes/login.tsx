@@ -66,6 +66,15 @@ function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
+
+    if (mode === "signup") {
+      const validation = validatePassword(password);
+      if (!validation.isValid) {
+        toast.error("Senha inválida", { description: validation.message });
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       if (mode === "signup") {
