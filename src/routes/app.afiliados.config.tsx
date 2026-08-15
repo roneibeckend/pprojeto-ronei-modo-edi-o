@@ -75,8 +75,8 @@ function AffiliateConfigPage() {
   }
 
   return (
-    <div className="max-w-2xl space-y-8 text-left">
-      <section className="glass p-6 lg:p-8 rounded-2xl border border-white/5 bg-white/[0.02]">
+    <div className="max-w-2xl space-y-8 text-left overflow-x-hidden">
+      <section className="glass p-5 sm:p-6 lg:p-8 rounded-2xl border border-white/5 bg-white/[0.02]">
         <div className="flex items-center gap-3 mb-8">
           <div className="bg-fire/20 p-2 rounded-xl">
             <CreditCard className="w-6 h-6 text-fire" />

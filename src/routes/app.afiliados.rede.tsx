@@ -31,8 +31,8 @@ function AffiliateNetworkPage() {
   }
 
   return (
-    <div className="space-y-6 text-left">
-      <div>
+    <div className="space-y-6 text-left overflow-x-hidden">
+      <div className="break-words">
         <h2 className="text-xl font-bold">Sua Rede de Indicações</h2>
         <p className="text-sm text-muted-foreground">Acompanhe os afiliados que se cadastraram através do seu link e as comissões geradas.</p>
       </div>

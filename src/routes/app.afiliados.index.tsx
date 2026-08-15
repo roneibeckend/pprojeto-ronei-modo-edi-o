@@ -54,8 +54,8 @@ function AffiliateDashboard() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="space-y-6 px-0">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (
           <div key={card.label} className="glass p-5 sm:p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
             <div className="flex items-center justify-between mb-4">

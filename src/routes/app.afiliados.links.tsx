@@ -88,9 +88,9 @@ function AffiliateLinksPage() {
   }
 
   return (
-    <div className="space-y-6 text-left">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-xl font-bold">Seus Links de Divulgação</h2>
+    <div className="space-y-6 text-left overflow-x-hidden">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <h2 className="text-xl font-bold break-words">Seus Links de Divulgação</h2>
         <div className="flex flex-col gap-3 w-full sm:w-auto">
            <div className="flex-1 min-w-0 bg-fire/5 border border-fire/20 p-3 rounded-xl flex items-center justify-between gap-3">
               <div className="min-w-0 overflow-hidden">
