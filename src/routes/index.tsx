@@ -193,35 +193,38 @@ function Reveal({
     const node = ref.current;
     if (!node) return;
 
-    // Aumentamos a margem de detecção no mobile para o conteúdo aparecer antes de entrar na tela
-    const isMobile = window.innerWidth < 768;
-    const rootMargin = isMobile ? "0px 0px 300px 0px" : "0px 0px 50px 0px";
-    const threshold = isMobile ? 0.01 : 0.1;
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            (e.target as HTMLElement).dataset.visible = "true";
-            io.unobserve(e.target);
-          }
-        }
-      },
-      { threshold, rootMargin },
-    );
-    io.observe(node);
+    // Otimização: Delay de observer para não travar a thread principal no load
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    const rootMargin = isMobile ? "0px 0px 400px 0px" : "0px 0px 100px 0px";
     
-    // Fallback: Se após 2 segundos (mobile) ou 5 segundos (desktop) não aparecer, forçamos a visibilidade
     const timeout = setTimeout(() => {
-      if (node && node.dataset.visible !== "true") {
-        node.dataset.visible = "true";
-      }
-    }, isMobile ? 1500 : 4000);
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              (e.target as HTMLElement).dataset.visible = "true";
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { threshold: 0.01, rootMargin },
+      );
+      io.observe(node);
+      
+      // Fallback
+      const forceVisible = setTimeout(() => {
+        if (node && node.dataset.visible !== "true") {
+          node.dataset.visible = "true";
+        }
+      }, 3000);
+      
+      return () => {
+        io.disconnect();
+        clearTimeout(forceVisible);
+      };
+    }, 100);
 
-    return () => {
-      io.disconnect();
-      clearTimeout(timeout);
-    };
+    return () => clearTimeout(timeout);
   }, []);
   const props: Record<string, unknown> = {
     ref: ref as React.Ref<HTMLElement>,
