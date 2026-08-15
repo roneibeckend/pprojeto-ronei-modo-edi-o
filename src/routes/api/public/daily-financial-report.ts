@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
           const authHeader = request.headers.get("Authorization");
           const internalSecret = process.env["REPORT_INTERNAL_SECRET"];
           
-          if (internalSecret && authHeader !== `Bearer ${internalSecret}`) {
+          if (!internalSecret || authHeader !== `Bearer ${internalSecret}`) {
             return new Response("Unauthorized", { status: 401 });
           }
 

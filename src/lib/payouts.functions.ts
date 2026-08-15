@@ -96,6 +96,13 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
     status: z.enum(['analyzing', 'approved', 'paid', 'rejected']),
   }).parse(data))
   .handler(async ({ data, context }) => {
+    // 0. Apenas admins podem alterar status de saques
+    const { data: isAdmin } = await supabaseAdmin.rpc('has_role', {
+      _user_id: context.userId,
+      _role: 'admin'
+    });
+    if (!isAdmin) throw new Error("Acesso negado.");
+
     // 1. Verificar se o registro existe e qual o valor/tipo
     const { data: payout, error: fetchError } = await supabaseAdmin
       .from('payout_requests')
