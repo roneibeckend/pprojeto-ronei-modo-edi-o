@@ -6,7 +6,7 @@ Do not make any visual modifications. The phrases I write are commands to unders
                                             oi
 */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type JSX, Suspense, lazy } from "react";
+import { useEffect, useRef, useState, type JSX, Suspense, lazy, memo } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
@@ -193,35 +193,38 @@ function Reveal({
     const node = ref.current;
     if (!node) return;
 
-    // Aumentamos a margem de detecção no mobile para o conteúdo aparecer antes de entrar na tela
-    const isMobile = window.innerWidth < 768;
-    const rootMargin = isMobile ? "0px 0px 300px 0px" : "0px 0px 50px 0px";
-    const threshold = isMobile ? 0.01 : 0.1;
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            (e.target as HTMLElement).dataset.visible = "true";
-            io.unobserve(e.target);
-          }
-        }
-      },
-      { threshold, rootMargin },
-    );
-    io.observe(node);
+    // Otimização: Delay de observer para não travar a thread principal no load
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    const rootMargin = isMobile ? "0px 0px 400px 0px" : "0px 0px 100px 0px";
     
-    // Fallback: Se após 2 segundos (mobile) ou 5 segundos (desktop) não aparecer, forçamos a visibilidade
     const timeout = setTimeout(() => {
-      if (node && node.dataset.visible !== "true") {
-        node.dataset.visible = "true";
-      }
-    }, isMobile ? 1500 : 4000);
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              (e.target as HTMLElement).dataset.visible = "true";
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { threshold: 0.01, rootMargin },
+      );
+      io.observe(node);
+      
+      // Fallback
+      const forceVisible = setTimeout(() => {
+        if (node && node.dataset.visible !== "true") {
+          node.dataset.visible = "true";
+        }
+      }, 3000);
+      
+      return () => {
+        io.disconnect();
+        clearTimeout(forceVisible);
+      };
+    }, 100);
 
-    return () => {
-      io.disconnect();
-      clearTimeout(timeout);
-    };
+    return () => clearTimeout(timeout);
   }, []);
   const props: Record<string, unknown> = {
     ref: ref as React.Ref<HTMLElement>,
@@ -663,6 +666,7 @@ function Nav() {
             alt="Espetinho na Veia — Do Zero aos 10k"
             width={40}
             height={40}
+            fetchPriority="high"
             className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_12px_oklch(0.72_0.20_50/0.55)]"
           />
           <span className="truncate font-display text-base tracking-wide sm:text-xl">
@@ -748,8 +752,9 @@ function Hero() {
                   <img
                     src={`https://img.youtube.com/vi/ZowrRHEwP7I/maxresdefault.jpg`}
                     alt="Ronnei — história do Espetos Grill"
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
+                    fetchPriority="high"
                     width={448}
                     height={252}
                     className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
@@ -941,13 +946,12 @@ function AuthorSolution() {
                   key={s.src}
                   src={s.src}
                   alt={s.alt}
-                  loading="lazy"
+                  loading={i === 0 ? "eager" : "lazy"}
                   decoding="async"
                   width={s.width}
                   height={s.height}
                   className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
                     i === idx ? "opacity-100" : "opacity-0"
-
                   }`}
                 />
               ))}

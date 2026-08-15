@@ -171,16 +171,31 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
-  useAffiliateTracking();
 
   useEffect(() => {
-    initPixel();
-    // Rastreia mudanças de rota SPA como PageView.
-    const unsub = router.subscribe("onResolved", () => {
+    // Rastreia mudanças de rota para a barra de progresso e trackings.
+    const unsubBefore = router.subscribe("onBeforeNavigate", () => {
+      if (typeof document !== "undefined") {
+        document.body.classList.add("loading-route");
+      }
+    });
+    
+    const unsubAfter = router.subscribe("onResolved", () => {
+      if (typeof document !== "undefined") {
+        document.body.classList.remove("loading-route");
+      }
       trackEvent("PageView");
     });
-    return () => unsub();
+
+    initPixel();
+
+    return () => {
+      unsubBefore();
+      unsubAfter();
+    };
   }, [router]);
+  
+  useAffiliateTracking();
 
   return (
     <QueryClientProvider client={queryClient}>
