@@ -129,14 +129,17 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
 
     if (!isAdmin) throw new Error("Forbidden: Admin access required");
 
-    let settings = await getEmailSettings();
+    // Fetch by from_email to handle multiple existing records (though we prefer single, let's be robust)
+    const { data: existing } = await supabaseAdmin
+      .from('email_settings')
+      .select('*')
+      .eq('from_email', data.from_email)
+      .maybeSingle();
     
-    if (!settings) {
-      const { data: newSettings, error: insertError } = await supabaseAdmin
+    if (!existing) {
+      const { error: insertError } = await supabaseAdmin
         .from('email_settings')
-        .insert([{ ...data }])
-        .select()
-        .single();
+        .insert([{ ...data }]);
       
       if (insertError) throw new Error(insertError.message);
       return { success: true };
@@ -145,7 +148,7 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin
       .from('email_settings')
       .update(data)
-      .eq('id', settings.id);
+      .eq('id', existing.id);
 
     if (error) throw new Error(error.message);
     
@@ -159,7 +162,7 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
           validation_status: result.status,
           last_validation_at: new Date().toISOString(),
           validation_error: result.error
-        }).eq('id', settings.id);
+        }).eq('from_email', data.from_email);
       }
     } catch (e) {
       console.warn("Could not auto-validate sender:", e);
