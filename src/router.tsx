@@ -20,6 +20,8 @@ export const getRouter = () => {
     scrollRestoration: true,
     defaultPreload: "intent",
     defaultPreloadStaleTime: 30000,
+    defaultPendingMs: 200, // Show pending component after 200ms
+    defaultPendingMinMs: 400, // Avoid flashing for very fast transitions
   });
 
 
