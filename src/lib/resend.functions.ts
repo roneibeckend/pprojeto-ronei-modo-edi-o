@@ -142,21 +142,29 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
         .insert([{ ...data }]);
       
       if (insertError) throw new Error(insertError.message);
-      return { success: true };
+    } else {
+      const { error } = await supabaseAdmin
+        .from('email_settings')
+        .update(data)
+        .eq('id', existing.id);
+
+      if (error) throw new Error(error.message);
     }
-
-    const { error } = await supabaseAdmin
-      .from('email_settings')
-      .update(data)
-      .eq('id', existing.id);
-
-    if (error) throw new Error(error.message);
     
+    // Auto-validate after successful save
     try {
       const { getResendConfig, validateResendSender } = await import("./resend.server");
-      const config = await getResendConfig();
-      if (config.apiKey) {
-        const result = await validateResendSender(config.apiKey, data.from_email);
+      // Use the API key from integrations if available
+      const { data: integration } = await supabaseAdmin
+        .from("integrations")
+        .select("credentials")
+        .eq("category", "resend")
+        .maybeSingle();
+        
+      const apiKey = (integration?.credentials as any)?.apiKey || process.env['RESEND_API_KEY'];
+      
+      if (apiKey) {
+        const result = await validateResendSender(apiKey, data.from_email);
         
         await supabaseAdmin.from('email_settings').update({
           validation_status: result.status,
