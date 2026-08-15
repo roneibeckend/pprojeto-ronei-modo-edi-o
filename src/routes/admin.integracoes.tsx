@@ -1818,6 +1818,21 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
                         )}
                       </div>
                     ))}
+                    {feature.category === 'interactive_previews' && (
+                      <div className="md:col-span-2 mt-4 p-4 bg-white/5 border border-white/10 rounded-xl">
+                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00] mb-3 flex items-center gap-2">
+                          <BookOpen className="h-3 w-3" /> Guia de Configuração
+                        </h4>
+                        <div className="space-y-3">
+                          {GUIDES.interactive_previews.map((step, idx) => (
+                            <div key={idx} className="flex gap-3 text-[10px] text-white/60 leading-relaxed">
+                              <span className="text-[#ff6a00] font-bold shrink-0">{idx + 1}.</span>
+                              <span>{step}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               )}
