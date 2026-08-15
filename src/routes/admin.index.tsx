@@ -109,7 +109,7 @@ function AdminDashboard() {
               <div className={`p-2 rounded-lg bg-white/5 ${card.color}`}>
                 <card.icon className="h-5 w-5" />
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-white/20">Real-time</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-white/20">Tempo Real</span>
             </div>
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">{card.value}</div>
             <div className="text-[10px] sm:text-xs text-white/40 mt-1 uppercase tracking-wider font-medium">{card.label}</div>
@@ -124,7 +124,7 @@ function AdminDashboard() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {[
-              { to: "/admin/cursos", label: "Gerenciar Catálogo de Cursos", visible: isAdmin },
+              { to: "/admin/cursos", label: "Catálogo de Conteúdo", visible: isAdmin },
               { to: "/admin/alunos", label: "Base de Alunos e Matrículas", visible: hasModule("alunos") },
               { to: "/admin/suporte", label: "Central de Suporte (Tickets)", highlight: (stats?.pendingTickets || 0) > 0, visible: hasModule("suporte") },
               { to: "/admin/receitas", label: "Central de Receitas", visible: isAdmin },
