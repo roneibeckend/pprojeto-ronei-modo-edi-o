@@ -1,9 +1,11 @@
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export type UserRole = "admin" | "manager" | "agent" | "student";
 
 export function useAuth() {
+  const queryClient = useQueryClient();
   const { data: session, isLoading: isLoadingSession } = useQuery({
     queryKey: ["auth-session"],
     staleTime: 1000 * 60 * 30, // 30 minutes
@@ -72,6 +74,18 @@ export function useAuth() {
     if (userRole === "admin") return true;
     return permissions?.some(p => p.module === moduleName) ?? false;
   };
+
+  useEffect(() => {
+    const handleProfileUpdate = (event: any) => {
+      const { avatar_url } = event.detail;
+      queryClient.setQueryData(["user-profile", session?.user?.id], (old: any) => 
+        old ? { ...old, avatar_url } : old
+      );
+    };
+
+    window.addEventListener("profile-updated", handleProfileUpdate);
+    return () => window.removeEventListener("profile-updated", handleProfileUpdate);
+  }, [session?.user?.id, queryClient]);
 
   return {
     session,
