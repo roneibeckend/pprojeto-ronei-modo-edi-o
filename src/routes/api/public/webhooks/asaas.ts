@@ -19,7 +19,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
 
         try {
           if (request.method !== 'POST') {
-             return new Response('Method Not Allowed', { status: 405 });
+             return new Response('Método não permitido', { status: 405 });
           }
 
           // Use a fresh body for validation
@@ -29,7 +29,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
           // 1. Schema Validation
           if (!body.id || !body.event || !body.payment?.id) {
             console.error('[Webhook Asaas] Invalid schema: missing id, event or payment.id');
-            return new Response('Bad Request', { status: 400 });
+            return new Response('Requisição inválida', { status: 400 });
           }
 
           eventId = body.id as string;
@@ -45,7 +45,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
 
           if (intError || !integration) {
             console.error('[Webhook Asaas] Fail closed: Integração não encontrada ou erro:', intError);
-            return new Response('Configuration Error', { status: 500 });
+            return new Response('Erro de configuração', { status: 500 });
           }
 
           const credentials = (integration.credentials || {}) as Record<string, any>;
@@ -93,7 +93,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
           const parsed = parseExternalReference(verifiedPayment.externalReference);
           if (!parsed?.productType || !parsed?.productId) {
             console.error('[Webhook Asaas] Referência externa inválida no pagamento verificado.');
-            return new Response('Invalid Reference', { status: 400 });
+            return new Response('Referência inválida', { status: 400 });
           }
 
           const { productType, productId, affiliateCode } = parsed;
@@ -106,7 +106,7 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
 
           if (!userId) {
             console.error(`[Webhook Asaas] Usuário não identificado para o pagamento ${paymentId}`);
-            return new Response('User Not Found', { status: 404 });
+            return new Response('Usuário não encontrado', { status: 404 });
           }
 
           // 7. Atomic Idempotency Claim (Postgres RPC)
