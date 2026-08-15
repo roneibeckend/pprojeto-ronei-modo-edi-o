@@ -145,9 +145,13 @@ function AdminRelatoriosPage() {
 
       // Se der erro 404 na Edge Function (não implantada), tentamos o Server Route
       if (error || !data) {
+        const session = await supabase.auth.getSession();
         const response = await fetch('/api/public/daily-financial-report', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.data.session?.access_token}`
+          },
           body: JSON.stringify({ recipient_id: recipientId, test: true })
         });
         
@@ -208,9 +212,13 @@ function AdminRelatoriosPage() {
       setIsLoadingPreview(true);
       setIsPreviewOpen(true);
       
+      const session = await supabase.auth.getSession();
       const response = await fetch('/api/public/daily-financial-report', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.data.session?.access_token}`
+        },
         body: JSON.stringify({ preview: true })
       });
       
