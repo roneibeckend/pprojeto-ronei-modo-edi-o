@@ -109,6 +109,12 @@ function LoginPage() {
       } else if (/already registered/i.test(msg) || /user already/i.test(msg)) {
         toast.error("E-mail já cadastrado", { description: "Faça login em vez de criar conta." });
         setMode("login");
+      } else if (/password/i.test(msg)) {
+        toast.error("Problema com a senha", { 
+          description: msg.includes("weak") 
+            ? "Sua senha é muito fraca. Tente misturar letras e números." 
+            : msg 
+        });
       } else {
         toast.error("Não foi possível continuar", { description: msg });
       }
