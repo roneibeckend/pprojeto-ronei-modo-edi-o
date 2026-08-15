@@ -107,5 +107,27 @@ export function useNotifications() {
     unreadCount,
     isLoading,
     markAsRead,
+    markAllAsRead: async () => {
+      if (!user || notifications.length === 0) return;
+      
+      try {
+        const rows = notifications.map(n => ({
+          user_id: user.id,
+          notification_id: n.id,
+          read_at: new Date().toISOString(),
+        }));
+
+        const { error } = await supabase
+          .from("user_notifications")
+          .upsert(rows, { onConflict: "user_id,notification_id" });
+
+        if (error) throw error;
+        queryClient.invalidateQueries({ queryKey: ["user_notifications", user?.id || "anonymous"] });
+        toast.success("Todas as notificações foram marcadas como lidas.");
+      } catch (error) {
+        console.error("Erro ao marcar todas como lidas:", error);
+        toast.error("Não foi possível limpar as notificações.");
+      }
+    },
   };
 }

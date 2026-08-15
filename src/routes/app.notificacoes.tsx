@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Bell, Check, Clock, Info, Library, Play, Clapperboard } from "lucide-react";
+import { Bell, Check, Clock, Info, Library, Play, Clapperboard, Trash2 } from "lucide-react";
 import { useNotifications } from "@/hooks/use-notifications";
 import { PageHeader } from "@/components/platform/Shell";
 import { formatDistanceToNow } from "date-fns";
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/app/notificacoes")({
 });
 
 function NotificationsPage() {
-  const { notifications, markAsRead, isLoading } = useNotifications();
+  const { notifications, markAsRead, markAllAsRead, isLoading } = useNotifications();
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -32,10 +32,25 @@ function NotificationsPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <PageHeader 
-        title="Notificações" 
-        subtitle="Fique por dentro das últimas novidades da plataforma."
-      />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <PageHeader 
+          title="Notificações" 
+          subtitle="Fique por dentro das últimas novidades da plataforma."
+        />
+        {notifications.length > 0 && (
+          <button
+            onClick={() => {
+              if (confirm("Deseja marcar todas as notificações como lidas?")) {
+                markAllAsRead();
+              }
+            }}
+            className="btn-ghost-fire flex items-center justify-center gap-2 px-4 py-2 text-sm"
+          >
+            <Trash2 className="h-4 w-4" />
+            Limpar Notificações
+          </button>
+        )}
+      </div>
 
       {isLoading ? (
         <div className="flex justify-center py-12">
