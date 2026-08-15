@@ -24,10 +24,47 @@ export const Route = createFileRoute("/app/")({
 function Dashboard() {
   const { isEnrolledInCourse, isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
   const { syncWithDatabase } = usePostPurchaseOfferStore();
+  const [showOffer, setShowOffer] = useState(false);
+  const [offerItem, setOfferItem] = useState<any>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [discountPercentage, setDiscountPercentage] = useState(15);
+  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
+  const createPaymentLink = useServerFn(createAsaasPaymentLink);
+  const { openPayment } = usePaymentModal();
 
   useEffect(() => {
     syncWithDatabase();
-  }, [syncWithDatabase]);
+
+    // Lógica para exibir oferta automática pós-cadastro
+    const checkFirstAccess = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const isFirstAccess = localStorage.getItem(`first_access_offer_${user.id}`);
+      if (!isFirstAccess) {
+        // Busca o ebook principal "Do Zero aos 10k" (id fixo ou busca por slug se disponível)
+        // Aqui buscamos o primeiro ebook disponível para ofertar
+        const { data: ebook } = await supabase
+          .from('ebooks')
+          .select('id, title, description, price, cover_url')
+          .eq('status', 'published')
+          .limit(1)
+          .maybeSingle();
+
+        if (ebook && !isEnrolledInEbook(ebook.id)) {
+          // Pequeno delay para a UI carregar
+          setTimeout(() => {
+            setShowOffer(true);
+            localStorage.setItem(`first_access_offer_${user.id}`, 'true');
+          }, 1500);
+        }
+      }
+    };
+
+    if (!isLoadingEnrollments) {
+      checkFirstAccess();
+    }
+  }, [syncWithDatabase, isLoadingEnrollments, isEnrolledInEbook]);
 
   const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
     queryKey: ["showcase-items"],
@@ -105,6 +142,16 @@ function Dashboard() {
 
   return (
     <div className="space-y-8">
+      {/* Oferta Automática Pós-Cadastro */}
+      {showOffer && (
+        <PostPurchaseOffer
+          isOpen={showOffer}
+          onClose={() => setShowOffer(false)}
+          onProceedWithOffers={(selected) => executeCheckout(selected)}
+          onProceedWithoutOffers={() => executeCheckout([])}
+          originalProductId={""}
+        />
+      )}
       {/* Showcase / Cursos */}
       <section>
         <div className="mb-6 flex items-center justify-between">
