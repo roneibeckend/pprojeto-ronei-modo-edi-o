@@ -286,7 +286,8 @@ function CoursesPage() {
                   <img 
                     src={c.cover_url || IMG.hero} 
                     alt={c.title} 
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                    className="h-full w-full object-contain sm:object-cover transition-transform duration-500 group-hover:scale-110" 
+
                     loading="lazy" 
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = IMG.hero;
