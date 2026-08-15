@@ -19,6 +19,6 @@
       "purpose": "any maskable"
     }
   ],
-  "id": "/app",
-  "scope": "/"
+  "id": "espetinho-na-veia-app",
+  "scope": "/app"
 }

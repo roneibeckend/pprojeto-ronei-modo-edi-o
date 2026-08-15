@@ -28,7 +28,8 @@ export function usePwaInstall() {
     checkStandalone();
 
     const handleBeforeInstallPrompt = (e: any) => {
-      // Previne o mini-infobar do Chrome no mobile
+      console.log('Evento beforeinstallprompt disparado');
+      // Impedir que o browser mostre o prompt automático
       e.preventDefault();
       // Guarda o evento para disparar depois
       setDeferredPrompt(e);
@@ -38,9 +39,18 @@ export function usePwaInstall() {
       const now = Date.now();
       const threeDays = 3 * 24 * 60 * 60 * 1000;
 
-      if (!lastPrompt || (now - parseInt(lastPrompt)) > threeDays) {
+      // Always show in development if not dismissed in the last 10 seconds
+      const isDev = window.location.hostname === 'localhost';
+      const waitTime = isDev ? 10000 : threeDays;
+
+      if (!lastPrompt || (now - parseInt(lastPrompt)) > waitTime) {
         // Pequeno atraso para não aparecer imediatamente
-        setTimeout(() => setIsVisible(true), 3000);
+        setTimeout(() => {
+          console.log('Exibindo banner de instalação PWA');
+          setIsVisible(true);
+        }, 3000);
+      } else {
+        console.log('Banner PWA ignorado devido a dispensa recente');
       }
     };
 
@@ -86,6 +96,7 @@ export function usePwaInstall() {
     isStandalone,
     installPwa,
     dismissPrompt,
-    canInstall: !!deferredPrompt
+    canInstall: !!deferredPrompt,
+    deferredPrompt // Exportado para depuração se necessário
   };
 }
