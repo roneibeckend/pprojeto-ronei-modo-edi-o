@@ -333,7 +333,8 @@ export function VideoPlayer({
           "w-full h-full", 
           (useNativeControls || isIntro)
             ? "object-contain bg-black" 
-            : "object-cover"
+            : "object-cover",
+          isMobileDevice && "fixed inset-0 z-[9999] bg-black"
         )}
         playsInline
         webkit-playsinline="true"
