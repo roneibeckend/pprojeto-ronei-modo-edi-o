@@ -339,9 +339,12 @@ export function VideoPlayer({
         onLoadStart={() => {
           setIsLoading(true);
         }}
-        onLoadedMetadata={() => {
+        onLoadedMetadata={(e) => {
           // Metadata is enough to try initial play for intro
+          const video = e.currentTarget;
           if (isIntro) {
+            video.muted = true;
+            video.setAttribute('muted', '');
             tryAutoplay();
           }
         }}
