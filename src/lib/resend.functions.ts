@@ -129,11 +129,11 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
 
     if (!isAdmin) throw new Error("Forbidden: Admin access required");
 
-    // Fetch by from_email to handle multiple existing records (though we prefer single, let's be robust)
+    // Always use the first record for simplicity, assuming one global config
     const { data: existing } = await supabaseAdmin
       .from('email_settings')
       .select('*')
-      .eq('from_email', data.from_email)
+      .limit(1)
       .maybeSingle();
     
     if (!existing) {
