@@ -149,7 +149,10 @@ function ProfilePage() {
                   alt={profile?.full_name} 
                   className="h-24 w-24 rounded-2xl border-4 border-[#0a0a0a] object-cover ring-1 ring-white/10"
                 />
-                <button className="absolute -bottom-2 -right-2 grid h-8 w-8 place-items-center rounded-lg bg-[#ff6a00] text-black shadow-lg transition-transform hover:scale-110">
+                <button 
+                  aria-label="Mudar avatar"
+                  className="absolute -bottom-2 -right-2 grid h-8 w-8 place-items-center rounded-lg bg-[#ff6a00] text-black shadow-lg transition-transform hover:scale-110 active:scale-95 touch-target"
+                >
                   <User className="h-4 w-4" />
                 </button>
               </div>
