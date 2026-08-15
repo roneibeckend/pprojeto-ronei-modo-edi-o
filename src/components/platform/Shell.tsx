@@ -290,7 +290,7 @@ export function Shell({ children }: { children: ReactNode }) {
             {children}
           </Suspense>
         </main>
-
+        <PwaInstallBanner />
       </div>
     </div>
   );
