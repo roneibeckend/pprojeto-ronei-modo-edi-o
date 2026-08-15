@@ -1334,7 +1334,7 @@ function Bonuses() {
   const bonuses = [
     { icon: Sparkles, title: "Artes para Divulgação", tag: "Bônus 01", value: "R$ 27,90", desc: "Artes profissionais prontas para você postar no Instagram e atrair clientes." },
     { icon: BookOpen, title: "Cardápio Editável", tag: "Bônus 02", value: "R$ 25,00", desc: "Modelo profissional de cardápio para você apenas colocar seus preços e imprimir." },
-    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", value: "R$ 15,00", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
+    { icon: Utensils, title: "Kit Churrasco Personalizado", tag: "Bônus 03", value: "Exclusivo", desc: "Concorra a um kit churrasco personalizado do ronnei ao adquirir o eBook hoje." },
     { icon: Calculator, title: "Calculadora de Venda", tag: "Bônus 04", value: "R$ 30,00", desc: "Ferramenta prática para calcular custos e garantir sua margem de lucro em cada venda." },
   ];
   return (
@@ -1344,14 +1344,15 @@ function Bonuses() {
       </div>
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1600px]">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Bônus Exclusivos</SectionTag>
+          <SectionTag>Oferta Especial</SectionTag>
           <h2 className="mt-4 max-w-3xl h-fluid-h3 font-black">
-            4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
+            Bônus e <span className="text-gradient-fire">Sorteio Exclusivo</span>
           </h2>
           <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-            Vantagens extras para acelerar seus resultados desde o primeiro dia.
+            Vantagens extras e a chance de ganhar um prêmio exclusivo para acelerar seu negócio.
           </p>
         </div>
+
         <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2">
           {bonuses.map(({ icon: Icon, title, tag, value, desc }) => (
             <div key={title} className="group relative overflow-hidden rounded-xl border border-border bg-card p-4 transition hover:border-[color:var(--gold)]/60">
