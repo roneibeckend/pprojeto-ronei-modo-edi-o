@@ -462,6 +462,7 @@ function CoursePage() {
                 ) : (
                   <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
                     <VideoPlayer
+                      key={signedIntroUrl || course.intro_video_url}
                       videoId={`intro-${course.id}`}
                       src={signedIntroUrl || course.intro_video_url}
                       isIntro={true}

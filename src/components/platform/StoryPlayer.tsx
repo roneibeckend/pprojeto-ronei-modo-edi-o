@@ -32,8 +32,13 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
 
     // Muted autoplay strategy for mobile
     video.muted = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
     setIsMuted(true);
-    video.play().catch(err => console.warn("Story initial play failed", err));
+    
+    video.play().catch(err => {
+      console.warn("Story initial play failed, will wait for gesture", err.name);
+    });
 
     return () => {
       video.removeEventListener("timeupdate", updateProgress);
@@ -49,18 +54,20 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
     if (video.muted) {
       video.muted = false;
       video.removeAttribute('muted');
+      video.volume = 1;
       setIsMuted(false);
       
-      if (video.paused) {
-        try {
-          const playPromise = video.play();
-          if (playPromise !== undefined) {
-            await playPromise;
-            setIsPlaying(true);
-          }
-        } catch (err: any) {
-          console.warn("Story play failed on unmute", err.name);
+      try {
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+          setIsPlaying(true);
         }
+      } catch (err: any) {
+        console.warn("Story play failed on unmute, retrying muted", err.name);
+        video.muted = true;
+        setIsMuted(true);
+        await video.play().catch(() => {});
       }
       return;
     }

@@ -431,6 +431,7 @@ function EbookReaderPage() {
                 ) : (
                   <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
                     <VideoPlayer
+                      key={signedIntroUrl || ebook.opening_video_url}
                       videoId={`intro-${ebook.id}`}
                       src={signedIntroUrl || ebook.opening_video_url}
                       isIntro={true}
