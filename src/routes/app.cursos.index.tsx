@@ -265,11 +265,11 @@ function CoursesPage() {
         </h2>
         
         {(ownedCourses.length > 0 || ownedEbooks.length > 0) ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 sm:gap-6">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 sm:gap-6">
             {/* Renderizar Cursos */}
             {ownedCourses.map((c) => (
               <article key={c.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30 flex flex-col h-full">
-                <div className="relative aspect-video bg-muted/20 shrink-0">
+                <div className="relative aspect-[3/4] bg-muted/20 shrink-0">
                   <img 
                     src={c.cover_url || IMG.hero} 
                     alt={c.title} 
@@ -308,7 +308,7 @@ function CoursesPage() {
             {/* Renderizar E-books */}
             {ownedEbooks.map((e) => (
               <article key={e.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30 flex flex-col h-full">
-                <div className="relative aspect-video bg-muted/20 shrink-0">
+                <div className="relative aspect-[3/4] bg-muted/20 shrink-0">
                   <img 
                     src={e.cover_url || e.cover || IMG.hero} 
                     alt={e.title} 
@@ -354,10 +354,10 @@ function CoursesPage() {
             <div className="h-px flex-1 bg-white/5" />
           </div>
           
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 sm:gap-6">
             {otherCourses.map((c) => (
-              <article key={c.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100">
-                <div className="relative aspect-video bg-muted/20 grayscale-[0.3]">
+              <article key={c.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100 flex flex-col h-full">
+                <div className="relative aspect-[3/4] bg-muted/20 grayscale-[0.3]">
                   <img 
                     src={c.cover_url || IMG.hero} 
                     alt={c.title} 
@@ -372,7 +372,7 @@ function CoursesPage() {
                   </div>
                 </div>
                 
-                <div className="p-5">
+                <div className="p-4 flex flex-col flex-1">
                   <h3 className="font-display text-lg font-bold leading-tight line-clamp-2 break-words">{c.title}</h3>
                   <p className="mt-2 line-clamp-3 text-sm text-muted-foreground break-words">{c.description}</p>
                   
@@ -387,7 +387,7 @@ function CoursesPage() {
                   <button 
                     onClick={() => handlePurchase(c, 'course')}
                     disabled={processingId === c.id}
-                    className="btn-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10 disabled:opacity-50 active:scale-[0.98] touch-action-manipulation"
+                    className="btn-fire mt-auto flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10 disabled:opacity-50 active:scale-[0.98] touch-action-manipulation"
                   >
                     {processingId === c.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-4 w-4" />}
                     {processingId === c.id ? "Processando..." : "Comprar e Liberar"}
@@ -409,10 +409,10 @@ function CoursesPage() {
             <div className="h-px flex-1 bg-white/5" />
           </div>
           
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 sm:gap-6">
             {otherEbooks.map((e) => (
-              <article key={e.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100">
-                <div className="relative aspect-video bg-muted/20 grayscale-[0.3]">
+              <article key={e.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100 flex flex-col h-full">
+                <div className="relative aspect-[3/4] bg-muted/20 grayscale-[0.3]">
                   <img 
                     src={e.cover_url || e.cover || IMG.hero} 
                     alt={e.title} 
@@ -427,7 +427,7 @@ function CoursesPage() {
                   </div>
                 </div>
                 
-                <div className="p-5">
+                <div className="p-4 flex flex-col flex-1">
                   <h3 className="font-display text-lg font-bold leading-tight line-clamp-2 break-words">{e.title}</h3>
                   <p className="mt-2 line-clamp-3 text-sm text-muted-foreground break-words">{e.description}</p>
                   
@@ -442,7 +442,7 @@ function CoursesPage() {
                   <button 
                     onClick={() => handlePurchase(e, 'ebook')}
                     disabled={processingId === e.id}
-                    className="btn-ghost-fire mt-4 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg disabled:opacity-50 active:scale-[0.98] touch-action-manipulation"
+                    className="btn-ghost-fire mt-auto flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg disabled:opacity-50 active:scale-[0.98] touch-action-manipulation"
                   >
                     {processingId === e.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-4 w-4" />}
                     {processingId === e.id ? "Processando..." : "Comprar e Liberar"}
