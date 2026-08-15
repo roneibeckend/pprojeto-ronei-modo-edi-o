@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { triggerEmailEvent } from "./resend.server";
 
 async function assertAdmin(context: any) {
   const { data: isAdmin, error } = await context.supabase.rpc("has_role", {
@@ -24,10 +25,54 @@ export const saveLiveClass = createServerFn({ method: "POST" })
   }).parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { error } = await supabaseAdmin
+    
+    const isNew = !data.id;
+    const { data: result, error } = await supabaseAdmin
       .from('live_classes')
-      .upsert(data as any);
+      .upsert(data as any)
+      .select()
+      .single();
+      
     if (error) throw new Error(error.message);
+
+    // Se for uma nova aula e estiver agendada, notifica os alunos
+    if (isNew && data.status === 'scheduled') {
+      console.log(`[LiveClass] Nova aula criada: ${data.title}. Iniciando notificações...`);
+      
+      // Busca todos os alunos ativos (profiles de usuários reais)
+      const { data: students, error: studentError } = await supabaseAdmin
+        .from('profiles')
+        .select('id, email, full_name')
+        .not('email', 'is', null);
+
+      if (!studentError && students && students.length > 0) {
+        // Envia notificações em background (não aguarda todas para não travar a UI)
+        // Usamos um bloco separado para não interferir na resposta do handler
+        (async () => {
+          try {
+            const results = await Promise.allSettled(students.map(student => 
+              triggerEmailEvent({
+                event: 'nova_aula_ao_vivo',
+                to: student.email!,
+                data: {
+                  name: student.full_name || 'Aluno',
+                  title: data.title,
+                  date: new Date(data.scheduled_at).toLocaleString('pt-BR'),
+                  description: data.description || 'Sem descrição.',
+                  link: data.link || '#'
+                },
+                idempotencyKey: `live_${result.id}_${student.id}`
+              })
+            ));
+            const sentCount = results.filter(r => r.status === 'fulfilled').length;
+            console.log(`[LiveClass] Notificações enviadas para ${sentCount}/${students.length} alunos.`);
+          } catch (notifyErr) {
+            console.error('[LiveClass] Erro no fluxo de notificações:', notifyErr);
+          }
+        })();
+      }
+    }
+
     return { success: true };
   });
 
