@@ -234,19 +234,42 @@ function ProfilePage() {
             <div className="h-24 bg-gradient-to-br from-[#ff6a00] to-[#ff9500] opacity-20" />
             <div className="relative -mt-12 flex flex-col items-center p-6 text-center">
               <div className="relative group">
-                <img 
-                  src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profile?.full_name || user?.email}&backgroundColor=e11d48`} 
-                  alt={profile?.full_name} 
-                  className="h-24 w-24 rounded-2xl border-4 border-[#0a0a0a] object-cover ring-1 ring-white/10"
-                />
-                <button 
-                  aria-label="Mudar avatar"
-                  className="absolute -bottom-2 -right-2 grid h-8 w-8 place-items-center rounded-lg bg-[#ff6a00] text-black shadow-lg transition-transform hover:scale-110 active:scale-95 touch-target"
-                >
-                  <User className="h-4 w-4" />
-                </button>
+                <div className="relative h-24 w-24 overflow-hidden rounded-2xl border-4 border-[#0a0a0a] ring-1 ring-white/10">
+                  <img 
+                    src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profile?.full_name || user?.email}&backgroundColor=e11d48`} 
+                    alt={profile?.full_name} 
+                    className="h-full w-full object-cover"
+                  />
+                  {isUploading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                      <Loader2 className="h-6 w-6 animate-spin text-[#ff6a00]" />
+                    </div>
+                  )}
+                </div>
+                
+                <label className="absolute -bottom-2 -right-2 grid h-8 w-8 place-items-center rounded-lg bg-[#ff6a00] text-black shadow-lg transition-transform hover:scale-110 active:scale-95 cursor-pointer touch-target">
+                  <Camera className="h-4 w-4" />
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    disabled={isUploading}
+                  />
+                </label>
+
+                {profile?.avatar_url && !isUploading && (
+                  <button 
+                    onClick={handleRemoveAvatar}
+                    className="absolute -top-2 -right-2 grid h-6 w-6 place-items-center rounded-full bg-red-500 text-white shadow-lg transition-transform hover:scale-110 active:scale-95 touch-target"
+                    title="Remover foto"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
               </div>
               <h3 className="mt-4 font-display text-xl font-bold truncate w-full px-2 text-white">{profile?.name || profile?.full_name || "Estudante"}</h3>
+
               <p className="text-sm text-white/40">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
               
               <div className="mt-6 grid grid-cols-2 w-full gap-2 px-2">
