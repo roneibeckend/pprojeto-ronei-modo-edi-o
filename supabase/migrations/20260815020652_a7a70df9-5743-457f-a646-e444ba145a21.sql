@@ -1,0 +1,2 @@
+CREATE POLICY "Users can insert their own tracking" ON public.progress_tracking FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update their own tracking" ON public.progress_tracking FOR UPDATE TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
