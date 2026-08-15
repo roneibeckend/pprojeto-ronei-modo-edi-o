@@ -21,13 +21,15 @@ export const validatePassword = (password: string) => {
   const hasLower = /[a-z]/.test(password);
   const hasUpper = /[A-Z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[^A-Za-z0-9]/.test(password);
 
-  const typesCount = [hasLower, hasUpper, hasNumber].filter(Boolean).length;
+  // Consider it "Medium" if it has at least 2 types (lower, upper, number, special)
+  const typesCount = [hasLower, hasUpper, hasNumber, hasSpecial].filter(Boolean).length;
 
   if (typesCount < 2) {
     return { 
       isValid: false, 
-      message: "Para sua segurança, a senha deve conter pelo menos dois destes três tipos: letras minúsculas, letras maiúsculas ou números." 
+      message: "Para sua segurança, a senha deve conter pelo menos dois tipos de caracteres (ex: letras e números, ou maiúsculas e minúsculas)." 
     };
   }
 
@@ -40,7 +42,8 @@ export const passwordSchema = z.string()
     const hasLower = /[a-z]/.test(password);
     const hasUpper = /[A-Z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
-    return [hasLower, hasUpper, hasNumber].filter(Boolean).length >= 2;
+    const hasSpecial = /[^A-Za-z0-9]/.test(password);
+    return [hasLower, hasUpper, hasNumber, hasSpecial].filter(Boolean).length >= 2;
   }, {
-    message: "A senha deve conter pelo menos dois destes três tipos: letras minúsculas, letras maiúsculas ou números."
+    message: "A senha deve conter pelo menos dois tipos de caracteres (ex: letras e números, ou maiúsculas e minúsculas)."
   });
