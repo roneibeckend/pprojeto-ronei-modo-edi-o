@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /app
+Disallow: /admin
+Disallow: /login
+Disallow: /auth
+Disallow: /api
+
+Sitemap: https://espetinhonaveia.lovable.app/sitemap.xml

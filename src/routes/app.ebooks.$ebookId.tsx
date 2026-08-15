@@ -222,23 +222,30 @@ function EbookReaderPage() {
   const isEnrolled = isEnrolledInEbook(ebook.id);
   const hasAccess = isFree || isEnrolled;
 
-  useEffect(() => {
-    if (activeChapterId && activeChapter && hasAccess) {
-      completeChapter({ 
-        chapterId: activeChapterId,
-        ebookId: ebook.id,
-        moduleId: activeChapter.module_id
-      });
+  const markedChaptersRef = useRef<Set<string>>(new Set());
 
-      // Show feedback modal if finished
-      if (!hasSubmittedFeedback) {
-        const completedCount = chapters.filter((c: any) => isChapterCompleted(c.id)).length;
-        if (completedCount >= chapters.length && chapters.length > 0) {
-          setShowFeedbackModal(true);
-        }
-      }
+  useEffect(() => {
+    if (!activeChapterId || !activeChapter || !hasAccess) return;
+    if (markedChaptersRef.current.has(activeChapterId)) return;
+    markedChaptersRef.current.add(activeChapterId);
+
+    completeChapter({
+      chapterId: activeChapterId,
+      ebookId: ebook.id,
+      moduleId: activeChapter.module_id,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeChapterId, hasAccess]);
+
+  useEffect(() => {
+    if (!hasAccess || hasSubmittedFeedback || chapters.length === 0) return;
+    const completedCount = chapters.filter((c: any) => isChapterCompleted(c.id)).length;
+    if (completedCount >= chapters.length) {
+      setShowFeedbackModal(true);
     }
-  }, [activeChapterId, activeChapter, ebook.id, completeChapter, chapters.length, isChapterCompleted, hasAccess, hasSubmittedFeedback]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chapters.length, hasAccess, hasSubmittedFeedback, activeChapterId, isChapterCompleted]);
+
 
   const handlePurchase = async () => {
     if (isOfferEnabled) {
