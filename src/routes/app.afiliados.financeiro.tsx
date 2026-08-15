@@ -51,17 +51,17 @@ function AffiliateFinancialPage() {
   return (
     <div className="space-y-6 text-left">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
+        <div className="text-center sm:text-left">
           <h2 className="text-xl font-bold">Relatório Financeiro</h2>
-          <p className="text-sm text-muted-foreground">Detalhamento de comissões e performance de vendas.</p>
+          <p className="text-sm text-muted-foreground mt-1">Detalhamento de comissões e performance.</p>
         </div>
-        <div className="flex items-center gap-2">
-           <div className="bg-white/5 border border-white/10 rounded-lg p-1 flex items-center gap-1">
+        <div className="flex items-center justify-center gap-2">
+           <div className="bg-white/5 border border-white/10 rounded-lg p-1 flex items-center gap-1 overflow-x-auto">
               {["7", "15", "30", "90"].map(days => (
                 <button
                   key={days}
                   onClick={() => setFilterDays(days)}
-                  className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase transition ${
+                  className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase transition whitespace-nowrap ${
                     filterDays === days ? "bg-fire text-white shadow-lg shadow-fire/20" : "text-white/40 hover:text-white"
                   }`}
                 >

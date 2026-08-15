@@ -55,9 +55,9 @@ function AffiliateNetworkPage() {
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="bg-white/5 text-[10px] font-bold uppercase tracking-widest text-white/40">
-              <th className="px-6 py-4">Afiliado</th>
-              <th className="px-6 py-4">Data Cadastro</th>
-              <th className="px-6 py-4">Status</th>
+              <th className="px-6 py-4 whitespace-nowrap">Afiliado</th>
+              <th className="px-6 py-4 whitespace-nowrap">Data Cadastro</th>
+              <th className="px-6 py-4 whitespace-nowrap text-center">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
@@ -68,13 +68,13 @@ function AffiliateNetworkPage() {
                     <div className="font-bold text-white">{item.profile?.name || "Sem Nome"}</div>
                     <div className="text-xs text-white/40">{item.profile?.email}</div>
                   </td>
-                  <td className="px-6 py-4 text-white/60">
+                  <td className="px-6 py-4 text-white/60 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-3 h-3" />
                       {new Date(item.created_at).toLocaleDateString('pt-BR')}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 text-center whitespace-nowrap">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
                       item.status === 'active' ? 'bg-emerald-500/10 text-emerald-500' :
                       item.status === 'blocked' ? 'bg-red-500/10 text-red-500' :

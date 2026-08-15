@@ -89,20 +89,20 @@ function AffiliateLinksPage() {
 
   return (
     <div className="space-y-6 text-left">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-xl font-bold">Seus Links de Divulgação</h2>
-        <div className="flex flex-wrap gap-2">
-           <div className="flex-1 min-w-[200px] bg-fire/5 border border-fire/20 p-3 rounded-xl flex items-center justify-between">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-fire">Link de Indicação (Afiliados)</div>
-                <div className="text-xs text-white/60 truncate max-w-[150px]">{window.location.origin}/auth?ref={user?.id?.slice(0, 8)}</div>
+        <div className="flex flex-col gap-3 w-full sm:w-auto">
+           <div className="flex-1 min-w-0 bg-fire/5 border border-fire/20 p-3 rounded-xl flex items-center justify-between gap-3">
+              <div className="min-w-0 overflow-hidden">
+                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-fire truncate">Link de Indicação (Afiliados)</div>
+                <div className="text-xs text-white/60 truncate">{window.location.origin}/auth?ref={user?.id?.slice(0, 8)}</div>
               </div>
               <button 
                 onClick={() => {
                   navigator.clipboard.writeText(`${window.location.origin}/auth?ref=${user?.id?.slice(0, 8)}`);
                   toast.success("Link de indicação copiado!");
                 }}
-                className="p-2 hover:bg-fire/10 rounded-lg text-fire transition"
+                className="p-2 hover:bg-fire/10 rounded-lg text-fire transition shrink-0"
               >
                 <Copy className="w-4 h-4" />
               </button>
@@ -110,7 +110,7 @@ function AffiliateLinksPage() {
            <button 
             onClick={() => createLinkMutation.mutate(null)}
             disabled={createLinkMutation.isPending}
-            className="btn-ghost-fire text-xs flex items-center gap-2 h-fit"
+            className="btn-ghost-fire text-xs flex items-center justify-center gap-2 h-fit w-full py-3 sm:py-2.5"
           >
             <Globe className="w-4 h-4" /> Gerar Link Global
           </button>
