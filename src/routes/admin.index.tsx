@@ -19,6 +19,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/admin/")({
+  head: () => ({ meta: [{ title: "Visão Geral · Admin" }] }),
   component: AdminDashboard,
 });
 

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/app/afiliados/")({
+  head: () => ({ meta: [{ title: "Visão Geral · Afiliado" }] }),
   component: AffiliateDashboard,
 });
 
