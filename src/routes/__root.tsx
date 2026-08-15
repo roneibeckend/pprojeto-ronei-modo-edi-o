@@ -171,6 +171,24 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const [isNavigating, setIsNavigating] = useEffect(() => {
+    // Rastreia mudanças de rota para a barra de progresso.
+    const unsubBefore = router.subscribe("onBeforeNavigate", () => {
+      if (typeof document !== "undefined") {
+        document.body.classList.add("loading-route");
+      }
+    });
+    const unsubAfter = router.subscribe("onResolved", () => {
+      if (typeof document !== "undefined") {
+        document.body.classList.remove("loading-route");
+      }
+    });
+    return () => {
+      unsubBefore();
+      unsubAfter();
+    };
+  }, [router]);
+  
   useAffiliateTracking();
 
   useEffect(() => {
