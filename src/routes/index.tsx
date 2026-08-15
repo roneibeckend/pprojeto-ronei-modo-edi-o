@@ -843,7 +843,7 @@ function Hero() {
               <div className="relative aspect-[9/16] h-[75vh] w-full max-w-[420px] mx-auto overflow-hidden rounded-xl bg-black">
                 <Suspense fallback={<div className="flex h-full items-center justify-center text-white"><Loader2 className="animate-spin" /></div>}>
                   <VideoPlayer 
-                    src="https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview"
+                    src="https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&mute=1"
                     videoId="ronnei-history"
                     isIntro={true}
                     className="w-full h-full"

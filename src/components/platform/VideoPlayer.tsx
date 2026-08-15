@@ -338,7 +338,7 @@ export function VideoPlayer({
         controls={useNativeControls}
         preload="auto"
         controlsList="nodownload noremoteplayback"
-        muted={isIntro}
+        muted={isIntro || isMobileDevice}
         autoPlay={isIntro}
         loop={isIntro}
         onLoadStart={() => {
