@@ -39,7 +39,10 @@ function LoginPage() {
     }
 
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/inicio" });
+      if (data.session) {
+        const redirectTo = urlParams.get('redirectTo');
+        navigate({ to: redirectTo || "/inicio", replace: true });
+      }
     });
   }, [navigate]);
 
@@ -56,7 +59,8 @@ function LoginPage() {
       }
       if (result.redirected) return;
       // Tokens já setados; segue pra plataforma
-      navigate({ to: "/inicio" });
+      const redirectTo = new URLSearchParams(window.location.search).get('redirectTo');
+      navigate({ to: redirectTo || "/inicio" });
     } catch (err) {
       toast.error("Erro ao conectar com Google");
       console.error(err);
@@ -89,12 +93,14 @@ function LoginPage() {
         });
         if (error) throw error;
         toast.success("Conta criada!", { description: "Você já pode acessar sua área de membros." });
-        navigate({ to: "/inicio" });
+        const redirectTo = new URLSearchParams(window.location.search).get('redirectTo');
+        navigate({ to: redirectTo || "/inicio" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Bem-vindo de volta!");
-        navigate({ to: "/inicio" });
+        const redirectTo = new URLSearchParams(window.location.search).get('redirectTo');
+        navigate({ to: redirectTo || "/inicio" });
       }
     } catch (err: any) {
       const msg = err?.message ?? "Falha ao autenticar";

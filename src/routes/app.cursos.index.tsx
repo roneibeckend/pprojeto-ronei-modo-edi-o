@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Play, Sparkles, Lock, ShoppingCart, Loader2 } from "lucide-react";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { createAsaasPaymentLink } from "@/lib/asaas.functions";
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/app/cursos/")({
 function CoursesPage() {
   const { courseEnrollments, ebookEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
   const { startedCount, finishedCount, totalProgress, isLoading: isLoadingProgress } = useProgress();
+  const navigate = useNavigate();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [offerContext, setOfferContext] = useState<{ item: any; type: 'course' | 'ebook' } | null>(null);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
@@ -40,10 +41,20 @@ function CoursesPage() {
     const buyId = params.get('buy');
     const buyType = params.get('type') as 'course' | 'ebook';
     
-    if (buyId && buyType) {
+    if (buyId && buyType && !isLoadingEnrollments) {
       const checkAndPurchase = async () => {
-        const { data, error } = await supabase.from(buyType === 'course' ? 'courses' : 'ebooks').select('*').eq('id', buyId).maybeSingle();
+        const { data, error } = await supabase
+          .from(buyType === 'course' ? 'courses' : 'ebooks')
+          .select('*')
+          .eq('id', buyId)
+          .maybeSingle();
+          
         if (data && !error) {
+          // If already enrolled, just navigate to the content
+          if (buyType === 'course' ? courseEnrollments.includes(buyId) : ebookEnrollments.includes(buyId)) {
+            navigate({ to: buyType === 'course' ? `/app/cursos/${buyId}` : `/app/ebooks/${buyId}` });
+            return;
+          }
           handlePurchase(data, buyType);
           // Clean up URL
           const newUrl = window.location.pathname;
@@ -51,10 +62,10 @@ function CoursesPage() {
         }
       };
       
-      const timer = setTimeout(checkAndPurchase, 500);
+      const timer = setTimeout(checkAndPurchase, 300);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isLoadingEnrollments, courseEnrollments, ebookEnrollments, navigate]);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
 

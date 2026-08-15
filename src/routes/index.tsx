@@ -341,8 +341,9 @@ function CTAButton({
   );
 }
 
-// Configuração do checkout — redireciona para o checkout do ebook principal.
-const CHECKOUT_URL = "/app/cursos?buy=ee1a776c-6c7d-4a88-a980-7e671ad8d4fb&type=ebook";
+// Configuração do checkout — redireciona para o checkout do ebook principal com flag de compra imediata.
+const MAIN_EBOOK_ID = "ee1a776c-6c7d-4a88-a980-7e671ad8d4fb";
+const CHECKOUT_URL = `/app/cursos?buy=${MAIN_EBOOK_ID}&type=ebook`;
 
 function CheckoutButton({ className = "", label = "Quero garantir meu acesso" }: { className?: string; label?: string }) {
   const [loading, setLoading] = useState(false);
@@ -536,8 +537,16 @@ function LeadForm() {
         </div>
         <h3 className="mt-4 text-xl font-black">Tudo certo, {name.split(" ")[0]}!</h3>
         <p className="mt-2 text-sm text-muted-foreground">
-          Seu cupom foi reservado. Agora é só garantir seu acesso abaixo.
+          Seu cupom foi reservado. Agora é só garantir seu acesso com o desconto aplicado.
         </p>
+        <div className="mt-6 flex justify-center">
+          <button
+            onClick={() => window.location.href = CHECKOUT_URL}
+            className="btn-fire shine-on-hover w-full py-4 font-bold"
+          >
+            Continuar para o Checkout <ArrowRight className="ml-2 h-4 w-4" />
+          </button>
+        </div>
       </div>
     );
   }
