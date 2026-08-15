@@ -53,12 +53,12 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
 
           if (!expectedToken) {
             console.error('[Webhook Asaas] Fail closed: webhookToken não configurado.');
-            return new Response('Forbidden', { status: 403 });
+            return new Response('Proibido', { status: 403 });
           }
 
           if (token !== expectedToken) {
             console.error('[Webhook Asaas] Token de acesso inválido.');
-            return new Response('Unauthorized', { status: 401 });
+            return new Response('Não autorizado', { status: 401 });
           }
 
           // 3. Event Filter

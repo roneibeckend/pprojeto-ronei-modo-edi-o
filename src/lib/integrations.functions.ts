@@ -123,7 +123,7 @@ export const getIntegrationHistory = createServerFn({ method: "POST" })
       _user_id: context.userId, 
       _role: 'admin' 
     });
-    if (!isAdmin) throw new Error("Forbidden");
+    if (!isAdmin) throw new Error("Proibido");
 
     return [];
   });
