@@ -2,8 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/platform/Shell";
-import { Trophy, Medal, Star, Target, TrendingUp, Loader2 } from "lucide-react";
+import { Trophy, Medal, Star, Target, TrendingUp, Loader2, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import { getRankingSettings } from "@/lib/ranking.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export const Route = createFileRoute("/app/progresso")({
   component: RankingPage,
@@ -18,15 +22,26 @@ type RankingRow = {
 };
 
 function RankingPage() {
+  const fetchSettings = useServerFn(getRankingSettings);
+
+  const { data: rankingSettings, isLoading: isLoadingSettings } = useQuery({
+    queryKey: ["ranking-settings"],
+    queryFn: () => fetchSettings()
+  });
+
   const { data: ranking, isLoading: isLoadingRanking } = useQuery({
-    queryKey: ["student-ranking"],
+    queryKey: ["student-ranking", rankingSettings],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).rpc("get_student_ranking", { p_limit: 50 });
+      const { data, error } = await (supabase as any).rpc("get_student_ranking_v2", { 
+        p_limit: 50,
+        p_start_date: rankingSettings?.isGlobal ? null : rankingSettings?.startDate,
+        p_end_date: rankingSettings?.isGlobal ? null : rankingSettings?.endDate
+      });
       if (error) throw error;
       return (data ?? []) as RankingRow[];
     },
+    enabled: !isLoadingSettings
   });
-
 
   const { data: userStats, isLoading: isLoadingStats } = useQuery({
     queryKey: ["user-stats"],
@@ -43,7 +58,7 @@ function RankingPage() {
     },
   });
 
-  if (isLoadingRanking || isLoadingStats) {
+  if (isLoadingRanking || isLoadingStats || isLoadingSettings) {
     return (
       <div className="flex h-[400px] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -53,13 +68,25 @@ function RankingPage() {
 
   const top3 = ranking?.slice(0, 3) || [];
   const others = ranking?.slice(3) || [];
+  
+  const periodText = rankingSettings?.isGlobal 
+    ? "Ranking Global" 
+    : `Ranking do Período (${rankingSettings?.startDate ? format(new Date(rankingSettings.startDate), "dd/MM/yy") : '?'} até ${rankingSettings?.endDate ? format(new Date(rankingSettings.endDate), "dd/MM/yy") : '?'})`;
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 pb-20">
-      <PageHeader 
-        title="Ranking de Alunos" 
-        subtitle="Conclua módulos e cursos rapidamente para subir no ranking e ganhar pontos!" 
-      />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <PageHeader 
+          title="Ranking de Alunos" 
+          subtitle="Conclua módulos e cursos rapidamente para subir no ranking e ganhar pontos!" 
+        />
+        {!rankingSettings?.isGlobal && (
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs font-bold uppercase tracking-widest animate-pulse">
+            <Calendar className="h-3 w-3" />
+            {periodText}
+          </div>
+        )}
+      </div>
 
       {/* User Stats Summary */}
       <div className="grid gap-4 sm:grid-cols-3">
