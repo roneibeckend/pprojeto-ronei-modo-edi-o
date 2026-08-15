@@ -245,11 +245,12 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
     if (data.lessonId) {
       const { data: lesson } = await supabaseAdmin
         .from("course_lessons")
-        .select("video_url, module:course_modules(course_id)")
+        .select("video_url, module:course_modules(course_id, course:courses(status))")
         .eq("id", data.lessonId)
         .maybeSingle();
       
-      if (!lesson || !lesson.video_url) throw new Error("Aula ou vídeo não encontrado.");
+      const courseStatus = (lesson as any)?.module?.course?.status;
+      if (!lesson || !lesson.video_url || (courseStatus === 'draft' && !(await context.supabase.rpc("has_role", { _user_id: userId, _role: "admin" })).data)) throw new Error("Aula ou vídeo não encontrado.");
       rawVideoUrl = lesson.video_url;
       targetCourseId = (lesson.module as any)?.course_id;
       preferredBucket = "course-assets";
@@ -257,11 +258,12 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
     else if (data.chapterId) {
       const { data: chapter } = await supabaseAdmin
         .from("ebook_chapters")
-        .select("video_url, ebook_id")
+        .select("video_url, ebook_id, ebook:ebooks(status)")
         .eq("id", data.chapterId)
         .maybeSingle();
       
-      if (!chapter || !chapter.video_url) throw new Error("Capítulo ou vídeo não encontrado.");
+      const ebookStatus = (chapter as any)?.ebook?.status;
+      if (!chapter || !chapter.video_url || (ebookStatus === 'draft' && !(await context.supabase.rpc("has_role", { _user_id: userId, _role: "admin" })).data)) throw new Error("Capítulo ou vídeo não encontrado.");
       rawVideoUrl = chapter.video_url;
       targetEbookId = chapter.ebook_id;
       preferredBucket = "ebook-assets";
@@ -270,20 +272,20 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
       if (data.contentType === 'course') {
         const { data: course } = await supabaseAdmin
           .from("courses")
-          .select("intro_video_url")
+          .select("intro_video_url, status")
           .eq("id", data.contentId)
           .maybeSingle();
-        if (!course || !course.intro_video_url) throw new Error("Vídeo de introdução não encontrado.");
+        if (!course || !course.intro_video_url || (course.status === 'draft' && !(await context.supabase.rpc("has_role", { _user_id: userId, _role: "admin" })).data)) throw new Error("Vídeo de introdução não encontrado.");
         rawVideoUrl = course.intro_video_url;
         targetCourseId = data.contentId;
         preferredBucket = "course-assets";
       } else if (data.contentType === 'ebook') {
         const { data: ebook } = await supabaseAdmin
           .from("ebooks")
-          .select("opening_video_url")
+          .select("opening_video_url, status")
           .eq("id", data.contentId)
           .maybeSingle();
-        if (!ebook || !ebook.opening_video_url) throw new Error("Vídeo de introdução não encontrado.");
+        if (!ebook || !ebook.opening_video_url || (ebook.status === 'draft' && !(await context.supabase.rpc("has_role", { _user_id: userId, _role: "admin" })).data)) throw new Error("Vídeo de introdução não encontrado.");
         rawVideoUrl = ebook.opening_video_url;
         targetEbookId = data.contentId;
         preferredBucket = "ebook-assets";
