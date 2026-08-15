@@ -36,6 +36,7 @@ import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminSuporteRouteImport } from './routes/admin.suporte'
 import { Route as AdminRelatoriosRouteImport } from './routes/admin.relatorios'
 import { Route as AdminReceitasRouteImport } from './routes/admin.receitas'
+import { Route as AdminRankingRouteImport } from './routes/admin.ranking'
 import { Route as AdminNotificacoesRouteImport } from './routes/admin.notificacoes'
 import { Route as AdminMateriaisRouteImport } from './routes/admin.materiais'
 import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
@@ -197,6 +198,11 @@ const AdminReceitasRoute = AdminReceitasRouteImport.update({
   path: '/receitas',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminRankingRoute = AdminRankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminNotificacoesRoute = AdminNotificacoesRouteImport.update({
   id: '/notificacoes',
   path: '/notificacoes',
@@ -344,6 +350,7 @@ export interface FileRoutesByFullPath {
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/materiais': typeof AdminMateriaisRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
+  '/admin/ranking': typeof AdminRankingRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/admin/suporte': typeof AdminSuporteRoute
@@ -396,6 +403,7 @@ export interface FileRoutesByTo {
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/materiais': typeof AdminMateriaisRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
+  '/admin/ranking': typeof AdminRankingRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/admin/suporte': typeof AdminSuporteRoute
@@ -449,6 +457,7 @@ export interface FileRoutesById {
   '/admin/integracoes': typeof AdminIntegracoesRoute
   '/admin/materiais': typeof AdminMateriaisRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
+  '/admin/ranking': typeof AdminRankingRoute
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
   '/admin/suporte': typeof AdminSuporteRoute
@@ -505,6 +514,7 @@ export interface FileRouteTypes {
     | '/admin/integracoes'
     | '/admin/materiais'
     | '/admin/notificacoes'
+    | '/admin/ranking'
     | '/admin/receitas'
     | '/admin/relatorios'
     | '/admin/suporte'
@@ -557,6 +567,7 @@ export interface FileRouteTypes {
     | '/admin/integracoes'
     | '/admin/materiais'
     | '/admin/notificacoes'
+    | '/admin/ranking'
     | '/admin/receitas'
     | '/admin/relatorios'
     | '/admin/suporte'
@@ -609,6 +620,7 @@ export interface FileRouteTypes {
     | '/admin/integracoes'
     | '/admin/materiais'
     | '/admin/notificacoes'
+    | '/admin/ranking'
     | '/admin/receitas'
     | '/admin/relatorios'
     | '/admin/suporte'
@@ -851,6 +863,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminReceitasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ranking': {
+      id: '/admin/ranking'
+      path: '/ranking'
+      fullPath: '/admin/ranking'
+      preLoaderRoute: typeof AdminRankingRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/notificacoes': {
       id: '/admin/notificacoes'
       path: '/notificacoes'
@@ -1064,6 +1083,7 @@ interface AdminRouteChildren {
   AdminIntegracoesRoute: typeof AdminIntegracoesRoute
   AdminMateriaisRoute: typeof AdminMateriaisRoute
   AdminNotificacoesRoute: typeof AdminNotificacoesRoute
+  AdminRankingRoute: typeof AdminRankingRoute
   AdminReceitasRoute: typeof AdminReceitasRoute
   AdminRelatoriosRoute: typeof AdminRelatoriosRoute
   AdminSuporteRoute: typeof AdminSuporteRoute
@@ -1082,6 +1102,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminIntegracoesRoute: AdminIntegracoesRoute,
   AdminMateriaisRoute: AdminMateriaisRoute,
   AdminNotificacoesRoute: AdminNotificacoesRoute,
+  AdminRankingRoute: AdminRankingRoute,
   AdminReceitasRoute: AdminReceitasRoute,
   AdminRelatoriosRoute: AdminRelatoriosRoute,
   AdminSuporteRoute: AdminSuporteRoute,
