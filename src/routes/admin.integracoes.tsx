@@ -885,6 +885,27 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
             </CardContent>
           </Card>
 
+          <Card className="bg-[#111] border-white/5">
+            <CardHeader>
+              <CardTitle className="text-lg font-bold uppercase flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-[#ff6a00]" /> Manual do E-mail (Resend)
+              </CardTitle>
+              <CardDescription className="text-xs text-white/40">Instruções para configurar o envio transacional.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                {GUIDES.resend.map((step, idx) => (
+                  <div key={idx} className="flex gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-xl">
+                    <div className="h-8 w-8 shrink-0 flex items-center justify-center rounded-lg bg-[#ff6a00]/10 text-[#ff6a00] font-bold text-sm border border-[#ff6a00]/20">
+                      {idx + 1}
+                    </div>
+                    <p className="text-sm text-white/80 leading-relaxed">{step}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          
           <Card className="bg-blue-500/5 border-blue-500/20">
             <CardHeader>
               <CardTitle className="text-sm font-bold flex items-center gap-2 text-blue-400 uppercase tracking-widest">
@@ -1140,14 +1161,6 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
           </div>
           <div className="flex items-center gap-2">
              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setActiveTab('guide')}
-                className="h-7 text-[9px] uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10"
-              >
-                <BookOpen className="h-3 w-3 mr-1.5" /> Manual
-              </Button>
-             <Button 
               variant="outline" 
               size="sm"
               onClick={() => setIntegration({ ...integration, status: !integration.status })}
@@ -1277,18 +1290,30 @@ function OffersIntegrationPanel() {
                 Configure o comportamento do popup de oferta pós-venda.
               </CardDescription>
             </div>
-            <div className="flex items-center gap-3 bg-black/40 p-1.5 rounded-full border border-white/5">
-              <span className={`text-[9px] font-black uppercase tracking-widest px-3 ${isEnabled ? 'text-emerald-400' : 'text-white/20'}`}>
-                {isEnabled ? 'Ativado' : 'Desativado'}
-              </span>
+            <div className="flex items-center gap-3">
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm"
-                onClick={() => saveOfferSettings({ status: !isEnabled })}
-                className={`h-7 w-12 rounded-full p-0 transition-all relative ${isEnabled ? 'bg-emerald-500/20' : 'bg-white/5'}`}
+                onClick={() => {
+                  toast.info("Manual: Defina o percentual de desconto que será aplicado a todos os produtos sugeridos no popup de upsell que aparece após uma compra bem-sucedida.");
+                }}
+                className="h-7 text-[9px] uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10"
               >
-                <div className={`absolute top-1 h-5 w-5 rounded-full transition-all duration-300 shadow-lg ${isEnabled ? 'right-1 bg-emerald-400 shadow-emerald-500/50' : 'left-1 bg-white/20'}`} />
+                <BookOpen className="h-3 w-3 mr-1.5" /> Manual
               </Button>
+              <div className="flex items-center gap-3 bg-black/40 p-1.5 rounded-full border border-white/5">
+                <span className={`text-[9px] font-black uppercase tracking-widest px-3 ${isEnabled ? 'text-emerald-400' : 'text-white/20'}`}>
+                  {isEnabled ? 'Ativado' : 'Desativado'}
+                </span>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => saveOfferSettings({ status: !isEnabled })}
+                  className={`h-7 w-12 rounded-full p-0 transition-all relative ${isEnabled ? 'bg-emerald-500/20' : 'bg-white/5'}`}
+                >
+                  <div className={`absolute top-1 h-5 w-5 rounded-full transition-all duration-300 shadow-lg ${isEnabled ? 'right-1 bg-emerald-400 shadow-emerald-500/50' : 'left-1 bg-white/20'}`} />
+                </Button>
+              </div>
             </div>
           </div>
         </CardHeader>
