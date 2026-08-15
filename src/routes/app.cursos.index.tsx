@@ -205,15 +205,15 @@ function CoursesPage() {
           <Skeleton className="h-10 w-48" />
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-24 w-full rounded-2xl" />
           ))}
         </div>
 
         <section>
           <Skeleton className="mb-6 h-6 w-48" />
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
               <CourseCardSkeleton key={i} />
             ))}
@@ -265,11 +265,11 @@ function CoursesPage() {
         </h2>
         
         {(ownedCourses.length > 0 || ownedEbooks.length > 0) ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 sm:gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {/* Renderizar Cursos */}
             {ownedCourses.map((c) => (
               <article key={c.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30 flex flex-col h-full">
-                <div className="relative aspect-[3/4] bg-muted/20 shrink-0">
+                <div className="relative aspect-video bg-muted/20 shrink-0">
                   <img 
                     src={c.cover_url || IMG.hero} 
                     alt={c.title} 
@@ -308,7 +308,7 @@ function CoursesPage() {
             {/* Renderizar E-books */}
             {ownedEbooks.map((e) => (
               <article key={e.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30 flex flex-col h-full">
-                <div className="relative aspect-[3/4] bg-muted/20 shrink-0">
+                <div className="relative aspect-video bg-muted/20 shrink-0">
                   <img 
                     src={e.cover_url || e.cover || IMG.hero} 
                     alt={e.title} 
@@ -354,10 +354,10 @@ function CoursesPage() {
             <div className="h-px flex-1 bg-white/5" />
           </div>
           
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 sm:gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {otherCourses.map((c) => (
               <article key={c.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100 flex flex-col h-full">
-                <div className="relative aspect-[3/4] bg-muted/20 grayscale-[0.3]">
+                <div className="relative aspect-video bg-muted/20 grayscale-[0.3]">
                   <img 
                     src={c.cover_url || IMG.hero} 
                     alt={c.title} 
@@ -409,10 +409,10 @@ function CoursesPage() {
             <div className="h-px flex-1 bg-white/5" />
           </div>
           
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 sm:gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {otherEbooks.map((e) => (
               <article key={e.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100 flex flex-col h-full">
-                <div className="relative aspect-[3/4] bg-muted/20 grayscale-[0.3]">
+                <div className="relative aspect-video bg-muted/20 grayscale-[0.3]">
                   <img 
                     src={e.cover_url || e.cover || IMG.hero} 
                     alt={e.title} 
