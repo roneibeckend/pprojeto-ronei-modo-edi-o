@@ -167,7 +167,7 @@ export function VideoPlayer({
     autoplayTriedRef.current = false;
     if (src && !isYouTube && !isGoogleDrive) {
       // Small delay to allow browser to settle
-      const timer = setTimeout(tryAutoplay, 800);
+      const timer = setTimeout(tryAutoplay, 300);
       return () => clearTimeout(timer);
     }
   }, [src]);
@@ -175,7 +175,6 @@ export function VideoPlayer({
   const tryAutoplay = async () => {
     const video = videoRef.current;
     if (!video || !isIntro) return;
-    if (!video.paused) return; // Already playing
     
     autoplayTriedRef.current = true;
     
@@ -190,10 +189,9 @@ export function VideoPlayer({
     console.log(`[VideoPlayer:tryAutoplay] Attempting muted play for intro video: ${videoId}`);
     
     try {
-      // For mobile compatibility, ensure we have at least metedata
+      // Force loading if needed
       if (video.readyState < 1) {
-        console.log(`[VideoPlayer:tryAutoplay] Video not ready (readyState=${video.readyState}), waiting...`);
-        return;
+        video.load();
       }
 
       // Explicitly set muted again before playing to satisfy mobile policies
@@ -207,7 +205,7 @@ export function VideoPlayer({
       }
     } catch (err: any) {
       console.warn(`[VideoPlayer:tryAutoplay] Playback rejected for: ${videoId}`, err.name);
-      // If even muted autoplay fails, we just wait for a user gesture
+      // Fallback: If even muted autoplay fails, we just wait for a user gesture
       setIsPlaying(false);
       setIsLoading(false);
     }
@@ -438,6 +436,7 @@ export function VideoPlayer({
         <div
           className={cn(
             "absolute inset-0 flex items-center justify-center bg-black/10 transition-all duration-300 z-30",
+            (isPlaying && isIntro) ? "opacity-0 invisible pointer-events-none" :
             useNativeControls
               ? (isPlaying ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible")
               : ((!isPlaying || showControls) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none")

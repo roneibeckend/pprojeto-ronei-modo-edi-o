@@ -32,12 +32,20 @@ export function StoryPlayer({ url, onClose, title }: StoryPlayerProps) {
 
     // Muted autoplay strategy for mobile
     video.muted = true;
+    video.defaultMuted = true;
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', 'true');
     setIsMuted(true);
     
     video.play().catch(err => {
       console.warn("Story initial play failed, will wait for gesture", err.name);
+      // Try again after a small delay if blocked
+      setTimeout(() => {
+        if (video.paused) {
+          video.play().catch(() => {});
+        }
+      }, 500);
     });
 
     return () => {
