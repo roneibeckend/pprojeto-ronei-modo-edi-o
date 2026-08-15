@@ -158,23 +158,23 @@ function AffiliateLayout() {
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-display font-black text-white break-words">Painel do Afiliado</h1>
-          <p className="text-muted-foreground break-words">Gerencie suas vendas e comissões.</p>
+    <div className="w-full space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 overflow-x-hidden">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-8">
+        <div className="text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl font-display font-black text-white leading-tight">Painel do Afiliado</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">Gerencie suas vendas e comissões.</p>
         </div>
-        <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/5">
-          <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Saldo Disponível</div>
-            <div className="text-xl font-display font-black text-fire">
+        
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full lg:w-auto">
+          <div className="bg-white/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 flex flex-col items-center sm:items-start">
+            <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Saldo Disponível</div>
+            <div className="text-lg sm:text-xl font-display font-black text-fire truncate w-full text-center sm:text-left">
               R$ {affiliateProfile?.balance?.toFixed(2).replace(".", ",")}
             </div>
           </div>
-          <div className="w-px h-8 bg-white/10" />
-          <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Total Ganho</div>
-            <div className="text-xl font-display font-black text-white">
+          <div className="bg-white/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 flex flex-col items-center sm:items-start">
+            <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Total Ganho</div>
+            <div className="text-lg sm:text-xl font-display font-black text-white truncate w-full text-center sm:text-left">
               R$ {affiliateProfile?.total_earnings?.toFixed(2).replace(".", ",")}
             </div>
           </div>
