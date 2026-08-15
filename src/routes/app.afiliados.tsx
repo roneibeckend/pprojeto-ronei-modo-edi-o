@@ -158,11 +158,11 @@ function AffiliateLayout() {
   ];
 
   return (
-    <div className="w-full space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 overflow-x-hidden">
+    <div className="w-full space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 overflow-x-hidden px-4 sm:px-0">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-8">
         <div className="text-center sm:text-left">
-          <h1 className="text-2xl sm:text-3xl font-display font-black text-white leading-tight">Painel do Afiliado</h1>
-          <p className="text-sm sm:text-base text-muted-foreground mt-1">Gerencie suas vendas e comissões.</p>
+          <h1 className="text-2xl sm:text-3xl font-display font-black text-white leading-tight break-words">Painel do Afiliado</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1 break-words">Gerencie suas vendas e comissões.</p>
         </div>
         
         <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full lg:w-auto">

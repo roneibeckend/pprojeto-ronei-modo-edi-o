@@ -49,8 +49,8 @@ function AffiliateFinancialPage() {
   }
 
   return (
-    <div className="space-y-6 text-left">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 text-left overflow-x-hidden">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="text-center sm:text-left">
           <h2 className="text-xl font-bold">Relatório Financeiro</h2>
           <p className="text-sm text-muted-foreground mt-1">Detalhamento de comissões e performance.</p>
