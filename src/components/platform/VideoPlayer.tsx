@@ -403,12 +403,18 @@ export function VideoPlayer({
           }
         }}
         onClick={(e) => {
-          // If native controls are on, clicking the video might interfere.
-          // We only intercept if it's our custom overlay or if native controls are off.
+          // Prevent default to avoid browser-specific tap behaviors
+          if (isMobileDevice) {
+            e.stopPropagation();
+          }
+          
           if (!useNativeControls) {
             e.stopPropagation();
             togglePlay(e);
           }
+        }}
+        onEnded={() => {
+          setIsPlaying(false);
         }}
       />
 
