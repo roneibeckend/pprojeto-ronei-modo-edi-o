@@ -62,9 +62,9 @@ function AffiliateMaterialsPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filtered?.map((material) => (
-          <div key={material.id} className="glass rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden group">
+          <div key={material.id} className="glass rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden group flex flex-col">
             <div className="aspect-video bg-white/5 relative">
               {material.thumbnail_url ? (
                 <img src={material.thumbnail_url} alt={material.title} className="w-full h-full object-cover" />
@@ -87,11 +87,11 @@ function AffiliateMaterialsPage() {
                 </a>
               </div>
             </div>
-            <div className="p-4">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-fire mb-1">{material.category}</div>
-              <h4 className="font-bold text-sm mb-1 line-clamp-1">{material.title}</h4>
+            <div className="p-4 sm:p-5 flex-1 flex flex-col min-w-0">
+              <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-fire mb-1 truncate">{material.category}</div>
+              <h4 className="font-bold text-sm mb-1 truncate leading-tight">{material.title}</h4>
               {material.description && (
-                <p className="text-xs text-muted-foreground line-clamp-2">{material.description}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed mt-auto pt-2">{material.description}</p>
               )}
             </div>
           </div>
