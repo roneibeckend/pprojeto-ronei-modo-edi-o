@@ -29,7 +29,8 @@ function AppGate() {
         
         if (error || !session) {
           if (error) console.error("Auth session error:", error);
-          navigate({ to: "/login", replace: true });
+          const currentPath = window.location.pathname + window.location.search;
+          navigate({ to: `/login?redirectTo=${encodeURIComponent(currentPath)}`, replace: true });
           return;
         }
         

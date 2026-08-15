@@ -40,10 +40,20 @@ function CoursesPage() {
     const buyId = params.get('buy');
     const buyType = params.get('type') as 'course' | 'ebook';
     
-    if (buyId && buyType) {
+    if (buyId && buyType && !isLoadingEnrollments) {
       const checkAndPurchase = async () => {
-        const { data, error } = await supabase.from(buyType === 'course' ? 'courses' : 'ebooks').select('*').eq('id', buyId).maybeSingle();
+        const { data, error } = await supabase
+          .from(buyType === 'course' ? 'courses' : 'ebooks')
+          .select('*')
+          .eq('id', buyId)
+          .maybeSingle();
+          
         if (data && !error) {
+          // If already enrolled, just navigate to the content
+          if (buyType === 'course' ? courseEnrollments.includes(buyId) : ebookEnrollments.includes(buyId)) {
+            navigate({ to: buyType === 'course' ? `/app/cursos/${buyId}` : `/app/ebooks/${buyId}` });
+            return;
+          }
           handlePurchase(data, buyType);
           // Clean up URL
           const newUrl = window.location.pathname;
@@ -51,10 +61,10 @@ function CoursesPage() {
         }
       };
       
-      const timer = setTimeout(checkAndPurchase, 500);
+      const timer = setTimeout(checkAndPurchase, 300);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isLoadingEnrollments, courseEnrollments, ebookEnrollments, navigate]);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
 
