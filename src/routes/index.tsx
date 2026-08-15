@@ -198,54 +198,45 @@ function Reveal({
     const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
     if (immediate) {
-      // Use a slightly larger delay for immediate to ensure mount-styles are settled
-      const t = setTimeout(() => {
-        if (node) node.dataset.visible = "true";
-      }, 50);
-      return () => clearTimeout(t);
+      node.dataset.visible = "true";
+      return;
     }
     
-    // Check if element is likely in initial viewport (above the fold)
-    // We add a safety margin of 200px
+    // Fallback: Check if element is likely in initial viewport
     const rect = node.getBoundingClientRect();
     const windowH = typeof window !== "undefined" ? window.innerHeight : 800;
-    if (rect.top >= 0 && rect.top < windowH + 200) {
-      const t = setTimeout(() => {
-        if (node) node.dataset.visible = "true";
-      }, 100 + (delay ? delay * 50 : 0));
-      return () => clearTimeout(t);
+    if (rect.top >= 0 && rect.top < windowH + 100) {
+      node.dataset.visible = "true";
+      return;
     }
 
     const rootMargin = isMobile ? "0px 0px 400px 0px" : "0px 0px 100px 0px";
     
-    const timeout = setTimeout(() => {
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (e.isIntersecting) {
-              (e.target as HTMLElement).dataset.visible = "true";
-              io.unobserve(e.target);
-            }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            (e.target as HTMLElement).dataset.visible = "true";
+            io.unobserve(e.target);
           }
-        },
-        { threshold: 0.01, rootMargin },
-      );
-      io.observe(node);
-      
-      const forceVisible = setTimeout(() => {
-        if (node && node.dataset.visible !== "true") {
-          node.dataset.visible = "true";
         }
-      }, 2000);
-      
-      return () => {
-        io.disconnect();
-        clearTimeout(forceVisible);
-      };
-    }, 50);
-
-    return () => clearTimeout(timeout);
-  }, [immediate, delay]);
+      },
+      { threshold: 0.01, rootMargin },
+    );
+    io.observe(node);
+    
+    // Force visible after a reasonable time if observer fails
+    const forceVisible = setTimeout(() => {
+      if (node && node.dataset.visible !== "true") {
+        node.dataset.visible = "true";
+      }
+    }, 2000);
+    
+    return () => {
+      io.disconnect();
+      clearTimeout(forceVisible);
+    };
+  }, [immediate]);
   const props: Record<string, unknown> = {
     ref: ref as React.Ref<HTMLElement>,
     className,
