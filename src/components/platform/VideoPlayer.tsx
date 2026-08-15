@@ -189,6 +189,12 @@ export function VideoPlayer({
     
     console.log(`[VideoPlayer:tryAutoplay] Attempting muted play for intro video: ${videoId}`);
     
+    // Safety check for mobile: avoid layout thrashing during autoplay
+    if (isMobileDevice) {
+      video.style.transform = 'translateZ(0)';
+      video.style.backfaceVisibility = 'hidden';
+    }
+
     try {
       // Force loading if needed
       if (video.readyState < 1) {
