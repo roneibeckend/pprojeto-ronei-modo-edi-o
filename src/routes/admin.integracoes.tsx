@@ -860,21 +860,24 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                 <Button 
                   variant="outline"
                   onClick={() => {
-                    if (!settings) {
+                    const from_name = (document.getElementById('from_name') as HTMLInputElement)?.value;
+                    const from_email = (document.getElementById('from_email') as HTMLInputElement)?.value;
+                    
+                    if (!settings && (!from_name || !from_email)) {
                       toast.error("Configure o remetente primeiro.");
                       return;
                     }
-                    if (!resendIntegration?.credentials?.apiKey && !settings.is_enabled) {
+                    if (!resendIntegration?.credentials?.apiKey && !settings?.is_enabled) {
                       toast.error("Configure a API Key do Resend antes de ativar.");
                       setActiveTab('resend');
                       return;
                     }
                     updateSettingsMutation.mutate({ 
                       data: {
-                        from_name: settings.from_name,
-                        from_email: settings.from_email,
-                        reply_to: settings.reply_to,
-                        is_enabled: !settings.is_enabled 
+                        from_name: from_name || settings?.from_name || '',
+                        from_email: from_email || settings?.from_email || '',
+                        reply_to: (document.getElementById('reply_to') as HTMLInputElement)?.value || settings?.reply_to || null,
+                        is_enabled: !settings?.is_enabled 
                       }
                     });
                   }}
