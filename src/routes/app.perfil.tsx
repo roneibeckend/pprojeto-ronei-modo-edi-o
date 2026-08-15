@@ -330,7 +330,7 @@ function Field({
 } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <label className="block group min-w-0">
-      <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 transition-colors group-focus-within:text-[#ff6a00] whitespace-nowrap overflow-hidden text-ellipsis">
+      <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 transition-colors group-focus-within:text-[#ff6a00] whitespace-nowrap overflow-hidden text-ellipsis">
         {label}
       </span>
       <div className="relative">
