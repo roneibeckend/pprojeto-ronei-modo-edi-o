@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/platform/Shell";
-import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2, Loader2 } from "lucide-react";
+import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2, Loader2, Download, Smartphone } from "lucide-react";
+import { usePwaInstall } from "@/hooks/use-pwa-install";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/app/perfil")({
 
 function ProfilePage() {
   const { user } = useAuth();
+  const { canInstall, isStandalone, installPwa } = usePwaInstall();
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [userOrders, setUserOrders] = useState<any[]>([]);
@@ -190,6 +192,34 @@ function ProfilePage() {
               </div>
             </div>
           </section>
+
+          {canInstall && !isStandalone && (
+            <section className="glass space-y-4 rounded-2xl border border-white/5 bg-white/[0.02] p-6">
+              <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">Aplicativo</h4>
+              <p className="text-xs text-white/40 leading-relaxed">
+                Instale o app oficial na sua tela inicial para acesso rápido e otimizado.
+              </p>
+              <button
+                onClick={installPwa}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#ff6a00]/30 bg-[#ff6a00]/10 py-3 text-xs font-bold uppercase tracking-widest text-[#ff6a00] transition-all hover:bg-[#ff6a00]/20 active:scale-[0.98]"
+              >
+                <Download className="h-4 w-4" />
+                Instalar Aplicativo
+              </button>
+            </section>
+          )}
+          
+          {isStandalone && (
+            <section className="glass flex items-center gap-3 rounded-2xl border border-emerald-500/10 bg-emerald-500/5 p-4">
+              <div className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-500/20 text-emerald-500">
+                <Smartphone className="h-4 w-4" />
+              </div>
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-500/70">App Instalado</div>
+                <div className="text-[10px] text-emerald-500/50">Versão nativa ativa</div>
+              </div>
+            </section>
+          )}
         </aside>
 
         {/* Main Content */}

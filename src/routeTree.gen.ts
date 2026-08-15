@@ -60,6 +60,7 @@ import { Route as ApiPublicDailyFinancialReportRouteImport } from './routes/api/
 import { Route as AdminFinanceiroSaquesRouteImport } from './routes/admin.financeiro.saques'
 import { Route as AdminAlunosStudentIdRouteImport } from './routes/admin.alunos.$studentId'
 import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
+import { Route as ApiPublicManifestWebmanifestRouteImport } from './routes/api/public/manifest.webmanifest'
 
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   id: '/termos-de-uso',
@@ -317,6 +318,12 @@ const ApiPublicWebhooksAsaasRoute = ApiPublicWebhooksAsaasRouteImport.update({
   path: '/api/public/webhooks/asaas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicManifestWebmanifestRoute =
+  ApiPublicManifestWebmanifestRouteImport.update({
+    id: '/api/public/manifest/webmanifest',
+    path: '/api/public/manifest/webmanifest',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -369,6 +376,7 @@ export interface FileRoutesByFullPath {
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/afiliados/': typeof AppAfiliadosIndexRoute
   '/app/cursos/': typeof AppCursosIndexRoute
+  '/api/public/manifest/webmanifest': typeof ApiPublicManifestWebmanifestRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
 }
 export interface FileRoutesByTo {
@@ -418,6 +426,7 @@ export interface FileRoutesByTo {
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/afiliados': typeof AppAfiliadosIndexRoute
   '/app/cursos': typeof AppCursosIndexRoute
+  '/api/public/manifest/webmanifest': typeof ApiPublicManifestWebmanifestRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
 }
 export interface FileRoutesById {
@@ -472,6 +481,7 @@ export interface FileRoutesById {
   '/app/ebooks/$ebookId': typeof AppEbooksEbookIdRoute
   '/app/afiliados/': typeof AppAfiliadosIndexRoute
   '/app/cursos/': typeof AppCursosIndexRoute
+  '/api/public/manifest/webmanifest': typeof ApiPublicManifestWebmanifestRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
 }
 export interface FileRouteTypes {
@@ -527,6 +537,7 @@ export interface FileRouteTypes {
     | '/app/ebooks/$ebookId'
     | '/app/afiliados/'
     | '/app/cursos/'
+    | '/api/public/manifest/webmanifest'
     | '/api/public/webhooks/asaas'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -576,6 +587,7 @@ export interface FileRouteTypes {
     | '/app/ebooks/$ebookId'
     | '/app/afiliados'
     | '/app/cursos'
+    | '/api/public/manifest/webmanifest'
     | '/api/public/webhooks/asaas'
   id:
     | '__root__'
@@ -629,6 +641,7 @@ export interface FileRouteTypes {
     | '/app/ebooks/$ebookId'
     | '/app/afiliados/'
     | '/app/cursos/'
+    | '/api/public/manifest/webmanifest'
     | '/api/public/webhooks/asaas'
   fileRoutesById: FileRoutesById
 }
@@ -643,6 +656,7 @@ export interface RootRouteChildren {
   TermosDeUsoRoute: typeof TermosDeUsoRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   ApiPublicDailyFinancialReportRoute: typeof ApiPublicDailyFinancialReportRoute
+  ApiPublicManifestWebmanifestRoute: typeof ApiPublicManifestWebmanifestRoute
   ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
 }
 
@@ -1005,6 +1019,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksAsaasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/manifest/webmanifest': {
+      id: '/api/public/manifest/webmanifest'
+      path: '/api/public/manifest/webmanifest'
+      fullPath: '/api/public/manifest/webmanifest'
+      preLoaderRoute: typeof ApiPublicManifestWebmanifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1155,6 +1176,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermosDeUsoRoute: TermosDeUsoRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   ApiPublicDailyFinancialReportRoute: ApiPublicDailyFinancialReportRoute,
+  ApiPublicManifestWebmanifestRoute: ApiPublicManifestWebmanifestRoute,
   ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
 }
 export const routeTree = rootRouteImport

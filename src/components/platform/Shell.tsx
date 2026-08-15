@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Bell } from "lucide-react";
 import { useNotifications } from "@/hooks/use-notifications";
+import { PwaInstallBanner } from "./PwaInstallBanner";
 import {
   Home,
   GraduationCap,
@@ -289,7 +290,7 @@ export function Shell({ children }: { children: ReactNode }) {
             {children}
           </Suspense>
         </main>
-
+        <PwaInstallBanner />
       </div>
     </div>
   );
