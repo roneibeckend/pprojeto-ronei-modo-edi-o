@@ -2,13 +2,35 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, HelpCircle } from "lucide-react";
 import { useState } from "react";
 
+const SITE_URL = "https://espetinhonaveia.lovable.app";
+
 export const Route = createFileRoute("/perguntas-frequentes")({
   head: () => ({
     meta: [
       { title: "Perguntas Frequentes — Espetinho na Veia" },
       { name: "description", content: "Tire suas dúvidas sobre o eBook Espetinho na Veia — Do Zero aos 10k: acesso, garantia, pagamento, suporte e conteúdo." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE_URL}/perguntas-frequentes` },
       { property: "og:title", content: "Perguntas Frequentes — Espetinho na Veia" },
       { property: "og:description", content: "Respostas rápidas sobre compra, acesso, garantia e conteúdo do eBook." },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Perguntas Frequentes — Espetinho na Veia" },
+      { name: "twitter:description", content: "Respostas rápidas sobre compra, acesso, garantia e conteúdo do eBook." },
+    ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/perguntas-frequentes` }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqs.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }),
+      },
     ],
   }),
   component: FAQPage,
