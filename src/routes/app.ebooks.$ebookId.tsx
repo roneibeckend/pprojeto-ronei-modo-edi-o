@@ -599,6 +599,7 @@ function EbookReaderPage() {
               </div>
             </button>
           </div>
+          <FeedbackList ebookId={ebook.id} />
         </div>
 
         {/* Sidebar Index */}
