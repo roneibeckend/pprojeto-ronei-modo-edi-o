@@ -105,7 +105,7 @@ export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
     // 1. Fetch material to identify associations
     const { data: material, error: fetchError } = await supabaseAdmin
       .from("platform_materials")
-      .select("*")
+      .select("*, course:courses(status), ebook:ebooks(status)")
       .eq("id", data.materialId)
       .maybeSingle();
 
@@ -119,7 +119,11 @@ export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
       _role: "admin"
     });
 
-    if (!isAdmin) {
+    const isAdminUser = isAdmin;
+    if (!isAdminUser) {
+      const parentStatus = (material as any).course?.status || (material as any).ebook?.status;
+      if (parentStatus === 'draft') throw new Error("Acesso negado: Conteúdo ainda não publicado.");
+
     // Check if material is assigned to a course/ebook the user is enrolled in
     const mAny = material as any;
     if (mAny.course_id) {
