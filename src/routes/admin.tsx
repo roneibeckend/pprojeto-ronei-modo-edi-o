@@ -61,10 +61,10 @@ function AdminRootLayout() {
   if (!isAdmin && !["manager", "agent", "student"].includes(role || "")) return null;
 
   const navItems = [
-    { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+    { to: "/admin", label: "Visão Geral", icon: LayoutDashboard, exact: true },
     { to: "/admin/financeiro", label: "Financeiro", icon: DollarSign, exact: true },
     { to: "/admin/financeiro/saques", label: "Gestão de Saques", icon: Wallet },
-    { to: "/admin/cursos", label: "Cursos", icon: Library },
+    { to: "/admin/cursos", label: "Catálogo", icon: Library },
     { to: "/admin/ebooks", label: "eBooks", icon: BookOpen },
     { to: "/admin/afiliados", label: "Afiliados", icon: TrendingUp },
     { to: "/admin/receitas", label: "Receitas", icon: ChefHat },

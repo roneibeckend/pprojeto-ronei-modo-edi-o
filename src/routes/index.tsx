@@ -120,7 +120,7 @@ export const Route = createFileRoute("/")({
           brand: { "@type": "Brand", name: "Espetinho na Veia" },
           author: { "@type": "Person", name: "Ronnei" },
           offers: {
-            "@type": "Offer",
+            "@type": "Oferta",
             url: `${SITE_URL}/#oferta`,
             price: "47.90",
             priceCurrency: "BRL",

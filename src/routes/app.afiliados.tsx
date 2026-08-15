@@ -149,7 +149,7 @@ function AffiliateLayout() {
   }
 
   const navItems = [
-    { label: "Dashboard", to: "/app/afiliados", icon: LayoutDashboard },
+    { label: "Visão Geral", to: "/app/afiliados", icon: LayoutDashboard },
     { label: "Links", to: "/app/afiliados/links", icon: LinkIcon },
     { label: "Materiais", to: "/app/afiliados/materiais", icon: Users },
     { label: "Financeiro", to: "/app/afiliados/financeiro", icon: Wallet },

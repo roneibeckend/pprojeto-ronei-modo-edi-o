@@ -48,7 +48,7 @@ export const toggleChapterProgress = createServerFn({ method: "POST" })
   }).parse(data))
   .handler(async ({ data }) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Unauthorized");
+    if (!user) throw new Error("Não autorizado");
 
     if (data.completed) {
       const { error } = await supabase

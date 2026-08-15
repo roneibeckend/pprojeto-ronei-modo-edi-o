@@ -38,7 +38,7 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
           }
 
           if (!isAuthorized) {
-            return new Response("Unauthorized", { status: 401 });
+            return new Response("Não autorizado", { status: 401 });
           }
 
           const { recipient_id, date, test, preview } = (await request.json().catch(() => ({}))) || {};

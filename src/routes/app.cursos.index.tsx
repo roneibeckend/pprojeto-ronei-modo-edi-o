@@ -312,7 +312,7 @@ function CoursesPage() {
                     className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl py-3 text-xs sm:text-sm font-bold bg-fire text-white shadow-lg shadow-fire/20 hover:brightness-110 transition-all active:scale-[0.98] touch-action-manipulation"
                   >
                     <Play className="h-4 w-4 fill-current" /> 
-                    Acessar curso
+                    Acessar conteúdo
                   </Link>
                 </div>
               </article>
@@ -352,7 +352,7 @@ function CoursesPage() {
           </div>
         ) : (
           <div className="glass flex flex-col items-center justify-center rounded-2xl py-20 text-center text-muted-foreground">
-            Você ainda não possui nenhum treinamento liberado.
+            Você ainda não possui nenhum conteúdo liberado.
           </div>
         )}
       </section>
@@ -362,7 +362,7 @@ function CoursesPage() {
         <section className="mb-12">
           <div className="mb-6 flex items-center gap-3">
             <h2 className="font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
-              Cursos Disponíveis
+              Conteúdo Disponível
             </h2>
             <div className="h-px flex-1 bg-white/5" />
           </div>
@@ -403,7 +403,7 @@ function CoursesPage() {
                     className="btn-fire mt-auto flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg shadow-fire/10 disabled:opacity-50 active:scale-[0.98] touch-action-manipulation"
                   >
                     {processingId === c.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-4 w-4" />}
-                    {processingId === c.id ? "Processando..." : "Comprar e Liberar"}
+                    {processingId === c.id ? "Processando..." : "Comprar acesso"}
                   </button>
                 </div>
               </article>
@@ -458,7 +458,7 @@ function CoursesPage() {
                     className="btn-ghost-fire mt-auto flex w-full items-center justify-center gap-2 py-3 text-sm font-bold shadow-lg disabled:opacity-50 active:scale-[0.98] touch-action-manipulation"
                   >
                     {processingId === e.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-4 w-4" />}
-                    {processingId === e.id ? "Processando..." : "Comprar e Liberar"}
+                    {processingId === e.id ? "Processando..." : "Comprar acesso"}
                   </button>
                 </div>
               </article>
