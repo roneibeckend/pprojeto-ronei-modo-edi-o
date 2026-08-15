@@ -313,8 +313,7 @@ function BrasaTicker() {
 }
 
 function SectionTag({ children }: { children: React.ReactNode }) {
-  const isHidden = (typeof children === "string" && (children.trim() === "" || children.trim() === "⁣"));
-
+  const isHidden = children === "\u2063" || (typeof children === "string" && children.trim() === "");
   if (isHidden) return null;
 
   return (
@@ -1335,7 +1334,7 @@ function Bonuses() {
   const bonuses = [
     { icon: Sparkles, title: "Artes para Divulgação", tag: "Bônus 01", value: "R$ 27,90", desc: "Artes profissionais prontas para você postar no Instagram e atrair clientes." },
     { icon: BookOpen, title: "Cardápio Editável", tag: "Bônus 02", value: "R$ 25,00", desc: "Modelo profissional de cardápio para você apenas colocar seus preços e imprimir." },
-    { icon: Utensils, title: "Kit Churrasco Personalizado", tag: "Bônus 03", value: "Exclusivo", desc: "Concorra a um kit churrasco personalizado do ronnei ao adquirir o eBook hoje." },
+    { icon: Award, title: "Certificado de conclusão", tag: "Bônus 03", value: "R$ 15,00", desc: "Certificado digital para validar sua formação no método Espetinho na Veia." },
     { icon: Calculator, title: "Calculadora de Venda", tag: "Bônus 04", value: "R$ 30,00", desc: "Ferramenta prática para calcular custos e garantir sua margem de lucro em cada venda." },
   ];
   return (
@@ -1345,15 +1344,14 @@ function Bonuses() {
       </div>
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 3xl:max-w-[1600px]">
         <div className="flex flex-col items-center text-center">
-          <SectionTag>Oferta Especial</SectionTag>
+          <SectionTag>Bônus Exclusivos</SectionTag>
           <h2 className="mt-4 max-w-3xl h-fluid-h3 font-black">
-            Bônus e <span className="text-gradient-fire">Sorteio Exclusivo</span>
+            4 bônus <span className="text-gradient-fire">exclusivos e gratuitos</span>
           </h2>
           <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-            Vantagens extras e a chance de ganhar um prêmio exclusivo para acelerar seu negócio.
+            Vantagens extras para acelerar seus resultados desde o primeiro dia.
           </p>
         </div>
-
         <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2">
           {bonuses.map(({ icon: Icon, title, tag, value, desc }) => (
             <div key={title} className="group relative overflow-hidden rounded-xl border border-border bg-card p-4 transition hover:border-[color:var(--gold)]/60">
@@ -1371,13 +1369,10 @@ function Bonuses() {
                   <p className="mt-1 text-xs text-muted-foreground">{desc}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
                     <span className="text-muted-foreground line-through">De {value}</span>
-                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold text-white shadow-sm ${value === "Exclusivo" ? "bg-[color:var(--gold)] shadow-[color:var(--gold)]/20" : "bg-fire shadow-fire"}`}>
-                      {value === "Exclusivo" ? "SORTEIO exclusivo" : "GRÁTIS hoje"}
-                    </span>
+                    <span className="rounded-full bg-fire px-2 py-0.5 text-[11px] font-bold text-white">GRÁTIS hoje</span>
                   </div>
                 </div>
               </div>
-
             </div>
           ))}
         </div>
