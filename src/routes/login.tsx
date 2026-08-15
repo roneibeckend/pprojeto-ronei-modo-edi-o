@@ -111,7 +111,7 @@ function LoginPage() {
             data: {
               to: email,
               template: 'boas_vindas',
-              data: { name: name || split_part(email, '@', 1) }
+              data: { name: name || email.split('@')[0] }
             }
           });
           console.log("[Auth] E-mail de boas-vindas solicitado para", email);
