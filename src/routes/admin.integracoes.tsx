@@ -1133,17 +1133,29 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
       <CardHeader className="border-b border-white/5 bg-white/[0.02]">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-lg font-bold uppercase">Credenciais API (Resend)</CardTitle>
+            <CardTitle className="text-lg font-bold uppercase flex items-center gap-2">
+              <Mail className="h-5 w-5 text-[#ff6a00]" /> Credenciais API (Resend)
+            </CardTitle>
             <CardDescription className="text-xs text-white/40">Insira sua API Key para habilitar os envios transacionais.</CardDescription>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setIntegration({ ...integration, status: !integration.status })}
-            className={`h-7 rounded-full px-4 border-none transition-all ${integration.status ? 'bg-[#ff6a00] text-black' : 'bg-white/10 text-white/40'}`}
-          >
-            {integration.status ? 'ATIVO' : 'INATIVO'}
-          </Button>
+          <div className="flex items-center gap-2">
+             <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setActiveTab('guide')}
+                className="h-7 text-[9px] uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10"
+              >
+                <BookOpen className="h-3 w-3 mr-1.5" /> Manual
+              </Button>
+             <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setIntegration({ ...integration, status: !integration.status })}
+              className={`h-7 rounded-full px-4 border-none transition-all ${integration.status ? 'bg-[#ff6a00] text-black' : 'bg-white/10 text-white/40'}`}
+            >
+              {integration.status ? 'ATIVO' : 'INATIVO'}
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="p-6 space-y-6">
