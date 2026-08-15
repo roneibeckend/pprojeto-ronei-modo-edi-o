@@ -1131,6 +1131,8 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
       }
       
       queryClient.invalidateQueries({ queryKey: ['resend_integration'] });
+      queryClient.invalidateQueries({ queryKey: ['integrations'] });
+      setOriginalIntegration(JSON.parse(JSON.stringify(integration)));
     } catch (err: any) {
       toast.error("Erro ao salvar: " + err.message);
     }
