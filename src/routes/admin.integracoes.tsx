@@ -42,7 +42,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { testIntegrationConnection, saveIntegration, getIntegrationHistory } from "@/lib/integrations.functions";
+import { testIntegrationConnection, saveIntegration, getIntegrationHistory, getResendIntegration } from "@/lib/integrations.functions";
 import { getEmailLogs, getEmailSettings, updateEmailSettings, sendEmail, validateSender } from "@/lib/resend.functions";
 import { getEmailTemplates, saveEmailTemplate, deleteEmailTemplate } from "@/lib/email-templates.functions";
 import { useServerFn } from "@tanstack/react-start";
@@ -716,11 +716,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
 
   const { data: resendIntegration, isLoading: loadingResend } = useQuery({
     queryKey: ['resend_integration'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('integrations').select('*').eq('category', 'resend').maybeSingle();
-      if (error) throw error;
-      return data as Integration;
-    }
+    queryFn: async () => await getResendIntegration()
   });
 
   const { data: logs, isLoading: loadingLogs } = useQuery({
@@ -1058,6 +1054,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
 function ResendConfigTab({ integration: initialIntegration }: { integration: Integration | undefined }) {
   const queryClient = useQueryClient();
   const [integration, setIntegration] = useState<Integration | null>(null);
+  const [originalIntegration, setOriginalIntegration] = useState<Integration | null>(null);
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<any>(null);
   
@@ -1077,6 +1074,7 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
   useEffect(() => {
     if (initialIntegration) {
       setIntegration(JSON.parse(JSON.stringify(initialIntegration)));
+      setOriginalIntegration(JSON.parse(JSON.stringify(initialIntegration)));
     } else {
       setIntegration({
         id: '' as any,
