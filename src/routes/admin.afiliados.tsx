@@ -78,12 +78,7 @@ function AdminAffiliatesPage() {
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: 'active' | 'blocked' | 'pending' }) => {
-      const { error } = await supabase
-        .from("affiliates")
-        .update({ status })
-        .eq("id", id);
-      
-      if (error) throw error;
+      await updateAffiliateStatus({ data: { id, status } });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-affiliates"] });
