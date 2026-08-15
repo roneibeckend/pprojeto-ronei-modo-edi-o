@@ -370,7 +370,7 @@ function CoursesPage() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {otherCourses.map((c) => (
               <article key={c.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100 flex flex-col h-full">
-                <div className="relative aspect-video max-h-[160px] sm:max-h-[200px] bg-muted/20 grayscale-[0.3]">
+                <div className="relative aspect-video max-h-[160px] sm:max-h-[200px] bg-muted/20 grayscale-[0.3] overflow-hidden">
                   <img 
                     src={c.cover_url || IMG.hero} 
                     alt={c.title} 
