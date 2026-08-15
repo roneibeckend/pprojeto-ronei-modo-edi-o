@@ -289,16 +289,16 @@ function ProfilePage() {
                   <tbody className="divide-y divide-white/5">
                     {userOrders.map((order) => (
                       <tr key={order.id} className="transition-colors hover:bg-white/[0.02]">
-                        <td className="px-6 py-4 font-mono font-medium text-[#ff6a00]">{order.id}</td>
-                        <td className="px-6 py-4 text-white/60">{order.date}</td>
-                        <td className="px-6 py-4 font-medium">{order.product}</td>
-                        <td className="hidden md:table-cell px-6 py-4">
+                        <td className="px-6 py-4 font-mono font-medium text-[#ff6a00] truncate max-w-[120px]">{order.id}</td>
+                        <td className="px-6 py-4 text-white/60 whitespace-nowrap">{order.date}</td>
+                        <td className="px-6 py-4 font-medium truncate max-w-[200px]">{order.product}</td>
+                        <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
                           <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-500">
                             <CheckCircle2 className="h-3 w-3" />
                             {order.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-right font-bold text-white">{order.value}</td>
+                        <td className="px-6 py-4 text-right font-bold text-white whitespace-nowrap">{order.value}</td>
                       </tr>
                     ))}
                   </tbody>
