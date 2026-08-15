@@ -161,7 +161,7 @@ export function VideoPlayer({
 
 
   // Intro videos: try a muted autoplay once the media is ready.
-  // If the browser blocks it (mobile policies), fall back to tap-to-play.
+  // If the browser blocks it (mobile/desktop policies), fall back to tap-to-play.
   const autoplayTriedRef = useRef(false);
   useEffect(() => {
     autoplayTriedRef.current = false;
@@ -178,33 +178,28 @@ export function VideoPlayer({
     
     autoplayTriedRef.current = true;
     
-    // Critical: Mobile autoplay MUST be muted.
+    // Critical: Mobile/Modern Desktop autoplay MUST be muted to start without user interaction.
     video.muted = true;
     video.defaultMuted = true;
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', 'true');
-    video.setAttribute('x5-playsinline', 'true'); // Support for some Android browsers
+    video.setAttribute('x5-playsinline', 'true');
     setIsMuted(true);
     
     console.log(`[VideoPlayer:tryAutoplay] Attempting muted play for intro video: ${videoId}`);
     
-    // Safety check for mobile: avoid layout thrashing during autoplay
     if (isMobileDevice) {
       video.style.transform = 'translateZ(0)';
       video.style.backfaceVisibility = 'hidden';
     }
 
     try {
-      // Force loading if needed
+      // Ensure source is ready
       if (video.readyState < 1) {
         video.load();
       }
 
-      // Explicitly set muted again before playing to satisfy mobile policies
-      video.muted = true;
-      video.setAttribute('muted', '');
-      
       const p = video.play();
       if (p !== undefined) {
         await p;
@@ -214,13 +209,13 @@ export function VideoPlayer({
       }
     } catch (err: any) {
       console.warn(`[VideoPlayer:tryAutoplay] Playback rejected for: ${videoId}`, err.name);
-      // Fallback: If even muted autoplay fails, we just wait for a user gesture
       setIsPlaying(false);
       setIsLoading(false);
+      // NotAllowedError is normal when autoplay is blocked; user interaction will be required.
     }
   };
 
-  const togglePlay = (e?: React.MouseEvent | React.TouchEvent) => {
+  const togglePlay = async (e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
       e.stopPropagation();
       e.preventDefault();
@@ -230,36 +225,29 @@ export function VideoPlayer({
     if (!video) return;
 
     if (video.paused) {
-      // Critical for mobile: call play() synchronously inside the user gesture.
-      // Reset state for a fresh attempt
-      video.removeAttribute('muted');
+      // Reset muted states for user-initiated playback
       video.muted = false;
       video.volume = 1;
       setIsMuted(false);
+      video.removeAttribute('muted');
       
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            console.log(`[VideoPlayer:togglePlay] Success`);
-            setIsPlaying(true);
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            console.warn('[VideoPlayer:togglePlay] Play failed, retrying muted:', err.name);
-            // Fallback: Try playing muted if unmuted is rejected (browser policy)
-            video.muted = true;
-            setIsMuted(true);
-            video.play()
-              .then(() => {
-                setIsPlaying(true);
-                setIsLoading(false);
-              })
-              .catch((err2) => {
-                console.error('[VideoPlayer:togglePlay] Muted retry also failed:', err2.name);
-                setIsPlaying(false);
-              });
-          });
+      try {
+        await video.play();
+        console.log(`[VideoPlayer:togglePlay] Success`);
+        setIsPlaying(true);
+        setIsLoading(false);
+      } catch (err: any) {
+        console.warn('[VideoPlayer:togglePlay] Play failed, trying muted fallback:', err.name);
+        video.muted = true;
+        setIsMuted(true);
+        try {
+          await video.play();
+          setIsPlaying(true);
+          setIsLoading(false);
+        } catch (err2) {
+          console.error('[VideoPlayer:togglePlay] Muted fallback also failed:', err2);
+          setIsPlaying(false);
+        }
       }
     } else {
       video.pause();
@@ -345,10 +333,10 @@ export function VideoPlayer({
         webkit-playsinline="true"
         x5-playsinline="true"
         controls={useNativeControls}
-        preload="auto"
+        preload="metadata"
         controlsList="nodownload noremoteplayback"
-        muted={isIntro || isMobileDevice}
-        autoPlay={isIntro || isMobileDevice}
+        muted={isIntro}
+        autoPlay={isIntro}
         loop={isIntro}
         onLoadStart={() => {
           setIsLoading(true);
@@ -502,11 +490,19 @@ export function VideoPlayer({
       {!useNativeControls && showControls && (
         <div className="absolute top-4 right-4 flex flex-col items-center gap-3 z-40">
             <button 
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation();
                 if(videoRef.current) {
-                  videoRef.current.muted = !isMuted;
-                  setIsMuted(!isMuted);
+                  const newMuted = !videoRef.current.muted;
+                  videoRef.current.muted = newMuted;
+                  setIsMuted(newMuted);
+                  if (!newMuted && videoRef.current.volume === 0) {
+                    videoRef.current.volume = 1;
+                  }
+                  // If unmuting while paused, try to play
+                  if (!newMuted && videoRef.current.paused) {
+                    try { await videoRef.current.play(); setIsPlaying(true); } catch(e) {}
+                  }
                 }
                 handleInteraction();
               }}
