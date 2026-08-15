@@ -37,7 +37,8 @@ export const updateRankingSettings = createServerFn({ method: "POST" })
     // though the user is an admin and the policy should allow it.
     // However, the policy "Admins can manage integrations" uses has_role(auth.uid(), 'admin')
     // which requires the auth session to be correctly passed to the database.
-    const { error } = await context.supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
       .from("integrations")
       .upsert({
         category: "ranking_settings",
