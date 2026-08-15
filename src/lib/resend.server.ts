@@ -1,6 +1,11 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 export async function getResendConfig() {
+  const { data: settings } = await supabaseAdmin
+    .from("email_settings")
+    .select("*")
+    .maybeSingle();
+
   const { data: integration, error } = await supabaseAdmin
     .from("integrations")
     .select("*")
@@ -13,15 +18,14 @@ export async function getResendConfig() {
     if (envApiKey) {
       return {
         apiKey: envApiKey,
-        fromEmail: process.env['RESEND_FROM_EMAIL'] || 'onboarding@resend.dev',
-        fromName: process.env['RESEND_FROM_NAME'] || 'Plataforma'
+        fromEmail: settings?.from_email || process.env['RESEND_FROM_EMAIL'] || 'onboarding@resend.dev',
+        fromName: settings?.from_name || process.env['RESEND_FROM_NAME'] || 'Plataforma'
       };
     }
     throw new Error("Integração com Resend não está configurada ou ativa.");
   }
 
   const credentials = (integration.credentials || {}) as Record<string, string>;
-  const settings = (integration.settings || {}) as Record<string, any>;
   const apiKey = credentials.apiKey;
 
   if (!apiKey) {
@@ -30,8 +34,8 @@ export async function getResendConfig() {
 
   return {
     apiKey,
-    fromEmail: settings.fromEmail || 'onboarding@resend.dev',
-    fromName: settings.fromName || 'Plataforma'
+    fromEmail: settings?.from_email || (integration.settings as any)?.fromEmail || 'onboarding@resend.dev',
+    fromName: settings?.from_name || (integration.settings as any)?.fromName || 'Plataforma'
   };
 }
 

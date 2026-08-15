@@ -839,14 +839,20 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                 </Button>
                 <Button 
                   variant="outline"
-                  onClick={() => settings && updateSettingsMutation.mutate({ 
-                    data: {
-                      from_name: settings.from_name,
-                      from_email: settings.from_email,
-                      reply_to: settings.reply_to,
-                      is_enabled: !settings?.is_enabled 
+                  onClick={() => {
+                    if (!settings) {
+                      toast.error("Configure o remetente primeiro.");
+                      return;
                     }
-                  })}
+                    updateSettingsMutation.mutate({ 
+                      data: {
+                        from_name: settings.from_name,
+                        from_email: settings.from_email,
+                        reply_to: settings.reply_to,
+                        is_enabled: !settings.is_enabled 
+                      }
+                    });
+                  }}
                   className="bg-white/5 border-white/10 hover:bg-white/10 font-bold uppercase tracking-widest text-[10px] h-10 px-6"
                 >
                   {settings?.is_enabled ? 'Desativar Envio' : 'Ativar Envio'}
