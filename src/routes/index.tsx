@@ -904,7 +904,7 @@ function Pain() {
     { icon: Heart, title: "Medo de investir", desc: "Trava por não ter um método claro passo a passo." },
   ];
   return (
-    <section className="relative py-14 sm:py-20">
+    <section className="relative py-14 sm:py-20 bg-card/10">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionTag>O problema</SectionTag>
