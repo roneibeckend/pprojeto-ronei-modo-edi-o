@@ -78,7 +78,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
   {
     title: "Gestão",
     items: [
-      { to: "/admin", label: "Painel Admin", icon: Shield, badge: "Gestão" },
+      { to: "/admin", label: "Painel Admin", icon: Shield, badge: "Gestão", module: "admin_only" },
       { to: "/admin/usuarios", label: "Equipe", icon: User, module: "admin_only" },
       { to: "/admin/alunos", label: "Alunos", icon: GraduationCap, module: "alunos" },
       { to: "/admin/cursos", label: "Cursos", icon: GraduationCap, module: "conteudo" },
@@ -161,20 +161,7 @@ export function Shell({ children }: { children: ReactNode }) {
             return hasModule(item.module);
           });
 
-          // Se for o grupo "Gestão" e o usuário for um aluno comum, 
-          // mostra apenas o item "Painel Central" (que redireciona para o admin mas deve se comportar como solicitado)
-          // Na verdade, o requisito diz: "Se o usuário for um aluno comum, o clique em 'GESTAO' deve levar apenas ao 'painel central'."
-          // E "Os menus 'equipe', 'alunos', 'cursos', 'e-books', 'suporte', 'afiliados' devem ser ocultos para usuários com perfil de aluno comum."
-          
           let displayItems = visibleItems;
-          if (group.title === "Gestão" && role === "student") {
-            // Para alunos, mantemos apenas o primeiro item (Painel Central) e mudamos o label se necessário
-            displayItems = visibleItems.filter(item => item.to === "/admin").map(item => ({
-              ...item,
-              label: "Painel Central",
-              badge: undefined // Remove badge Admin para alunos
-            }));
-          }
 
           if (displayItems.length === 0) return null;
 
