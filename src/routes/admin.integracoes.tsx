@@ -804,24 +804,42 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome do Remetente</Label>
                   <Input 
-                    defaultValue={settings?.from_name}
+                    value={settings?.from_name || ''}
                     id="from_name"
+                    onChange={(e) => {
+                      queryClient.setQueryData(['email_settings'], (old: any) => ({
+                        ...old,
+                        from_name: e.target.value
+                      }));
+                    }}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail do Remetente</Label>
                   <Input 
-                    defaultValue={settings?.from_email}
+                    value={settings?.from_email || ''}
                     id="from_email"
+                    onChange={(e) => {
+                      queryClient.setQueryData(['email_settings'], (old: any) => ({
+                        ...old,
+                        from_email: e.target.value
+                      }));
+                    }}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail de Resposta (Reply-To)</Label>
                   <Input 
-                    defaultValue={settings?.reply_to || ""}
+                    value={settings?.reply_to || ""}
                     id="reply_to"
+                    onChange={(e) => {
+                      queryClient.setQueryData(['email_settings'], (old: any) => ({
+                        ...old,
+                        reply_to: e.target.value
+                      }));
+                    }}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
@@ -1210,7 +1228,20 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
           )}
         </div>
       </CardContent>
-      <CardFooter className="bg-white/[0.01] border-t border-white/5 p-4 flex justify-end">
+      <CardFooter className="bg-white/[0.01] border-t border-white/5 p-4 flex justify-between">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => {
+            if (originalIntegration) {
+              setIntegration(JSON.parse(JSON.stringify(originalIntegration)));
+              toast.info("Configurações restauradas.");
+            }
+          }} 
+          className="text-[9px] uppercase tracking-widest hover:bg-white/5"
+        >
+          <RotateCcw className="h-3 w-3 mr-1.5" /> Descartar
+        </Button>
         <Button onClick={handleSave} className="bg-[#ff6a00] text-black hover:bg-[#ff6a00]/90 text-[10px] font-bold uppercase tracking-widest h-9 px-6">
           <Save className="h-3.5 w-3.5 mr-2" /> Salvar API Key
         </Button>
