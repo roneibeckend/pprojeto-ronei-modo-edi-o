@@ -666,6 +666,7 @@ function Nav() {
             alt="Espetinho na Veia — Do Zero aos 10k"
             width={40}
             height={40}
+            fetchPriority="high"
             className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_12px_oklch(0.72_0.20_50/0.55)]"
           />
           <span className="truncate font-display text-base tracking-wide sm:text-xl">
@@ -751,8 +752,9 @@ function Hero() {
                   <img
                     src={`https://img.youtube.com/vi/ZowrRHEwP7I/maxresdefault.jpg`}
                     alt="Ronnei — história do Espetos Grill"
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
+                    fetchPriority="high"
                     width={448}
                     height={252}
                     className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
@@ -944,13 +946,12 @@ function AuthorSolution() {
                   key={s.src}
                   src={s.src}
                   alt={s.alt}
-                  loading="lazy"
+                  loading={i === 0 ? "eager" : "lazy"}
                   decoding="async"
                   width={s.width}
                   height={s.height}
                   className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
                     i === idx ? "opacity-100" : "opacity-0"
-
                   }`}
                 />
               ))}
