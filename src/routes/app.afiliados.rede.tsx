@@ -37,15 +37,15 @@ function AffiliateNetworkPage() {
         <p className="text-sm text-muted-foreground">Acompanhe os afiliados que se cadastraram através do seu link e as comissões geradas.</p>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="glass p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 rounded-xl bg-fire/10 text-fire">
-              <Users className="w-6 h-6" />
+      <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="glass p-5 sm:p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-fire/10 text-fire shrink-0">
+              <Users className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Total de Indicados</div>
-              <div className="text-2xl font-display font-black text-white">{network?.length || 0}</div>
+            <div className="min-w-0">
+              <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-0.5 truncate">Total de Indicados</div>
+              <div className="text-2xl sm:text-3xl font-display font-black text-white">{network?.length || 0}</div>
             </div>
           </div>
         </div>
