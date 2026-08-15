@@ -339,7 +339,7 @@ export function VideoPlayer({
         preload="auto"
         controlsList="nodownload noremoteplayback"
         muted={isIntro || isMobileDevice}
-        autoPlay={isIntro}
+        autoPlay={isIntro || isMobileDevice}
         loop={isIntro}
         onLoadStart={() => {
           setIsLoading(true);
