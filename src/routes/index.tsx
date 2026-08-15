@@ -1370,10 +1370,13 @@ function Bonuses() {
                   <p className="mt-1 text-xs text-muted-foreground">{desc}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
                     <span className="text-muted-foreground line-through">De {value}</span>
-                    <span className="rounded-full bg-fire px-2 py-0.5 text-[11px] font-bold text-white">GRÁTIS hoje</span>
+                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold text-white shadow-sm ${value === "Exclusivo" ? "bg-[color:var(--gold)] shadow-[color:var(--gold)]/20" : "bg-fire shadow-fire"}`}>
+                      {value === "Exclusivo" ? "SORTEIO exclusivo" : "GRÁTIS hoje"}
+                    </span>
                   </div>
                 </div>
               </div>
+
             </div>
           ))}
         </div>
