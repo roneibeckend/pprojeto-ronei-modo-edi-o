@@ -20,12 +20,24 @@ export const usePostPurchaseOfferStore = create<PostPurchaseOfferState>((set) =>
       
       if (!error && data) {
         set({ isEnabled: data.status ?? true });
+        // Cache the setting in localStorage for immediate retrieval on next load
+        localStorage.setItem('post_purchase_offer_enabled', String(data.status ?? true));
       }
     } catch (err) {
       console.error('Failed to sync offer settings:', err);
+      // Fallback to local cache if DB fails
+      const cached = localStorage.getItem('post_purchase_offer_enabled');
+      if (cached !== null) set({ isEnabled: cached === 'true' });
     }
   }
 }));
+
+// Initialize from local cache for zero-latency startup
+if (typeof window !== 'undefined') {
+  const cached = localStorage.getItem('post_purchase_offer_enabled');
+  if (cached !== null) {
+    usePostPurchaseOfferStore.getState().togglePostPurchaseOfferPopup(cached === 'true');
+  }
 
 if (typeof window !== 'undefined') {
   (window as any).togglePostPurchaseOfferPopup = (enabled: boolean) => {

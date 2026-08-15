@@ -31,7 +31,8 @@ function Dashboard() {
 
   const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
     queryKey: ["showcase-items"],
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 60 * 60, // 1 hour - showcase data doesn't change often
+    gcTime: 1000 * 60 * 60 * 24, // 24 hours
     queryFn: async () => {
       const [coursesRes, ebooksRes] = await Promise.all([
         supabase

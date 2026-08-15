@@ -18,7 +18,8 @@ export function useEnrollments() {
       return data.map((e) => e.course_id);
     },
     enabled: !!user?.id,
-    staleTime: 1000 * 60 * 30, // 30 minutes
+    staleTime: 1000 * 60 * 60, // 1 hour - enrollments are stable
+    gcTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   const { data: ebookEnrollments, isLoading: isLoadingEbooks, refetch: refetchEbooks } = useQuery({
@@ -34,7 +35,8 @@ export function useEnrollments() {
       return data.map((e) => e.ebook_id);
     },
     enabled: !!user?.id,
-    staleTime: 1000 * 60 * 30, // 30 minutes
+    staleTime: 1000 * 60 * 60, // 1 hour
+    gcTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   return {
