@@ -1606,11 +1606,17 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
       name: 'Previews Interativas',
       description: 'Habilita o modo de interação ao vivo e componentes dinâmicos nos capítulos dos E-books.',
       icon: Sparkles,
-      category: 'interactive_previews'
+      category: 'interactive_previews',
+      settingsFields: [
+        { key: 'theme', label: 'Tema do Editor', type: 'select', options: ['modern', 'classic', 'minimal'], default: 'modern' },
+        { key: 'auto_sanitize', label: 'Sanitização Automática', type: 'boolean', default: true },
+        { key: 'allow_scripts', label: 'Permitir Scripts Externos', type: 'boolean', default: false },
+        { key: 'max_depth', label: 'Profundidade Máxima da Árvore', type: 'number', default: 5 }
+      ]
     }
   ];
 
-  const handleToggle = async (feature: typeof features[0], currentStatus: boolean) => {
+  const handleToggle = async (feature: any, currentStatus: boolean) => {
     try {
       const integration = integrations?.find(i => i.category === feature.category);
       
@@ -1618,11 +1624,11 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
         data: {
           id: integration?.id || '',
           name: feature.name,
-          type: 'ia', // Fallback for enum
+          type: 'ia',
           category: feature.category,
           status: !currentStatus,
           credentials: {},
-          settings: { description: feature.description, is_feature: 'true' }
+          settings: integration?.settings || { description: feature.description, is_feature: 'true' }
         }
       });
       
@@ -1630,6 +1636,29 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
       queryClient.invalidateQueries({ queryKey: ['integrations'] });
     } catch (err: any) {
       toast.error("Erro ao alterar estado: " + err.message);
+    }
+  };
+
+  const handleUpdateSettings = async (feature: any, newSettings: Record<string, any>) => {
+    try {
+      const integration = integrations?.find(i => i.category === feature.category);
+      
+      await saveIntegrationFn({
+        data: {
+          id: integration?.id || '',
+          name: feature.name,
+          type: 'ia',
+          category: feature.category,
+          status: integration?.status ?? true,
+          credentials: {},
+          settings: { ...(integration?.settings || {}), ...newSettings, is_feature: 'true' }
+        }
+      });
+      
+      toast.success(`Configurações de ${feature.name} atualizadas!`);
+      queryClient.invalidateQueries({ queryKey: ['integrations'] });
+    } catch (err: any) {
+      toast.error("Erro ao salvar configurações: " + err.message);
     }
   };
 
@@ -1668,6 +1697,62 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
                   </div>
                 </div>
               </CardHeader>
+              
+              {isActive && feature.settingsFields && (
+                <CardContent className="p-6 bg-white/[0.01]">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {feature.settingsFields.map((field) => (
+                      <div key={field.key} className="space-y-2">
+                        <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">{field.label}</Label>
+                        
+                        {field.type === 'boolean' ? (
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className={cn(
+                                "h-8 text-[9px] uppercase tracking-widest border-white/10",
+                                String(integration?.settings?.[field.key]) === 'true' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-white/5 text-white/40"
+                              )}
+                              onClick={() => handleUpdateSettings(feature, { [field.key]: 'true' })}
+                            >
+                              Habilitado
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className={cn(
+                                "h-8 text-[9px] uppercase tracking-widest border-white/10",
+                                String(integration?.settings?.[field.key]) === 'false' || !integration?.settings?.[field.key] ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-white/5 text-white/40"
+                              )}
+                              onClick={() => handleUpdateSettings(feature, { [field.key]: 'false' })}
+                            >
+                              Desabilitado
+                            </Button>
+                          </div>
+                        ) : field.type === 'select' ? (
+                          <select 
+                            className="w-full bg-black/40 border border-white/10 rounded-lg p-2 text-xs text-white outline-none focus:border-[#ff6a00]"
+                            value={integration?.settings?.[field.key] || field.default}
+                            onChange={(e) => handleUpdateSettings(feature, { [field.key]: e.target.value })}
+                          >
+                            {field.options.map(opt => (
+                              <option key={opt} value={opt} className="bg-[#111]">{opt.toUpperCase()}</option>
+                            ))}
+                          </select>
+                        ) : (
+                          <Input 
+                            type={field.type}
+                            className="bg-black/40 border-white/10 h-9 text-xs focus:border-[#ff6a00]"
+                            defaultValue={integration?.settings?.[field.key] || field.default}
+                            onBlur={(e) => handleUpdateSettings(feature, { [field.key]: e.target.value })}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              )}
             </Card>
           );
         })}
