@@ -321,7 +321,7 @@ function CoursesPage() {
             {/* Renderizar E-books */}
             {ownedEbooks.map((e) => (
               <article key={e.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30 flex flex-col h-full">
-                <div className="relative aspect-video max-h-[160px] sm:max-h-[200px] bg-muted/20 shrink-0">
+                <div className="relative aspect-video max-h-[160px] sm:max-h-[200px] bg-muted/20 shrink-0 overflow-hidden">
                   <img 
                     src={e.cover_url || e.cover || IMG.hero} 
                     alt={e.title} 
