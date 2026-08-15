@@ -195,18 +195,25 @@ function Reveal({
     const node = ref.current;
     if (!node) return;
 
-    if (immediate) {
-      node.dataset.visible = "true";
-      return;
-    }
-
     const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+    if (immediate) {
+      // Use a slightly larger delay for immediate to ensure mount-styles are settled
+      const t = setTimeout(() => {
+        if (node) node.dataset.visible = "true";
+      }, 50);
+      return () => clearTimeout(t);
+    }
     
-    // Check if element is likely in initial viewport
+    // Check if element is likely in initial viewport (above the fold)
+    // We add a safety margin of 200px
     const rect = node.getBoundingClientRect();
-    if (rect.top < (typeof window !== "undefined" ? window.innerHeight : 800)) {
-      node.dataset.visible = "true";
-      return;
+    const windowH = typeof window !== "undefined" ? window.innerHeight : 800;
+    if (rect.top >= 0 && rect.top < windowH + 200) {
+      const t = setTimeout(() => {
+        if (node) node.dataset.visible = "true";
+      }, 100 + (delay ? delay * 50 : 0));
+      return () => clearTimeout(t);
     }
 
     const rootMargin = isMobile ? "0px 0px 400px 0px" : "0px 0px 100px 0px";
@@ -238,7 +245,7 @@ function Reveal({
     }, 50);
 
     return () => clearTimeout(timeout);
-  }, [immediate]);
+  }, [immediate, delay]);
   const props: Record<string, unknown> = {
     ref: ref as React.Ref<HTMLElement>,
     className,
