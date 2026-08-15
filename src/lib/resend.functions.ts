@@ -112,11 +112,20 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
     is_enabled: z.boolean()
   }).parse(data))
   .handler(async ({ data }) => {
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) throw new Error("Unauthorized");
+
+    const { data: isAdmin } = await supabase.rpc('has_role', { 
+      _user_id: userData.user.id, 
+      _role: 'admin' 
+    });
+
+    if (!isAdmin) throw new Error("Forbidden: Admin access required");
+
     let settings = await getEmailSettings();
     
     if (!settings) {
-      // Se não existir, tenta criar uma configuração padrão inicial
-      const { data: newSettings, error: insertError } = await supabase
+      const { data: newSettings, error: insertError } = await supabaseAdmin
         .from('email_settings')
         .insert([{ ...data }])
         .select()
@@ -126,23 +135,21 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
       return { success: true };
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('email_settings')
       .update(data)
       .eq('id', settings.id);
 
     if (error) throw new Error(error.message);
     
-    // Trigger validation if possible
     try {
-      const { getResendConfig } = await import("./resend.server");
+      const { getResendConfig, validateResendSender } = await import("./resend.server");
       const config = await getResendConfig();
       if (config.apiKey) {
-        const { validateResendSender } = await import("./resend.server");
         const result = await validateResendSender(config.apiKey, data.from_email);
         const currentSettings = await getEmailSettings();
         if (currentSettings) {
-          await supabase.from('email_settings').update({
+          await supabaseAdmin.from('email_settings').update({
             validation_status: result.status,
             last_validation_at: new Date().toISOString(),
             validation_error: result.error
