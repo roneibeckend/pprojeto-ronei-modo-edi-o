@@ -95,6 +95,7 @@ export function usePwaInstall() {
     isStandalone,
     installPwa,
     dismissPrompt,
-    canInstall: !!deferredPrompt
+    canInstall: !!deferredPrompt,
+    deferredPrompt // Exportado para depuração se necessário
   };
 }
