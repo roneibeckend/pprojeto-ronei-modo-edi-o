@@ -812,6 +812,17 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                     const from_name = (document.getElementById('from_name') as HTMLInputElement).value;
                     const from_email = (document.getElementById('from_email') as HTMLInputElement).value;
                     const reply_to = (document.getElementById('reply_to') as HTMLInputElement).value;
+                    
+                    if (!from_name || from_name.length < 2) {
+                      toast.error("O Nome do Remetente deve ter pelo menos 2 caracteres.");
+                      return;
+                    }
+
+                    if (!from_email || !from_email.includes('@')) {
+                      toast.error("Insira um e-mail de remetente válido.");
+                      return;
+                    }
+
                     updateSettingsMutation.mutate({ 
                       data: {
                         from_name, 
