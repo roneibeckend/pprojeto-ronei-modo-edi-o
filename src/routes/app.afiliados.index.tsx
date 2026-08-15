@@ -55,17 +55,17 @@ function AffiliateDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (
-          <div key={card.label} className="glass p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
+          <div key={card.label} className="glass p-5 sm:p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
             <div className="flex items-center justify-between mb-4">
               <div className={`p-2 rounded-xl bg-white/5 ${card.color}`}>
-                <card.icon className="w-6 h-6" />
+                <card.icon className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <ArrowUpRight className="w-4 h-4 text-white/20" />
             </div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{card.label}</div>
-            <div className="text-3xl font-display font-black text-white">{card.value}</div>
+            <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{card.label}</div>
+            <div className="text-2xl sm:text-3xl font-display font-black text-white">{card.value}</div>
           </div>
         ))}
       </div>
@@ -80,26 +80,26 @@ function AffiliateDashboard() {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="bg-white/5 text-[10px] font-bold uppercase tracking-widest text-white/40">
-                  <th className="px-6 py-4">Data</th>
-                  <th className="px-6 py-4">Valor Venda</th>
-                  <th className="px-6 py-4">Sua Comissão</th>
-                  <th className="px-6 py-4">Status</th>
+                  <th className="px-4 sm:px-6 py-4 whitespace-nowrap">Data</th>
+                  <th className="px-4 sm:px-6 py-4 whitespace-nowrap text-right">Valor Venda</th>
+                  <th className="px-4 sm:px-6 py-4 whitespace-nowrap text-right">Sua Comissão</th>
+                  <th className="px-4 sm:px-6 py-4 whitespace-nowrap text-center">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {stats?.sales && stats.sales.length > 0 ? (
                   stats.sales.map((sale) => (
                     <tr key={sale.id} className="hover:bg-white/[0.01] transition-colors">
-                      <td className="px-6 py-4 text-white/60">
+                      <td className="px-4 sm:px-6 py-4 text-white/60 whitespace-nowrap">
                         {new Date(sale.created_at).toLocaleDateString('pt-BR')}
                       </td>
-                      <td className="px-6 py-4 font-bold text-white">
+                      <td className="px-4 sm:px-6 py-4 font-bold text-white text-right whitespace-nowrap">
                         R$ {sale.amount?.toFixed(2).replace(".", ",")}
                       </td>
-                      <td className="px-6 py-4 font-bold text-fire">
+                      <td className="px-4 sm:px-6 py-4 font-bold text-fire text-right whitespace-nowrap">
                         R$ {sale.commission?.toFixed(2).replace(".", ",")}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4 text-center whitespace-nowrap">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
                           sale.status === 'paid' ? 'bg-emerald-500/10 text-emerald-500' :
                           sale.status === 'cancelled' ? 'bg-red-500/10 text-red-500' :

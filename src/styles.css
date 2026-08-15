@@ -165,11 +165,11 @@
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
   .touch-target { min-width: 44px; min-height: 44px; }
   
-  .scrollbar-hidden {
+  .scrollbar-hidden, .no-scrollbar {
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
-  .scrollbar-hidden::-webkit-scrollbar {
+  .scrollbar-hidden::-webkit-scrollbar, .no-scrollbar::-webkit-scrollbar {
     width: 0;
     height: 0;
     display: none;
