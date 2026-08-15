@@ -105,6 +105,7 @@ export function useNotifications() {
   return {
     notifications,
     unreadCount,
+    userNotifications,
     isLoading,
     markAsRead,
     markAllAsRead: async () => {

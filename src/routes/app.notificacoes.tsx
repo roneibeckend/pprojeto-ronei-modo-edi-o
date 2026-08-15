@@ -10,7 +10,7 @@ export const Route = createFileRoute("/app/notificacoes")({
 });
 
 function NotificationsPage() {
-  const { notifications, markAsRead, markAllAsRead, isLoading } = useNotifications();
+  const { notifications, userNotifications, markAsRead, markAllAsRead, isLoading } = useNotifications();
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -68,10 +68,16 @@ function NotificationsPage() {
             const Icon = getIcon(notification.type);
             const colorClass = getColor(notification.type);
             
+            const isRead = userNotifications.some((un: any) => un.notification_id === notification.id && un.read_at);
+            
             return (
               <div 
                 key={notification.id}
-                className="group relative bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/[0.07] transition cursor-pointer"
+                className={`group relative border rounded-2xl p-6 transition cursor-pointer ${
+                  isRead 
+                    ? "bg-white/[0.02] border-white/5 opacity-60" 
+                    : "bg-white/5 border-white/10 hover:bg-white/[0.07]"
+                }`}
                 onClick={() => markAsRead(notification.id)}
               >
                 <div className="flex gap-4">
@@ -80,9 +86,12 @@ function NotificationsPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <h3 className="font-bold text-lg truncate group-hover:text-primary transition">
-                        {notification.title}
-                      </h3>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <h3 className="font-bold text-lg truncate group-hover:text-primary transition">
+                          {notification.title}
+                        </h3>
+                        {!isRead && <div className="h-2 w-2 rounded-full bg-fire shrink-0" />}
+                      </div>
                       <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest flex items-center gap-1 shrink-0">
                         <Clock className="h-3 w-3" />
                         {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: ptBR })}
