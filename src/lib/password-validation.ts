@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 /**
- * Validates a password based on relaxed requirements:
- * - Minimum length: 8 characters
+ * Validates a password based on requirements:
+ * - Minimum length: 6 characters
  * - Must contain at least 2 of the following types:
  *   - Lowercase letters
  *   - Uppercase letters
@@ -14,8 +14,8 @@ export const validatePassword = (password: string) => {
     return { isValid: false, message: "A senha é obrigatória." };
   }
 
-  if (password.length < 8) {
-    return { isValid: false, message: "A senha deve ter pelo menos 8 caracteres." };
+  if (password.length < 6) {
+    return { isValid: false, message: "A senha deve ter pelo menos 6 caracteres." };
   }
 
   const hasLower = /[a-z]/.test(password);
@@ -35,7 +35,7 @@ export const validatePassword = (password: string) => {
 };
 
 export const passwordSchema = z.string()
-  .min(8, "A senha deve ter pelo menos 8 caracteres.")
+  .min(6, "A senha deve ter pelo menos 6 caracteres.")
   .refine((password) => {
     const hasLower = /[a-z]/.test(password);
     const hasUpper = /[A-Z]/.test(password);
