@@ -32,6 +32,48 @@ function Dashboard() {
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
 
+  const executeCheckout = async (targetItem: any, additionalItems: any[]) => {
+    try {
+      setIsProcessing(true);
+      
+      const products = [
+        {
+          productId: targetItem.id,
+          productType: targetItem.type,
+          title: targetItem.title,
+          description: targetItem.description,
+          value: targetItem.price || 0,
+        },
+        ...additionalItems.map(off => ({
+          productId: off.id,
+          productType: off.type,
+          title: off.title,
+          description: off.description,
+          value: (off.price || 0) * (1 - (discountPercentage / 100)),
+        }))
+      ];
+
+      const result = await createPaymentLink({
+        data: {
+          products,
+          affiliateRef: getAffiliateRef() || undefined,
+          paymentType: targetItem.payment_type || 'unique',
+          dueDays: targetItem.due_days || 3,
+        }
+      });
+      
+      if (result.url) {
+        openPayment(result.url, targetItem.title, targetItem.id, targetItem.type);
+      }
+    } catch (error: any) {
+      console.error("Erro ao processar compra:", error);
+      toast.error(error.message || "Erro ao gerar link de pagamento.");
+    } finally {
+      setIsProcessing(false);
+      setShowOffer(false);
+    }
+  };
+
   useEffect(() => {
     syncWithDatabase();
 
@@ -52,6 +94,7 @@ function Dashboard() {
           .maybeSingle();
 
         if (ebook && !isEnrolledInEbook(ebook.id)) {
+          setOfferItem({ ...ebook, type: 'ebook' });
           // Pequeno delay para a UI carregar
           setTimeout(() => {
             setShowOffer(true);
@@ -143,13 +186,13 @@ function Dashboard() {
   return (
     <div className="space-y-8">
       {/* Oferta Automática Pós-Cadastro */}
-      {showOffer && (
+      {showOffer && offerItem && (
         <PostPurchaseOffer
           isOpen={showOffer}
           onClose={() => setShowOffer(false)}
-          onProceedWithOffers={(selected) => executeCheckout(selected)}
-          onProceedWithoutOffers={() => executeCheckout([])}
-          originalProductId={""}
+          onProceedWithOffers={(selected) => executeCheckout(offerItem, selected)}
+          onProceedWithoutOffers={() => executeCheckout(offerItem, [])}
+          originalProductId={offerItem.id}
         />
       )}
       {/* Showcase / Cursos */}
