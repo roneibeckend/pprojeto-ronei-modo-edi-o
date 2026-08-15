@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { useState, type ReactNode, Suspense } from "react";
+import { useState, type ReactNode, Suspense, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { toast } from "sonner";
