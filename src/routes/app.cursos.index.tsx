@@ -31,6 +31,14 @@ function CoursesPage() {
   const [offerContext, setOfferContext] = useState<{ item: any; type: 'course' | 'ebook' } | null>(null);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
+  const { data: interactivePreviewsStatus } = useQuery({
+    queryKey: ['interactive-previews-status'],
+    queryFn: async () => {
+      const { data } = await supabase.from('integrations').select('status').eq('category', 'interactive_previews').maybeSingle();
+      return data?.status ?? false;
+    }
+  });
+
   useEffect(() => {
     syncWithDatabase();
   }, [syncWithDatabase]);
@@ -200,7 +208,7 @@ function CoursesPage() {
   if (isLoadingCourses || isLoadingEnrollments || isLoadingEbooks || isLoadingProgress) {
     return (
       <div className="pb-10 space-y-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 opacity-0 pointer-events-none">
           <Skeleton className="h-12 w-64" />
           <Skeleton className="h-10 w-48" />
         </div>
@@ -212,7 +220,10 @@ function CoursesPage() {
         </div>
 
         <section>
-          <Skeleton className="mb-6 h-6 w-48" />
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-10 w-48" />
+          </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
               <CourseCardSkeleton key={i} />
@@ -246,9 +257,11 @@ function CoursesPage() {
           title="Meus cursos"
           subtitle="Gerencie seus treinamentos e descubra novos conteúdos."
         />
-        <Link to="/app/cursos/preview" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto mt-2 sm:mt-0 py-3 sm:py-4 h-12 sm:h-auto">
-          <Sparkles className="h-4 w-4" /> Ver previews interativas
-        </Link>
+        {interactivePreviewsStatus && (
+          <Link to="/app/cursos/preview" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto mt-2 sm:mt-0 py-3 sm:py-4 h-12 sm:h-auto">
+            <Sparkles className="h-4 w-4" /> Ver previews interativas
+          </Link>
+        )}
       </div>
 
       <ProgressSummary 

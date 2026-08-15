@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Check,
@@ -12,8 +12,15 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/app/cursos/preview")({
+  beforeLoad: async () => {
+    const { data } = await supabase.from('integrations').select('status').eq('category', 'interactive_previews').maybeSingle();
+    if (data?.status === false) {
+      throw redirect({ to: '/app/cursos' });
+    }
+  },
   head: () => ({ meta: [{ title: "Previews — Curso interativo" }] }),
   component: PreviewPage,
 });
