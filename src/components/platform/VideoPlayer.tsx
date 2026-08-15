@@ -343,18 +343,24 @@ export function VideoPlayer({
         muted={isIntro}
         autoPlay={isIntro}
         loop={isIntro}
-        onLoadStart={() => setIsLoading(true)}
+        onLoadStart={() => {
+          setIsLoading(true);
+        }}
         onLoadedMetadata={() => {
-          setIsLoading(false);
+          // Metadata is enough to try initial play for intro
           if (isIntro) {
             tryAutoplay();
-          } else {
-            videoRef.current?.play().catch(err => console.warn("Autoplay failed on metadata", err));
           }
         }}
         onCanPlay={() => {
-          setIsLoading(false);
-          videoRef.current?.play().catch(err => console.warn("Autoplay failed on canplay", err));
+          // CanPlay means enough buffer to start
+          if (isIntro) {
+            tryAutoplay();
+          } else {
+            // For normal videos, we wait for user interaction to call togglePlay,
+            // but we can remove the loader now.
+            setIsLoading(false);
+          }
         }}
         onPlaying={() => {
           setIsPlaying(true);
@@ -390,8 +396,12 @@ export function VideoPlayer({
           }
         }}
         onClick={(e) => {
-          e.stopPropagation();
-          togglePlay(e);
+          // If native controls are on, clicking the video might interfere.
+          // We only intercept if it's our custom overlay or if native controls are off.
+          if (!useNativeControls) {
+            e.stopPropagation();
+            togglePlay(e);
+          }
         }}
       />
 
