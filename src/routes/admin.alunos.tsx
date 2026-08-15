@@ -135,7 +135,7 @@ function AdminAlunosPage() {
       ) : (
         <div className="border border-white/5 rounded-xl overflow-hidden bg-[#111] w-full">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm table-fixed lg:table-auto">
+            <table className="w-full text-left text-sm table-fixed lg:table-auto min-w-[700px]">
               <thead>
                 <tr className="border-b border-white/5 bg-white/[0.02]">
                   <th className="px-6 py-4 font-bold text-white/40 uppercase tracking-widest text-[10px] w-[30%] min-w-[200px]">Aluno</th>
