@@ -88,13 +88,23 @@ export const validateSender = createServerFn({ method: "POST" })
     email: z.string().email()
   }).parse(data))
   .handler(async ({ data }) => {
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) throw new Error("Unauthorized");
+
+    const { data: isAdmin } = await supabase.rpc('has_role', { 
+      _user_id: userData.user.id, 
+      _role: 'admin' 
+    });
+
+    if (!isAdmin) throw new Error("Forbidden: Admin access required");
+
     const { validateResendSender } = await import("./resend.server");
     const result = await validateResendSender(data.apiKey, data.email);
     
-    // Update settings with validation result
-    const { data: settings } = await supabase.from('email_settings').select('id').maybeSingle();
+    // Update settings with validation result using admin client
+    const { data: settings } = await supabaseAdmin.from('email_settings').select('id').maybeSingle();
     if (settings) {
-      await supabase.from('email_settings').update({
+      await supabaseAdmin.from('email_settings').update({
         validation_status: result.status,
         last_validation_at: new Date().toISOString(),
         validation_error: result.error
