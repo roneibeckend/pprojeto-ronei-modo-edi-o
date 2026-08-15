@@ -43,6 +43,12 @@ function CoursesPage() {
     
     if (buyId && buyType && !isLoadingEnrollments) {
       const checkAndPurchase = async () => {
+        // Se já está matriculado, apenas navega
+        if (buyType === 'course' ? courseEnrollments.includes(buyId) : ebookEnrollments.includes(buyId)) {
+          navigate({ to: buyType === 'course' ? `/app/cursos/${buyId}` : `/app/ebooks/${buyId}` });
+          return;
+        }
+
         const { data, error } = await supabase
           .from(buyType === 'course' ? 'courses' : 'ebooks')
           .select('*')
@@ -50,56 +56,56 @@ function CoursesPage() {
           .maybeSingle();
           
         if (data && !error) {
-          // If already enrolled, just navigate to the content
-          if (buyType === 'course' ? courseEnrollments.includes(buyId) : ebookEnrollments.includes(buyId)) {
-            navigate({ to: buyType === 'course' ? `/app/cursos/${buyId}` : `/app/ebooks/${buyId}` });
-            return;
-          }
-          handlePurchase(data, buyType);
-          // Clean up URL
+          // Limpa URL primeiro para evitar loops de processamento se o usuário der refresh
           const newUrl = window.location.pathname;
           window.history.replaceState({}, '', newUrl);
+          
+          handlePurchase(data, buyType);
         }
       };
       
       const timer = setTimeout(checkAndPurchase, 300);
       return () => clearTimeout(timer);
     }
-  }, [isLoadingEnrollments, courseEnrollments, ebookEnrollments, navigate]);
+  }, [isLoadingEnrollments, courseEnrollments, ebookEnrollments]);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
 
   const handlePurchase = async (item: any, type: 'course' | 'ebook') => {
+    // Check if item is already owned (safety check)
+    if (type === 'course' ? courseEnrollments.includes(item.id) : ebookEnrollments.includes(item.id)) {
+      navigate({ to: type === 'course' ? `/app/cursos/${item.id}` : `/app/ebooks/${item.id}` });
+      return;
+    }
+
     if (isOfferEnabled) {
-      // Fast check: if it's the only product or if no other products exist, skip modal
-      const { data: otherProducts } = await supabase.from(type === 'course' ? 'courses' : 'ebooks')
+      // Sync toggle state just in case
+      const { data: configData } = await supabase.from('integrations').select('status').eq('category', 'offer_settings').maybeSingle();
+      if (configData && configData.status === false) {
+        await executeCheckout(item, type, []);
+        return;
+      }
+
+      // Fast check: if no other products exist, skip modal
+      const { data: otherCourses } = await supabase.from('courses')
         .select('id')
         .eq('status', 'published')
         .eq('is_locked', false)
         .neq('id', item.id)
         .limit(1);
 
-      if (!otherProducts || otherProducts.length === 0) {
-        // Check both tables
-        const otherType = type === 'course' ? 'ebooks' : 'courses';
-        const { data: otherTypeProducts } = await supabase.from(otherType)
-          .select('id')
-          .eq('status', 'published')
-          .eq('is_locked', false)
-          .limit(1);
-          
-        if (!otherTypeProducts || otherTypeProducts.length === 0) {
-          await executeCheckout(item, type, []);
-          return;
-        }
-      }
+      const { data: otherEbooks } = await supabase.from('ebooks')
+        .select('id')
+        .eq('status', 'published')
+        .eq('is_locked', false)
+        .neq('id', item.id)
+        .limit(1);
 
-      // Sync toggle state just in case
-      const { data } = await supabase.from('integrations').select('status').eq('category', 'offer_settings').maybeSingle();
-      if (data && data.status === false) {
+      if ((!otherCourses || otherCourses.length === 0) && (!otherEbooks || otherEbooks.length === 0)) {
         await executeCheckout(item, type, []);
         return;
       }
+
       setOfferContext({ item, type });
       return;
     }
