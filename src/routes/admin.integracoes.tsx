@@ -42,7 +42,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { testIntegrationConnection, saveIntegration, getIntegrationHistory } from "@/lib/integrations.functions";
+import { testIntegrationConnection, saveIntegration, getIntegrationHistory, getResendIntegration } from "@/lib/integrations.functions";
 import { getEmailLogs, getEmailSettings, updateEmailSettings, sendEmail, validateSender } from "@/lib/resend.functions";
 import { getEmailTemplates, saveEmailTemplate, deleteEmailTemplate } from "@/lib/email-templates.functions";
 import { useServerFn } from "@tanstack/react-start";
@@ -716,11 +716,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
 
   const { data: resendIntegration, isLoading: loadingResend } = useQuery({
     queryKey: ['resend_integration'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('integrations').select('*').eq('category', 'resend').maybeSingle();
-      if (error) throw error;
-      return data as Integration;
-    }
+    queryFn: async () => await getResendIntegration()
   });
 
   const { data: logs, isLoading: loadingLogs } = useQuery({
@@ -808,24 +804,42 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome do Remetente</Label>
                   <Input 
-                    defaultValue={settings?.from_name}
+                    value={settings?.from_name || ''}
                     id="from_name"
+                    onChange={(e) => {
+                      queryClient.setQueryData(['email_settings'], (old: any) => ({
+                        ...old,
+                        from_name: e.target.value
+                      }));
+                    }}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail do Remetente</Label>
                   <Input 
-                    defaultValue={settings?.from_email}
+                    value={settings?.from_email || ''}
                     id="from_email"
+                    onChange={(e) => {
+                      queryClient.setQueryData(['email_settings'], (old: any) => ({
+                        ...old,
+                        from_email: e.target.value
+                      }));
+                    }}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail de Resposta (Reply-To)</Label>
                   <Input 
-                    defaultValue={settings?.reply_to || ""}
+                    value={settings?.reply_to || ""}
                     id="reply_to"
+                    onChange={(e) => {
+                      queryClient.setQueryData(['email_settings'], (old: any) => ({
+                        ...old,
+                        reply_to: e.target.value
+                      }));
+                    }}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
@@ -868,6 +882,11 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                       toast.error("Configure o remetente primeiro.");
                       return;
                     }
+                    if (!resendIntegration?.credentials?.apiKey && !settings.is_enabled) {
+                      toast.error("Configure a API Key do Resend antes de ativar.");
+                      setActiveTab('resend');
+                      return;
+                    }
                     updateSettingsMutation.mutate({ 
                       data: {
                         from_name: settings.from_name,
@@ -877,7 +896,12 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                       }
                     });
                   }}
-                  className="bg-white/5 border-white/10 hover:bg-white/10 font-bold uppercase tracking-widest text-[10px] h-10 px-6"
+                  className={cn(
+                    "font-bold uppercase tracking-widest text-[10px] h-10 px-6 transition-all",
+                    settings?.is_enabled 
+                      ? "bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20" 
+                      : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20"
+                  )}
                 >
                   {settings?.is_enabled ? 'Desativar Envio' : 'Ativar Envio'}
                 </Button>
@@ -1058,6 +1082,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
 function ResendConfigTab({ integration: initialIntegration }: { integration: Integration | undefined }) {
   const queryClient = useQueryClient();
   const [integration, setIntegration] = useState<Integration | null>(null);
+  const [originalIntegration, setOriginalIntegration] = useState<Integration | null>(null);
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<any>(null);
   
@@ -1077,6 +1102,7 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
   useEffect(() => {
     if (initialIntegration) {
       setIntegration(JSON.parse(JSON.stringify(initialIntegration)));
+      setOriginalIntegration(JSON.parse(JSON.stringify(initialIntegration)));
     } else {
       setIntegration({
         id: '' as any,
@@ -1115,6 +1141,8 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
       }
       
       queryClient.invalidateQueries({ queryKey: ['resend_integration'] });
+      queryClient.invalidateQueries({ queryKey: ['integrations'] });
+      setOriginalIntegration(JSON.parse(JSON.stringify(integration)));
     } catch (err: any) {
       toast.error("Erro ao salvar: " + err.message);
     }
@@ -1212,7 +1240,20 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
           )}
         </div>
       </CardContent>
-      <CardFooter className="bg-white/[0.01] border-t border-white/5 p-4 flex justify-end">
+      <CardFooter className="bg-white/[0.01] border-t border-white/5 p-4 flex justify-between">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => {
+            if (originalIntegration) {
+              setIntegration(JSON.parse(JSON.stringify(originalIntegration)));
+              toast.info("Configurações restauradas.");
+            }
+          }} 
+          className="text-[9px] uppercase tracking-widest hover:bg-white/5"
+        >
+          <RotateCcw className="h-3 w-3 mr-1.5" /> Descartar
+        </Button>
         <Button onClick={handleSave} className="bg-[#ff6a00] text-black hover:bg-[#ff6a00]/90 text-[10px] font-bold uppercase tracking-widest h-9 px-6">
           <Save className="h-3.5 w-3.5 mr-2" /> Salvar API Key
         </Button>

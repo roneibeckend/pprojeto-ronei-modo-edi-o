@@ -6,6 +6,10 @@ export async function getResendConfig() {
     .select("*")
     .maybeSingle();
 
+  if (settings && settings.is_enabled === false) {
+    throw new Error("O envio de e-mails está desativado nas configurações de Identidade do Remetente.");
+  }
+
   const { data: integration, error } = await supabaseAdmin
     .from("integrations")
     .select("*")
