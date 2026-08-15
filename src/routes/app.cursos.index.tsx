@@ -208,7 +208,7 @@ function CoursesPage() {
   if (isLoadingCourses || isLoadingEnrollments || isLoadingEbooks || isLoadingProgress) {
     return (
       <div className="pb-10 space-y-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 opacity-0">
           <Skeleton className="h-12 w-64" />
           <Skeleton className="h-10 w-48" />
         </div>
