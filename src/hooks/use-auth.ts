@@ -6,6 +6,8 @@ export type UserRole = "admin" | "manager" | "agent" | "student";
 export function useAuth() {
   const { data: session, isLoading: isLoadingSession } = useQuery({
     queryKey: ["auth-session"],
+    staleTime: 1000 * 60 * 30, // 30 minutes
+    gcTime: 1000 * 60 * 60, // 1 hour
     queryFn: async () => {
       const { data } = await supabase.auth.getSession();
       return data.session;
@@ -14,6 +16,7 @@ export function useAuth() {
 
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["user-profile", session?.user?.id],
+    staleTime: 1000 * 60 * 5, // 5 minutes
     queryFn: async () => {
       if (!session?.user?.id) return null;
       const { data, error } = await supabase
@@ -33,6 +36,7 @@ export function useAuth() {
 
   const { data: userRole, isLoading: isLoadingRole } = useQuery({
     queryKey: ["user-role", session?.user?.id],
+    staleTime: 1000 * 60 * 10, // 10 minutes
     queryFn: async () => {
       if (!session?.user?.id) return "student" as UserRole;
       const { data, error } = await supabase
