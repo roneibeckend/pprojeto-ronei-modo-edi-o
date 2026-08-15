@@ -42,12 +42,11 @@ export const saveLiveClass = createServerFn({ method: "POST" })
       // Busca todos os alunos ativos (profiles de usuários reais)
       const { data: students, error: studentError } = await supabaseAdmin
         .from('profiles')
-        .select('id, email, full_name')
+        .select('id, email, name')
         .not('email', 'is', null);
 
       if (!studentError && students && students.length > 0) {
-        // Envia notificações em background (não aguarda todas para não travar a UI)
-        // Usamos um bloco separado para não interferir na resposta do handler
+        // Envia notificações em background
         (async () => {
           try {
             const results = await Promise.allSettled(students.map(student => 
@@ -55,7 +54,7 @@ export const saveLiveClass = createServerFn({ method: "POST" })
                 event: 'nova_aula_ao_vivo',
                 to: student.email!,
                 data: {
-                  name: student.full_name || 'Aluno',
+                  name: student.name || 'Aluno',
                   title: data.title,
                   date: new Date(data.scheduled_at).toLocaleString('pt-BR'),
                   description: data.description || 'Sem descrição.',
