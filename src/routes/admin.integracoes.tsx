@@ -1465,7 +1465,7 @@ function EmailTemplatesTab() {
                     defaultValue={selectedTemplate.name} 
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00]" 
                   />
-                  <p className="text-[9px] text-white/20 italic">* Use letras minúsculas e underscores (ex: recovery_password)</p>
+                  <p className="text-[9px] text-white/20 italic">* Use letras minúsculas, números e underscores (ex: recovery_password_01)</p>
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Descrição Curta</Label>
