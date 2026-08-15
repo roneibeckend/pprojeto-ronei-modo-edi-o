@@ -196,6 +196,8 @@ export function VideoPlayer({
 
       // Explicitly set muted again before playing to satisfy mobile policies
       video.muted = true;
+      video.setAttribute('muted', '');
+      
       const p = video.play();
       if (p !== undefined) {
         await p;
