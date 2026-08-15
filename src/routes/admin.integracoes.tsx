@@ -109,7 +109,7 @@ function IntegrationsPage() {
   const navigate = useNavigate();
   const { role, isLoading: isLoadingAuth } = useAuth();
   const queryClient = useQueryClient();
-  const [activeCategory, setActiveCategory] = useState<'ia' | 'payment' | 'email' | 'webhooks' | 'offers'>('ia');
+  const [activeCategory, setActiveCategory] = useState<'ia' | 'payment' | 'email' | 'webhooks' | 'offers' | 'feature'>('ia');
   const [selectedItem, setSelectedItem] = useState<Integration | null>(null);
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<any>(null);
