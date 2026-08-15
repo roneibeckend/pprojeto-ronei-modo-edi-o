@@ -9,7 +9,7 @@ export { Skeleton };
 export function CourseCardSkeleton() {
   return (
     <div className="glass overflow-hidden rounded-2xl border border-white/5">
-      <Skeleton className="aspect-video w-full rounded-none" />
+      <Skeleton className="aspect-video max-h-[160px] sm:max-h-[200px] w-full rounded-none" />
       <div className="p-5 space-y-3">
         <Skeleton className="h-6 w-3/4" />
         <Skeleton className="h-4 w-full" />
