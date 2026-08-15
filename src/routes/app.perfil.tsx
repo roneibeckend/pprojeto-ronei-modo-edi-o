@@ -67,6 +67,95 @@ function ProfilePage() {
     }
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate type
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Tipo de arquivo não suportado. Use JPG, PNG ou WEBP.");
+      return;
+    }
+
+    // Validate size (max 2MB)
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error("A imagem deve ter no máximo 2MB.");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      
+      const fileExt = file.name.split(".").pop();
+      const filePath = `${user.id}/${Math.random()}.${fileExt}`;
+
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from("profiles")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from("profiles")
+        .getPublicUrl(filePath);
+
+      // Update profile in database
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ 
+          avatar_url: publicUrl,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", user.id);
+
+      if (updateError) throw updateError;
+
+      setProfile((prev: any) => ({ ...prev, avatar_url: publicUrl }));
+      toast.success("Foto de perfil atualizada!");
+      
+      // Force refresh of any other components using this data
+      window.dispatchEvent(new CustomEvent("profile-updated", { detail: { avatar_url: publicUrl } }));
+    } catch (error: any) {
+      console.error("Error uploading avatar:", error);
+      toast.error("Erro ao enviar imagem: " + (error.message || "Tente novamente."));
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!user || !profile?.avatar_url) return;
+
+    try {
+      setIsSaving(true);
+      
+      const { error } = await supabase
+        .from("profiles")
+        .update({ 
+          avatar_url: null,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      setProfile((prev: any) => ({ ...prev, avatar_url: null }));
+      toast.success("Foto de perfil removida.");
+      
+      window.dispatchEvent(new CustomEvent("profile-updated", { detail: { avatar_url: null } }));
+    } catch (error: any) {
+      console.error("Error removing avatar:", error);
+      toast.error("Erro ao remover imagem.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+
 
   useEffect(() => {
     async function loadProfileData() {
