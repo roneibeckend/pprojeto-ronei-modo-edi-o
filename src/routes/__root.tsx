@@ -94,33 +94,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
+      { title: "Espetinho na Veia" },
       {
         name: "description",
         content:
-          "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
+          "Plataforma oficial Espetinho na Veia: conteúdos, cursos e materiais para lucrar com espetinhos.",
       },
       { name: "theme-color", content: "#1a0d08" },
-      { property: "og:title", content: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
-      {
-        property: "og:description",
-        content:
-          "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês.",
-      },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Espetinho na Veia" },
       { property: "og:locale", content: "pt_BR" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
-      { name: "twitter:description", content: "eBook prático com 14 capítulos + bônus para montar, temperar, precificar e vender espetinhos com alto lucro. Comece do zero e chegue aos 10k/mês." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4a3ab4b2-697e-4265-9cc2-26c31eb5da7c/id-preview-97f464f3--28d3c13e-4c7d-45b5-8d3d-fa05057ac015.lovable.app-1784863120206.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4a3ab4b2-697e-4265-9cc2-26c31eb5da7c/id-preview-97f464f3--28d3c13e-4c7d-45b5-8d3d-fa05057ac015.lovable.app-1784863120206.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "manifest", href: "/manifest.json" },
-      { rel: "apple-touch-icon", href: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4a3ab4b2-697e-4265-9cc2-26c31eb5da7c/id-preview-97f464f3--28d3c13e-4c7d-45b5-8d3d-fa05057ac015.lovable.app-1784863120206.png" },
+      { rel: "apple-touch-icon", href: "/favicon.ico" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -133,17 +123,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "Product",
-          name: "eBook Espetinho na Veia — Do Zero aos 10k",
+          "@type": "Organization",
+          name: "Espetinho na Veia",
+          url: "https://espetinhonaveia.lovable.app",
           description:
-            "Guia completo para montar, temperar, precificar e vender espetinhos com alto lucro.",
-          brand: { "@type": "Brand", name: "Espetinho na Veia" },
-          offers: {
-            "@type": "Offer",
-            price: "47.90",
-            priceCurrency: "BRL",
-            availability: "https://schema.org/InStock",
-          },
+            "Educação prática para montar, temperar, precificar e vender espetinhos com alta margem.",
+          email: "contato@espetinhonaveia.com",
         }),
       },
     ],
