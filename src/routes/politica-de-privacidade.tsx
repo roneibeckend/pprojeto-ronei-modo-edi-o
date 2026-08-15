@@ -18,7 +18,7 @@ function PrivacyPage() {
   const lastUpdate = "14/08/2026";
   const companyName = "RONNEI";
   const dpoName = "Ronnei";
-  const contactEmail = "ronneivml122@gmail.com";
+  
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-24">
@@ -173,7 +173,7 @@ function PrivacyPage() {
           <p>
             Sob a LGPD, você tem o direito de solicitar a confirmação da existência de tratamento, o acesso aos seus dados, a correção de dados incompletos, a portabilidade e a exclusão definitiva, <strong className="text-foreground">nos limites permitidos pela legislação aplicável</strong> (ex: quando dados precisam ser mantidos por obrigação fiscal).
           </p>
-          <p className="mt-4">Para exercer seus direitos, entre em contato com nosso Encarregado de Dados (DPO) através do e-mail: <span className="text-foreground">{contactEmail}</span>.</p>
+          <p className="mt-4">Para exercer seus direitos, entre em contato com nosso Encarregado de Dados (DPO) através da nossa plataforma de suporte.</p>
         </section>
 
         <section>
@@ -196,8 +196,8 @@ function PrivacyPage() {
                 <span className="text-foreground">{dpoName}</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-[color:var(--gold)]">Email:</span>
-                <span className="text-foreground">{contactEmail}</span>
+                <span className="text-[color:var(--gold)]">Suporte:</span>
+                <span className="text-foreground">Integrado na plataforma</span>
               </li>
             </ul>
           </div>

@@ -18,7 +18,7 @@ function TermsPage() {
   const lastUpdate = "14/08/2026";
   const companyName = "RONNEI";
   const cnpj = "45.680.415/0001-91";
-  const contactEmail = "ronneivml122@gmail.com";
+  
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-24">
@@ -80,7 +80,7 @@ function TermsPage() {
               <strong className="text-foreground">Direito de Arrependimento:</strong> Em conformidade com o Código de Defesa do Consumidor (CDC), você tem o direito de desistir da compra e solicitar o reembolso integral no prazo de <strong className="text-foreground">7 (sete) dias corridos</strong> após a confirmação do pagamento, independente do motivo.
             </p>
             <p>
-              <strong className="text-foreground">Procedimento:</strong> Para solicitar o reembolso dentro do prazo legal, entre em contato através do e-mail {contactEmail}.
+              <strong className="text-foreground">Procedimento:</strong> Para solicitar o reembolso dentro do prazo legal, entre em contato através do nosso canal de suporte.
             </p>
           </div>
         </section>
@@ -125,8 +125,8 @@ function TermsPage() {
             <p className="mb-4">Se você tiver qualquer dúvida sobre estes termos, entre em contato conosco:</p>
             <ul className="space-y-2 font-medium">
               <li className="flex items-center gap-2">
-                <span className="text-[color:var(--gold)]">Email:</span>
-                <span className="text-foreground">{contactEmail}</span>
+                <span className="text-[color:var(--gold)]">Suporte:</span>
+                <span className="text-foreground">Canal de tickets e suporte integrado</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-[color:var(--gold)]">WhatsApp:</span>
