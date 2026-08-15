@@ -83,26 +83,47 @@ const WEBHOOKS = [
 
 const GUIDES: Record<string, string[]> = {
   openai: [
-    "Acesse a sua conta no dashboard da OpenAI.",
-    "Navegue até 'API Keys' nas configurações da conta.",
-    "Clique em 'Create new secret key'.",
-    "Copie a chave gerada e cole no campo 'API Key' abaixo.",
-    "Clique em 'Salvar' e depois em 'Testar Conexão'."
+    "Acesse a sua conta no dashboard da OpenAI (platform.openai.com).",
+    "Navegue até a seção 'API Keys' no menu lateral.",
+    "Clique em 'Create new secret key' e dê um nome à chave.",
+    "Copie a chave gerada imediatamente (ela não será exibida novamente).",
+    "Cole a chave no campo 'API Key' abaixo e clique em 'Salvar'."
   ],
   mercadopago: [
-    "Crie uma conta no Mercado Pago Developers.",
-    "Crie uma nova aplicação no painel.",
-    "Navegue até 'Credenciais de Produção' ou 'Credenciais de Teste'.",
+    "Acesse o painel do Mercado Pago Developers.",
+    "Vá em 'Suas aplicações' e selecione ou crie uma nova aplicação.",
+    "Clique em 'Credenciais de produção' no menu lateral.",
     "Copie o 'Access Token' e a 'Public Key'.",
-    "Configure os Webhooks apontando para as URLs mostradas na aba 'Webhooks'.",
-    "Salve e realize um teste de conexão."
+    "Configure os Webhooks apontando para as URLs da aba 'Webhooks' deste painel.",
+    "Ative a aplicação e realize um teste de conexão."
   ],
   asaas: [
     "Acesse sua conta Asaas e vá em 'Minha Conta' -> 'Integrações'.",
-    "Gere uma nova 'API Key'.",
-    "Copie a chave e cole no campo correspondente.",
-    "Configure a URL de Webhook para receber notificações de pagamento.",
-    "Salve e teste a conexão."
+    "Gere uma nova 'API Key' para o ambiente desejado (Produção ou Sandbox).",
+    "Copie a chave e cole no campo correspondente abaixo.",
+    "Para Webhooks: vá em 'Webhooks' no Asaas e cole a URL encontrada na aba 'Webhooks' deste painel.",
+    "Marque os eventos de pagamento desejados no Asaas e salve."
+  ],
+  stripe: [
+    "Acesse o Dashboard da Stripe e vá em 'Developers' -> 'API Keys'.",
+    "Copie a 'Secret Key' (sk_...) e a 'Publishable Key' (pk_...).",
+    "Para Webhooks: vá em 'Webhooks', adicione um endpoint com a URL da aba 'Webhooks'.",
+    "Selecione os eventos 'checkout.session.completed' e 'invoice.paid'.",
+    "Copie o 'Signing Secret' do Webhook se necessário para validação."
+  ],
+  resend: [
+    "Acesse resend.com e faça login no seu dashboard.",
+    "Vá em 'API Keys' e clique em 'Create API Key'.",
+    "Selecione a permissão 'Full Access' ou 'Sending Access'.",
+    "Copie a chave gerada e cole na aba 'API Key (Resend)' deste painel.",
+    "Importante: Verifique seu domínio em 'Domains' para garantir a entrega dos e-mails."
+  ],
+  interactive_previews: [
+    "Ative o recurso de Prévias Interativas no interruptor acima.",
+    "Configure o 'Theme' (Tema) para combinar com a identidade visual da sua marca.",
+    "Ative 'Auto Sanitize' para remover códigos maliciosos automaticamente.",
+    "Defina 'Allow Scripts' apenas se precisar executar JS personalizado nas prévias.",
+    "Ajuste 'Max Depth' para controlar a complexidade das árvores de elementos renderizadas."
   ]
 };
 
@@ -738,6 +759,9 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
           <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
             Identidade
           </TabsTrigger>
+          <TabsTrigger value="guide" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+            Manual
+          </TabsTrigger>
           <TabsTrigger value="templates" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
             Templates
           </TabsTrigger>
@@ -861,6 +885,27 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
             </CardContent>
           </Card>
 
+          <Card className="bg-[#111] border-white/5">
+            <CardHeader>
+              <CardTitle className="text-lg font-bold uppercase flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-[#ff6a00]" /> Manual do E-mail (Resend)
+              </CardTitle>
+              <CardDescription className="text-xs text-white/40">Instruções para configurar o envio transacional.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                {GUIDES.resend.map((step, idx) => (
+                  <div key={idx} className="flex gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-xl">
+                    <div className="h-8 w-8 shrink-0 flex items-center justify-center rounded-lg bg-[#ff6a00]/10 text-[#ff6a00] font-bold text-sm border border-[#ff6a00]/20">
+                      {idx + 1}
+                    </div>
+                    <p className="text-sm text-white/80 leading-relaxed">{step}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          
           <Card className="bg-blue-500/5 border-blue-500/20">
             <CardHeader>
               <CardTitle className="text-sm font-bold flex items-center gap-2 text-blue-400 uppercase tracking-widest">
@@ -1109,17 +1154,21 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
       <CardHeader className="border-b border-white/5 bg-white/[0.02]">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-lg font-bold uppercase">Credenciais API (Resend)</CardTitle>
+            <CardTitle className="text-lg font-bold uppercase flex items-center gap-2">
+              <Mail className="h-5 w-5 text-[#ff6a00]" /> Credenciais API (Resend)
+            </CardTitle>
             <CardDescription className="text-xs text-white/40">Insira sua API Key para habilitar os envios transacionais.</CardDescription>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setIntegration({ ...integration, status: !integration.status })}
-            className={`h-7 rounded-full px-4 border-none transition-all ${integration.status ? 'bg-[#ff6a00] text-black' : 'bg-white/10 text-white/40'}`}
-          >
-            {integration.status ? 'ATIVO' : 'INATIVO'}
-          </Button>
+          <div className="flex items-center gap-2">
+             <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setIntegration({ ...integration, status: !integration.status })}
+              className={`h-7 rounded-full px-4 border-none transition-all ${integration.status ? 'bg-[#ff6a00] text-black' : 'bg-white/10 text-white/40'}`}
+            >
+              {integration.status ? 'ATIVO' : 'INATIVO'}
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="p-6 space-y-6">
@@ -1241,18 +1290,30 @@ function OffersIntegrationPanel() {
                 Configure o comportamento do popup de oferta pós-venda.
               </CardDescription>
             </div>
-            <div className="flex items-center gap-3 bg-black/40 p-1.5 rounded-full border border-white/5">
-              <span className={`text-[9px] font-black uppercase tracking-widest px-3 ${isEnabled ? 'text-emerald-400' : 'text-white/20'}`}>
-                {isEnabled ? 'Ativado' : 'Desativado'}
-              </span>
+            <div className="flex items-center gap-3">
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm"
-                onClick={() => saveOfferSettings({ status: !isEnabled })}
-                className={`h-7 w-12 rounded-full p-0 transition-all relative ${isEnabled ? 'bg-emerald-500/20' : 'bg-white/5'}`}
+                onClick={() => {
+                  toast.info("Manual: Defina o percentual de desconto que será aplicado a todos os produtos sugeridos no popup de upsell que aparece após uma compra bem-sucedida.");
+                }}
+                className="h-7 text-[9px] uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10"
               >
-                <div className={`absolute top-1 h-5 w-5 rounded-full transition-all duration-300 shadow-lg ${isEnabled ? 'right-1 bg-emerald-400 shadow-emerald-500/50' : 'left-1 bg-white/20'}`} />
+                <BookOpen className="h-3 w-3 mr-1.5" /> Manual
               </Button>
+              <div className="flex items-center gap-3 bg-black/40 p-1.5 rounded-full border border-white/5">
+                <span className={`text-[9px] font-black uppercase tracking-widest px-3 ${isEnabled ? 'text-emerald-400' : 'text-white/20'}`}>
+                  {isEnabled ? 'Ativado' : 'Desativado'}
+                </span>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => saveOfferSettings({ status: !isEnabled })}
+                  className={`h-7 w-12 rounded-full p-0 transition-all relative ${isEnabled ? 'bg-emerald-500/20' : 'bg-white/5'}`}
+                >
+                  <div className={`absolute top-1 h-5 w-5 rounded-full transition-all duration-300 shadow-lg ${isEnabled ? 'right-1 bg-emerald-400 shadow-emerald-500/50' : 'left-1 bg-white/20'}`} />
+                </Button>
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -1757,6 +1818,21 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
                         )}
                       </div>
                     ))}
+                    {feature.category === 'interactive_previews' && (
+                      <div className="md:col-span-2 mt-4 p-4 bg-white/5 border border-white/10 rounded-xl">
+                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#ff6a00] mb-3 flex items-center gap-2">
+                          <BookOpen className="h-3 w-3" /> Guia de Configuração
+                        </h4>
+                        <div className="space-y-3">
+                          {GUIDES.interactive_previews.map((step, idx) => (
+                            <div key={idx} className="flex gap-3 text-[10px] text-white/60 leading-relaxed">
+                              <span className="text-[#ff6a00] font-bold shrink-0">{idx + 1}.</span>
+                              <span>{step}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               )}
