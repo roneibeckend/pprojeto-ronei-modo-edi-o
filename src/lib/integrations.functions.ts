@@ -19,7 +19,7 @@ export const getResendIntegration = createServerFn({ method: "GET" })
       .maybeSingle();
 
     if (error) throw error;
-    return data;
+    return data || undefined;
   });
 
 export const saveIntegration = createServerFn({ method: "POST" })
@@ -28,7 +28,7 @@ export const saveIntegration = createServerFn({ method: "POST" })
     data: z.object({
       id: z.string().uuid().optional().nullable(),
       name: z.string(),
-      type: z.string(),
+      type: z.enum(['ia', 'payment']),
       category: z.string(),
       status: z.boolean(),
       credentials: z.record(z.any()),
@@ -87,7 +87,6 @@ export const testIntegrationConnection = createServerFn({ method: "POST" })
     if (!isAdmin) throw new Error("Forbidden");
 
     // Mock implementation for test result
-    // In a real scenario, this would call the actual provider API
     return {
       success: true,
       message: "Conexão testada com sucesso!",
@@ -115,7 +114,5 @@ export const getIntegrationHistory = createServerFn({ method: "POST" })
     });
     if (!isAdmin) throw new Error("Forbidden");
 
-    // Returning empty array as fallback if history table doesn't exist yet
-    // or providing actual data if it exists.
     return [];
   });
