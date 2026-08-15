@@ -176,18 +176,18 @@ function ProfilePage() {
                 <div className="grid h-8 w-8 place-items-center rounded-lg bg-white/5 text-[#ff6a00]">
                   <Mail className="h-4 w-4" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">E-mail</div>
-                  <div className="text-sm font-medium truncate">{user?.email || profile?.email || "—"}</div>
+                  <div className="text-sm font-medium truncate text-white">{user?.email || profile?.email || "—"}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="grid h-8 w-8 place-items-center rounded-lg bg-white/5 text-[#ff6a00]">
                   <Phone className="h-4 w-4" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30">Telefone</div>
-                  <div className="text-sm font-medium truncate">{profile?.phone || "Não informado"}</div>
+                  <div className="text-sm font-medium truncate text-white">{profile?.phone || "Não informado"}</div>
                 </div>
               </div>
             </div>
