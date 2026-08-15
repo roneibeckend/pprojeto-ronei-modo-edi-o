@@ -115,3 +115,25 @@ export const getAffiliateNetwork = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return network;
   });
+
+export const updateAffiliateStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: unknown) => z.object({
+    id: z.string(),
+    status: z.enum(["active", "blocked", "pending"]),
+  }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Acesso negado: permissão de administrador necessária.");
+
+    const { error } = await supabaseAdmin
+      .from("affiliates")
+      .update({ status: data.status as any, updated_at: new Date().toISOString() })
+      .eq("id", data.id);
+
+    if (error) throw new Error(error.message);
+    return { success: true };
+  });

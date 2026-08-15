@@ -25,7 +25,7 @@ import {
 import { PageHeader } from "@/components/platform/Shell";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { saveAffiliateMaterial, deleteAffiliateMaterial } from "@/lib/affiliates.functions";
+import { saveAffiliateMaterial, deleteAffiliateMaterial, updateAffiliateStatus } from "@/lib/affiliates.functions";
 
 export const Route = createFileRoute("/admin/afiliados")({
   component: AdminAffiliatesPage,
@@ -78,12 +78,7 @@ function AdminAffiliatesPage() {
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: 'active' | 'blocked' | 'pending' }) => {
-      const { error } = await supabase
-        .from("affiliates")
-        .update({ status })
-        .eq("id", id);
-      
-      if (error) throw error;
+      await updateAffiliateStatus({ data: { id, status } });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-affiliates"] });
