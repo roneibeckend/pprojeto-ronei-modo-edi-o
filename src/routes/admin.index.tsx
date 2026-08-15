@@ -27,12 +27,11 @@ function AdminDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!authLoading && !["admin", "manager", "agent", "student"].includes(role || "")) {
+    if (!authLoading && !isAdmin && !hasModule("suporte") && !hasModule("conteudo") && !hasModule("alunos") && !hasModule("financeiro")) {
       toast.error("Sua conta não tem acesso a esta área.");
       navigate({ to: "/app" });
     }
-
-  }, [authLoading, role, navigate]);
+  }, [authLoading, isAdmin, hasModule, navigate]);
 
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
@@ -75,46 +74,8 @@ function AdminDashboard() {
     );
   }
 
-  if (role === 'student') {
-    return (
-      <div className="space-y-8 animate-in fade-in duration-700">
-        <div className="rounded-2xl border border-white/5 bg-[#111] p-8 text-center max-w-2xl mx-auto">
-          <div className="h-20 w-20 rounded-full bg-[#ff6a00]/10 flex items-center justify-center text-[#ff6a00] mx-auto mb-6">
-            <ShieldAlert className="h-10 w-10" />
-          </div>
-          <h2 className="text-2xl font-bold tracking-tight mb-2">Painel Central de Aluno</h2>
-          <p className="text-white/40 mb-8">
-            Você está acessando a área de gestão. Como aluno, você pode visualizar comunicados importantes e solicitar suporte avançado.
-          </p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Link 
-              to="/app/cursos" 
-              className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-[#ff6a00]/50 transition group"
-            >
-              <div className="h-10 w-10 rounded-lg bg-[#ff6a00]/10 flex items-center justify-center text-[#ff6a00]">
-                <GraduationCap className="h-5 w-5" />
-              </div>
-              <div className="text-left">
-                <div className="text-sm font-bold">Meus Cursos</div>
-                <div className="text-[10px] text-white/40 uppercase tracking-widest">Acessar aulas</div>
-              </div>
-            </Link>
-            <Link 
-              to="/app/suporte" 
-              className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-[#ff6a00]/50 transition group"
-            >
-              <div className="h-10 w-10 rounded-lg bg-[#ff6a00]/10 flex items-center justify-center text-[#ff6a00]">
-                <Activity className="h-5 w-5" />
-              </div>
-              <div className="text-left">
-                <div className="text-sm font-bold">Abrir Ticket</div>
-                <div className="text-[10px] text-white/40 uppercase tracking-widest">Falar com suporte</div>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+  if (!isAdmin && !hasModule("suporte") && !hasModule("conteudo") && !hasModule("alunos") && !hasModule("financeiro")) {
+    return null; // Será redirecionado pelo useEffect
   }
 
   if (isLoading) {
