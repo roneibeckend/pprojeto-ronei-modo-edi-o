@@ -68,7 +68,7 @@ const VideoPlayer = lazy(() =>
     .then(m => ({ default: m.VideoPlayer }))
 );
 
-const SITE_URL = "https://sizzling-story-maker.lovable.app";
+const SITE_URL = "https://espetinhonaveia.lovable.app";
 const OG_IMAGE = `${SITE_URL}${heroChef.url}`;
 
 export const Route = createFileRoute("/")({
@@ -566,12 +566,14 @@ function LeadForm() {
         Receba seu cupom de desconto exclusivo
       </p>
 
-      <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      <label htmlFor="lead-name" className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         Seu nome
       </label>
       <div className="relative mt-1.5">
         <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
+          id="lead-name"
+          name="name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -592,12 +594,14 @@ function LeadForm() {
         </p>
       )}
 
-      <label className="mt-4 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      <label htmlFor="lead-whatsapp" className="mt-4 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         Seu WhatsApp
       </label>
       <div className="relative mt-1.5">
         <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
+          id="lead-whatsapp"
+          name="whatsapp"
           type="tel"
           inputMode="tel"
           value={whatsapp}
@@ -724,7 +728,7 @@ function Hero() {
       <div className="mx-auto flex max-w-[1200px] flex-col items-center px-4 text-center sm:px-6 3xl:max-w-[1500px]">
 
         <Reveal variant="blur" delay={1} as="h1" className="mt-4 text-3xl font-black leading-[1.05] sm:text-4xl md:text-5xl lg:text-6xl">
-          Do zero ao <span className="animated-fire-text">próprio negócio</span>
+          Do zero ao <span className="animated-fire-text">próprio negócio de espetinhos</span>
         </Reveal>
         <Reveal variant="up" delay={2} as="p" className="mt-3 max-w-2xl text-fluid-lead text-muted-foreground sm:mt-4">
           O método completo para montar, temperar, precificar e vender espetinhos com alta margem — mesmo sem experiência e com pouco investimento.
