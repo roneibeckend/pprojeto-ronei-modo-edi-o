@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { useState, type ReactNode, Suspense } from "react";
+import { useState, type ReactNode, Suspense, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { toast } from "sonner";
@@ -93,9 +93,24 @@ const navGroups: { title: string; items: NavItem[] }[] = [
 export function Shell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const { isAdmin, role, hasModule, profile, user } = useAuth();
+  const { isAdmin, role, hasModule, profile: authProfile, user } = useAuth();
+  const [localAvatar, setLocalAvatar] = useState<string | null>(null);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { unreadCount } = useNotifications();
+
+  // Use local state if it exists, otherwise use profile from useAuth
+  const profile = authProfile ? { ...authProfile, avatar_url: localAvatar || authProfile.avatar_url } : authProfile;
+
+  useEffect(() => {
+    const handleProfileUpdate = (event: any) => {
+      if (event.detail.avatar_url !== undefined) {
+        setLocalAvatar(event.detail.avatar_url);
+      }
+    };
+
+    window.addEventListener("profile-updated", handleProfileUpdate);
+    return () => window.removeEventListener("profile-updated", handleProfileUpdate);
+  }, []);
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");

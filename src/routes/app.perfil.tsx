@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/platform/Shell";
-import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2, Loader2, Download, Smartphone } from "lucide-react";
+import { User, Mail, Phone, Calendar, ShoppingBag, CheckCircle2, Loader2, Download, Smartphone, Camera, X } from "lucide-react";
 import { usePwaInstall } from "@/hooks/use-pwa-install";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
@@ -23,6 +23,7 @@ function ProfilePage() {
   const [userOrders, setUserOrders] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [newPhone, setNewPhone] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   const formatPhone = (value: string) => {
     // Remove non-digits
@@ -66,6 +67,105 @@ function ProfilePage() {
     }
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate type
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Tipo de arquivo não suportado. Use JPG, PNG ou WEBP.");
+      return;
+    }
+
+    // Validate size (max 2MB)
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error("A imagem deve ter no máximo 2MB.");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      
+      const fileExt = file.name.split(".").pop();
+      const filePath = `${user.id}/${Math.random()}.${fileExt}`;
+
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from("profiles")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from("profiles")
+        .getPublicUrl(filePath);
+
+      // Update profile in database
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ 
+          avatar_url: publicUrl,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", user.id);
+
+      if (updateError) throw updateError;
+
+      setProfile((prev: any) => ({ ...prev, avatar_url: publicUrl }));
+      toast.success("Foto de perfil atualizada!");
+      
+      // Force refresh of any other components using this data
+      window.dispatchEvent(new CustomEvent("profile-updated", { detail: { avatar_url: publicUrl } }));
+    } catch (error: any) {
+      console.error("Error uploading avatar:", error);
+      toast.error("Erro ao enviar imagem: " + (error.message || "Tente novamente."));
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!user || !profile?.avatar_url) return;
+
+    try {
+      setIsSaving(true);
+      
+      const { error } = await supabase
+        .from("profiles")
+        .update({ 
+          avatar_url: null,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      setProfile((prev: any) => ({ ...prev, avatar_url: null }));
+      toast.success("Foto de perfil removida.");
+      
+      window.dispatchEvent(new CustomEvent("profile-updated", { detail: { avatar_url: null } }));
+    } catch (error: any) {
+      console.error("Error removing avatar:", error);
+      toast.error("Erro ao remover imagem.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+
+
+  useEffect(() => {
+    const handleProfileUpdate = (event: any) => {
+      const { avatar_url } = event.detail;
+      setProfile((prev: any) => prev ? { ...prev, avatar_url } : null);
+    };
+
+    window.addEventListener("profile-updated", handleProfileUpdate);
+    return () => window.removeEventListener("profile-updated", handleProfileUpdate);
+  }, []);
 
   useEffect(() => {
     async function loadProfileData() {
@@ -144,19 +244,42 @@ function ProfilePage() {
             <div className="h-24 bg-gradient-to-br from-[#ff6a00] to-[#ff9500] opacity-20" />
             <div className="relative -mt-12 flex flex-col items-center p-6 text-center">
               <div className="relative group">
-                <img 
-                  src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profile?.full_name || user?.email}&backgroundColor=e11d48`} 
-                  alt={profile?.full_name} 
-                  className="h-24 w-24 rounded-2xl border-4 border-[#0a0a0a] object-cover ring-1 ring-white/10"
-                />
-                <button 
-                  aria-label="Mudar avatar"
-                  className="absolute -bottom-2 -right-2 grid h-8 w-8 place-items-center rounded-lg bg-[#ff6a00] text-black shadow-lg transition-transform hover:scale-110 active:scale-95 touch-target"
-                >
-                  <User className="h-4 w-4" />
-                </button>
+                <div className="relative h-24 w-24 overflow-hidden rounded-2xl border-4 border-[#0a0a0a] ring-1 ring-white/10">
+                  <img 
+                    src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profile?.full_name || user?.email}&backgroundColor=e11d48`} 
+                    alt={profile?.full_name} 
+                    className="h-full w-full object-cover"
+                  />
+                  {isUploading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                      <Loader2 className="h-6 w-6 animate-spin text-[#ff6a00]" />
+                    </div>
+                  )}
+                </div>
+                
+                <label className="absolute -bottom-2 -right-2 grid h-8 w-8 place-items-center rounded-lg bg-[#ff6a00] text-black shadow-lg transition-transform hover:scale-110 active:scale-95 cursor-pointer touch-target">
+                  <Camera className="h-4 w-4" />
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    disabled={isUploading}
+                  />
+                </label>
+
+                {profile?.avatar_url && !isUploading && (
+                  <button 
+                    onClick={handleRemoveAvatar}
+                    className="absolute -top-2 -right-2 grid h-6 w-6 place-items-center rounded-full bg-red-500 text-white shadow-lg transition-transform hover:scale-110 active:scale-95 touch-target"
+                    title="Remover foto"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
               </div>
               <h3 className="mt-4 font-display text-xl font-bold truncate w-full px-2 text-white">{profile?.name || profile?.full_name || "Estudante"}</h3>
+
               <p className="text-sm text-white/40">Membro desde {profile?.created_at ? format(new Date(profile.created_at), "dd/MM/yyyy") : "—"}</p>
               
               <div className="mt-6 grid grid-cols-2 w-full gap-2 px-2">
