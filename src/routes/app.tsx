@@ -33,6 +33,16 @@ function AppGate() {
           navigate({ to: `/login?redirectTo=${encodeURIComponent(currentPath)}`, replace: true });
           return;
         }
+
+        // Reforçar o carregamento do manifest para PWA se necessário
+        const manifestLink = document.querySelector('link[rel="manifest"]');
+        if (!manifestLink) {
+          const link = document.createElement('link');
+          link.rel = 'manifest';
+          link.href = '/manifest.json';
+          document.head.appendChild(link);
+        }
+
         
         setReady(true);
       } catch (err) {
