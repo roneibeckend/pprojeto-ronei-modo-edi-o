@@ -330,14 +330,12 @@ export function VideoPlayer({
             : "object-cover"
         )}
         playsInline
-        webkit-playsinline="true"
-        x5-playsinline="true"
-        controls={useNativeControls}
-        preload="metadata"
-        controlsList="nodownload noremoteplayback"
         muted={isIntro}
         autoPlay={isIntro}
         loop={isIntro}
+        controls={useNativeControls}
+        preload="metadata"
+        controlsList="nodownload noremoteplayback"
         onLoadStart={() => {
           setIsLoading(true);
         }}
