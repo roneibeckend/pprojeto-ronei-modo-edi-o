@@ -148,7 +148,7 @@ function LoginPage() {
   const isSignup = mode === "signup";
 
   return (
-    <div className="grid min-h-dvh w-full lg:grid-cols-2">
+    <div className="grid min-h-dvh w-full lg:grid-cols-2 safe-top safe-bottom">
       <div className="relative hidden overflow-hidden lg:block">
         <img src={IMG.chef} alt="Preparando espetinhos na brasa" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
@@ -289,7 +289,7 @@ function LoginPage() {
           </p>
 
           <p className="mt-2 text-center text-xs text-muted-foreground">
-            <Link to="/" className="hover:underline">← Voltar para o site</Link>
+            <button onClick={() => window.history.back()} className="hover:underline">← Voltar</button>
           </p>
         </div>
       </div>

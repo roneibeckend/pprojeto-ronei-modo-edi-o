@@ -4,6 +4,7 @@
   "description": "Acesse seus cursos, e-books e materiais da comunidade Espetinho na Veia diretamente da tela inicial do seu celular.",
   "start_url": "/app",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#0a0a0a",
   "theme_color": "#e11d48",
   "icons": [
