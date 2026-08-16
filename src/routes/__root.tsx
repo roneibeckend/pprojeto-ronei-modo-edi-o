@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
+import { PwaUpdateManager } from "../components/platform/PwaUpdateManager";
 
 import { useAffiliateTracking } from "../hooks/use-affiliate-tracking";
 
@@ -93,7 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" },
       { title: "Espetinho na Veia" },
       {
         name: "description",
@@ -187,6 +188,7 @@ function RootComponent() {
       <Outlet />
       
       <Toaster position="top-center" theme="dark" richColors closeButton />
+      <PwaUpdateManager />
     </QueryClientProvider>
   );
 }

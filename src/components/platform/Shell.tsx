@@ -117,9 +117,9 @@ export function Shell({ children }: { children: ReactNode }) {
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
 
   const SidebarInner = (
-    <div className="flex h-dvh flex-col overflow-hidden bg-sidebar text-sidebar-foreground">
+    <div className="flex h-dvh flex-col overflow-hidden bg-sidebar text-sidebar-foreground safe-top safe-bottom">
       {/* Brand */}
-      <div className="flex shrink-0 items-center gap-3 border-b border-sidebar-border px-5 py-4">
+      <div className="flex shrink-0 items-center gap-3 border-b border-sidebar-border px-5 py-4 pt-safe">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary">
           <Flame className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} />
         </div>
@@ -233,7 +233,7 @@ export function Shell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-3 border-b border-white/5 bg-[#0a0a0a]/90 px-4 backdrop-blur lg:px-8">
+        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-3 border-b border-white/5 bg-[#0a0a0a]/90 px-4 backdrop-blur lg:px-8 pt-safe h-[calc(3.5rem+env(safe-area-inset-top))]">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button
@@ -281,7 +281,7 @@ export function Shell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 overflow-y-auto px-4 py-4 pb-24 lg:px-8 lg:py-8 lg:pb-8 3xl:max-w-[1800px] 3xl:mx-auto w-full">
+        <main className="min-w-0 flex-1 overflow-y-auto px-4 py-4 pb-safe lg:px-8 lg:py-8 lg:pb-8 3xl:max-w-[1800px] 3xl:mx-auto w-full overscroll-contain">
           <Outlet />
         </main>
         <PwaInstallBanner />

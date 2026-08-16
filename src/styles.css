@@ -121,10 +121,17 @@
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overscroll-behavior-y: auto;
+    overscroll-behavior-y: none; /* Previne bounce indesejado no PWA */
+    user-select: none; /* Comportamento mais nativo, evita seleção acidental */
+    -webkit-tap-highlight-color: transparent;
     
     /* Previne atrasos de clique em mobile */
     touch-action: manipulation;
+  }
+
+  /* Permite seleção de texto apenas em áreas de leitura */
+  .prose, input, textarea, [contenteditable="true"] {
+    user-select: text;
   }
   
   /* Desabilita gradientes pesados no mobile para performance de scroll */
