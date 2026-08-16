@@ -14,7 +14,9 @@ interface KnowledgeItem {
 }
 
 export const getChatbotResponse = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data) => z.object({ 
+
     message: z.string(),
     context: z.object({
       url: z.string().optional(),
@@ -98,7 +100,9 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
   });
 
 export const submitKnowledgeFeedback = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data) => z.object({
+
     knowledgeId: z.string(),
     isPositive: z.boolean()
   }).parse(data))

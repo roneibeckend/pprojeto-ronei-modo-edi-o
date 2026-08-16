@@ -3,25 +3,18 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getMaterials = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+
     try {
-      if (!context) {
-        // Fallback or error based on your security requirements.
-        // For public materials, we might not need context if using a public client.
-        const { supabase } = await import("@/integrations/supabase/client");
-        const { data, error } = await supabase
-          .from("platform_materials")
-          .select("*")
-          .eq("is_active", true)
-          .order("created_at", { ascending: false });
-        if (error) throw error;
-        return data || [];
-      }
+      if (!context) throw new Error("Unauthorized");
+      
       const { data, error } = await context.supabase
         .from("platform_materials")
         .select("*")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
+
 
       if (error) throw error;
       return data || [];
