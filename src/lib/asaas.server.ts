@@ -1,4 +1,5 @@
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+// src/lib/asaas.server.ts
+// supabaseAdmin is now imported dynamically in grantAccess to avoid module cycle issues
 
 const ASAAS_SANDBOX_URL = "https://sandbox.asaas.com/api/v3";
 const ASAAS_PRODUCTION_URL = "https://www.asaas.com/api/v3";
