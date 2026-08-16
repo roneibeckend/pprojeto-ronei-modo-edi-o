@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AppVerificarCertificadoRouteImport } from './routes/app.verificar-certificado'
 import { Route as AppSuporteRouteImport } from './routes/app.suporte'
 import { Route as AppReceitasRouteImport } from './routes/app.receitas'
 import { Route as AppProgressoRouteImport } from './routes/app.progresso'
@@ -116,6 +117,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppVerificarCertificadoRoute = AppVerificarCertificadoRouteImport.update({
+  id: '/verificar-certificado',
+  path: '/verificar-certificado',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppSuporteRoute = AppSuporteRouteImport.update({
   id: '/suporte',
@@ -360,6 +366,7 @@ export interface FileRoutesByFullPath {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
+  '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
@@ -410,6 +417,7 @@ export interface FileRoutesByTo {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
+  '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
@@ -465,6 +473,7 @@ export interface FileRoutesById {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
+  '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
@@ -521,6 +530,7 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
+    | '/app/verificar-certificado'
     | '/auth/callback'
     | '/admin/'
     | '/app/'
@@ -571,6 +581,7 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
+    | '/app/verificar-certificado'
     | '/auth/callback'
     | '/admin'
     | '/app'
@@ -625,6 +636,7 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
+    | '/app/verificar-certificado'
     | '/auth/callback'
     | '/admin/'
     | '/app/'
@@ -738,6 +750,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/callback'
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/verificar-certificado': {
+      id: '/app/verificar-certificado'
+      path: '/verificar-certificado'
+      fullPath: '/app/verificar-certificado'
+      preLoaderRoute: typeof AppVerificarCertificadoRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/suporte': {
       id: '/app/suporte'
@@ -1143,6 +1162,7 @@ interface AppRouteChildren {
   AppProgressoRoute: typeof AppProgressoRoute
   AppReceitasRoute: typeof AppReceitasRoute
   AppSuporteRoute: typeof AppSuporteRoute
+  AppVerificarCertificadoRoute: typeof AppVerificarCertificadoRoute
   AppIndexRoute: typeof AppIndexRoute
   AppEbooksEbookIdRoute: typeof AppEbooksEbookIdRoute
 }
@@ -1159,6 +1179,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProgressoRoute: AppProgressoRoute,
   AppReceitasRoute: AppReceitasRoute,
   AppSuporteRoute: AppSuporteRoute,
+  AppVerificarCertificadoRoute: AppVerificarCertificadoRoute,
   AppIndexRoute: AppIndexRoute,
   AppEbooksEbookIdRoute: AppEbooksEbookIdRoute,
 }
