@@ -329,6 +329,37 @@ function SupportPage() {
                         {m.text}
                       </div>
                     </div>
+                    
+                    {/* Feedback and Contextual Actions */}
+                    {m.role === "ai" && m.knowledgeId && !m.feedbackGiven && (
+                      <div className="mt-2 flex items-center gap-3 px-2">
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-white/20">Isso ajudou?</span>
+                        <button 
+                          onClick={() => submitFeedback(i, m.knowledgeId!, true)}
+                          className="hover:text-emerald-500 text-white/20 transition-colors"
+                        >
+                          <ThumbsUp className="h-3 w-3" />
+                        </button>
+                        <button 
+                          onClick={() => submitFeedback(i, m.knowledgeId!, false)}
+                          className="hover:text-fire text-white/20 transition-colors"
+                        >
+                          <ThumbsDown className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )}
+
+                    {m.role === "ai" && m.needsHuman && (
+                      <div className="mt-3 flex gap-2 px-2">
+                        <button 
+                          onClick={() => setActiveTab("tickets")}
+                          className="flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#ff6a00] hover:bg-white/10 transition"
+                        >
+                          <TicketIcon className="h-3 w-3" /> Falar com suporte
+                        </button>
+                      </div>
+                    )}
+
                     <span className="mt-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-white/20">
                       {m.time}
                     </span>
