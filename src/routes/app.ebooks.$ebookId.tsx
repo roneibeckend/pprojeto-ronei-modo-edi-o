@@ -413,8 +413,17 @@ function EbookReaderPage() {
     <div className="mx-auto max-w-5xl px-0 pb-20 sm:px-4 overflow-x-hidden">
       <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-end sm:justify-between mb-6 sm:mb-8 sm:px-0">
         <div>
-          <div className="mb-4">
+          <div className="mb-4 flex items-center gap-4">
             <FeedbackSummary ebookId={ebook.id} />
+            {chapters.length > 0 && chapters.every((c: any) => isChapterCompleted(c.id)) && (
+              <Link
+                to="/app/certificados"
+                className="flex items-center gap-2 px-3 py-1 bg-[#ff6a00]/10 hover:bg-[#ff6a00]/20 rounded-lg text-[10px] font-bold uppercase tracking-widest text-[#ff6a00] transition border border-[#ff6a00]/20"
+              >
+                <Award className="w-3.5 h-3.5" />
+                Certificado Disponível
+              </Link>
+            )}
           </div>
           <PageHeader
             title={ebook.title}
