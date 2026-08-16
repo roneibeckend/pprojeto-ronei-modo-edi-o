@@ -155,6 +155,11 @@ export function VideoPlayer({
       clearTimeout(loadingTimeout);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       listeners.forEach(([name, fn]) => video.removeEventListener(name, fn));
+      
+      // Release video resources
+      video.pause();
+      video.removeAttribute('src'); // empty source
+      video.load();
     };
   }, [src, videoId, isYouTube, isGoogleDrive]);
 

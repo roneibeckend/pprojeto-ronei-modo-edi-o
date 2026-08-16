@@ -90,22 +90,20 @@ function Dashboard() {
 
   const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
     queryKey: ["showcase-items"],
-    staleTime: 1000 * 60 * 60, // 1 hour - showcase data doesn't change often
-    gcTime: 1000 * 60 * 60 * 24, // 24 hours
+    staleTime: 1000 * 60 * 60, // 1 hour
+    gcTime: 1000 * 60 * 60 * 24,
     queryFn: async () => {
       const [coursesRes, ebooksRes] = await Promise.all([
         supabase
           .from("courses")
-          .select("id, title, description, price, cover_url, created_at, badge, is_locked, status")
+          .select("id, title, description, price, cover_url, created_at, badge, status")
           .eq("is_locked", false)
-          .in("status", ["active", "published"])
-          .limit(10),
+          .in("status", ["active", "published"]),
         supabase
           .from("ebooks")
-          .select("id, title, description, price, cover_url, created_at, badge, is_locked, status")
+          .select("id, title, description, price, cover_url, created_at, badge, status")
           .eq("is_locked", false)
-          .in("status", ["active", "published"])
-          .limit(10),
+          .in("status", ["active", "published"]),
       ]);
 
       if (coursesRes.error) throw coursesRes.error;
@@ -113,27 +111,11 @@ function Dashboard() {
 
       const items = [
         ...(coursesRes.data || []).map(c => ({ 
-          id: c.id,
-          title: c.title,
-          description: c.description,
-          price: c.price,
-          cover_url: c.cover_url,
-          created_at: c.created_at,
-          badge: c.badge,
-          is_locked: c.is_locked,
-          status: c.status,
+          ...c,
           type: 'course' as const 
         })),
         ...(ebooksRes.data || []).map(e => ({ 
-          id: e.id,
-          title: e.title,
-          description: e.description,
-          price: e.price,
-          cover_url: e.cover_url,
-          created_at: e.created_at,
-          badge: e.badge,
-          is_locked: e.is_locked,
-          status: e.status,
+          ...e,
           type: 'ebook' as const 
         })),
       ];
