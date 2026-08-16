@@ -12,23 +12,29 @@ import {
   User,
   ChevronRight,
   HelpCircle,
-  AlertCircle
+  AlertCircle,
+  ThumbsUp,
+  ThumbsDown,
+  ExternalLink
 } from "lucide-react";
 
 import { PageHeader } from "@/components/platform/Shell";
-import { supportQuestions } from "@/lib/platform-data";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useServerFn } from "@tanstack/react-start";
+import { getChatbotResponse, submitKnowledgeFeedback } from "@/lib/chatbot.functions";
 
-export const Route = createFileRoute("/app/suporte")({
-  head: () => ({ meta: [{ title: "Suporte e Central de Ajuda — Espetinho na Veia" }] }),
-  component: SupportPage,
-});
-
-type Msg = { role: "user" | "ai"; text: string; time: string };
+type Msg = { 
+  role: "user" | "ai"; 
+  text: string; 
+  time: string;
+  knowledgeId?: string | null;
+  feedbackGiven?: boolean;
+  needsHuman?: boolean;
+};
 
 function SupportPage() {
 
