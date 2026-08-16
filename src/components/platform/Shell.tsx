@@ -180,6 +180,7 @@ export function Shell({ children }: { children: ReactNode }) {
                       to={item.to}
                       aria-current={active ? "page" : undefined}
                       onClick={() => setOpen(false)}
+                      preload="intent"
                       className={`group relative flex h-12 sm:h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none active:scale-[0.98] touch-action-manipulation ${
                         active
                           ? "bg-primary text-primary-foreground"

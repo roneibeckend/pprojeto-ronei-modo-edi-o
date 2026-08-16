@@ -113,6 +113,8 @@ function EbookReaderPage() {
 
 
 
+  // Opening video removed from auto-trigger to optimize UX
+  /*
   useEffect(() => {
     if (ebook?.opening_video_url) {
       const hasSeen = localStorage.getItem(`ebook_opening_${ebook.id}`);
@@ -121,6 +123,7 @@ function EbookReaderPage() {
       }
     }
   }, [ebook.id, ebook.opening_video_url]);
+  */
 
   const markVideoAsSeen = () => {
     setShowOpeningVideo(false);

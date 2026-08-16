@@ -99,10 +99,9 @@ function Dashboard() {
 
         if (ebook && !isEnrolledInEbook(ebook.id)) {
           setOfferItem({ ...ebook, type: 'ebook' });
-          setTimeout(() => {
-            setShowOffer(true);
-            localStorage.setItem(`first_access_offer_${user.id}`, 'true');
-          }, 1500);
+          // Auto-offer logic removed to prevent automatic popups.
+          // Offer should only appear via manual triggers now.
+          // localStorage.setItem(`first_access_offer_${user.id}`, 'true');
         }
       }
     };

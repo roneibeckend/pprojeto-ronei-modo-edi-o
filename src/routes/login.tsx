@@ -40,8 +40,7 @@ function LoginPage() {
 
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
-        const redirectTo = urlParams.get('redirectTo');
-        navigate({ to: redirectTo || "/inicio", replace: true });
+        navigate({ to: "/inicio", replace: true });
       }
     });
   }, [navigate]);
@@ -59,8 +58,7 @@ function LoginPage() {
       }
       if (result.redirected) return;
       // Tokens já setados; segue pra plataforma
-      const redirectTo = new URLSearchParams(window.location.search).get('redirectTo');
-      navigate({ to: redirectTo || "/inicio" });
+      navigate({ to: "/inicio" });
     } catch (err) {
       toast.error("Erro ao conectar com Google");
       console.error(err);
@@ -119,18 +117,12 @@ function LoginPage() {
           console.error("[Auth] Erro ao disparar e-mail de boas-vindas:", emailErr);
         }
         
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirectTo = urlParams.get('redirectTo');
-        
-        // Redireciona para /app/inicio (que processa a oferta) ou para o redirectTo
-        // Note: removi a verificação redundante e forço o replace para evitar voltar para a tela de login
-        navigate({ to: redirectTo || "/inicio", replace: true });
+        navigate({ to: "/inicio", replace: true });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Bem-vindo de volta!");
-        const redirectTo = new URLSearchParams(window.location.search).get('redirectTo');
-        navigate({ to: redirectTo || "/inicio" });
+        navigate({ to: "/inicio" });
       }
     } catch (err: any) {
       const msg = err?.message ?? "Falha ao autenticar";
