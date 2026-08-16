@@ -181,6 +181,40 @@ function Dashboard() {
     );
   }
 
+  // Processamento de compra imediata vinda do redirecionamento
+  useEffect(() => {
+    const handleBuyParam = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const buyId = urlParams.get('buy');
+      const buyType = urlParams.get('type') as 'course' | 'ebook' | null;
+
+      if (buyId && buyType && !isLoadingEnrollments) {
+        // Verifica se já não está inscrito
+        const alreadyEnrolled = buyType === 'course' ? isEnrolledInCourse(buyId) : isEnrolledInEbook(buyId);
+        if (alreadyEnrolled) return;
+
+        // Busca os detalhes do item para o checkout
+        const table = buyType === 'course' ? 'courses' : 'ebooks';
+        const { data: item } = await supabase
+          .from(table)
+          .select('id, title, description, price')
+          .eq('id', buyId)
+          .maybeSingle();
+
+        if (item) {
+          executeCheckout({ ...item, type: buyType }, []);
+          // Limpa a URL para evitar re-disparo
+          const newUrl = new URL(window.location.href);
+          newUrl.searchParams.delete('buy');
+          newUrl.searchParams.delete('type');
+          window.history.replaceState({}, '', newUrl.pathname + newUrl.search);
+        }
+      }
+    };
+
+    handleBuyParam();
+  }, [isLoadingEnrollments]);
+
   // Fallback para o primeiro item se não houver contexto anterior
   const lastItem = showcaseItems?.[0];
 
