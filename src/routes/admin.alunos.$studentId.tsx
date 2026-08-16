@@ -455,9 +455,25 @@ function AdminStudentProfilePage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-bold text-sm pr-16">{enrollment.title}</h4>
-                          <span className="text-[10px] font-bold text-[#ff6a00] uppercase tracking-widest">
-                            {enrollment.progress || 0}% Concluído
-                          </span>
+                          <div className="flex items-center gap-3">
+                            {enrollment.progress === 100 && (
+                              <button
+                                onClick={() => handleGenerateCertificate(enrollment)}
+                                disabled={certLoading === enrollment.id}
+                                className="flex items-center gap-1.5 px-3 py-1 bg-[#ff6a00]/10 hover:bg-[#ff6a00]/20 rounded-lg text-[9px] font-bold uppercase tracking-widest text-[#ff6a00] transition disabled:opacity-50"
+                              >
+                                {certLoading === enrollment.id ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <Award className="w-3 h-3" />
+                                )}
+                                Gerar Certificado
+                              </button>
+                            )}
+                            <span className="text-[10px] font-bold text-[#ff6a00] uppercase tracking-widest">
+                              {enrollment.progress || 0}% Concluído
+                            </span>
+                          </div>
                         </div>
                         <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                           <div 
