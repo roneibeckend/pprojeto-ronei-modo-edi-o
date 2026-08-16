@@ -416,7 +416,7 @@ function FullCertificate({ cert }: { cert: any }) {
             {/* Body */}
             <div className="mt-8 text-center">
               <p className="text-[12px] uppercase tracking-[0.28em] text-black/50">Certificamos que</p>
-              <p className="mt-3 font-display text-3xl font-extrabold uppercase tracking-wide sm:text-4xl">{student.name}</p>
+              <p className="mt-3 font-display text-3xl font-extrabold uppercase tracking-wide sm:text-4xl">{fallbackStudent.name}</p>
               <div className="mx-auto mt-2 h-px w-64 bg-black/20" />
               <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-black/75 sm:text-base">
                 concluiu com aproveitamento integral o curso
