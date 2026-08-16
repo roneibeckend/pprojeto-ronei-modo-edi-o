@@ -52,7 +52,7 @@ function LiveClassesPage() {
         </h2>
         
         {upcomingClasses.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {upcomingClasses.map((live) => (
               <LiveClassCard key={live.id} live={live} />
             ))}
@@ -72,7 +72,7 @@ function LiveClassesPage() {
             <Clock className="h-5 w-5 text-muted-foreground" />
             Aulas Encerradas
           </h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {pastClasses.map((live) => (
               <LiveClassCard key={live.id} live={live} isPast />
             ))}
