@@ -25,6 +25,8 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     const { message, context: requestContext } = data;
     const query = message.toLowerCase();
 
+    if (!context) throw new Error("Internal Server Error: No context");
+
     // 1. Buscar base de conhecimento
     const { data: knowledge, error } = await context.supabase
       .from("knowledge_base")
@@ -101,6 +103,7 @@ export const submitKnowledgeFeedback = createServerFn({ method: "POST" })
     isPositive: z.boolean()
   }).parse(data))
   .handler(async ({ data, context }) => {
+    if (!context) throw new Error("Internal Server Error: No context");
     const { error } = await context.supabase
       .from("knowledge_feedback")
       .insert({

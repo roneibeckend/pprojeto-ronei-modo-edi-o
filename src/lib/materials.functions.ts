@@ -5,7 +5,23 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export const getMaterials = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     try {
+      if (!context) {
+        // Fallback or error based on your security requirements.
+        // For public materials, we might not need context if using a public client.
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data, error } = await supabase
+          .from("platform_materials")
+          .select("*")
+          .eq("is_active", true)
+          .order("created_at", { ascending: false });
+        if (error) throw error;
+        return data || [];
+      }
       const { data, error } = await context.supabase
+        .from("platform_materials")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
         .from("platform_materials")
         .select("*")
         .eq("is_active", true)
