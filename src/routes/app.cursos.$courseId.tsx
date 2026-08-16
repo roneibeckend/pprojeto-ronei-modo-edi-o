@@ -163,15 +163,17 @@ function CoursePage() {
     }
   };
 
-  if (!course) return null;
-
-  const isFree = (course.price || 0) === 0;
-  const isEnrolled = isEnrolledInCourse(course.id);
+  const isFree = course ? (course.price || 0) === 0 : false;
+  const isEnrolled = course ? isEnrolledInCourse(course.id) : false;
   const hasAccess = isFree || isEnrolled;
 
-  const flat = course.modules?.flatMap((m: any) => m.lessons || []) || [];
+  const flat = course?.modules?.flatMap((m: any) => m.lessons || []) || [];
   const completedCount = flat.filter((l: any) => isLessonCompleted(l.id)).length;
   const isCompleted = flat.length > 0 && completedCount === flat.length;
+
+  if (!course) return null;
+
+  // access and flat definitions moved above early return to maintain hook order
 
   useEffect(() => {
     // Só dispara se estiver tudo carregado e o usuário tiver acesso

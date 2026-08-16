@@ -67,6 +67,10 @@ function EbookReaderPage() {
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
+  const isFree = ebook ? (ebook.price || 0) === 0 : false;
+  const isEnrolled = ebook ? isEnrolledInEbook(ebook.id) : false;
+  const hasAccess = isFree || isEnrolled;
+
   const { data: interactivePreviewsStatus } = useQuery({
     queryKey: ['interactive-previews-status'],
     queryFn: async () => {
@@ -230,9 +234,7 @@ function EbookReaderPage() {
   const nextChapter = activeIndex < chapters.length - 1 ? chapters[activeIndex + 1] : null;
 
 
-  const isFree = (ebook.price || 0) === 0;
-  const isEnrolled = isEnrolledInEbook(ebook.id);
-  const hasAccess = isFree || isEnrolled;
+  // access definitions moved above early return to maintain hook order
 
   const markedChaptersRef = useRef<Set<string>>(new Set());
 
@@ -348,6 +350,8 @@ function EbookReaderPage() {
     }
   };
 
+  // Access logic moved above for hook stability
+
   if (isLoadingEnrollments) {
     return (
       <div className="mx-auto max-w-5xl pb-20 animate-in fade-in duration-500">
@@ -368,8 +372,6 @@ function EbookReaderPage() {
       </div>
     );
   }
-
-
 
   if (!hasAccess) {
     return (

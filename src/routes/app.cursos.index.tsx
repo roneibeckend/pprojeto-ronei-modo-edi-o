@@ -205,6 +205,12 @@ function CoursesPage() {
     },
   });
 
+  const ownedCourses = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || (c.price || 0) === 0) || [];
+  const otherCourses = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0) || [];
+  
+  const ownedEbooks = dbEbooks?.filter((e) => ebookEnrollments.includes(e.id) || (e.price || 0) === 0) || [];
+  const otherEbooks = dbEbooks?.filter((e) => !ebookEnrollments.includes(e.id) && (e.price || 0) > 0) || [];
+
   if (isLoadingCourses || isLoadingEnrollments || isLoadingEbooks || isLoadingProgress) {
     return (
       <div className="pb-10 space-y-8">
@@ -233,13 +239,6 @@ function CoursesPage() {
       </div>
     );
   }
-
-
-  const ownedCourses = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || (c.price || 0) === 0) || [];
-  const otherCourses = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0) || [];
-  
-  const ownedEbooks = dbEbooks?.filter((e) => ebookEnrollments.includes(e.id) || (e.price || 0) === 0) || [];
-  const otherEbooks = dbEbooks?.filter((e) => !ebookEnrollments.includes(e.id) && (e.price || 0) > 0) || [];
 
   // totalProgress removido daqui para evitar conflito com o que vem do hook
 
