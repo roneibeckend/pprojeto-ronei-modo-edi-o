@@ -29,8 +29,10 @@ import {
   AlertCircle,
   CheckCircle2,
   HelpCircle,
-  Flag
+  Flag,
+  Award
 } from "lucide-react";
+import { CertificateEditor } from "@/components/admin/CertificateEditor";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
