@@ -1069,6 +1069,74 @@ export type Database = {
         }
         Relationships: []
       }
+      knowledge_base: {
+        Row: {
+          category: Database["public"]["Enums"]["knowledge_category"]
+          content: string
+          created_at: string | null
+          id: string
+          keywords: string[] | null
+          questions: string[] | null
+          status: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["knowledge_category"]
+          content: string
+          created_at?: string | null
+          id?: string
+          keywords?: string[] | null
+          questions?: string[] | null
+          status?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["knowledge_category"]
+          content?: string
+          created_at?: string | null
+          id?: string
+          keywords?: string[] | null
+          questions?: string[] | null
+          status?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      knowledge_feedback: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_positive: boolean
+          knowledge_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_positive: boolean
+          knowledge_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_positive?: boolean
+          knowledge_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_feedback_knowledge_id_fkey"
+            columns: ["knowledge_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_base"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
@@ -1753,6 +1821,36 @@ export type Database = {
           },
         ]
       }
+      unhandled_questions: {
+        Row: {
+          confidence: number | null
+          context: Json | null
+          created_at: string | null
+          id: string
+          question: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          confidence?: number | null
+          context?: Json | null
+          created_at?: string | null
+          id?: string
+          question: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          confidence?: number | null
+          context?: Json | null
+          created_at?: string | null
+          id?: string
+          question?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_notifications: {
         Row: {
           created_at: string
@@ -1945,6 +2043,14 @@ export type Database = {
       app_role: "admin" | "student" | "manager" | "agent"
       difficulty_level: "Fácil" | "Médio" | "Avançado"
       integration_type: "ia" | "payment"
+      knowledge_category:
+        | "CONTA"
+        | "CURSOS"
+        | "EBOOKS"
+        | "MATERIAIS"
+        | "PWA"
+        | "SUPORTE"
+        | "PROBLEMAS"
       live_class_status: "scheduled" | "live" | "completed"
       payout_status: "pending" | "analyzing" | "approved" | "paid" | "rejected"
       support_sender_type: "student" | "assistant" | "support_agent" | "system"
@@ -2081,6 +2187,15 @@ export const Constants = {
       app_role: ["admin", "student", "manager", "agent"],
       difficulty_level: ["Fácil", "Médio", "Avançado"],
       integration_type: ["ia", "payment"],
+      knowledge_category: [
+        "CONTA",
+        "CURSOS",
+        "EBOOKS",
+        "MATERIAIS",
+        "PWA",
+        "SUPORTE",
+        "PROBLEMAS",
+      ],
       live_class_status: ["scheduled", "live", "completed"],
       payout_status: ["pending", "analyzing", "approved", "paid", "rejected"],
       support_sender_type: ["student", "assistant", "support_agent", "system"],
