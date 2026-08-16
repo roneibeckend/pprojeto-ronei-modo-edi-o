@@ -137,6 +137,7 @@ export async function resolveUserFromPayment(payment: any, baseUrl: string, apiK
 
   if (!email) return null;
 
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: profile } = await supabaseAdmin
     .from("profiles")
     .select("id")
