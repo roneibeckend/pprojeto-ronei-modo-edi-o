@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, Suspense, lazy, useRef, useLayoutEffect } from "react";
-import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart, CheckCircle2, ArrowDown, X } from "lucide-react";
+import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart, CheckCircle2, ArrowDown, X, Award } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -418,8 +418,17 @@ function CoursePage() {
     <div className="mx-auto max-w-7xl px-0 sm:px-4">
       <div className="flex flex-col gap-4 px-4 sm:flex-row sm:items-end sm:justify-between mb-6 sm:mb-8 sm:px-0">
         <div>
-          <div className="mb-4">
+          <div className="mb-4 flex items-center gap-4">
             <FeedbackSummary courseId={course.id} />
+            {isCompleted && (
+              <Link
+                to="/app/certificados"
+                className="flex items-center gap-2 px-3 py-1 bg-[#ff6a00]/10 hover:bg-[#ff6a00]/20 rounded-lg text-[10px] font-bold uppercase tracking-widest text-[#ff6a00] transition border border-[#ff6a00]/20"
+              >
+                <Award className="w-3.5 h-3.5" />
+                Certificado Disponível
+              </Link>
+            )}
           </div>
           <PageHeader
             title={course.title}

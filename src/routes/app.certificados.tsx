@@ -1,10 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2, Printer } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { certificates as baseCertificates, courses, student } from "@/lib/platform-data";
+import { courses as baseCourses, student as fallbackStudent } from "@/lib/platform-data";
 import { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { useServerFn } from "@tanstack/react-start";
+import { getStudentCertificates } from "@/lib/certificates-student.functions";
+import { useQuery } from "@tanstack/react-query";
+
 
 // Estilos específicos para impressão
 const printStyles = `
@@ -69,21 +73,21 @@ export const Route = createFileRoute("/app/certificados")({
 const BRAND = "#ff6a00";
 
 function CertificatesPage() {
-  // Sincronizar dinamicamente com o progresso dos cursos
-  const certificates = baseCertificates.map(cert => {
-    const course = courses.find(c => c.id === cert.courseId);
-    const isUnlocked = course ? course.progress === 100 : cert.unlocked;
-    return {
-      ...cert,
-      unlocked: isUnlocked,
-      completedAt: isUnlocked ? (cert.completedAt === "—" ? "06/08/2026" : cert.completedAt) : "—"
-    };
+  const fetchCerts = useServerFn(getStudentCertificates);
+  const { data: certificates = [], isLoading } = useQuery({
+    queryKey: ['student-certificates'],
+    queryFn: () => fetchCerts()
   });
 
-  const [preview, setPreview] = useState<{ cert: typeof certificates[number]; autoDownload?: boolean } | null>(null);
-  const unlockedCount = certificates.filter((c) => c.unlocked).length;
-  const totalHours = certificates.filter((c) => c.unlocked).reduce((s, c) => s + c.hours, 0);
-  const nextCert = certificates.find((c) => !c.unlocked);
+  const [preview, setPreview] = useState<{ cert: any; autoDownload?: boolean } | null>(null);
+  const unlockedCount = certificates.length;
+  const totalHours = certificates.reduce((s: number, c: any) => s + c.hours, 0);
+  
+  // Find courses that don't have a certificate yet to show as "next objective"
+  const nextCert = baseCourses.find(course => 
+    !certificates.some((cert: any) => cert.content_id === course.id)
+  );
+
 
   return (
     <div>
@@ -92,22 +96,37 @@ function CertificatesPage() {
 
       {/* Hero stats */}
       <div className="mb-8 grid gap-3 grid-cols-2 md:grid-cols-3">
-        <StatCard icon={<Award className="h-5 w-5" strokeWidth={2.5} />} label="Conquistados" value={`${unlockedCount}/${certificates.length}`} accent />
+        <StatCard icon={<Award className="h-5 w-5" strokeWidth={2.5} />} label="Conquistados" value={`${unlockedCount}`} accent />
         <StatCard icon={<Clock className="h-5 w-5" strokeWidth={2.5} />} label="Carga total" value={`${totalHours}h`} />
-        <StatCard className="col-span-2 md:col-span-1" icon={<GraduationCap className="h-5 w-5" strokeWidth={2.5} />} label="Próximo objetivo" value={nextCert?.course ?? "Todos concluídos"} small />
+        <StatCard className="col-span-2 md:col-span-1" icon={<GraduationCap className="h-5 w-5" strokeWidth={2.5} />} label="Próximo objetivo" value={nextCert?.title ?? "Todos concluídos"} small />
       </div>
 
-      {/* Grid */}
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {certificates.map((c) => (
-          <CertCard
-            key={c.id}
-            cert={c}
-            onPreview={() => setPreview({ cert: c })}
-            onDownload={() => setPreview({ cert: c, autoDownload: true })}
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex h-[40vh] items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
+        </div>
+      ) : certificates.length > 0 ? (
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {certificates.map((c: any) => (
+            <CertCard
+              key={c.id}
+              cert={c}
+              onPreview={() => setPreview({ cert: c })}
+              onDownload={() => setPreview({ cert: c, autoDownload: true })}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-white/5 bg-[#0e0e0e] p-12 text-center">
+          <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-white/5 text-white/20">
+            <Award className="h-8 w-8" />
+          </div>
+          <h3 className="font-display text-xl font-bold text-white">Nenhum certificado ainda</h3>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-white/50">
+            Conclua seus cursos ou e-books para liberar seus certificados oficiais.
+          </p>
+        </div>
+      )}
 
       {/* Verification band */}
       <div className="mt-10 flex flex-col items-start gap-4 rounded-xl border border-white/5 bg-[#0e0e0e] p-5 sm:flex-row sm:items-center">
@@ -248,7 +267,7 @@ function MiniCertificate({ cert, locked }: { cert: any; locked: boolean }) {
           <Flame className="h-2.5 w-2.5" strokeWidth={3} /> Espetinho na Veia
         </div>
         <div className="mt-2 font-display text-[10px] font-bold uppercase tracking-[0.18em] text-black/70">Certificado de Conclusão</div>
-        <div className="mt-1 font-display text-lg font-extrabold uppercase text-black break-words">{student.name}</div>
+        <div className="mt-1 font-display text-lg font-extrabold uppercase text-black break-words">{fallbackStudent.name}</div>
         <div className="mt-1.5 max-w-[85%] whitespace-normal text-[9px] font-medium text-black/60 break-words">{cert.course}</div>
         {!locked && (
           <div className="mt-2 flex items-center gap-2 text-[7px] font-mono uppercase tracking-widest text-black/40">
@@ -397,7 +416,7 @@ function FullCertificate({ cert }: { cert: any }) {
             {/* Body */}
             <div className="mt-8 text-center">
               <p className="text-[12px] uppercase tracking-[0.28em] text-black/50">Certificamos que</p>
-              <p className="mt-3 font-display text-3xl font-extrabold uppercase tracking-wide sm:text-4xl">{student.name}</p>
+              <p className="mt-3 font-display text-3xl font-extrabold uppercase tracking-wide sm:text-4xl">{fallbackStudent.name}</p>
               <div className="mx-auto mt-2 h-px w-64 bg-black/20" />
               <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-black/75 sm:text-base">
                 concluiu com aproveitamento integral o curso

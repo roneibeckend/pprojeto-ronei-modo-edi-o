@@ -15,7 +15,8 @@ import {
   ShieldAlert,
   Plus,
   CreditCard,
-  DollarSign
+  DollarSign,
+  Award
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -23,7 +24,12 @@ import { PageHeader } from "@/components/platform/Shell";
 import { useServerFn } from "@tanstack/react-start";
 import { manualConfirmEnrollment } from "@/lib/enrollment-admin.functions";
 import { 
+  generateCertificateManually,
+  getContentCertificate
+} from "@/lib/certificates.functions.ts";
+import { 
   Dialog, 
+
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
@@ -53,6 +59,11 @@ function AdminStudentProfilePage() {
   const [manualData, setManualData] = useState({ productId: '', productType: 'course' as 'course' | 'ebook', notes: '' });
 
   const manualConfirmFn = useServerFn(manualConfirmEnrollment);
+  const generateCertFn = useServerFn(generateCertificateManually);
+  const getCertConfigFn = useServerFn(getContentCertificate);
+
+  const [certLoading, setCertLoading] = useState<string | null>(null);
+
 
   useEffect(() => {
     fetchStudentData();
@@ -213,6 +224,36 @@ function AdminStudentProfilePage() {
       setLoading(false);
     }
   }
+
+  const handleGenerateCertificate = async (enrollment: any) => {
+    try {
+      setCertLoading(enrollment.id);
+      
+      // First check if certificate is enabled for this content
+      const config = await getCertConfigFn({ data: { contentId: enrollment.type === 'course' ? enrollment.course_id : enrollment.ebook_id } }) as any;
+      
+      if (!config || !config.is_enabled) {
+        toast.error("A geração de certificado não está habilitada para este conteúdo.");
+        return;
+      }
+
+      await generateCertFn({
+        data: {
+          student_id: studentId,
+          content_id: enrollment.type === 'course' ? enrollment.course_id : enrollment.ebook_id,
+          content_type: enrollment.type as 'course' | 'ebook',
+        }
+      });
+      
+      toast.success("Certificado gerado com sucesso!");
+      fetchStudentData();
+    } catch (error: any) {
+      toast.error("Erro ao gerar certificado: " + error.message);
+    } finally {
+      setCertLoading(null);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -414,9 +455,25 @@ function AdminStudentProfilePage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-bold text-sm pr-16">{enrollment.title}</h4>
-                          <span className="text-[10px] font-bold text-[#ff6a00] uppercase tracking-widest">
-                            {enrollment.progress || 0}% Concluído
-                          </span>
+                          <div className="flex items-center gap-3">
+                            {enrollment.progress === 100 && (
+                              <button
+                                onClick={() => handleGenerateCertificate(enrollment)}
+                                disabled={certLoading === enrollment.id}
+                                className="flex items-center gap-1.5 px-3 py-1 bg-[#ff6a00]/10 hover:bg-[#ff6a00]/20 rounded-lg text-[9px] font-bold uppercase tracking-widest text-[#ff6a00] transition disabled:opacity-50"
+                              >
+                                {certLoading === enrollment.id ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <Award className="w-3 h-3" />
+                                )}
+                                Gerar Certificado
+                              </button>
+                            )}
+                            <span className="text-[10px] font-bold text-[#ff6a00] uppercase tracking-widest">
+                              {enrollment.progress || 0}% Concluído
+                            </span>
+                          </div>
                         </div>
                         <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                           <div 

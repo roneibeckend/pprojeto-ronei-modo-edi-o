@@ -1,4 +1,5 @@
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+// src/lib/asaas.server.ts
+// supabaseAdmin is now imported dynamically in functions to avoid module cycle issues
 
 const ASAAS_SANDBOX_URL = "https://sandbox.asaas.com/api/v3";
 const ASAAS_PRODUCTION_URL = "https://www.asaas.com/api/v3";
@@ -6,6 +7,7 @@ const ASAAS_PRODUCTION_URL = "https://www.asaas.com/api/v3";
 export const ASAAS_USER_AGENT = "Lovable-LMS-Platform/1.0.0 (+https://lovable.app)";
 
 export async function getAsaasConfig() {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: integration, error } = await supabaseAdmin
     .from("integrations")
     .select("*")
@@ -87,6 +89,8 @@ export async function grantAccess(
   productId: string,
   userId: string,
 ): Promise<boolean> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  
   if (productType === "course") {
     const { error } = await supabaseAdmin
       .from("course_enrollments")
@@ -95,6 +99,8 @@ export async function grantAccess(
       console.error("[Asaas] Falha ao matricular em curso:", error);
       return false;
     }
+    
+    // Auto-generate certificate if enabled and progess check passes (handled in separate logic usually, but here we can trigger initial check)
     return true;
   }
   if (productType === "ebook") {
@@ -131,6 +137,7 @@ export async function resolveUserFromPayment(payment: any, baseUrl: string, apiK
 
   if (!email) return null;
 
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: profile } = await supabaseAdmin
     .from("profiles")
     .select("id")
