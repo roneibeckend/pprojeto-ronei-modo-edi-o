@@ -96,22 +96,37 @@ function CertificatesPage() {
 
       {/* Hero stats */}
       <div className="mb-8 grid gap-3 grid-cols-2 md:grid-cols-3">
-        <StatCard icon={<Award className="h-5 w-5" strokeWidth={2.5} />} label="Conquistados" value={`${unlockedCount}/${certificates.length}`} accent />
+        <StatCard icon={<Award className="h-5 w-5" strokeWidth={2.5} />} label="Conquistados" value={`${unlockedCount}`} accent />
         <StatCard icon={<Clock className="h-5 w-5" strokeWidth={2.5} />} label="Carga total" value={`${totalHours}h`} />
-        <StatCard className="col-span-2 md:col-span-1" icon={<GraduationCap className="h-5 w-5" strokeWidth={2.5} />} label="Próximo objetivo" value={nextCert?.course ?? "Todos concluídos"} small />
+        <StatCard className="col-span-2 md:col-span-1" icon={<GraduationCap className="h-5 w-5" strokeWidth={2.5} />} label="Próximo objetivo" value={nextCert?.title ?? "Todos concluídos"} small />
       </div>
 
-      {/* Grid */}
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {certificates.map((c) => (
-          <CertCard
-            key={c.id}
-            cert={c}
-            onPreview={() => setPreview({ cert: c })}
-            onDownload={() => setPreview({ cert: c, autoDownload: true })}
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex h-[40vh] items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
+        </div>
+      ) : certificates.length > 0 ? (
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {certificates.map((c: any) => (
+            <CertCard
+              key={c.id}
+              cert={c}
+              onPreview={() => setPreview({ cert: c })}
+              onDownload={() => setPreview({ cert: c, autoDownload: true })}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-white/5 bg-[#0e0e0e] p-12 text-center">
+          <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-white/5 text-white/20">
+            <Award className="h-8 w-8" />
+          </div>
+          <h3 className="font-display text-xl font-bold text-white">Nenhum certificado ainda</h3>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-white/50">
+            Conclua seus cursos ou e-books para liberar seus certificados oficiais.
+          </p>
+        </div>
+      )}
 
       {/* Verification band */}
       <div className="mt-10 flex flex-col items-start gap-4 rounded-xl border border-white/5 bg-[#0e0e0e] p-5 sm:flex-row sm:items-center">
