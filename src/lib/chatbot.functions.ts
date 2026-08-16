@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 // Definindo tipos para evitar erros de 'never'
 interface KnowledgeItem {
@@ -21,13 +21,12 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
       path: z.string().optional()
     }).optional()
   }).parse(data))
-  .handler(async ({ data }) => {
-    const { message, context } = data;
+  .handler(async ({ data, context }) => {
+    const { message, context: requestContext } = data;
     const query = message.toLowerCase();
 
     // 1. Buscar base de conhecimento
-    // Usando casting para 'any' para contornar problemas temporários de tipos gerados
-    const { data: knowledge, error } = await (supabase as any)
+    const { data: knowledge, error } = await context.supabase
       .from("knowledge_base")
       .select("*")
       .eq("status", "active");
@@ -82,10 +81,10 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     }
 
     // 4. Fallback: Gravar pergunta não respondida
-    await (supabase as any).from("unhandled_questions").insert({
+    await context.supabase.from("unhandled_questions").insert({
       question: message,
       confidence,
-      context: context || {},
+      context: requestContext || {},
       status: 'pending'
     });
 
@@ -101,8 +100,8 @@ export const submitKnowledgeFeedback = createServerFn({ method: "POST" })
     knowledgeId: z.string(),
     isPositive: z.boolean()
   }).parse(data))
-  .handler(async ({ data }) => {
-    const { error } = await (supabase as any)
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
       .from("knowledge_feedback")
       .insert({
         knowledge_id: data.knowledgeId,

@@ -1,27 +1,20 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getMaterials = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .handler(async ({ context }) => {
     try {
-      console.log("Server side: Fetching platform_materials");
-      const { data, error } = await supabase
+      const { data, error } = await context.supabase
         .from("platform_materials")
         .select("*")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("Server side: Error fetching platform_materials:", error);
-        throw error;
-      }
-      
-      console.log("Server side: Materials fetched:", data?.length || 0);
+      if (error) throw error;
       return data || [];
     } catch (e) {
-      console.error("Server side: Fatal error in getMaterials:", e);
+      console.error("Server side error in getMaterials:", e);
       throw e;
     }
   });
