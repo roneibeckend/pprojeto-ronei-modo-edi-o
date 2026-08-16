@@ -7,6 +7,7 @@ const ASAAS_PRODUCTION_URL = "https://www.asaas.com/api/v3";
 export const ASAAS_USER_AGENT = "Lovable-LMS-Platform/1.0.0 (+https://lovable.app)";
 
 export async function getAsaasConfig() {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: integration, error } = await supabaseAdmin
     .from("integrations")
     .select("*")
