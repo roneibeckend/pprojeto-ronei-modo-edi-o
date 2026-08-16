@@ -32,6 +32,7 @@ export const upsertMaterial = createServerFn({ method: "POST" })
     is_active: z.boolean().default(true),
   }).parse(data))
   .handler(async ({ data, context }) => {
+    if (!context) throw new Error("Internal Server Error: No context");
     const { data: hasRole, error: roleError } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
       _role: "admin" 
