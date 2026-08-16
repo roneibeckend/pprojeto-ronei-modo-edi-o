@@ -87,6 +87,8 @@ export async function grantAccess(
   productId: string,
   userId: string,
 ): Promise<boolean> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  
   if (productType === "course") {
     const { error } = await supabaseAdmin
       .from("course_enrollments")
@@ -95,6 +97,8 @@ export async function grantAccess(
       console.error("[Asaas] Falha ao matricular em curso:", error);
       return false;
     }
+    
+    // Auto-generate certificate if enabled and progess check passes (handled in separate logic usually, but here we can trigger initial check)
     return true;
   }
   if (productType === "ebook") {
