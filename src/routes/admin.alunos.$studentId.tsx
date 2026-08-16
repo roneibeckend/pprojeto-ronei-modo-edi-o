@@ -225,6 +225,36 @@ function AdminStudentProfilePage() {
     }
   }
 
+  const handleGenerateCertificate = async (enrollment: any) => {
+    try {
+      setCertLoading(enrollment.id);
+      
+      // First check if certificate is enabled for this content
+      const config = await getCertConfigFn({ data: { contentId: enrollment.type === 'course' ? enrollment.course_id : enrollment.ebook_id } });
+      
+      if (!config.is_enabled) {
+        toast.error("A geração de certificado não está habilitada para este conteúdo.");
+        return;
+      }
+
+      await generateCertFn({
+        data: {
+          student_id: studentId,
+          content_id: enrollment.type === 'course' ? enrollment.course_id : enrollment.ebook_id,
+          content_type: enrollment.type as 'course' | 'ebook',
+        }
+      });
+      
+      toast.success("Certificado gerado com sucesso!");
+      fetchStudentData();
+    } catch (error: any) {
+      toast.error("Erro ao gerar certificado: " + error.message);
+    } finally {
+      setCertLoading(null);
+    }
+  };
+
+
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
