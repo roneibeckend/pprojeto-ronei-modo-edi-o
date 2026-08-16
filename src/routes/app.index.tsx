@@ -77,15 +77,19 @@ function Dashboard() {
   useEffect(() => {
     syncWithDatabase();
 
-    // Lógica para exibir oferta automática pós-cadastro
+    // Lógica para exibir oferta automática pós-cadastro (Apenas se o redirecionamento pedir)
     const checkFirstAccess = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      const urlParams = new URLSearchParams(window.location.search);
+      const buyItem = urlParams.get('buy');
+      
+      // Se houver um item explícito para compra, não mostra o popup de oferta geral
+      if (buyItem) return;
+
       const isFirstAccess = localStorage.getItem(`first_access_offer_${user.id}`);
       if (!isFirstAccess) {
-        // Busca o ebook principal "Do Zero aos 10k" (id fixo ou busca por slug se disponível)
-        // Aqui buscamos o primeiro ebook disponível para ofertar
         const { data: ebook } = await supabase
           .from('ebooks')
           .select('id, title, description, price, cover_url')
@@ -95,7 +99,6 @@ function Dashboard() {
 
         if (ebook && !isEnrolledInEbook(ebook.id)) {
           setOfferItem({ ...ebook, type: 'ebook' });
-          // Pequeno delay para a UI carregar
           setTimeout(() => {
             setShowOffer(true);
             localStorage.setItem(`first_access_offer_${user.id}`, 'true');
@@ -177,6 +180,40 @@ function Dashboard() {
       </div>
     );
   }
+
+  // Processamento de compra imediata vinda do redirecionamento
+  useEffect(() => {
+    const handleBuyParam = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const buyId = urlParams.get('buy');
+      const buyType = urlParams.get('type') as 'course' | 'ebook' | null;
+
+      if (buyId && buyType && !isLoadingEnrollments) {
+        // Verifica se já não está inscrito
+        const alreadyEnrolled = buyType === 'course' ? isEnrolledInCourse(buyId) : isEnrolledInEbook(buyId);
+        if (alreadyEnrolled) return;
+
+        // Busca os detalhes do item para o checkout
+        const table = buyType === 'course' ? 'courses' : 'ebooks';
+        const { data: item } = await supabase
+          .from(table)
+          .select('id, title, description, price')
+          .eq('id', buyId)
+          .maybeSingle();
+
+        if (item) {
+          executeCheckout({ ...item, type: buyType }, []);
+          // Limpa a URL para evitar re-disparo
+          const newUrl = new URL(window.location.href);
+          newUrl.searchParams.delete('buy');
+          newUrl.searchParams.delete('type');
+          window.history.replaceState({}, '', newUrl.pathname + newUrl.search);
+        }
+      }
+    };
+
+    handleBuyParam();
+  }, [isLoadingEnrollments]);
 
   // Fallback para o primeiro item se não houver contexto anterior
   const lastItem = showcaseItems?.[0];

@@ -355,9 +355,9 @@ function CTAButton({
   );
 }
 
-// Configuração do checkout — redireciona para o checkout do ebook principal com flag de compra imediata.
+// Configuração do checkout — redireciona para o login com contexto de redirecionamento
 const MAIN_EBOOK_ID = "ee1a776c-6c7d-4a88-a980-7e671ad8d4fb";
-const CHECKOUT_URL = `/login?redirectTo=${encodeURIComponent(`/app/cursos?buy=${MAIN_EBOOK_ID}&type=ebook`)}`;
+const CHECKOUT_URL = `/login?redirectTo=${encodeURIComponent(`/app?buy=${MAIN_EBOOK_ID}&type=ebook`)}`;
 
 function CheckoutButton({ className = "", label = "Quero garantir meu acesso" }: { className?: string; label?: string }) {
   const [loading, setLoading] = useState(false);
