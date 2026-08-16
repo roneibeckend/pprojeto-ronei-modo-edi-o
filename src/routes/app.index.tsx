@@ -77,33 +77,10 @@ function Dashboard() {
   useEffect(() => {
     syncWithDatabase();
 
-    // Lógica para exibir oferta automática pós-cadastro (Apenas se o redirecionamento pedir)
+    // A oferta automática foi desativada para evitar exibição imediata após o login.
+    // Agora a oferta só é exibida via ações manuais (como clique em comprar) na vitrine.
     const checkFirstAccess = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const buyItem = urlParams.get('buy');
-      
-      // Se houver um item explícito para compra, não mostra o popup de oferta geral
-      if (buyItem) return;
-
-      const isFirstAccess = localStorage.getItem(`first_access_offer_${user.id}`);
-      if (!isFirstAccess) {
-        const { data: ebook } = await supabase
-          .from('ebooks')
-          .select('id, title, description, price, cover_url')
-          .eq('status', 'published')
-          .limit(1)
-          .maybeSingle();
-
-        if (ebook && !isEnrolledInEbook(ebook.id)) {
-          setOfferItem({ ...ebook, type: 'ebook' });
-          // Auto-offer logic removed to prevent automatic popups.
-          // Offer should only appear via manual triggers now.
-          // localStorage.setItem(`first_access_offer_${user.id}`, 'true');
-        }
-      }
+      // Logic removed as per requirement: do not show offer automatically after login.
     };
 
     if (!isLoadingEnrollments) {
