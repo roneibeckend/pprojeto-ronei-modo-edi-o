@@ -2,6 +2,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
+// Definindo tipos para evitar erros de 'never'
+interface KnowledgeItem {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  questions: string[] | null;
+  keywords: string[] | null;
+  status: string;
+}
+
 export const getChatbotResponse = createServerFn({ method: "POST" })
   .inputValidator((data) => z.object({ 
     message: z.string(),
@@ -15,7 +26,8 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     const query = message.toLowerCase();
 
     // 1. Buscar base de conhecimento
-    const { data: knowledge, error } = await supabase
+    // Usando casting para 'any' para contornar problemas temporários de tipos gerados
+    const { data: knowledge, error } = await (supabase as any)
       .from("knowledge_base")
       .select("*")
       .eq("status", "active");
@@ -29,10 +41,10 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     }
 
     // 2. Lógica de Matching
-    let bestMatch = null;
+    let bestMatch: KnowledgeItem | null = null;
     let maxScore = 0;
 
-    for (const item of knowledge) {
+    for (const item of (knowledge as KnowledgeItem[])) {
       let score = 0;
       
       // Peso 1: Palavras-chave
@@ -70,7 +82,7 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     }
 
     // 4. Fallback: Gravar pergunta não respondida
-    await supabase.from("unhandled_questions").insert({
+    await (supabase as any).from("unhandled_questions").insert({
       question: message,
       confidence,
       context: context || {},
@@ -90,7 +102,7 @@ export const submitKnowledgeFeedback = createServerFn({ method: "POST" })
     isPositive: z.boolean()
   }).parse(data))
   .handler(async ({ data }) => {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("knowledge_feedback")
       .insert({
         knowledge_id: data.knowledgeId,
