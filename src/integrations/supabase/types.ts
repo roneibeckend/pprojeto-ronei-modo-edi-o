@@ -1174,6 +1174,7 @@ export type Database = {
       }
       live_classes: {
         Row: {
+          cover_url: string | null
           created_at: string | null
           description: string | null
           id: string
@@ -1184,6 +1185,7 @@ export type Database = {
           title: string
         }
         Insert: {
+          cover_url?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
@@ -1194,6 +1196,7 @@ export type Database = {
           title: string
         }
         Update: {
+          cover_url?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
@@ -1934,6 +1937,7 @@ export type Database = {
         Args: { p_content: string; p_ticket_id: string }
         Returns: undefined
       }
+      update_expired_live_classes: { Args: never; Returns: undefined }
     }
     Enums: {
       affiliate_sale_status: "pending" | "paid" | "cancelled"
