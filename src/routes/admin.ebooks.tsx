@@ -572,6 +572,15 @@ function AdminEbooksPage() {
                 <TabsContent value="content" className="flex-1 mt-0 outline-none">
                   {editingItem?.id && <EbookContentEditor ebookId={editingItem.id} />}
                 </TabsContent>
+
+                <TabsContent value="certificates" className="flex-1 mt-0">
+                  {editingItem?.id && (
+                    <CertificateEditor 
+                      contentId={editingItem.id} 
+                      contentType="ebook" 
+                    />
+                  )}
+                </TabsContent>
             </Tabs>
           </div>
         </div>
