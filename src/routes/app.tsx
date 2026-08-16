@@ -77,6 +77,7 @@ function AppGate() {
         <Outlet />
       </Shell>
       <AsaasPaymentModal />
+      <OnboardingGuide />
     </>
   );
 }

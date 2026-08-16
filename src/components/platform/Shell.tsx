@@ -3,9 +3,10 @@ import { useState, type ReactNode, Suspense, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { toast } from "sonner";
-import { Bell } from "lucide-react";
+import { Bell, Rocket } from "lucide-react";
 import { useNotifications } from "@/hooks/use-notifications";
 import { PwaInstallBanner } from "./PwaInstallBanner";
+import { OnboardingLauncher } from "./OnboardingGuide";
 import {
   Home,
   GraduationCap,
@@ -256,6 +257,7 @@ export function Shell({ children }: { children: ReactNode }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <OnboardingLauncher />
             <Link 
               to="/app/notificacoes"
               className="relative grid h-10 w-10 place-items-center rounded-md border border-white/10 hover:border-primary/50 transition-colors touch-target"
