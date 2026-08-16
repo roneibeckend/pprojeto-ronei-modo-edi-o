@@ -79,8 +79,7 @@ function Dashboard() {
     syncWithDatabase();
 
     // A oferta automática foi desativada completamente.
-    // A lógica de checkFirstAccess foi removida para garantir que o popup 
-    // nunca apareça sem uma ação de compra iniciada pelo usuário.
+    // O popup agora só aparece em resposta a um clique de compra.
   }, [syncWithDatabase]);
 
   const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
