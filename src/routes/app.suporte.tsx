@@ -15,7 +15,6 @@ import {
   AlertCircle,
   ThumbsUp,
   ThumbsDown,
-  ExternalLink
 } from "lucide-react";
 
 import { PageHeader } from "@/components/platform/Shell";
@@ -115,12 +114,10 @@ function SupportPage() {
     (async () => {
       try {
         const result = await getChatbot({ 
-          data: {
-            message: text,
-            context: {
-              url: window.location.href,
-              path: window.location.pathname
-            }
+          message: text,
+          context: {
+            url: window.location.href,
+            path: window.location.pathname
           }
         });
         
@@ -146,7 +143,7 @@ function SupportPage() {
 
   const submitFeedback = async (msgIndex: number, knowledgeId: string, isPositive: boolean) => {
     try {
-      await sendFeedback({ data: { knowledgeId, isPositive } });
+      await sendFeedback({ knowledgeId, isPositive });
       setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, feedbackGiven: true } : m));
       toast.success(isPositive ? "Obrigado pelo feedback!" : "Lamentamos. Vamos revisar essa resposta.");
     } catch (error) {
