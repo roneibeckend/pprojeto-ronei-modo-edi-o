@@ -82,41 +82,7 @@ function Dashboard() {
     // O popup agora só aparece em resposta a um clique de compra.
   }, [syncWithDatabase]);
 
-  const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
-    queryKey: ["showcase-items"],
-    staleTime: 1000 * 60 * 60, // 1 hour
-    gcTime: 1000 * 60 * 60 * 24,
-    queryFn: async () => {
-      const [coursesRes, ebooksRes] = await Promise.all([
-        supabase
-          .from("courses")
-          .select("id, title, description, price, cover_url, created_at, badge, status")
-          .eq("is_locked", false)
-          .in("status", ["active", "published"]),
-        supabase
-          .from("ebooks")
-          .select("id, title, description, price, cover_url, created_at, badge, status")
-          .eq("is_locked", false)
-          .in("status", ["active", "published"]),
-      ]);
-
-      if (coursesRes.error) throw coursesRes.error;
-      if (ebooksRes.error) throw ebooksRes.error;
-
-      const items = [
-        ...(coursesRes.data || []).map(c => ({ 
-          ...c,
-          type: 'course' as const 
-        })),
-        ...(ebooksRes.data || []).map(e => ({ 
-          ...e,
-          type: 'ebook' as const 
-        })),
-      ];
-
-      return items.sort((a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime());
-    },
-  });
+  // Query e Hooks movidos para cima do loading return para manter ordem estável
 
   if (isLoadingItems || isLoadingEnrollments) {
     return (
@@ -170,18 +136,7 @@ function Dashboard() {
   // Lógica de "Retomar onde parou"
   const [resumeItem, setResumeItem] = useState<{ id: string, type: 'course' | 'ebook', title: string } | null>(null);
 
-  useEffect(() => {
-    if (showcaseItems) {
-      // Verifica o último item lido/assistido no localStorage
-      const lastReadEbookId = Object.keys(localStorage).find(key => key.startsWith('ebook_last_read_'))?.split('_').pop();
-      const lastWatchedCourseId = Object.keys(localStorage).find(key => key.startsWith('course_last_watched_'))?.split('_').pop();
-      
-      const lastItem = showcaseItems.find(i => i.id === lastReadEbookId || i.id === lastWatchedCourseId);
-      if (lastItem) {
-        setResumeItem({ id: lastItem.id, type: lastItem.type, title: lastItem.title });
-      }
-    }
-  }, [showcaseItems]);
+  // useEffect de resumeItem movido para cima do loading return
 
   const lastItem = showcaseItems?.[0];
 
