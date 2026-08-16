@@ -617,17 +617,23 @@ function SupportPage() {
             </div>
             
             <div className="grid gap-3">
-              {supportQuestions.slice(0, 5).map((q) => (
+              {[
+                "Como acessar meus cursos?",
+                "Como baixar E-books?",
+                "Como instalo o app?",
+                "Esqueci minha senha",
+                "Falar com suporte"
+              ].map((q) => (
                 <button
-                  key={q.q}
+                  key={q}
                   onClick={() => {
                     setActiveTab("chat");
-                    send(q.q);
+                    send(q);
                   }}
                   className="group flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.02] p-4 text-left transition hover:border-[#ff6a00]/30 hover:bg-[#ff6a00]/5"
                 >
                   <span className="text-sm font-medium text-white/60 group-hover:text-white transition whitespace-normal">
-                    {q.q}
+                    {q}
                   </span>
                   <ChevronRight className="h-4 w-4 shrink-0 text-white/10 group-hover:text-[#ff6a00] transition" />
                 </button>
