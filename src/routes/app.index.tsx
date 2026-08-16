@@ -77,12 +77,87 @@ function Dashboard() {
 
   useEffect(() => {
     syncWithDatabase();
-
-    // A oferta automática foi desativada completamente.
-    // O popup agora só aparece em resposta a um clique de compra.
   }, [syncWithDatabase]);
 
-  // Query e Hooks movidos para cima do loading return para manter ordem estável
+  const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
+    queryKey: ["showcase-items"],
+    staleTime: 1000 * 60 * 60, // 1 hour
+    gcTime: 1000 * 60 * 60 * 24,
+    queryFn: async () => {
+      const [coursesRes, ebooksRes] = await Promise.all([
+        supabase
+          .from("courses")
+          .select("id, title, description, price, cover_url, created_at, badge, status")
+          .eq("is_locked", false)
+          .in("status", ["active", "published"]),
+        supabase
+          .from("ebooks")
+          .select("id, title, description, price, cover_url, created_at, badge, status")
+          .eq("is_locked", false)
+          .in("status", ["active", "published"]),
+      ]);
+
+      if (coursesRes.error) throw coursesRes.error;
+      if (ebooksRes.error) throw ebooksRes.error;
+
+      const items = [
+        ...(coursesRes.data || []).map(c => ({ 
+          ...c,
+          type: 'course' as const 
+        })),
+        ...(ebooksRes.data || []).map(e => ({ 
+          ...e,
+          type: 'ebook' as const 
+        })),
+      ];
+
+      return items.sort((a, b) => new Date(b.created_at || "").getTime() - new Date(a.created_at || "").getTime());
+    },
+  });
+
+  const [resumeItem, setResumeItem] = useState<{ id: string, type: 'course' | 'ebook', title: string } | null>(null);
+
+  useEffect(() => {
+    if (showcaseItems) {
+      const lastReadEbookId = Object.keys(localStorage).find(key => key.startsWith('ebook_last_read_'))?.split('_').pop();
+      const lastWatchedCourseId = Object.keys(localStorage).find(key => key.startsWith('course_last_watched_'))?.split('_').pop();
+      
+      const lastItem = showcaseItems.find(i => i.id === lastReadEbookId || i.id === lastWatchedCourseId);
+      if (lastItem) {
+        setResumeItem({ id: lastItem.id, type: lastItem.type, title: lastItem.title });
+      }
+    }
+  }, [showcaseItems]);
+
+  useEffect(() => {
+    const handleBuyParam = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const buyId = urlParams.get('buy');
+      const buyType = urlParams.get('type') as 'course' | 'ebook' | null;
+
+      if (buyId && buyType && !isLoadingEnrollments) {
+        const alreadyEnrolled = buyType === 'course' ? isEnrolledInCourse(buyId) : isEnrolledInEbook(buyId);
+        if (alreadyEnrolled) return;
+
+        const table = buyType === 'course' ? 'courses' : 'ebooks';
+        const { data: item } = await supabase
+          .from(table)
+          .select('id, title, description, price')
+          .eq('id', buyId)
+          .maybeSingle();
+
+        if (item) {
+          executeCheckout({ ...item, type: buyType }, []);
+          const newUrl = new URL(window.location.href);
+          newUrl.searchParams.delete('buy');
+          newUrl.searchParams.delete('type');
+          window.history.replaceState({}, '', newUrl.pathname + newUrl.search);
+        }
+      }
+    };
+
+    handleBuyParam();
+  }, [isLoadingEnrollments]);
 
   if (isLoadingItems || isLoadingEnrollments) {
     return (
@@ -99,52 +174,8 @@ function Dashboard() {
     );
   }
 
-  // Processamento de compra imediata vinda do redirecionamento
-  useEffect(() => {
-    const handleBuyParam = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const buyId = urlParams.get('buy');
-      const buyType = urlParams.get('type') as 'course' | 'ebook' | null;
-
-      if (buyId && buyType && !isLoadingEnrollments) {
-        // Verifica se já não está inscrito
-        const alreadyEnrolled = buyType === 'course' ? isEnrolledInCourse(buyId) : isEnrolledInEbook(buyId);
-        if (alreadyEnrolled) return;
-
-        // Busca os detalhes do item para o checkout
-        const table = buyType === 'course' ? 'courses' : 'ebooks';
-        const { data: item } = await supabase
-          .from(table)
-          .select('id, title, description, price')
-          .eq('id', buyId)
-          .maybeSingle();
-
-        if (item) {
-          executeCheckout({ ...item, type: buyType }, []);
-          // Limpa a URL para evitar re-disparo
-          const newUrl = new URL(window.location.href);
-          newUrl.searchParams.delete('buy');
-          newUrl.searchParams.delete('type');
-          window.history.replaceState({}, '', newUrl.pathname + newUrl.search);
-        }
-      }
-    };
-
-    handleBuyParam();
-  }, [isLoadingEnrollments]);
-
-  // Lógica de "Retomar onde parou"
-  const [resumeItem, setResumeItem] = useState<{ id: string, type: 'course' | 'ebook', title: string } | null>(null);
-
-  // useEffect de resumeItem movido para cima do loading return
-
-  const lastItem = showcaseItems?.[0];
-
-
-
   return (
     <div className="space-y-8">
-      {/* Banner de Retomada (Opcional e pós-login) */}
       {resumeItem && (
         <section className="animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="glass flex flex-col items-center justify-between gap-4 rounded-2xl p-6 sm:flex-row">
@@ -167,9 +198,7 @@ function Dashboard() {
           </div>
         </section>
       )}
-      {/* A oferta automática no mount do Dashboard foi removida. 
-          Agora ela é disparada apenas pelo CourseShowcaseCard abaixo. */}
-      {/* Showcase / Cursos */}
+
       <section>
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-display text-2xl font-bold tracking-tight break-words">Novidades para você</h2>
@@ -178,14 +207,14 @@ function Dashboard() {
         
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 sm:gap-6">
           {showcaseItems
-            ?.map(item => ({
+            ?.map((item: any) => ({
               ...item,
               isEnrolled: item.type === 'course' 
                 ? isEnrolledInCourse(item.id) || (item.price || 0) === 0
                 : isEnrolledInEbook(item.id) || (item.price || 0) === 0
             }))
-            .filter(item => !item.isEnrolled) // Oculta itens que o aluno já possui ou que são gratuitos
-            .map((item) => (
+            .filter((item: any) => !item.isEnrolled)
+            .map((item: any) => (
               <CourseShowcaseCard 
                 key={`${item.type}-${item.id}`} 
                 item={item} 
@@ -211,7 +240,6 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
     e.stopPropagation();
     
     if (isOfferEnabled) {
-      // Fetch current discount for calculation consistency
       const { data } = await supabase.from('integrations').select('settings').eq('category', 'offer_settings').maybeSingle();
       if (data?.settings && typeof data.settings === 'object') {
         const s = data.settings as any;
@@ -292,7 +320,6 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
-        
         {item.badge && !isLocked && (
           <div className="absolute left-3 top-3 rounded-full bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-black">
             <Sparkles className="mr-1 inline h-3 w-3" /> {item.badge}
@@ -343,21 +370,5 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
       </div>
     </article>
     </>
-  );
-}
-
-function StatCard({ icon: Icon, label, value, accent }: { icon: React.ElementType; label: string; value: string; accent?: boolean }) {
-  return (
-    <div className={`glass rounded-2xl p-5 ${accent ? "gradient-border" : ""}`}>
-      <div className="flex items-center gap-3">
-        <div className="grid h-10 w-10 place-items-center rounded-xl bg-fire/20 text-primary">
-          <Icon className="h-5 w-5" />
-        </div>
-        <div>
-          <div className="text-xs uppercase tracking-widest text-muted-foreground">{label}</div>
-          <div className="font-display text-2xl font-bold">{value}</div>
-        </div>
-      </div>
-    </div>
   );
 }
