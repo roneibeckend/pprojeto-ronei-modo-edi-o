@@ -18,12 +18,14 @@ import {
   Layout,
   Users,
   Flag,
-  Save
+  Save,
+  Award
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { CourseTreeEditor } from "@/components/admin/CourseTreeEditor";
+import { CertificateEditor } from "@/components/admin/CertificateEditor";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -354,6 +356,9 @@ function AdminCursosPage() {
                 <TabsTrigger value="students" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Users className="h-4 w-4" /> Alunos
                 </TabsTrigger>
+                <TabsTrigger value="certificates" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
+                  <Award className="h-4 w-4" /> Certificados
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="info" className="flex-1 mt-0">
@@ -570,6 +575,15 @@ function AdminCursosPage() {
                   <Users className="h-12 w-12 mb-4" />
                   <p className="text-sm">Funcionalidade de listagem de alunos em desenvolvimento.</p>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="certificates" className="flex-1 mt-0">
+                {editingItem?.id && (
+                  <CertificateEditor 
+                    contentId={editingItem.id} 
+                    contentType="course" 
+                  />
+                )}
               </TabsContent>
             </Tabs>
           </div>

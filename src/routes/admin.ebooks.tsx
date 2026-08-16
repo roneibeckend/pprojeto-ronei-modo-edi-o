@@ -29,8 +29,10 @@ import {
   AlertCircle,
   CheckCircle2,
   HelpCircle,
-  Flag
+  Flag,
+  Award
 } from "lucide-react";
+import { CertificateEditor } from "@/components/admin/CertificateEditor";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
@@ -333,6 +335,9 @@ function AdminEbooksPage() {
                 <TabsTrigger value="content" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Layout className="h-4 w-4" /> Capítulos
                 </TabsTrigger>
+                <TabsTrigger value="certificates" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
+                  <Award className="h-4 w-4" /> Certificados
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="info" className="flex-1 mt-0 outline-none">
@@ -566,6 +571,15 @@ function AdminEbooksPage() {
 
                 <TabsContent value="content" className="flex-1 mt-0 outline-none">
                   {editingItem?.id && <EbookContentEditor ebookId={editingItem.id} />}
+                </TabsContent>
+
+                <TabsContent value="certificates" className="flex-1 mt-0">
+                  {editingItem?.id && (
+                    <CertificateEditor 
+                      contentId={editingItem.id} 
+                      contentType="ebook" 
+                    />
+                  )}
                 </TabsContent>
             </Tabs>
           </div>
