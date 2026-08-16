@@ -348,6 +348,10 @@ function EbookReaderPage() {
     }
   };
 
+  const isFree = ebook ? (ebook.price || 0) === 0 : false;
+  const isEnrolled = ebook ? isEnrolledInEbook(ebook.id) : false;
+  const hasAccess = isFree || isEnrolled;
+
   if (isLoadingEnrollments) {
     return (
       <div className="mx-auto max-w-5xl pb-20 animate-in fade-in duration-500">
@@ -368,8 +372,6 @@ function EbookReaderPage() {
       </div>
     );
   }
-
-
 
   if (!hasAccess) {
     return (
