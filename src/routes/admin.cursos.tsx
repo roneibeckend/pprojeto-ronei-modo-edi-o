@@ -576,6 +576,15 @@ function AdminCursosPage() {
                   <p className="text-sm">Funcionalidade de listagem de alunos em desenvolvimento.</p>
                 </div>
               </TabsContent>
+
+              <TabsContent value="certificates" className="flex-1 mt-0">
+                {editingItem?.id && (
+                  <CertificateEditor 
+                    contentId={editingItem.id} 
+                    contentType="course" 
+                  />
+                )}
+              </TabsContent>
             </Tabs>
           </div>
         </div>
