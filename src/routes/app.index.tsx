@@ -26,6 +26,7 @@ function Dashboard() {
   const { syncWithDatabase } = usePostPurchaseOfferStore();
   const [showOffer, setShowOffer] = useState(false);
   const [offerItem, setOfferItem] = useState<any>(null);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [discountPercentage, setDiscountPercentage] = useState(15);
   const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
