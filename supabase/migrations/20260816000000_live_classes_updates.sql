@@ -19,3 +19,21 @@ $$;
 
 -- 3. Grant access
 GRANT EXECUTE ON FUNCTION public.update_expired_live_classes() TO service_role;
+
+-- 4. Create cron job to run every hour
+DO $$
+BEGIN
+    -- Try to unschedule if exists
+    BEGIN
+        PERFORM cron.unschedule('update_live_classes_status');
+    EXCEPTION WHEN OTHERS THEN
+        -- Do nothing
+    END;
+    
+    PERFORM cron.schedule(
+        'update_live_classes_status',
+        '0 * * * *', -- Every hour at minute 0
+        'SELECT public.update_expired_live_classes()'
+    );
+END;
+$$;
