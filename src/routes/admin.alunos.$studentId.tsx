@@ -59,6 +59,11 @@ function AdminStudentProfilePage() {
   const [manualData, setManualData] = useState({ productId: '', productType: 'course' as 'course' | 'ebook', notes: '' });
 
   const manualConfirmFn = useServerFn(manualConfirmEnrollment);
+  const generateCertFn = useServerFn(generateCertificateManually);
+  const getCertConfigFn = useServerFn(getContentCertificate);
+
+  const [certLoading, setCertLoading] = useState<string | null>(null);
+
 
   useEffect(() => {
     fetchStudentData();
