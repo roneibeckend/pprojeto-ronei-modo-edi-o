@@ -77,15 +77,19 @@ function Dashboard() {
   useEffect(() => {
     syncWithDatabase();
 
-    // Lógica para exibir oferta automática pós-cadastro
+    // Lógica para exibir oferta automática pós-cadastro (Apenas se o redirecionamento pedir)
     const checkFirstAccess = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      const urlParams = new URLSearchParams(window.location.search);
+      const buyItem = urlParams.get('buy');
+      
+      // Se houver um item explícito para compra, não mostra o popup de oferta geral
+      if (buyItem) return;
+
       const isFirstAccess = localStorage.getItem(`first_access_offer_${user.id}`);
       if (!isFirstAccess) {
-        // Busca o ebook principal "Do Zero aos 10k" (id fixo ou busca por slug se disponível)
-        // Aqui buscamos o primeiro ebook disponível para ofertar
         const { data: ebook } = await supabase
           .from('ebooks')
           .select('id, title, description, price, cover_url')
@@ -95,7 +99,6 @@ function Dashboard() {
 
         if (ebook && !isEnrolledInEbook(ebook.id)) {
           setOfferItem({ ...ebook, type: 'ebook' });
-          // Pequeno delay para a UI carregar
           setTimeout(() => {
             setShowOffer(true);
             localStorage.setItem(`first_access_offer_${user.id}`, 'true');
