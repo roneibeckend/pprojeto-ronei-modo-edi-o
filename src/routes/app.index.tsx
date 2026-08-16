@@ -77,16 +77,10 @@ function Dashboard() {
   useEffect(() => {
     syncWithDatabase();
 
-    // A oferta automática foi desativada para evitar exibição imediata após o login.
-    // Agora a oferta só é exibida via ações manuais (como clique em comprar) na vitrine.
-    const checkFirstAccess = async () => {
-      // Logic removed as per requirement: do not show offer automatically after login.
-    };
-
-    if (!isLoadingEnrollments) {
-      checkFirstAccess();
-    }
-  }, [syncWithDatabase, isLoadingEnrollments, isEnrolledInEbook]);
+    // A oferta automática foi desativada completamente.
+    // A lógica de checkFirstAccess foi removida para garantir que o popup 
+    // nunca apareça sem uma ação de compra iniciada pelo usuário.
+  }, [syncWithDatabase]);
 
   const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
     queryKey: ["showcase-items"],
@@ -218,16 +212,8 @@ function Dashboard() {
           </div>
         </section>
       )}
-      {/* Oferta Automática Pós-Cadastro */}
-      {showOffer && offerItem && (
-        <PostPurchaseOffer
-          isOpen={showOffer}
-          onClose={() => setShowOffer(false)}
-          onProceedWithOffers={(selected) => executeCheckout(offerItem, selected)}
-          onProceedWithoutOffers={() => executeCheckout(offerItem, [])}
-          originalProductId={offerItem.id}
-        />
-      )}
+      {/* A oferta automática no mount do Dashboard foi removida. 
+          Agora ela é disparada apenas pelo CourseShowcaseCard abaixo. */}
       {/* Showcase / Cursos */}
       <section>
         <div className="mb-6 flex items-center justify-between">

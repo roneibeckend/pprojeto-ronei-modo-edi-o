@@ -8,7 +8,7 @@ interface PostPurchaseOfferState {
 }
 
 export const usePostPurchaseOfferStore = create<PostPurchaseOfferState>((set) => ({
-  isEnabled: true, 
+  isEnabled: false, // Default to false to prevent automatic display
   togglePostPurchaseOfferPopup: (enabled: boolean) => set({ isEnabled: enabled }),
   syncWithDatabase: async () => {
     try {
@@ -19,10 +19,10 @@ export const usePostPurchaseOfferStore = create<PostPurchaseOfferState>((set) =>
         .maybeSingle();
       
       if (!error && data) {
-        set({ isEnabled: data.status ?? true });
+        set({ isEnabled: data.status ?? false });
         // Cache the setting in localStorage for immediate retrieval on next load
         if (typeof window !== 'undefined') {
-          localStorage.setItem('post_purchase_offer_enabled', String(data.status ?? true));
+          localStorage.setItem('post_purchase_offer_enabled', String(data.status ?? false));
         }
       }
     } catch (err) {
