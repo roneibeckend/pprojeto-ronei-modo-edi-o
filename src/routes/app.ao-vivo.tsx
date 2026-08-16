@@ -89,40 +89,48 @@ function LiveClassCard({ live, isPast = false }: { live: any; isPast?: boolean }
 
   return (
     <div className={`glass overflow-hidden rounded-2xl border transition-all duration-300 flex flex-col h-full ${isLive ? 'border-primary ring-1 ring-primary/20' : 'border-white/5'}`}>
-      <div className="relative aspect-video bg-muted/20">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Video className={`h-12 w-12 ${isLive ? 'text-primary animate-pulse' : 'text-muted-foreground/20'}`} />
-        </div>
+      <div className="relative aspect-[16/9] bg-muted/20 sm:aspect-video">
+        {live.cover_url ? (
+          <img 
+            src={live.cover_url} 
+            alt={live.title} 
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Video className={`h-12 w-12 ${isLive ? 'text-primary animate-pulse' : 'text-muted-foreground/20'}`} />
+          </div>
+        )}
         
         {isLive && (
-          <div className="absolute top-3 left-3 flex items-center gap-2 rounded-full bg-red-600 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-lg animate-pulse">
+          <div className="absolute top-3 left-3 flex items-center gap-2 rounded-full bg-red-600 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-lg animate-pulse z-10">
             <span className="h-1.5 w-1.5 rounded-full bg-white" />
             Ao Vivo
           </div>
         )}
 
         {!isPast && !isLive && (
-          <div className="absolute top-3 left-3 rounded-full bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gold">
+          <div className="absolute top-3 left-3 rounded-full bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gold z-10">
             Agendada
           </div>
         )}
       </div>
 
-      <div className="p-5 space-y-4 flex flex-col flex-1">
+      <div className="p-4 sm:p-5 space-y-3 sm:space-y-4 flex flex-col flex-1">
         <div>
-          <h3 className="font-display text-lg font-bold line-clamp-1">{live.title}</h3>
-          <p className="mt-1 text-sm text-muted-foreground line-clamp-2 min-h-[40px]">
+          <h3 className="font-display text-base sm:text-lg font-bold line-clamp-1">{live.title}</h3>
+          <p className="mt-1 text-xs sm:text-sm text-muted-foreground line-clamp-2 min-h-[32px] sm:min-h-[40px]">
             {live.description || "Nenhuma descrição disponível."}
           </p>
         </div>
 
-        <div className="flex flex-col gap-2 pt-2 border-t border-white/5">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4 text-primary/60" />
+        <div className="flex flex-col gap-1.5 pt-2 border-t border-white/5">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5 sm:h-4 w-4 text-primary/60" />
             {format(date, "dd 'de' MMMM", { locale: ptBR })}
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Clock className="h-4 w-4 text-primary/60" />
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+            <Clock className="h-3.5 w-3.5 sm:h-4 w-4 text-primary/60" />
             {format(date, "HH:mm", { locale: ptBR })}h
           </div>
         </div>

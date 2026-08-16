@@ -34,6 +34,7 @@ type LiveClass = {
   scheduled_at: string;
   link: string | null;
   materials_url: string | null;
+  cover_url: string | null;
   status: 'scheduled' | 'live' | 'completed';
 };
 
@@ -140,8 +141,14 @@ function LiveClassesPage() {
             <div key={c.id} className="group relative overflow-hidden rounded-xl border border-white/5 bg-[#111] p-5 transition hover:border-primary/40">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex flex-1 items-start gap-4">
-                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-                    <Video className="h-6 w-6" />
+                  <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-white/5">
+                    {c.cover_url ? (
+                      <img src={c.cover_url} alt={c.title} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-white/10">
+                        <Video className="h-8 w-8" />
+                      </div>
+                    )}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
@@ -190,6 +197,24 @@ function LiveClassesPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Imagem de Capa (URL)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={editingClass?.cover_url || ""}
+                    onChange={(e) => setEditingClass({ ...editingClass, cover_url: e.target.value })}
+                    className="flex-1 rounded-lg border border-white/10 bg-black/40 p-3 text-sm outline-none focus:border-primary transition"
+                    placeholder="https://exemplo.com/imagem.jpg"
+                  />
+                  <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-white/5">
+                    {editingClass?.cover_url && (
+                      <img src={editingClass.cover_url} alt="Preview" className="h-full w-full object-cover" />
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título do Evento</label>
                 <input
                   type="text"
@@ -197,7 +222,6 @@ function LiveClassesPage() {
                   value={editingClass?.title || ""}
                   onChange={(e) => setEditingClass({ ...editingClass, title: e.target.value })}
                   className="w-full rounded-lg border border-white/10 bg-black/40 p-3 text-sm outline-none focus:border-primary transition text-[16px] md:text-sm"
-
                   placeholder="Ex.: Masterclass: O Segredo da Brasa"
                 />
               </div>
