@@ -36,7 +36,14 @@ type Msg = {
   needsHuman?: boolean;
 };
 
+export const Route = createFileRoute("/app/suporte")({
+  head: () => ({ meta: [{ title: "Suporte e Central de Ajuda — Espetinho na Veia" }] }),
+  component: SupportPage,
+});
+
 function SupportPage() {
+  const getChatbot = useServerFn(getChatbotResponse);
+  const sendFeedback = useServerFn(submitKnowledgeFeedback);
 
   const { user } = useAuth();
   const queryClient = useQueryClient();
