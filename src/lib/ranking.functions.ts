@@ -1,11 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 export const getRankingSettings = createServerFn({ method: "GET" })
   .handler(async () => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("integrations")
       .select("settings")
       .eq("category", "ranking_settings")
@@ -33,11 +33,6 @@ export const updateRankingSettings = createServerFn({ method: "POST" })
       throw new Error("Unauthorized: Only admins can manage ranking settings");
     }
 
-    // Use supabaseAdmin to perform the operation to ensure it bypasses RLS if needed,
-    // though the user is an admin and the policy should allow it.
-    // However, the policy "Admins can manage integrations" uses has_role(auth.uid(), 'admin')
-    // which requires the auth session to be correctly passed to the database.
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("integrations")
       .upsert({

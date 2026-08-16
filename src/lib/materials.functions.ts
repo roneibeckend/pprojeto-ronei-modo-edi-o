@@ -1,27 +1,25 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getMaterials = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }: { context: any }) => {
+
     try {
-      console.log("Server side: Fetching platform_materials");
-      const { data, error } = await supabase
+      if (!context) throw new Error("Unauthorized");
+      
+      const { data, error } = await context.supabase
         .from("platform_materials")
         .select("*")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("Server side: Error fetching platform_materials:", error);
-        throw error;
-      }
-      
-      console.log("Server side: Materials fetched:", data?.length || 0);
+
+      if (error) throw error;
       return data || [];
     } catch (e) {
-      console.error("Server side: Fatal error in getMaterials:", e);
+      console.error("Server side error in getMaterials:", e);
       throw e;
     }
   });
@@ -38,7 +36,9 @@ export const upsertMaterial = createServerFn({ method: "POST" })
     category: z.string().nullable().optional(),
     is_active: z.boolean().default(true),
   }).parse(data))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }: { data: any, context: any }) => {
+
+    if (!context) throw new Error("Internal Server Error: No context");
     const { data: hasRole, error: roleError } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
       _role: "admin" 
@@ -72,7 +72,8 @@ export const upsertMaterial = createServerFn({ method: "POST" })
 export const deleteMaterial = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: any) => z.object({ id: z.string().uuid() }).parse(data))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }: { data: any, context: any }) => {
+
     const { data: hasRole, error: roleError } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
       _role: "admin" 
@@ -98,7 +99,7 @@ export const deleteMaterial = createServerFn({ method: "POST" })
 export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: any) => z.object({ materialId: z.string().uuid() }).parse(data))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }: { data: any, context: any }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
 
