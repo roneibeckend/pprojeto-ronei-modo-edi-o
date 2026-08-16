@@ -289,7 +289,7 @@ function LoginPage() {
           </p>
 
           <p className="mt-2 text-center text-xs text-muted-foreground">
-            <Link to="/" className="hover:underline">← Voltar para o site</Link>
+            <button onClick={() => window.history.back()} className="hover:underline">← Voltar</button>
           </p>
         </div>
       </div>

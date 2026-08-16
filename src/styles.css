@@ -109,6 +109,7 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     background-image:
       radial-gradient(ellipse 80% 50% at 20% -10%, oklch(0.63 0.24 27 / 0.18), transparent 60%),
       radial-gradient(ellipse 60% 40% at 90% 10%, oklch(0.72 0.20 50 / 0.12), transparent 60%),
@@ -163,6 +164,15 @@
 
   #lovable-badge { 
     display: none !important; 
+  }
+  
+  /* Ajuste para inputs não causarem zoom automático no iOS */
+  @media screen and (-webkit-min-device-pixel-ratio: 0) {
+    select:focus,
+    textarea:focus,
+    input:focus {
+      font-size: 16px !important;
+    }
   }
 }
 

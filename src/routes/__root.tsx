@@ -146,7 +146,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="antialiased overflow-x-hidden">
+      <body className="antialiased overflow-x-hidden selection:bg-primary/30">
         {children}
         <Scripts />
       </body>

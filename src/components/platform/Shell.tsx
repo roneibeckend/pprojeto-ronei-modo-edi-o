@@ -212,11 +212,15 @@ export function Shell({ children }: { children: ReactNode }) {
       <div className="shrink-0 border-t border-sidebar-border p-3">
         <button
           onClick={async () => {
-            await supabase.auth.signOut();
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+              toast.error("Erro ao sair.");
+              return;
+            }
             toast.success("Você saiu da plataforma.");
-            navigate({ to: "/login" });
+            window.location.href = '/login'; // Força reload para limpar estados e garantir redirecionamento PWA
           }}
-          className="flex h-10 w-full items-center gap-3 rounded-md border border-sidebar-border px-3 text-sm font-medium text-sidebar-foreground/70 transition-colors duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none"
+          className="flex h-12 sm:h-10 w-full items-center gap-3 rounded-md border border-sidebar-border px-3 text-sm font-medium text-sidebar-foreground/70 transition-colors duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none touch-action-manipulation active:scale-[0.98]"
         >
           <LogOut className="h-4 w-4" />
           Sair da plataforma
