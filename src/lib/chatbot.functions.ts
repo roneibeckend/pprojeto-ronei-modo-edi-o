@@ -12,8 +12,7 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     const lowerMessage = message.toLowerCase();
 
     // 1. Buscar na base de conhecimento
-    // Usaremos uma busca simples por palavras-chave/perguntas similares
-    const { data: knowledge, error } = await supabase
+    const { data: knowledge, error } = await (supabase as any)
       .from('knowledge_base')
       .select('*')
       .eq('status', 'active');
@@ -22,20 +21,20 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
       console.error("Erro ao buscar conhecimento:", error);
       return { 
         answer: "Desculpe, tive um problema técnico ao acessar minha base de conhecimento. Tente novamente em instantes.",
-        confidence: 0,
+        confidence: "BAIXA",
         knowledgeId: null
       };
     }
 
     // 2. Lógica de Match (Intencionalidade)
-    let bestMatch = null;
+    let bestMatch: any = null;
     let maxScore = 0;
 
-    for (const item of knowledge || []) {
+    for (const item of (knowledge || []) as any[]) {
       let score = 0;
       
       // Checar perguntas exatas
-      if (item.questions?.some(q => q.toLowerCase() === lowerMessage)) {
+      if (item.questions?.some((q: string) => q.toLowerCase() === lowerMessage)) {
         score += 100;
       }
 
@@ -58,14 +57,14 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     }
 
     // 3. Classificar confiança
-    let confidence = "BAIXA";
+    let confidence: "ALTA" | "MÉDIA" | "BAIXA" = "BAIXA";
     if (maxScore >= 80) confidence = "ALTA";
     else if (maxScore >= 30) confidence = "MÉDIA";
 
     // 4. Fallback se não encontrar
     if (!bestMatch || confidence === "BAIXA") {
       // Registrar dúvida não respondida (background)
-      await supabase.from('unhandled_questions').insert({
+      await (supabase as any).from('unhandled_questions').insert({
         question: message,
         confidence: maxScore / 100,
         context: context || {}
@@ -94,7 +93,7 @@ export const submitKnowledgeFeedback = createServerFn({ method: "POST" })
     comment: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
-    const { data: feedback, error } = await supabase
+    const { error } = await (supabase as any)
       .from('knowledge_feedback')
       .insert({
         knowledge_id: data.knowledgeId,
