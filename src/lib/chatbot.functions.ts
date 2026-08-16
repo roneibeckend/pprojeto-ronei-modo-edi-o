@@ -23,7 +23,8 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
       path: z.string().optional()
     }).optional()
   }).parse(data))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }: { data: any, context: any }) => {
+
     const { message, context: requestContext } = data;
     const query = message.toLowerCase();
 
@@ -106,7 +107,7 @@ export const submitKnowledgeFeedback = createServerFn({ method: "POST" })
     knowledgeId: z.string(),
     isPositive: z.boolean()
   }).parse(data))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }: { data: any, context: any }) => {
     if (!context) throw new Error("Internal Server Error: No context");
     const { error } = await context.supabase
       .from("knowledge_feedback")

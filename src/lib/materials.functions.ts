@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getMaterials = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .handler(async ({ context }: { context: any }) => {
 
     try {
       if (!context) throw new Error("Unauthorized");
@@ -36,7 +36,8 @@ export const upsertMaterial = createServerFn({ method: "POST" })
     category: z.string().nullable().optional(),
     is_active: z.boolean().default(true),
   }).parse(data))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }: { data: any, context: any }) => {
+
     if (!context) throw new Error("Internal Server Error: No context");
     const { data: hasRole, error: roleError } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
@@ -71,7 +72,8 @@ export const upsertMaterial = createServerFn({ method: "POST" })
 export const deleteMaterial = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: any) => z.object({ id: z.string().uuid() }).parse(data))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }: { data: any, context: any }) => {
+
     const { data: hasRole, error: roleError } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
       _role: "admin" 
@@ -97,7 +99,7 @@ export const deleteMaterial = createServerFn({ method: "POST" })
 export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: any) => z.object({ materialId: z.string().uuid() }).parse(data))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }: { data: any, context: any }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
 
