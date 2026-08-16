@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { Shell } from "@/components/platform/Shell";
 import { supabase } from "@/integrations/supabase/client";
 import { AsaasPaymentModal } from "@/components/platform/AsaasPaymentModal";
+import { OnboardingGuide } from "@/components/platform/OnboardingGuide";
 
 export const Route = createFileRoute("/app")({
   ssr: false,
