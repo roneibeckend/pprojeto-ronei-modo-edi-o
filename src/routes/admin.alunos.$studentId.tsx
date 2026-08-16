@@ -230,9 +230,9 @@ function AdminStudentProfilePage() {
       setCertLoading(enrollment.id);
       
       // First check if certificate is enabled for this content
-      const config = await getCertConfigFn({ data: { contentId: enrollment.type === 'course' ? enrollment.course_id : enrollment.ebook_id } });
+      const config = await getCertConfigFn({ data: { contentId: enrollment.type === 'course' ? enrollment.course_id : enrollment.ebook_id } }) as any;
       
-      if (!config.is_enabled) {
+      if (!config || !config.is_enabled) {
         toast.error("A geração de certificado não está habilitada para este conteúdo.");
         return;
       }
