@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate, navigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Shell } from "@/components/platform/Shell";
@@ -8,6 +8,38 @@ import { OnboardingGuide } from "@/components/platform/OnboardingGuide";
 
 export const Route = createFileRoute("/app")({
   ssr: false,
+  loader: async ({ context: { queryClient } }) => {
+    // Prefetch user session and profile to avoid waterfalls in Shell and children
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      const currentPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/app';
+      throw navigate({ to: `/login?redirectTo=${encodeURIComponent(currentPath)}`, replace: true });
+    }
+
+    // Parallel prefetch common app data
+    await Promise.all([
+      queryClient.ensureQueryData({
+        queryKey: ["user-enrollments", session.user.id],
+        queryFn: async () => {
+          const [courses, ebooks] = await Promise.all([
+             supabase.from("course_enrollments").select("course_id").eq("user_id", session.user.id),
+             supabase.from("ebook_enrollments").select("ebook_id").eq("user_id", session.user.id)
+          ]);
+          return {
+            courseEnrollments: courses.data?.map(e => e.course_id) || [],
+            ebookEnrollments: ebooks.data?.map(e => e.ebook_id) || []
+          };
+        }
+      }),
+      queryClient.ensureQueryData({
+        queryKey: ["interactive-previews-status"],
+        queryFn: async () => {
+          const { data } = await supabase.from('integrations').select('status').eq('category', 'interactive_previews').maybeSingle();
+          return data?.status ?? false;
+        }
+      })
+    ]);
+  },
   head: () => ({
     meta: [
       { title: "Plataforma — Espetinho na Veia" },
@@ -18,59 +50,6 @@ export const Route = createFileRoute("/app")({
 });
 
 function AppGate() {
-  const navigate = useNavigate();
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-    const checkAuth = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (!mounted) return;
-        
-        if (error || !session) {
-          if (error) console.error("Auth session error:", error);
-          const currentPath = window.location.pathname + window.location.search;
-          navigate({ to: `/login?redirectTo=${encodeURIComponent(currentPath)}`, replace: true });
-          return;
-        }
-
-        // Reforçar o carregamento do manifest para PWA se necessário
-        const manifestLink = document.querySelector('link[rel="manifest"]');
-        if (!manifestLink) {
-          const link = document.createElement('link');
-          link.rel = 'manifest';
-          link.href = '/manifest.json';
-          document.head.appendChild(link);
-        }
-
-        
-        setReady(true);
-      } catch (err) {
-        console.error("Critical auth error:", err);
-        if (mounted) navigate({ to: "/login", replace: true });
-      }
-    };
-
-    checkAuth();
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!mounted) return;
-      if (!session) navigate({ to: "/login", replace: true });
-    });
-    return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
-    };
-  }, [navigate]);
-
-  if (!ready) {
-    return (
-      <div className="grid min-h-dvh place-items-center bg-background">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
   return (
     <>
       <Shell>

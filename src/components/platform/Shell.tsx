@@ -282,18 +282,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </header>
 
         <main className="min-w-0 flex-1 overflow-y-auto px-4 py-4 pb-24 lg:px-8 lg:py-8 lg:pb-8 3xl:max-w-[1800px] 3xl:mx-auto w-full">
-          <Suspense fallback={
-            <div className="animate-in fade-in duration-500 space-y-8">
-              <Skeleton className="h-10 w-64" />
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <Skeleton className="h-48 w-full rounded-2xl" />
-                <Skeleton className="h-48 w-full rounded-2xl" />
-                <Skeleton className="h-48 w-full rounded-2xl" />
-              </div>
-            </div>
-          }>
-            {children}
-          </Suspense>
+          <Outlet />
         </main>
         <PwaInstallBanner />
       </div>
