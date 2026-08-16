@@ -99,10 +99,9 @@ function Dashboard() {
 
         if (ebook && !isEnrolledInEbook(ebook.id)) {
           setOfferItem({ ...ebook, type: 'ebook' });
-          setTimeout(() => {
-            setShowOffer(true);
-            localStorage.setItem(`first_access_offer_${user.id}`, 'true');
-          }, 1500);
+          // Auto-offer logic removed to prevent automatic popups.
+          // Offer should only appear via manual triggers now.
+          // localStorage.setItem(`first_access_offer_${user.id}`, 'true');
         }
       }
     };
@@ -215,13 +214,51 @@ function Dashboard() {
     handleBuyParam();
   }, [isLoadingEnrollments]);
 
-  // Fallback para o primeiro item se não houver contexto anterior
+  // Lógica de "Retomar onde parou"
+  const [resumeItem, setResumeItem] = useState<{ id: string, type: 'course' | 'ebook', title: string } | null>(null);
+
+  useEffect(() => {
+    if (showcaseItems) {
+      // Verifica o último item lido/assistido no localStorage
+      const lastReadEbookId = Object.keys(localStorage).find(key => key.startsWith('ebook_last_read_'))?.split('_').pop();
+      const lastWatchedCourseId = Object.keys(localStorage).find(key => key.startsWith('course_last_watched_'))?.split('_').pop();
+      
+      const lastItem = showcaseItems.find(i => i.id === lastReadEbookId || i.id === lastWatchedCourseId);
+      if (lastItem) {
+        setResumeItem({ id: lastItem.id, type: lastItem.type, title: lastItem.title });
+      }
+    }
+  }, [showcaseItems]);
+
   const lastItem = showcaseItems?.[0];
 
 
 
   return (
     <div className="space-y-8">
+      {/* Banner de Retomada (Opcional e pós-login) */}
+      {resumeItem && (
+        <section className="animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="glass flex flex-col items-center justify-between gap-4 rounded-2xl p-6 sm:flex-row">
+            <div className="flex items-center gap-4">
+              <div className="grid h-12 w-12 place-items-center rounded-xl bg-fire/20 text-primary">
+                <Play className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="font-display text-lg font-bold">Continuar de onde parou?</h3>
+                <p className="text-sm text-muted-foreground">Você estava vendo: <span className="text-foreground font-medium">{resumeItem.title}</span></p>
+              </div>
+            </div>
+            <Link 
+              to={resumeItem.type === 'course' ? "/app/cursos/$courseId" : "/app/ebooks/$ebookId"}
+              params={resumeItem.type === 'course' ? { courseId: resumeItem.id } : { ebookId: resumeItem.id }}
+              className="btn-fire px-8 py-2.5 text-xs font-bold uppercase tracking-widest whitespace-nowrap"
+            >
+              Retomar agora
+            </Link>
+          </div>
+        </section>
+      )}
       {/* Oferta Automática Pós-Cadastro */}
       {showOffer && offerItem && (
         <PostPurchaseOffer

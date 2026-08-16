@@ -227,6 +227,8 @@ function CoursePage() {
     return () => { cancelled = true; };
   }, [course.intro_video_url, introNeedsSigning, getSignedUrl]);
 
+  // Opening video removed from auto-trigger to optimize UX
+  /*
   useEffect(() => {
     if (course?.intro_video_url) {
       const hasSeen = localStorage.getItem(`course_opening_${course.id}`);
@@ -235,6 +237,7 @@ function CoursePage() {
       }
     }
   }, [course.id, course.intro_video_url]);
+  */
 
   const markVideoAsSeen = () => {
     setShowOpeningVideo(false);
