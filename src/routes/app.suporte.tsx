@@ -114,10 +114,12 @@ function SupportPage() {
     (async () => {
       try {
         const result = await getChatbot({ 
-          message: text,
-          context: {
-            url: window.location.href,
-            path: window.location.pathname
+          data: {
+            message: text,
+            context: {
+              url: window.location.href,
+              path: window.location.pathname
+            }
           }
         });
         
@@ -143,7 +145,7 @@ function SupportPage() {
 
   const submitFeedback = async (msgIndex: number, knowledgeId: string, isPositive: boolean) => {
     try {
-      await sendFeedback({ knowledgeId, isPositive });
+      await sendFeedback({ data: { knowledgeId, isPositive } });
       setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, feedbackGiven: true } : m));
       toast.success(isPositive ? "Obrigado pelo feedback!" : "Lamentamos. Vamos revisar essa resposta.");
     } catch (error) {
