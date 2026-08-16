@@ -21,6 +21,7 @@ export const saveLiveClass = createServerFn({ method: "POST" })
     scheduled_at: z.string(),
     link: z.string().optional(),
     materials_url: z.string().optional(),
+    cover_url: z.string().nullable().optional(),
     status: z.enum(['scheduled', 'live', 'completed']).default('scheduled'),
   }).parse(data))
   .handler(async ({ data, context }) => {
