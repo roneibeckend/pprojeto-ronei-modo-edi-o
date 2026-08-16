@@ -13,7 +13,9 @@ import {
   Trash2,
   AlertCircle,
   X,
-  Loader2
+  Loader2,
+  Image as ImageIcon,
+  Upload
 } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { supabase } from "@/integrations/supabase/client";
