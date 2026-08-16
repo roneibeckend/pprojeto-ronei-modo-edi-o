@@ -80,6 +80,7 @@ function AdminRootLayout() {
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
     { to: "/admin/materiais", label: "Materiais", icon: Library },
     { to: "/admin/ranking", label: "Configuração Ranking", icon: Star },
+    { to: "/admin/chatbot", label: "Inteligência Brasa", icon: BrainCircuit },
   ];
 
   return (

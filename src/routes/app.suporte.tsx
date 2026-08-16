@@ -12,25 +12,37 @@ import {
   User,
   ChevronRight,
   HelpCircle,
-  AlertCircle
+  AlertCircle,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
 
 import { PageHeader } from "@/components/platform/Shell";
-import { supportQuestions } from "@/lib/platform-data";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useServerFn } from "@tanstack/react-start";
+import { getChatbotResponse, submitKnowledgeFeedback } from "@/lib/chatbot.functions";
+
+type Msg = { 
+  role: "user" | "ai"; 
+  text: string; 
+  time: string;
+  knowledgeId?: string | null;
+  feedbackGiven?: boolean;
+  needsHuman?: boolean;
+};
 
 export const Route = createFileRoute("/app/suporte")({
   head: () => ({ meta: [{ title: "Suporte e Central de Ajuda — Espetinho na Veia" }] }),
   component: SupportPage,
 });
 
-type Msg = { role: "user" | "ai"; text: string; time: string };
-
 function SupportPage() {
+  const getChatbot = useServerFn(getChatbotResponse);
+  const sendFeedback = useServerFn(submitKnowledgeFeedback);
 
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -98,16 +110,47 @@ function SupportPage() {
     setInput("");
     setTyping(true);
     
-    setTimeout(() => {
-      const match = supportQuestions.find((q) => q.q.toLowerCase() === text.toLowerCase());
-      const answer = match?.a ?? "Entendi! Essa é uma dúvida importante. Nossa equipe humana também foi notificada e vai te responder em breve caso eu não tenha a resposta exata aqui. Enquanto isso, posso ajudar com algo mais?";
-      setMessages((m) => [...m, { 
-        role: "ai", 
-        text: answer,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }]);
-      setTyping(false);
-    }, 1200);
+    // Obter resposta inteligente do servidor
+    (async () => {
+      try {
+        const result = await getChatbot({ 
+          data: {
+            message: text,
+            context: {
+              url: window.location.href,
+              path: window.location.pathname
+            }
+          }
+        });
+        
+        setMessages((m) => [...m, { 
+          role: "ai", 
+          text: result.answer,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          knowledgeId: result.knowledgeId,
+          needsHuman: result.needsHuman
+        }]);
+      } catch (error) {
+        console.error("Erro no chatbot:", error);
+        setMessages((m) => [...m, { 
+          role: "ai", 
+          text: "Desculpe, tive um problema e não consegui processar sua dúvida agora. Tente novamente ou fale com nosso suporte.",
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }]);
+      } finally {
+        setTyping(false);
+      }
+    })();
+  };
+
+  const submitFeedback = async (msgIndex: number, knowledgeId: string, isPositive: boolean) => {
+    try {
+      await sendFeedback({ data: { knowledgeId, isPositive } });
+      setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, feedbackGiven: true } : m));
+      toast.success(isPositive ? "Obrigado pelo feedback!" : "Lamentamos. Vamos revisar essa resposta.");
+    } catch (error) {
+      console.error("Erro ao enviar feedback:", error);
+    }
   };
 
   const handleOpenTicket = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -285,6 +328,37 @@ function SupportPage() {
                         {m.text}
                       </div>
                     </div>
+                    
+                    {/* Feedback and Contextual Actions */}
+                    {m.role === "ai" && m.knowledgeId && !m.feedbackGiven && (
+                      <div className="mt-2 flex items-center gap-3 px-2">
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-white/20">Isso ajudou?</span>
+                        <button 
+                          onClick={() => submitFeedback(i, m.knowledgeId!, true)}
+                          className="hover:text-emerald-500 text-white/20 transition-colors"
+                        >
+                          <ThumbsUp className="h-3 w-3" />
+                        </button>
+                        <button 
+                          onClick={() => submitFeedback(i, m.knowledgeId!, false)}
+                          className="hover:text-fire text-white/20 transition-colors"
+                        >
+                          <ThumbsDown className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )}
+
+                    {m.role === "ai" && m.needsHuman && (
+                      <div className="mt-3 flex gap-2 px-2">
+                        <button 
+                          onClick={() => setActiveTab("tickets")}
+                          className="flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#ff6a00] hover:bg-white/10 transition"
+                        >
+                          <TicketIcon className="h-3 w-3" /> Falar com suporte
+                        </button>
+                      </div>
+                    )}
+
                     <span className="mt-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-white/20">
                       {m.time}
                     </span>
@@ -542,17 +616,23 @@ function SupportPage() {
             </div>
             
             <div className="grid gap-3">
-              {supportQuestions.slice(0, 5).map((q) => (
+              {[
+                "Como acessar meus cursos?",
+                "Como baixar E-books?",
+                "Como instalo o app?",
+                "Esqueci minha senha",
+                "Falar com suporte"
+              ].map((q) => (
                 <button
-                  key={q.q}
+                  key={q}
                   onClick={() => {
                     setActiveTab("chat");
-                    send(q.q);
+                    send(q);
                   }}
                   className="group flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.02] p-4 text-left transition hover:border-[#ff6a00]/30 hover:bg-[#ff6a00]/5"
                 >
                   <span className="text-sm font-medium text-white/60 group-hover:text-white transition whitespace-normal">
-                    {q.q}
+                    {q}
                   </span>
                   <ChevronRight className="h-4 w-4 shrink-0 text-white/10 group-hover:text-[#ff6a00] transition" />
                 </button>
