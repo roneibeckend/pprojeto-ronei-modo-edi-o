@@ -335,6 +335,9 @@ function AdminEbooksPage() {
                 <TabsTrigger value="content" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Layout className="h-4 w-4" /> Capítulos
                 </TabsTrigger>
+                <TabsTrigger value="certificates" disabled={!editingItem?.id} className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
+                  <Award className="h-4 w-4" /> Certificados
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="info" className="flex-1 mt-0 outline-none">
