@@ -18,12 +18,14 @@ import {
   Layout,
   Users,
   Flag,
-  Save
+  Save,
+  Award
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { CourseTreeEditor } from "@/components/admin/CourseTreeEditor";
+import { CertificateEditor } from "@/components/admin/CertificateEditor";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
