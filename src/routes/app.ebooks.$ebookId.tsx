@@ -67,6 +67,10 @@ function EbookReaderPage() {
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
+  const isFree = ebook ? (ebook.price || 0) === 0 : false;
+  const isEnrolled = ebook ? isEnrolledInEbook(ebook.id) : false;
+  const hasAccess = isFree || isEnrolled;
+
   const { data: interactivePreviewsStatus } = useQuery({
     queryKey: ['interactive-previews-status'],
     queryFn: async () => {
