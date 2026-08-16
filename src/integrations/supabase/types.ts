@@ -1983,12 +1983,44 @@ export type Database = {
           status: string
         }[]
       }
+      affiliate_sensitive_fields_unchanged: {
+        Args: {
+          _balance: number
+          _commission_rate: number
+          _id: string
+          _referrer_id: string
+          _status: Database["public"]["Enums"]["affiliate_status"]
+          _total_earnings: number
+        }
+        Returns: boolean
+      }
+      award_points: {
+        Args: { p_points: number; p_user_id: string }
+        Returns: undefined
+      }
       distribute_partner_profits: {
         Args: { p_amount: number; p_partner_id: string }
         Returns: undefined
       }
+      get_student_ranking: {
+        Args: { p_limit?: number }
+        Returns: {
+          avatar_url: string
+          global_rank: number
+          name: string
+          total_points: number
+          user_id: string
+        }[]
+      }
       has_module_access: {
         Args: { _module: string; _user_id: string }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
         Returns: boolean
       }
       increment_affiliate_earnings: {
@@ -1997,6 +2029,10 @@ export type Database = {
       }
       increment_partner_withdrawn: {
         Args: { p_amount: number; p_user_id: string }
+        Returns: undefined
+      }
+      save_assistant_response: {
+        Args: { p_content: string; p_ticket_id: string }
         Returns: undefined
       }
       update_expired_live_classes: { Args: never; Returns: undefined }
