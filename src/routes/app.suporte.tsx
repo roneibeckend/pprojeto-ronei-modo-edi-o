@@ -104,16 +104,45 @@ function SupportPage() {
     setInput("");
     setTyping(true);
     
-    setTimeout(() => {
-      const match = supportQuestions.find((q) => q.q.toLowerCase() === text.toLowerCase());
-      const answer = match?.a ?? "Entendi! Essa é uma dúvida importante. Nossa equipe humana também foi notificada e vai te responder em breve caso eu não tenha a resposta exata aqui. Enquanto isso, posso ajudar com algo mais?";
-      setMessages((m) => [...m, { 
-        role: "ai", 
-        text: answer,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }]);
-      setTyping(false);
-    }, 1200);
+    // Obter resposta inteligente do servidor
+    (async () => {
+      try {
+        const result = await getChatbotResponse({ 
+          message: text,
+          context: {
+            url: window.location.href,
+            path: window.location.pathname
+          }
+        });
+        
+        setMessages((m) => [...m, { 
+          role: "ai", 
+          text: result.answer,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          knowledgeId: result.knowledgeId,
+          needsHuman: result.needsHuman
+        }]);
+      } catch (error) {
+        console.error("Erro no chatbot:", error);
+        setMessages((m) => [...m, { 
+          role: "ai", 
+          text: "Desculpe, tive um problema e não consegui processar sua dúvida agora. Tente novamente ou fale com nosso suporte.",
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }]);
+      } finally {
+        setTyping(false);
+      }
+    })();
+  };
+
+  const submitFeedback = async (msgIndex: number, knowledgeId: string, isPositive: boolean) => {
+    try {
+      await submitKnowledgeFeedback({ knowledgeId, isPositive });
+      setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, feedbackGiven: true } : m));
+      toast.success(isPositive ? "Obrigado pelo feedback!" : "Lamentamos. Vamos revisar essa resposta.");
+    } catch (error) {
+      console.error("Erro ao enviar feedback:", error);
+    }
   };
 
   const handleOpenTicket = async (e: React.FormEvent<HTMLFormElement>) => {

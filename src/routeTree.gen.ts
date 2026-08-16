@@ -21,7 +21,6 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AppVerificarCertificadoRouteImport } from './routes/app.verificar-certificado'
-import { Route as AppSuporteRouteImport } from './routes/app.suporte'
 import { Route as AppReceitasRouteImport } from './routes/app.receitas'
 import { Route as AppProgressoRouteImport } from './routes/app.progresso'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
@@ -121,11 +120,6 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
 const AppVerificarCertificadoRoute = AppVerificarCertificadoRouteImport.update({
   id: '/verificar-certificado',
   path: '/verificar-certificado',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuporteRoute = AppSuporteRouteImport.update({
-  id: '/suporte',
-  path: '/suporte',
   getParentRoute: () => AppRoute,
 } as any)
 const AppReceitasRoute = AppReceitasRouteImport.update({
@@ -365,7 +359,6 @@ export interface FileRoutesByFullPath {
   '/app/perfil': typeof AppPerfilRoute
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
-  '/app/suporte': typeof AppSuporteRoute
   '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/admin/': typeof AdminIndexRoute
@@ -416,7 +409,6 @@ export interface FileRoutesByTo {
   '/app/perfil': typeof AppPerfilRoute
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
-  '/app/suporte': typeof AppSuporteRoute
   '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/admin': typeof AdminIndexRoute
@@ -472,7 +464,6 @@ export interface FileRoutesById {
   '/app/perfil': typeof AppPerfilRoute
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
-  '/app/suporte': typeof AppSuporteRoute
   '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/admin/': typeof AdminIndexRoute
@@ -529,7 +520,6 @@ export interface FileRouteTypes {
     | '/app/perfil'
     | '/app/progresso'
     | '/app/receitas'
-    | '/app/suporte'
     | '/app/verificar-certificado'
     | '/auth/callback'
     | '/admin/'
@@ -580,7 +570,6 @@ export interface FileRouteTypes {
     | '/app/perfil'
     | '/app/progresso'
     | '/app/receitas'
-    | '/app/suporte'
     | '/app/verificar-certificado'
     | '/auth/callback'
     | '/admin'
@@ -635,7 +624,6 @@ export interface FileRouteTypes {
     | '/app/perfil'
     | '/app/progresso'
     | '/app/receitas'
-    | '/app/suporte'
     | '/app/verificar-certificado'
     | '/auth/callback'
     | '/admin/'
@@ -756,13 +744,6 @@ declare module '@tanstack/react-router' {
       path: '/verificar-certificado'
       fullPath: '/app/verificar-certificado'
       preLoaderRoute: typeof AppVerificarCertificadoRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/suporte': {
-      id: '/app/suporte'
-      path: '/suporte'
-      fullPath: '/app/suporte'
-      preLoaderRoute: typeof AppSuporteRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/receitas': {
@@ -1161,7 +1142,6 @@ interface AppRouteChildren {
   AppPerfilRoute: typeof AppPerfilRoute
   AppProgressoRoute: typeof AppProgressoRoute
   AppReceitasRoute: typeof AppReceitasRoute
-  AppSuporteRoute: typeof AppSuporteRoute
   AppVerificarCertificadoRoute: typeof AppVerificarCertificadoRoute
   AppIndexRoute: typeof AppIndexRoute
   AppEbooksEbookIdRoute: typeof AppEbooksEbookIdRoute
@@ -1178,7 +1158,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppPerfilRoute: AppPerfilRoute,
   AppProgressoRoute: AppProgressoRoute,
   AppReceitasRoute: AppReceitasRoute,
-  AppSuporteRoute: AppSuporteRoute,
   AppVerificarCertificadoRoute: AppVerificarCertificadoRoute,
   AppIndexRoute: AppIndexRoute,
   AppEbooksEbookIdRoute: AppEbooksEbookIdRoute,
