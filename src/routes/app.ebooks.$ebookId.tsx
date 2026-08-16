@@ -350,9 +350,7 @@ function EbookReaderPage() {
     }
   };
 
-  const isFree = ebook ? (ebook.price || 0) === 0 : false;
-  const isEnrolled = ebook ? isEnrolledInEbook(ebook.id) : false;
-  const hasAccess = isFree || isEnrolled;
+  // Access logic moved above for hook stability
 
   if (isLoadingEnrollments) {
     return (
