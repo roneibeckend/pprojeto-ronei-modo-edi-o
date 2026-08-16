@@ -1,6 +1,4 @@
-import { createFileRoute, Outlet, useNavigate, navigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { Shell } from "@/components/platform/Shell";
 import { supabase } from "@/integrations/supabase/client";
 import { AsaasPaymentModal } from "@/components/platform/AsaasPaymentModal";
@@ -9,11 +7,16 @@ import { OnboardingGuide } from "@/components/platform/OnboardingGuide";
 export const Route = createFileRoute("/app")({
   ssr: false,
   loader: async ({ context: { queryClient } }) => {
-    // Prefetch user session and profile to avoid waterfalls in Shell and children
     const { data: { session } } = await supabase.auth.getSession();
+    
     if (!session) {
       const currentPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/app';
-      throw navigate({ to: `/login?redirectTo=${encodeURIComponent(currentPath)}`, replace: true });
+      throw redirect({
+        to: '/login',
+        search: {
+          redirectTo: currentPath,
+        },
+      });
     }
 
     // Parallel prefetch common app data
