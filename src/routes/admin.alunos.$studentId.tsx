@@ -24,7 +24,12 @@ import { PageHeader } from "@/components/platform/Shell";
 import { useServerFn } from "@tanstack/react-start";
 import { manualConfirmEnrollment } from "@/lib/enrollment-admin.functions";
 import { 
+  generateCertificateManually,
+  getContentCertificate
+} from "@/lib/certificates.functions.ts";
+import { 
   Dialog, 
+
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
