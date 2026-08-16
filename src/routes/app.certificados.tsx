@@ -73,21 +73,21 @@ export const Route = createFileRoute("/app/certificados")({
 const BRAND = "#ff6a00";
 
 function CertificatesPage() {
-  // Sincronizar dinamicamente com o progresso dos cursos
-  const certificates = baseCertificates.map(cert => {
-    const course = courses.find(c => c.id === cert.courseId);
-    const isUnlocked = course ? course.progress === 100 : cert.unlocked;
-    return {
-      ...cert,
-      unlocked: isUnlocked,
-      completedAt: isUnlocked ? (cert.completedAt === "—" ? "06/08/2026" : cert.completedAt) : "—"
-    };
+  const fetchCerts = useServerFn(getStudentCertificates);
+  const { data: certificates = [], isLoading } = useQuery({
+    queryKey: ['student-certificates'],
+    queryFn: () => fetchCerts()
   });
 
-  const [preview, setPreview] = useState<{ cert: typeof certificates[number]; autoDownload?: boolean } | null>(null);
-  const unlockedCount = certificates.filter((c) => c.unlocked).length;
-  const totalHours = certificates.filter((c) => c.unlocked).reduce((s, c) => s + c.hours, 0);
-  const nextCert = certificates.find((c) => !c.unlocked);
+  const [preview, setPreview] = useState<{ cert: any; autoDownload?: boolean } | null>(null);
+  const unlockedCount = certificates.length;
+  const totalHours = certificates.reduce((s: number, c: any) => s + c.hours, 0);
+  
+  // Find courses that don't have a certificate yet to show as "next objective"
+  const nextCert = baseCourses.find(course => 
+    !certificates.some((cert: any) => cert.content_id === course.id)
+  );
+
 
   return (
     <div>
