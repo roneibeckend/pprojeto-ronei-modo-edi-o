@@ -26,6 +26,7 @@ function Dashboard() {
   const { syncWithDatabase } = usePostPurchaseOfferStore();
   const [showOffer, setShowOffer] = useState(false);
   const [offerItem, setOfferItem] = useState<any>(null);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [discountPercentage, setDiscountPercentage] = useState(15);
   const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
@@ -77,16 +78,9 @@ function Dashboard() {
   useEffect(() => {
     syncWithDatabase();
 
-    // A oferta automática foi desativada para evitar exibição imediata após o login.
-    // Agora a oferta só é exibida via ações manuais (como clique em comprar) na vitrine.
-    const checkFirstAccess = async () => {
-      // Logic removed as per requirement: do not show offer automatically after login.
-    };
-
-    if (!isLoadingEnrollments) {
-      checkFirstAccess();
-    }
-  }, [syncWithDatabase, isLoadingEnrollments, isEnrolledInEbook]);
+    // A oferta automática foi desativada completamente.
+    // O popup agora só aparece em resposta a um clique de compra.
+  }, [syncWithDatabase]);
 
   const { data: showcaseItems, isLoading: isLoadingItems } = useQuery({
     queryKey: ["showcase-items"],
@@ -218,16 +212,8 @@ function Dashboard() {
           </div>
         </section>
       )}
-      {/* Oferta Automática Pós-Cadastro */}
-      {showOffer && offerItem && (
-        <PostPurchaseOffer
-          isOpen={showOffer}
-          onClose={() => setShowOffer(false)}
-          onProceedWithOffers={(selected) => executeCheckout(offerItem, selected)}
-          onProceedWithoutOffers={() => executeCheckout(offerItem, [])}
-          originalProductId={offerItem.id}
-        />
-      )}
+      {/* A oferta automática no mount do Dashboard foi removida. 
+          Agora ela é disparada apenas pelo CourseShowcaseCard abaixo. */}
       {/* Showcase / Cursos */}
       <section>
         <div className="mb-6 flex items-center justify-between">
