@@ -18,24 +18,22 @@ export const getContentCertificate = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
-    // First, ensure the record exists (sync logic in case trigger didn't run or table was created later)
     const { data: existing } = await supabaseAdmin
-      .from('content_certificates')
+      .from('content_certificates' as any)
       .select('*')
       .eq('content_id', data.contentId)
       .maybeSingle();
 
     if (!existing) {
-      // Try to identify content type
-      const { data: course } = await supabaseAdmin.from('courses').select('id').eq('id', data.contentId).maybeSingle();
+      const { data: course } = await supabaseAdmin.from('courses' as any).select('id').eq('id', data.contentId).maybeSingle();
       const contentType = course ? 'course' : 'ebook';
       
       const { data: inserted } = await supabaseAdmin
-        .from('content_certificates')
+        .from('content_certificates' as any)
         .insert({
           content_id: data.contentId,
           content_type: contentType,
-        })
+        } as any)
         .select()
         .single();
       
@@ -59,8 +57,8 @@ export const saveContentCertificate = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     const { error } = await supabaseAdmin
-      .from('content_certificates')
-      .upsert(data, { onConflict: 'content_id' });
+      .from('content_certificates' as any)
+      .upsert(data as any, { onConflict: 'content_id' });
 
     if (error) throw new Error(error.message);
     return { success: true };
@@ -81,14 +79,14 @@ export const generateCertificateManually = createServerFn({ method: "POST" })
     const certificateCode = `CERT-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
 
     const { data: result, error } = await supabaseAdmin
-      .from('certificates')
+      .from('certificates' as any)
       .insert({
         student_id: data.student_id,
         content_id: data.content_id,
         content_type: data.content_type,
         certificate_code: certificateCode,
         custom_data: data.custom_data || {},
-      })
+      } as any)
       .select()
       .single();
 
@@ -101,7 +99,7 @@ export const listTemplates = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
-      .from('certificate_templates')
+      .from('certificate_templates' as any)
       .select('*')
       .eq('is_active', true);
       
