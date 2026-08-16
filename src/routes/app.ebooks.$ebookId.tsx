@@ -230,9 +230,7 @@ function EbookReaderPage() {
   const nextChapter = activeIndex < chapters.length - 1 ? chapters[activeIndex + 1] : null;
 
 
-  const isFree = (ebook.price || 0) === 0;
-  const isEnrolled = isEnrolledInEbook(ebook.id);
-  const hasAccess = isFree || isEnrolled;
+  // access definitions moved above early return to maintain hook order
 
   const markedChaptersRef = useRef<Set<string>>(new Set());
 
