@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getStudentCertificates = createServerFn({ method: "GET" })
@@ -19,24 +18,29 @@ export const getStudentCertificates = createServerFn({ method: "GET" })
 
     if (certError) throw new Error(certError.message);
 
+    const certs = (certificates || []) as any[];
+
     // Fetch related content details (courses/ebooks)
-    const courseIds = (certificates || []).filter(c => c.content_type === 'course').map(c => c.content_id);
-    const ebookIds = (certificates || []).filter(c => c.content_type === 'ebook').map(c => c.content_id);
+    const courseIds = certs.filter(c => c.content_type === 'course').map(c => c.content_id);
+    const ebookIds = certs.filter(c => c.content_type === 'ebook').map(c => c.content_id);
 
     const [{ data: courses }, { data: ebooks }] = await Promise.all([
       courseIds.length > 0 
         ? supabaseAdmin.from('courses' as any).select('id, title').in('id', courseIds)
-        : Promise.resolve({ data: [] }),
+        : Promise.resolve({ data: [] as any[] }),
       ebookIds.length > 0
         ? supabaseAdmin.from('ebooks' as any).select('id, title').in('id', ebookIds)
-        : Promise.resolve({ data: [] })
+        : Promise.resolve({ data: [] as any[] })
     ]);
 
+    const courseList = (courses || []) as any[];
+    const ebookList = (ebooks || []) as any[];
+
     // Format final data
-    return (certificates || []).map(cert => {
+    return certs.map(cert => {
       const content = cert.content_type === 'course' 
-        ? courses?.find(c => c.id === cert.content_id)
-        : ebooks?.find(e => e.id === cert.content_id);
+        ? courseList.find(c => c.id === cert.content_id)
+        : ebookList.find(e => e.id === cert.content_id);
 
       return {
         ...cert,

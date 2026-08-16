@@ -1,10 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2, Printer } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { certificates as baseCertificates, courses, student } from "@/lib/platform-data";
+import { courses as baseCourses } from "@/lib/platform-data";
 import { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { useServerFn } from "@tanstack/react-start";
+import { getStudentCertificates } from "@/lib/certificates-student.functions";
+import { useQuery } from "@tanstack/react-query";
+
 
 // Estilos específicos para impressão
 const printStyles = `
