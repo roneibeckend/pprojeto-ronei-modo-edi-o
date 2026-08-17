@@ -617,11 +617,11 @@ function SupportPage() {
             
             <div className="grid gap-3">
               {[
-                "Como acessar meus cursos?",
+                "Onde estão meus cursos?",
                 "Como baixar E-books?",
-                "Como instalo o app?",
+                "Como instalar o App (PWA)",
                 "Esqueci minha senha",
-                "Falar com suporte"
+                "Receitas Espetinho na Veia"
               ].map((q) => (
                 <button
                   key={q}
