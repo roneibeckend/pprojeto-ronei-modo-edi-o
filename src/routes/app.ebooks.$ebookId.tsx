@@ -621,18 +621,23 @@ function EbookReaderPage() {
 
             {!nextChapter ? (
               <button
-                onClick={() => setShowFeedbackModal(true)}
-                className="group flex flex-1 items-center justify-end gap-4 rounded-2xl bg-[#ff6a00] p-4 text-right transition-all hover:bg-[#ff8c33] shadow-lg shadow-fire/20"
+                disabled={hasSubmittedFeedback}
+                onClick={() => !hasSubmittedFeedback && setShowFeedbackModal(true)}
+                className={`group flex flex-1 items-center justify-end gap-4 rounded-2xl p-4 text-right transition-all shadow-lg shadow-fire/20 ${
+                  hasSubmittedFeedback 
+                    ? "bg-white/5 opacity-50 cursor-not-allowed pointer-events-none" 
+                    : "bg-[#ff6a00] hover:bg-[#ff8c33]"
+                }`}
               >
                 <div className="hidden md:block">
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-black/60">
+                  <div className={`text-[10px] font-bold uppercase tracking-widest ${hasSubmittedFeedback ? "text-muted-foreground" : "text-black/60"}`}>
                     {hasSubmittedFeedback ? "Concluído" : "Finalizar"}
                   </div>
-                  <div className="line-clamp-2 text-sm font-bold text-black">
+                  <div className={`line-clamp-2 text-sm font-bold ${hasSubmittedFeedback ? "text-muted-foreground" : "text-black"}`}>
                     {hasSubmittedFeedback ? "Curso Finalizado" : "Concluir E-book"}
                   </div>
                 </div>
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-black/20 text-black">
+                <div className={`grid h-10 w-10 place-items-center rounded-xl ${hasSubmittedFeedback ? "bg-white/5 text-muted-foreground" : "bg-black/20 text-black"}`}>
                   <Award className="h-5 w-5" />
                 </div>
               </button>
