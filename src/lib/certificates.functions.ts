@@ -58,6 +58,7 @@ export const saveContentCertificate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     content_id: z.string(),
+    content_type: z.enum(['course', 'ebook']),
     template_id: z.string().nullable().optional(),
     is_enabled: z.boolean(),
     custom_text: z.string().nullable().optional(),
@@ -67,9 +68,10 @@ export const saveContentCertificate = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
+    const { content_type, ...upsertData } = data;
     const { error } = await supabaseAdmin
       .from('content_certificates' as any)
-      .upsert(data as any, { onConflict: 'content_id' });
+      .upsert({ ...upsertData, content_type } as any, { onConflict: 'content_id' });
 
     if (error) throw new Error(error.message);
     return { success: true };
