@@ -14,7 +14,7 @@ interface FeedbackModalProps {
   onSuccess?: () => void;
 }
 
-export function FeedbackModal({ courseId, ebookId, itemTitle, isOpen, onClose }: FeedbackModalProps) {
+export function FeedbackModal({ courseId, ebookId, itemTitle, isOpen, onClose, onSuccess }: FeedbackModalProps) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
