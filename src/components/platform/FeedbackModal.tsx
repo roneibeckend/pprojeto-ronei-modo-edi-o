@@ -11,6 +11,7 @@ interface FeedbackModalProps {
   itemTitle: string;
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
 export function FeedbackModal({ courseId, ebookId, itemTitle, isOpen, onClose }: FeedbackModalProps) {
@@ -69,6 +70,7 @@ export function FeedbackModal({ courseId, ebookId, itemTitle, isOpen, onClose }:
       toast.success("Feedback enviado com sucesso! Ele passará por moderação.");
       
       setTimeout(() => {
+        onSuccess?.();
         onClose();
       }, 3000);
     } catch (error: any) {
