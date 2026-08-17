@@ -63,10 +63,11 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
       await saveCertFn({
         data: {
           content_id: contentId,
-          template_id: config.template_id,
-          is_enabled: config.is_enabled,
-          custom_text: config.custom_text,
-          min_progress_percentage: config.min_progress_percentage
+          template_id: config.template_id || (templates.length > 0 ? templates[0].id : null),
+          is_enabled: !!config.is_enabled,
+          custom_text: config.custom_text || null,
+          min_progress_percentage: config.min_progress_percentage ?? 100
+
         }
       });
       toast.success("Configurações salvas com sucesso!");
