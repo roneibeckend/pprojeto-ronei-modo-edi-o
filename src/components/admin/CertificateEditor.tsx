@@ -63,10 +63,11 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
       await saveCertFn({
         data: {
           content_id: contentId,
-          template_id: config.template_id,
-          is_enabled: config.is_enabled,
-          custom_text: config.custom_text,
-          min_progress_percentage: config.min_progress_percentage
+          template_id: config.template_id || (templates.length > 0 ? templates[0].id : null),
+          is_enabled: !!config.is_enabled,
+          custom_text: config.custom_text || null,
+          min_progress_percentage: config.min_progress_percentage ?? 100
+
         }
       });
       toast.success("Configurações salvas com sucesso!");
@@ -125,20 +126,21 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
               onClick={() => setConfig({ ...config, is_enabled: !config.is_enabled })}
               className={cn(
                 "w-12 h-6 rounded-full transition-colors relative",
-                config.is_enabled ? "bg-[#ff6a00]" : "bg-white/10"
+                config?.is_enabled ? "bg-[#ff6a00]" : "bg-white/10"
               )}
             >
               <div className={cn(
                 "absolute top-1 w-4 h-4 rounded-full bg-black transition-all",
-                config.is_enabled ? "left-7" : "left-1"
+                config?.is_enabled ? "left-7" : "left-1"
               )} />
             </button>
+
           </div>
 
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Template de Certificado</label>
             <select 
-              value={config.template_id || ""} 
+              value={config.template_id || (templates.length > 0 ? templates[0].id : "")} 
               onChange={e => setConfig({ ...config, template_id: e.target.value })}
               className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] appearance-none"
             >
@@ -155,7 +157,7 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
               type="number"
               min="0"
               max="100"
-              value={config.min_progress_percentage}
+              value={config.min_progress_percentage ?? 100}
               onChange={e => setConfig({ ...config, min_progress_percentage: parseInt(e.target.value) || 0 })}
               className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
             />

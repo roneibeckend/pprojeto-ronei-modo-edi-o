@@ -294,6 +294,139 @@ export type Database = {
         }
         Relationships: []
       }
+      certificate_templates: {
+        Row: {
+          background_url: string | null
+          created_at: string | null
+          css_content: string | null
+          description: string | null
+          html_content: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          background_url?: string | null
+          created_at?: string | null
+          css_content?: string | null
+          description?: string | null
+          html_content?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          background_url?: string | null
+          created_at?: string | null
+          css_content?: string | null
+          description?: string | null
+          html_content?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      certificates: {
+        Row: {
+          certificate_code: string
+          content_id: string
+          content_type: string
+          created_at: string | null
+          custom_data: Json | null
+          id: string
+          is_revoked: boolean | null
+          issue_date: string | null
+          revocation_reason: string | null
+          revoked_at: string | null
+          student_id: string
+          template_id: string | null
+        }
+        Insert: {
+          certificate_code: string
+          content_id: string
+          content_type: string
+          created_at?: string | null
+          custom_data?: Json | null
+          id?: string
+          is_revoked?: boolean | null
+          issue_date?: string | null
+          revocation_reason?: string | null
+          revoked_at?: string | null
+          student_id: string
+          template_id?: string | null
+        }
+        Update: {
+          certificate_code?: string
+          content_id?: string
+          content_type?: string
+          created_at?: string | null
+          custom_data?: Json | null
+          id?: string
+          is_revoked?: boolean | null
+          issue_date?: string | null
+          revocation_reason?: string | null
+          revoked_at?: string | null
+          student_id?: string
+          template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificates_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "certificate_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_certificates: {
+        Row: {
+          content_id: string
+          content_type: string
+          created_at: string | null
+          custom_text: string | null
+          id: string
+          is_enabled: boolean | null
+          min_progress_percentage: number | null
+          template_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content_id: string
+          content_type: string
+          created_at?: string | null
+          custom_text?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          min_progress_percentage?: number | null
+          template_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content_id?: string
+          content_type?: string
+          created_at?: string | null
+          custom_text?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          min_progress_percentage?: number | null
+          template_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_certificates_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "certificate_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_enrollments: {
         Row: {
           course_id: string
