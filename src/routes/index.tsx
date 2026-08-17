@@ -47,6 +47,7 @@ import {
   User,
   Phone,
   X,
+  Send,
 } from "lucide-react";
 
 import heroChef from "@/assets/hero-chef.asset.json";
@@ -1720,12 +1721,14 @@ function FAQ() {
     { q: "Como recebo o material?", a: "O acesso é liberado automaticamente por e-mail em minutos, após a confirmação do pagamento. Você lê no celular, tablet ou computador." },
   ];
 
+  const getChatbot = useServerFn(getChatbotResponse);
   type Msg = { role: "user" | "ai"; text: string };
   const [messages, setMessages] = useState<Msg[]>([
-    { role: "ai", text: "Olá! 👋 Eu sou a Brunna, assistente do Ronnei. Escolhe uma pergunta ao lado que eu te respondo na hora." },
+    { role: "ai", text: "Olá! 👋 Eu sou a Brasa, sua assistente. Escolha uma pergunta ao lado ou escreva sua dúvida que eu te respondo na hora." },
   ]);
   const [typing, setTyping] = useState(false);
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -1733,16 +1736,38 @@ function FAQ() {
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [messages, typing]);
 
-  const ask = (i: number) => {
-    if (typing) return;
-    const f = faqs[i];
-    setActiveIdx(i);
-    setMessages((m) => [...m, { role: "user", text: f.q }]);
+  const ask = async (text: string, index?: number) => {
+    if (typing || !text.trim()) return;
+    
+    if (index !== undefined) setActiveIdx(index);
+    setMessages((m) => [...m, { role: "user", text }]);
+    setInput("");
     setTyping(true);
-    setTimeout(() => {
-      setMessages((m) => [...m, { role: "ai", text: f.a }]);
+
+    try {
+      const result = await getChatbot({ 
+        data: {
+          message: text,
+          context: {
+            url: window.location.href,
+            path: window.location.pathname
+          }
+        }
+      });
+      
+      setMessages((m) => [...m, { 
+        role: "ai", 
+        text: result.answer
+      }]);
+    } catch (error) {
+      console.error("Erro no chatbot:", error);
+      setMessages((m) => [...m, { 
+        role: "ai", 
+        text: "Desculpe, tive um problema ao processar sua dúvida. Tente novamente em instantes."
+      }]);
+    } finally {
       setTyping(false);
-    }, 900);
+    }
   };
 
   return (
@@ -1772,7 +1797,7 @@ function FAQ() {
                   <li key={i}>
                     <button
                       type="button"
-                      onClick={() => ask(i)}
+                      onClick={() => ask(f.q, i)}
                       disabled={typing}
                       className={`group flex w-full items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left text-sm transition disabled:opacity-70 ${
                         active
@@ -1800,7 +1825,7 @@ function FAQ() {
                   <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-card bg-emerald-400" />
                 </div>
                 <div className="leading-tight">
-                  <div className="text-sm font-semibold">Brunna • Assistente</div>
+                  <div className="text-sm font-semibold">Brasa • Assistente</div>
                   <div className="text-xs text-muted-foreground">Online • responde na hora</div>
                 </div>
               </div>
@@ -1845,12 +1870,27 @@ function FAQ() {
             </div>
 
             <div className="border-t border-border/60 bg-background/40 px-4 py-3">
-              <div className="flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2.5 text-sm text-muted-foreground">
-                <MessageCircle className="h-4 w-4 text-[color:var(--gold)]" />
-                <span className="truncate">Selecione uma pergunta ao lado…</span>
-              </div>
-              <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                Ainda com dúvida? Fale com a gente pelas redes sociais.
+              <form 
+                onSubmit={(e) => { e.preventDefault(); ask(input); }}
+                className="relative flex items-center gap-2"
+              >
+                <input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Escreva sua dúvida..."
+                  className="w-full rounded-full border border-border bg-background/60 px-4 py-2.5 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-[color:var(--gold)]/50 focus:bg-background/80"
+                />
+                <button 
+                  type="submit" 
+                  disabled={typing || !input.trim()}
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-fire text-white shadow-fire transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+                  aria-label="Enviar"
+                >
+                  <Send className="h-4 w-4" />
+                </button>
+              </form>
+              <p className="mt-2 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
+                Suporte instantâneo via Inteligência Brasa
               </p>
             </div>
           </div>
