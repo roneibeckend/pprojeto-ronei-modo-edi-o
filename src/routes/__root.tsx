@@ -42,11 +42,38 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    
+    // Auto-recovery for chunk errors or failed style loading
+    const isChunkError = error.message.toLowerCase().includes('chunk') || 
+                        error.message.toLowerCase().includes('dynamically imported');
+    
+    if (isChunkError && typeof window !== 'undefined') {
+      console.warn("Detectado erro de carregamento de recursos. Tentando recuperação automática...");
+      
+      // Limpa caches do Service Worker se possível antes do reload
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+          for (const registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    }
   }, [error]);
 
   const handleReset = async () => {
     // Tentar recarregar a página inteira para limpar o cache do navegador e manifestos antigos
     if (typeof window !== 'undefined') {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          await registration.unregister();
+        }
+      }
       window.location.reload();
       return;
     }
@@ -151,6 +178,32 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="antialiased overflow-x-hidden selection:bg-primary/30">
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Script de Resiliência Visual: Detecta se o CSS principal falhou ou se há erros de chunk precoces
+              (function() {
+                window.addEventListener('error', function(e) {
+                  if (e.message && (e.message.indexOf('chunk') > -1 || e.message.indexOf('dynamically imported') > -1)) {
+                    console.warn('Recuperação de Layout: Detectada falha crítica. Recarregando...');
+                    window.location.reload();
+                  }
+                }, true);
+
+                // Verifica se as variáveis de tema foram carregadas
+                window.addEventListener('load', function() {
+                  setTimeout(function() {
+                    const primary = getComputedStyle(document.documentElement).getPropertyValue('--primary');
+                    if (!primary || primary.trim() === '') {
+                      console.error('Falha na Resiliência: Layout não carregado corretamente. Restaurando...');
+                      window.location.reload();
+                    }
+                  }, 2000);
+                });
+              })();
+            `,
+          }}
+        />
         {children}
         <Scripts />
       </body>
