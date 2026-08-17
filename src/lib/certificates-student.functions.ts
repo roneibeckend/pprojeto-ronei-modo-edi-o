@@ -14,21 +14,21 @@ export const generateCertificate = createServerFn({ method: "POST" })
     // Check if already exists
     const { data: existing } = await supabaseAdmin
       .from('certificates' as any)
-      .select('id')
+      .select('id' as any)
       .eq('student_id', context.userId)
       .eq('content_id', data.content_id)
       .maybeSingle();
       
-    if (existing) return { success: true, certificate_id: existing.id };
+    if (existing) return { success: true, certificate_id: (existing as any).id };
 
     // Get certificate configuration to check if it's enabled
     const { data: config } = await supabaseAdmin
       .from('content_certificates' as any)
-      .select('*')
+      .select('*' as any)
       .eq('content_id', data.content_id)
       .maybeSingle();
 
-    if (config && config.is_enabled === false) {
+    if (config && (config as any).is_enabled === false) {
       throw new Error("Certificado não está habilitado para este conteúdo.");
     }
 
@@ -42,17 +42,17 @@ export const generateCertificate = createServerFn({ method: "POST" })
         content_type: data.content_type,
         certificate_code: certificateCode,
         issue_date: new Date().toISOString(),
-        template_id: config?.template_id,
+        template_id: (config as any)?.template_id,
         custom_data: {
-          hours: config?.min_progress_percentage === 100 ? 40 : 10,
-          text: config?.custom_text
+          hours: (config as any)?.min_progress_percentage === 100 ? 40 : 10,
+          text: (config as any)?.custom_text
         }
       } as any)
       .select()
       .single();
 
     if (error) throw new Error(error.message);
-    return { success: true, certificate_id: result.id };
+    return { success: true, certificate_id: (result as any).id };
   });
 
 
