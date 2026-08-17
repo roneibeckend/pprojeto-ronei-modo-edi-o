@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getOnboardingStatus = createServerFn({ method: "GET" })
@@ -9,13 +8,14 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
     
     const { data, error } = await supabaseAdmin
       .from('user_onboarding' as any)
-      .select('has_seen_onboarding' as any)
+      .select('*')
       .eq('user_id', context.userId)
       .maybeSingle();
       
     if (error) throw new Error(error.message);
     
-    return { hasSeenOnboarding: data?.has_seen_onboarding ?? false };
+    const onboardingData = data as any;
+    return { hasSeenOnboarding: onboardingData?.has_seen_onboarding ?? false };
   });
 
 export const completeOnboarding = createServerFn({ method: "POST" })
@@ -35,3 +35,4 @@ export const completeOnboarding = createServerFn({ method: "POST" })
     
     return { success: true };
   });
+
