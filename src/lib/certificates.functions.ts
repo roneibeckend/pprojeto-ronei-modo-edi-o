@@ -16,19 +16,29 @@ export const getContentCertificate = createServerFn({ method: "GET" })
     contentId: z.string(),
   }).parse(data))
   .handler(async ({ data, context }) => {
+    await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
-    const { data: existing } = await supabaseAdmin
+    // First try to find by content_id
+    const { data: existing, error: fetchError } = await supabaseAdmin
       .from('content_certificates' as any)
       .select('*')
       .eq('content_id', data.contentId)
       .maybeSingle();
 
+    if (fetchError) throw new Error(fetchError.message);
+
     if (!existing) {
-      const { data: course } = await supabaseAdmin.from('courses' as any).select('id').eq('id', data.contentId).maybeSingle();
+      // Check if it's a course or ebook to set content_type
+      const { data: course } = await supabaseAdmin
+        .from('courses' as any)
+        .select('id')
+        .eq('id', data.contentId)
+        .maybeSingle();
+        
       const contentType = course ? 'course' : 'ebook';
       
-      const { data: inserted } = await supabaseAdmin
+      const { data: inserted, error: insertError } = await supabaseAdmin
         .from('content_certificates' as any)
         .insert({
           content_id: data.contentId,
@@ -37,6 +47,7 @@ export const getContentCertificate = createServerFn({ method: "GET" })
         .select()
         .single();
       
+      if (insertError) throw new Error(insertError.message);
       return inserted;
     }
 
