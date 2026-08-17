@@ -173,14 +173,10 @@ function Dashboard() {
           // Se for uma compra direta da Landing Page, acionamos o fluxo de compra
           const targetItem = { ...item, type: buyType };
           
-          if (isOfferEnabled) {
-             // Se houver upsell, abre o modal de oferta
-             setOfferItem(targetItem);
-             setShowOffer(true);
-          } else {
-             // Senão vai direto pro checkout
-             executeCheckout(targetItem, []);
-          }
+          // O popup de oferta exclusiva agora deve ser exibido APENAS se o usuário clicar no botão comprar
+          // e NÃO automaticamente ao entrar na página inicial, mesmo que vindo da Landing Page
+          // Portanto, ignoramos a verificação automática aqui e vamos direto para o checkout
+          executeCheckout(targetItem, []);
 
           const newUrl = new URL(window.location.href);
           newUrl.searchParams.delete('buy');
