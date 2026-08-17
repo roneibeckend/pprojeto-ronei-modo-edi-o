@@ -61,7 +61,7 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
         listTemplatesFn()
       ]);
       setConfig(certConfig);
-      setTemplates(templatesList);
+      setTemplates((templatesList as any[]) || []);
     } catch (error: any) {
       toast.error("Erro ao carregar configurações de certificado: " + error.message);
     } finally {
@@ -123,8 +123,9 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
         }
       });
 
-      setTemplates([newTemplate, ...templates]);
-      setConfig({ ...config, template_id: newTemplate.id });
+      const templateData = newTemplate as any;
+      setTemplates([templateData, ...templates]);
+      setConfig({ ...config, template_id: templateData.id });
       toast.success("Novo modelo carregado e selecionado!");
     } catch (error: any) {
       toast.error("Erro no upload: " + error.message);
