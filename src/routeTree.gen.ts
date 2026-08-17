@@ -19,7 +19,6 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AppVerificarCertificadoRouteImport } from './routes/app.verificar-certificado'
 import { Route as AppSuporteRouteImport } from './routes/app.suporte'
 import { Route as AppReceitasRouteImport } from './routes/app.receitas'
@@ -113,11 +112,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
-} as any)
-const AuthCallbackRoute = AuthCallbackRouteImport.update({
-  id: '/auth/callback',
-  path: '/auth/callback',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AppVerificarCertificadoRoute = AppVerificarCertificadoRouteImport.update({
   id: '/verificar-certificado',
@@ -374,7 +368,6 @@ export interface FileRoutesByFullPath {
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
   '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
-  '/auth/callback': typeof AuthCallbackRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -426,7 +419,6 @@ export interface FileRoutesByTo {
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
   '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
-  '/auth/callback': typeof AuthCallbackRoute
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -483,7 +475,6 @@ export interface FileRoutesById {
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
   '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
-  '/auth/callback': typeof AuthCallbackRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -541,7 +532,6 @@ export interface FileRouteTypes {
     | '/app/receitas'
     | '/app/suporte'
     | '/app/verificar-certificado'
-    | '/auth/callback'
     | '/admin/'
     | '/app/'
     | '/admin/alunos/$studentId'
@@ -593,7 +583,6 @@ export interface FileRouteTypes {
     | '/app/receitas'
     | '/app/suporte'
     | '/app/verificar-certificado'
-    | '/auth/callback'
     | '/admin'
     | '/app'
     | '/admin/alunos/$studentId'
@@ -649,7 +638,6 @@ export interface FileRouteTypes {
     | '/app/receitas'
     | '/app/suporte'
     | '/app/verificar-certificado'
-    | '/auth/callback'
     | '/admin/'
     | '/app/'
     | '/admin/alunos/$studentId'
@@ -678,7 +666,6 @@ export interface RootRouteChildren {
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
-  AuthCallbackRoute: typeof AuthCallbackRoute
   ApiPublicDailyFinancialReportRoute: typeof ApiPublicDailyFinancialReportRoute
   ApiPublicManifestWebmanifestRoute: typeof ApiPublicManifestWebmanifestRoute
   ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
@@ -755,13 +742,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
-    }
-    '/auth/callback': {
-      id: '/auth/callback'
-      path: '/auth/callback'
-      fullPath: '/auth/callback'
-      preLoaderRoute: typeof AuthCallbackRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/app/verificar-certificado': {
       id: '/app/verificar-certificado'
@@ -1216,7 +1196,6 @@ const rootRouteChildren: RootRouteChildren = {
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
-  AuthCallbackRoute: AuthCallbackRoute,
   ApiPublicDailyFinancialReportRoute: ApiPublicDailyFinancialReportRoute,
   ApiPublicManifestWebmanifestRoute: ApiPublicManifestWebmanifestRoute,
   ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
