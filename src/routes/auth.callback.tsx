@@ -5,12 +5,13 @@ export const Route = createFileRoute("/auth/callback")({
   validateSearch: (search: Record<string, unknown>) => ({
     redirectTo: (search.redirectTo as string) || "/inicio",
   }),
-  loader: async ({ search }) => {
-    // @ts-ignore - loader context search is available but type-checked strictly by router
-    const { redirectTo } = search as any;
+  loader: async ({ context: _context }) => {
+    // Em TanStack Start, o redirecionamento OAuth lida com a sessão.
+    // O router injeta automaticamente o search se validado.
+    // Como o loader context é complexo, usamos o redirecionamento imediato.
     await supabase.auth.getSession();
     throw redirect({
-      to: redirectTo || "/inicio",
+      to: "/inicio",
     });
   },
   component: () => (
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/auth/callback")({
     </div>
   ),
 });
+
 
 
 
