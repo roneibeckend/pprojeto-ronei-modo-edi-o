@@ -1488,10 +1488,7 @@ function Testimonials() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("course_feedback")
-        .select(`
-          *,
-          profile:profiles(name, avatar_url)
-        `)
+        .select("id, rating, comment, created_at")
         .eq("status", "approved")
         .order("created_at", { ascending: false })
         .limit(6);
@@ -1526,10 +1523,10 @@ function Testimonials() {
 
   const displayItems = realFeedbacks && realFeedbacks.length > 0 
     ? realFeedbacks.map((f: any) => ({
-        name: f.profile?.name || "Aluno",
+        name: "Aluno",
         role: "Aluno do Curso",
         text: f.comment || "",
-        img: f.profile?.avatar_url || author.url,
+        img: author.url,
         rating: f.rating
       }))
     : staticItems;
