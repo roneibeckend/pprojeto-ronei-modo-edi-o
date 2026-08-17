@@ -303,6 +303,7 @@ export type Database = {
           html_content: string | null
           id: string
           is_active: boolean | null
+          is_default: boolean | null
           name: string
           updated_at: string | null
         }
@@ -314,6 +315,7 @@ export type Database = {
           html_content?: string | null
           id?: string
           is_active?: boolean | null
+          is_default?: boolean | null
           name: string
           updated_at?: string | null
         }
@@ -325,6 +327,7 @@ export type Database = {
           html_content?: string | null
           id?: string
           is_active?: boolean | null
+          is_default?: boolean | null
           name?: string
           updated_at?: string | null
         }
