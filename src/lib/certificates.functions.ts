@@ -80,12 +80,21 @@ export const saveContentCertificate = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
-    const { content_type, ...upsertData } = data;
+    const { content_id, content_type, ...upsertData } = data;
     const { error } = await supabaseAdmin
       .from('content_certificates' as any)
-      .upsert({ ...upsertData, content_type } as any, { onConflict: 'content_id' });
+      .upsert({ 
+        ...upsertData, 
+        content_id, 
+        content_type 
+      } as any, { 
+        onConflict: 'content_id' 
+      });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error(`Error saving certificate for content ${content_id}:`, error);
+      throw new Error(error.message);
+    }
     return { success: true };
   });
 
