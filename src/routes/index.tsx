@@ -771,16 +771,16 @@ function Hero() {
             >
               <div className="absolute -inset-3 -z-10 rounded-[2rem] bg-fire opacity-25 blur-2xl transition group-hover:opacity-40" />
               <div className="glass gradient-border relative overflow-hidden rounded-2xl p-1.5 shadow-fire">
-                <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background">
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background ring-1 ring-white/10 shadow-2xl">
                   <img
-                    src={`https://img.youtube.com/vi/ZowrRHEwP7I/maxresdefault.jpg`}
+                    src="https://img.youtube.com/vi/ZowrRHEwP7I/maxresdefault.jpg"
                     alt="Ronnei — história do Espetos Grill"
                     loading="eager"
                     decoding="async"
                     fetchPriority="high"
-                    width={448}
-                    height={252}
-                    className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    width={1280}
+                    height={720}
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
 
@@ -1605,8 +1605,23 @@ function Offer() {
               </span>
             </div>
 
-            {/* Price */}
-            <div className="mt-8 text-center [font-variant-numeric:tabular-nums]">
+            {/* eBook Cover & Price Container */}
+            <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:items-center">
+              {/* eBook Cover Visual */}
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-[color:var(--ember)]/20 to-[color:var(--gold)]/20 blur-2xl opacity-0 group-hover:opacity-100 transition duration-500" />
+                <div className="relative aspect-[3/4] w-full max-w-[240px] mx-auto overflow-hidden rounded-lg border border-white/10 bg-black/40 shadow-2xl transition duration-500 group-hover:scale-[1.02] group-hover:-rotate-2">
+                  <img 
+                    src="https://jpapgdwrjjvhmniqtukg.supabase.co/storage/v1/object/public/content-covers/ebook-do-zero-10k.png" 
+                    alt="Capa do eBook Do Zero aos 10K"
+                    loading="lazy"
+                    className="h-full w-full object-contain p-2"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-[color:var(--ember)]/10 to-transparent pointer-events-none" />
+                </div>
+              </div>
+
+              <div className="text-center lg:text-left [font-variant-numeric:tabular-nums]">
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--ember)]" />
                 <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--ember)]">Preço de lançamento</span>
@@ -1618,7 +1633,7 @@ function Offer() {
                 Estamos formando a maior comunidade de espeteiros do Brasil — por isso o valor está simbólico no lançamento.
               </p>
 
-              <div className="mt-3 flex items-start justify-center gap-1.5">
+              <div className="mt-3 flex items-start justify-center lg:justify-start gap-1.5">
                 <span className="mt-3 text-xl font-semibold text-[color:var(--gold)]">R$</span>
                 <span className="font-display text-7xl leading-none tracking-tight text-gradient-fire sm:text-8xl">
                   47
@@ -1636,6 +1651,7 @@ function Offer() {
                 <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">ou</span>
                 <span className="text-sm font-bold text-[color:var(--gold)]">3x de R$ 17,00</span>
                 <span className="text-[11px] text-muted-foreground">no cartão</span>
+              </div>
               </div>
             </div>
 
