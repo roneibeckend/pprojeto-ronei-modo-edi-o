@@ -124,9 +124,11 @@
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overscroll-behavior-y: none; /* Previne bounce indesejado no PWA */
-    user-select: none; /* Comportamento mais nativo, evita seleção acidental */
+    overscroll-behavior-y: none;
+    user-select: none;
     -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
     
     /* Previne atrasos de clique em mobile */
     touch-action: manipulation;
