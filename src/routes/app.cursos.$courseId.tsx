@@ -18,6 +18,7 @@ import { FeedbackList } from "@/components/platform/FeedbackList";
 import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 import { getSignedVideoUrl } from "@/lib/video.functions";
+import { generateCertificate } from "@/lib/certificates-student.functions";
 import { motion, AnimatePresence } from "framer-motion";
 
 
@@ -87,7 +88,7 @@ function CoursePage() {
   const [signedLessonUrl, setSignedLessonUrl] = useState<string | null>(null);
   const [signedIntroUrl, setSignedIntroUrl] = useState<string | null>(null);
   const [isLoadingSignedUrl, setIsLoadingSignedUrl] = useState(false);
-
+  const generateCertFn = useServerFn(generateCertificate);
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
 
 
@@ -189,26 +190,33 @@ function CoursePage() {
     const isActuallyCompleted = flat.length > 0 && currentCompletedCount === flat.length;
 
     if (isActuallyCompleted) {
-      const checkFeedback = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-        
-        const { data } = await supabase
-          .from("course_feedback")
-          .select("id")
-          .eq("user_id", user.id)
-          .eq("course_id", course.id)
-          .maybeSingle();
-        
-        if (data) {
-          setHasSubmittedFeedback(true);
-        } else {
-          setShowFeedbackModal(true);
+      const handleFinalization = async () => {
+        try {
+          // Generate certificate automatically first
+          await generateCertFn({ data: { content_id: course.id, content_type: 'course' } });
+          
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const { data } = await supabase
+            .from("course_feedback")
+            .select("id")
+            .eq("user_id", user.id)
+            .eq("course_id", course.id)
+            .maybeSingle();
+          
+          if (data) {
+            setHasSubmittedFeedback(true);
+          } else {
+            setShowFeedbackModal(true);
+          }
+        } catch (error) {
+          console.error("Erro na finalização automática do curso:", error);
         }
       };
-      checkFeedback();
+      handleFinalization();
     }
-  }, [lessonProgress, hasSubmittedFeedback, course.id, hasAccess, flat.length, isLoadingEnrollments]);
+  }, [lessonProgress, hasSubmittedFeedback, course.id, hasAccess, flat.length, isLoadingEnrollments, generateCertFn]);
 
   const introNeedsSigning = Boolean(
     course?.intro_video_url &&
@@ -577,13 +585,21 @@ function CoursePage() {
             >
               <ChevronLeft className="h-4 w-4" /> Aula anterior
             </button>
-            <button
-              disabled={!next}
-              onClick={() => next && setActiveId(next.id)}
-              className="btn-ghost-fire text-xs sm:text-sm disabled:opacity-40 flex-1 sm:flex-none h-10 sm:h-auto"
-            >
-              Próxima aula <ChevronRight className="h-4 w-4" />
-            </button>
+            {!next ? (
+              <button
+                onClick={() => setShowFeedbackModal(true)}
+                className="btn-fire text-xs sm:text-sm flex-1 sm:flex-none h-10 sm:h-auto px-6 shadow-lg shadow-fire/20"
+              >
+                Finalizar Curso <Award className="ml-2 h-4 w-4" />
+              </button>
+            ) : (
+              <button
+                onClick={() => next && setActiveId(next.id)}
+                className="btn-ghost-fire text-xs sm:text-sm flex-1 sm:flex-none h-10 sm:h-auto"
+              >
+                Próxima aula <ChevronRight className="h-4 w-4" />
+              </button>
+            )}
           </div>
 
           {/* Tabs */}
