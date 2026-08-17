@@ -8,7 +8,7 @@ interface PostPurchaseOfferState {
 }
 
 export const usePostPurchaseOfferStore = create<PostPurchaseOfferState>((set) => ({
-  isEnabled: false, // Default to false to prevent automatic display
+  isEnabled: false,
   togglePostPurchaseOfferPopup: (enabled: boolean) => set({ isEnabled: enabled }),
   syncWithDatabase: async () => {
     try {
