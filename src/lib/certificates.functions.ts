@@ -58,6 +58,7 @@ export const saveContentCertificate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     content_id: z.string(),
+    content_type: z.enum(['course', 'ebook']),
     template_id: z.string().nullable().optional(),
     is_enabled: z.boolean(),
     custom_text: z.string().nullable().optional(),
