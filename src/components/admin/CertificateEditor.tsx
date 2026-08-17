@@ -76,10 +76,10 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
         data: {
           content_id: contentId,
           content_type: contentType,
-          template_id: config.template_id || (templates.length > 0 ? templates[0].id : null),
-          is_enabled: !!config.is_enabled,
-          custom_text: config.custom_text || null,
-          min_progress_percentage: config.min_progress_percentage ?? 100
+          template_id: config?.template_id || (templates.length > 0 ? templates[0].id : null),
+          is_enabled: !!config?.is_enabled,
+          custom_text: config?.custom_text || null,
+          min_progress_percentage: config?.min_progress_percentage ?? 100
         }
       });
       toast.success("Configurações salvas com sucesso!");
@@ -180,7 +180,7 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
               <div className="text-[10px] text-white/40 uppercase tracking-widest">Emitir automaticamente após conclusão</div>
             </div>
             <button 
-              onClick={() => setConfig({ ...config, is_enabled: !config.is_enabled })}
+              onClick={() => setConfig({ ...config, is_enabled: !config?.is_enabled })}
               className={cn(
                 "w-12 h-6 rounded-full transition-colors relative",
                 config?.is_enabled ? "bg-[#ff6a00]" : "bg-white/10"
@@ -205,7 +205,7 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
             
             <div className="grid grid-cols-1 gap-2">
               <select 
-                value={config.template_id || ""} 
+                value={config?.template_id || ""} 
                 onChange={e => setConfig({ ...config, template_id: e.target.value })}
                 className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] appearance-none"
               >
@@ -217,7 +217,7 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
                 ))}
               </select>
 
-              {config.template_id && !selectedTemplate?.is_default && (
+              {config?.template_id && !selectedTemplate?.is_default && (
                 <button 
                   onClick={() => {
                     const defaultTemplate = templates.find(t => t.is_default);
@@ -239,7 +239,7 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
               type="number"
               min="0"
               max="100"
-              value={config.min_progress_percentage ?? 100}
+              value={config?.min_progress_percentage ?? 100}
               onChange={e => setConfig({ ...config, min_progress_percentage: parseInt(e.target.value) || 0 })}
               className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
             />
@@ -249,7 +249,7 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
             <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Texto Customizado (Opcional)</label>
             <textarea 
               rows={3}
-              value={config.custom_text || ""}
+              value={config?.custom_text || ""}
               onChange={e => setConfig({ ...config, custom_text: e.target.value })}
               placeholder="Ex: Carga horária total de 40 horas..."
               className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] resize-none"
