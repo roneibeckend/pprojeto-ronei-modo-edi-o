@@ -2,14 +2,15 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth/callback")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirectTo: (search.redirectTo as string) || "/inicio",
+  }),
   loader: async ({ search }) => {
+    // O Supabase Auth lida com o token no fragmento (#) automaticamente após o redirecionamento
     const { data: { session } } = await supabase.auth.getSession();
     
-    // Se já temos sessão ou se viemos de um fluxo OAuth (o Supabase JS client lida com o hash automaticamente)
-    const redirectTo = (search as any).redirectTo || "/inicio";
-    
     return redirect({
-      to: redirectTo,
+      to: search.redirectTo,
     });
   },
   component: () => (
@@ -21,3 +22,4 @@ export const Route = createFileRoute("/auth/callback")({
     </div>
   ),
 });
+
