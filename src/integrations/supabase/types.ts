@@ -2094,20 +2094,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      acquire_asaas_webhook_claim: {
-        Args: {
-          p_event_id: string
-          p_event_type: string
-          p_lease_interval?: string
-          p_payload: Json
-          p_payment_id: string
-        }
-        Returns: {
-          claim_token: string
-          claimed_at: string
-          status: string
-        }[]
-      }
+      acquire_asaas_webhook_claim:
+        | {
+            Args: {
+              p_event_id: string
+              p_event_type: string
+              p_payload: Json
+              p_payment_id: string
+            }
+            Returns: {
+              claim_token: string
+            }[]
+          }
+        | {
+            Args: {
+              p_event_id: string
+              p_event_type: string
+              p_lease_interval?: string
+              p_payload: Json
+              p_payment_id: string
+            }
+            Returns: {
+              claim_token: string
+              claimed_at: string
+              status: string
+            }[]
+          }
       affiliate_sensitive_fields_unchanged: {
         Args: {
           _balance: number
