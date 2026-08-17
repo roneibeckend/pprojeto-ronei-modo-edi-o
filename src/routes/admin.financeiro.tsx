@@ -76,7 +76,7 @@ function FinancePage() {
 
       
       const [settingsRes, costsRes, partnersRes, autoRevenue] = await Promise.all([
-        supabase.from("financial_settings").select("*").single(),
+        supabase.from("financial_settings").select("*").maybeSingle(),
         supabase.from("financial_costs").select("*").order("created_at"),
         supabase.from("financial_partners").select("*").order("created_at"),
         fetchFinancialSummary({ data: { startDate: dates.start, endDate: dates.end } })
