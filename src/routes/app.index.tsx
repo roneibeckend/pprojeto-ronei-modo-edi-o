@@ -311,12 +311,14 @@ function Dashboard() {
 }
 
 function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boolean }) {
+  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
+  const createPaymentLink = useServerFn(createAsaasPaymentLink);
+  const saveCheckout = useServerFn(savePendingCheckout);
+  const { openPayment } = usePaymentModal();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
   const [discountPercentage, setDiscountPercentage] = useState(15);
-  const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
-  const createPaymentLink = useServerFn(createAsaasPaymentLink);
-  const { openPayment } = usePaymentModal();
+
   
   const handlePurchase = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -338,6 +340,16 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
   const executeCheckout = async (additionalItems: any[]) => {
     try {
       setIsProcessing(true);
+      
+      // Persiste a intenção
+      await saveCheckout({
+        data: {
+          productId: item.id,
+          productType: item.type,
+          metadata: { additionalItems }
+        }
+      });
+
       
       const products = [
         {
