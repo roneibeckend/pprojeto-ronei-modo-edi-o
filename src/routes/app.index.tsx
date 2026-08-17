@@ -153,35 +153,38 @@ function Dashboard() {
       if (buyId && buyType && !isLoadingEnrollments) {
         const alreadyEnrolled = buyType === 'course' ? isEnrolledInCourse(buyId) : isEnrolledInEbook(buyId);
         
-        // Se já tem acesso, limpa a URL e não faz nada
         if (alreadyEnrolled) {
           const newUrl = new URL(window.location.href);
           newUrl.searchParams.delete('buy');
           newUrl.searchParams.delete('type');
           window.history.replaceState({}, '', newUrl.pathname + newUrl.search);
+          
+          // Se já tem acesso, redireciona para o conteúdo para não ficar na home
+          navigate({ 
+            to: buyType === 'course' ? "/app/cursos/$courseId" : "/app/ebooks/$ebookId",
+            params: buyType === 'course' ? { courseId: buyId } : { ebookId: buyId }
+          });
           return;
         }
 
         const table = buyType === 'course' ? 'courses' : 'ebooks';
         const { data: item } = await supabase
           .from(table)
-          .select('id, title, description, price')
+          .select('id, title, description, price, status, is_locked')
           .eq('id', buyId)
           .maybeSingle();
 
         if (item) {
-          // Se for uma compra direta da Landing Page, acionamos o fluxo de compra
           const targetItem = { ...item, type: buyType };
           
-          // O popup de oferta exclusiva agora deve ser exibido APENAS se o usuário clicar no botão comprar
-          // e NÃO automaticamente ao entrar na página inicial, mesmo que vindo da Landing Page
-          // Portanto, ignoramos a verificação automática aqui e vamos direto para o checkout
-          executeCheckout(targetItem, []);
-
+          // Limpa URL para evitar loops
           const newUrl = new URL(window.location.href);
           newUrl.searchParams.delete('buy');
           newUrl.searchParams.delete('type');
           window.history.replaceState({}, '', newUrl.pathname + newUrl.search);
+
+          // Inicia checkout
+          executeCheckout(targetItem, []);
         }
       }
     };
