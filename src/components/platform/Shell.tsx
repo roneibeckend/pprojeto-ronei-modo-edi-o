@@ -218,7 +218,7 @@ export function Shell({ children }: { children: ReactNode }) {
               return;
             }
             toast.success("Você saiu da plataforma.");
-            window.location.href = '/login'; // Força reload para limpar estados e garantir redirecionamento PWA
+            navigate({ to: '/login', replace: true });
           }}
           className="flex h-12 sm:h-10 w-full items-center gap-3 rounded-md border border-sidebar-border px-3 text-sm font-medium text-sidebar-foreground/70 transition-colors duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none touch-action-manipulation active:scale-[0.98]"
         >
