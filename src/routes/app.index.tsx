@@ -437,6 +437,7 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
                 {isProcessing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}
                 {isProcessing ? "..." : "Comprar"}
               </button>
+
             </div>
           </div>
         ) : (
