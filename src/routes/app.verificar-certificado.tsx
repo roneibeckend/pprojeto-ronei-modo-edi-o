@@ -1,142 +1,218 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Award, ShieldCheck, Search, Loader2, CheckCircle2, XCircle, ChevronLeft } from "lucide-react";
-import { useServerFn } from "@tanstack/react-start";
-import { verifyCertificate } from "@/lib/certificates-verify.functions";
-import { toast } from "sonner";
+import { createFileRoute } from "@tanstack/react-router";
+import { 
+  CheckCircle2, 
+  Search, 
+  Loader2, 
+  Award, 
+  Calendar, 
+  User, 
+  BookOpen,
+  QrCode,
+  ShieldCheck,
+  FileText
+} from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/app/verificar-certificado")({
-  head: () => ({ meta: [{ title: "Verificar Certificado — Espetinho na Veia" }] }),
-  component: VerifyCertificatePage,
+  component: VerificarCertificado,
 });
 
-function VerifyCertificatePage() {
+function VerificarCertificado() {
   const [code, setCode] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const [hasSearched, setHasSearched] = useState(false);
-  
-  const verifyFn = useServerFn(verifyCertificate);
+  const [loading, setLoading] = useState(false);
+  const [certificate, setCertificate] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!code.trim()) {
-      toast.error("Por favor, insira um código de certificado.");
-      return;
-    }
+  async function handleVerify(e: React.FormEvent) {
+    e.preventDefault();
+    if (!code) return;
 
     try {
-      setIsSearching(true);
-      const data = await verifyFn({ data: { code: code.trim() } });
-      setResult(data);
-      setHasSearched(true);
+      setLoading(true);
+      setError(null);
+      setCertificate(null);
+
+      const { data, error: certError } = await supabase
+        .from("certificates" as any)
+        .select(`
+          *,
+          profile:profiles(full_name),
+          template:certificate_templates(*)
+        `)
+        .eq("certificate_code", code.trim().toUpperCase())
+        .maybeSingle();
+
+      if (certError) throw certError;
+
       if (!data) {
-        toast.error("Certificado não encontrado ou inválido.");
+        setError("Certificado não encontrado. Verifique o código e tente novamente.");
+        return;
       }
-    } catch (error: any) {
-      toast.error("Erro ao verificar certificado: " + error.message);
+
+      const certData = data as any;
+
+      if (certData.is_revoked) {
+        setError("Este certificado foi revogado e não é mais válido.");
+        return;
+      }
+
+      // Fetch content title
+      let contentTitle = "";
+      if (certData.content_type === "course") {
+        const { data: course } = await supabase
+          .from("courses" as any)
+          .select("title")
+          .eq("id", certData.content_id)
+          .maybeSingle();
+        contentTitle = (course as any)?.title || "Curso";
+      } else {
+        const { data: ebook } = await supabase
+          .from("ebooks" as any)
+          .select("title")
+          .eq("id", certData.content_id)
+          .maybeSingle();
+        contentTitle = (ebook as any)?.title || "E-book";
+      }
+
+      setCertificate({
+        ...certData,
+        contentTitle,
+        studentName: certData.profile?.full_name || "Aluno",
+        template: certData.template
+      });
+    } catch (err: any) {
+      setError("Erro ao verificar certificado. Tente novamente mais tarde.");
+      console.error(err);
     } finally {
-      setIsSearching(false);
+      setLoading(false);
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-[#060606] text-white p-4 sm:p-8">
-      <div className="mx-auto max-w-2xl">
-        <Link 
-          to="/app/certificados" 
-          className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-8 transition-colors group"
-        >
-          <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-          Voltar para Meus Certificados
-        </Link>
-
-        <div className="text-center mb-12">
-          <div className="inline-grid h-16 w-16 place-items-center rounded-2xl bg-[#ff6a00]/10 text-[#ff6a00] mb-6">
-            <ShieldCheck className="h-8 w-8" strokeWidth={2.5} />
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col p-4 md:p-8">
+      <div className="max-w-4xl mx-auto w-full space-y-8 py-12">
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-[#ff6a00]/10 border border-[#ff6a00]/20 mb-2">
+            <ShieldCheck className="h-8 w-8 text-[#ff6a00]" />
           </div>
-          <h1 className="font-display text-3xl font-black mb-4">Validação de Certificados</h1>
-          <p className="text-white/50 max-w-md mx-auto">
-            Verifique a autenticidade de um certificado emitido pela plataforma Espetinho na Veia através do código único.
+          <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase">
+            Verificador de <span className="text-[#ff6a00]">Certificados</span>
+          </h1>
+          <p className="text-white/60 max-w-lg mx-auto">
+            Valide a autenticidade dos certificados emitidos pela nossa plataforma informando o código de autenticação único.
           </p>
         </div>
 
-        <div className="bg-[#0e0e0e] border border-white/5 rounded-3xl p-6 sm:p-8 shadow-2xl">
-          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 mb-8">
+        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl">
+          <form onSubmit={handleVerify} className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/30" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
               <input
                 type="text"
-                placeholder="Ex: CERT-XXXXXXXX"
                 value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase())}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#ff6a00]/50 transition-colors uppercase font-mono"
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="Ex: CERT-A1B2C3D4"
+                className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-lg outline-none focus:border-[#ff6a00] transition-colors uppercase"
               />
             </div>
             <button
               type="submit"
-              disabled={isSearching}
-              className="btn-fire px-8 py-4 font-bold flex items-center justify-center gap-2 disabled:opacity-50"
+              disabled={loading || !code}
+              className="bg-[#ff6a00] hover:bg-[#ff8c33] disabled:opacity-50 text-black font-black uppercase italic tracking-tighter px-8 py-4 rounded-2xl transition-all flex items-center justify-center gap-2"
             >
-              {isSearching ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
+              {loading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
-                "Verificar"
+                <>
+                  <QrCode className="h-5 w-5" />
+                  Verificar
+                </>
               )}
             </button>
           </form>
 
-          {hasSearched && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              {result ? (
-                <div className="rounded-2xl border border-green-500/20 bg-green-500/5 p-6">
-                  <div className="flex items-start gap-4 mb-6">
-                    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-green-500/20 text-green-500">
-                      <CheckCircle2 className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-green-500">Certificado Autêntico</h3>
-                      <p className="text-white/50 text-sm">Este certificado foi emitido pela nossa plataforma e é válido.</p>
-                    </div>
+          {error && (
+            <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-center animate-in fade-in slide-in-from-top-2 duration-300">
+              {error}
+            </div>
+          )}
+
+          {certificate && (
+            <div className="mt-8 space-y-8 animate-in fade-in zoom-in duration-500">
+              <div className="flex items-center justify-center gap-2 text-green-500 font-bold mb-8">
+                <CheckCircle2 className="h-6 w-6" />
+                Certificado Autêntico e Válido
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
+                      <User className="h-3 w-3" /> Aluno
+                    </label>
+                    <div className="text-xl font-bold">{certificate.studentName}</div>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/5">
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-1">Aluno</div>
-                      <div className="text-white font-medium">{result.studentName}</div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
+                      <BookOpen className="h-3 w-3" /> Conteúdo
+                    </label>
+                    <div className="text-xl font-bold">{certificate.contentTitle}</div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
+                        <Calendar className="h-3 w-3" /> Data de Emissão
+                      </label>
+                      <div className="font-bold">
+                        {new Date(certificate.issue_date).toLocaleDateString("pt-BR")}
+                      </div>
                     </div>
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/5">
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-1">Conteúdo</div>
-                      <div className="text-white font-medium">{result.contentTitle}</div>
-                    </div>
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/5">
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-1">Data de Emissão</div>
-                      <div className="text-white font-medium">{result.issueDateFormatted}</div>
-                    </div>
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/5">
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-1">Código</div>
-                      <div className="text-white font-mono font-medium">{result.certificate_code}</div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
+                        <Award className="h-3 w-3" /> Carga Horária
+                      </label>
+                      <div className="font-bold">{certificate.custom_data?.hours || 40}h</div>
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6 text-center">
-                  <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-red-500/20 text-red-500">
-                    <XCircle className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-bold text-red-500">Não Encontrado</h3>
-                  <p className="mt-2 text-white/50">
-                    O código informado não corresponde a nenhum certificado válido em nossa base de dados.
-                  </p>
+
+                <div className="bg-black/40 border border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[200px]">
+                  {certificate.template?.background_url ? (
+                    <>
+                      <img 
+                        src={certificate.template.background_url} 
+                        alt="Template Layout" 
+                        className="absolute inset-0 w-full h-full object-contain opacity-20"
+                      />
+                      <div className="relative z-10">
+                        <FileText className="h-12 w-12 text-[#ff6a00] mx-auto mb-4" />
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">Código de Autenticação</div>
+                        <div className="text-2xl font-black italic tracking-tighter text-[#ff6a00]">{certificate.certificate_code}</div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="h-12 w-12 text-[#ff6a00] mx-auto mb-4" />
+                      <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">Código de Autenticação</div>
+                      <div className="text-2xl font-black italic tracking-tighter text-[#ff6a00]">{certificate.certificate_code}</div>
+                    </>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           )}
         </div>
 
-        <div className="mt-12 text-center text-white/20 text-xs">
-          <p>© 2026 Espetinho na Veia. Todos os direitos reservados.</p>
-          <p className="mt-1 uppercase tracking-widest">Segurança e Autenticidade Garantidas</p>
+        <div className="text-center">
+          <a
+            href="/"
+            className="text-white/40 hover:text-[#ff6a00] text-sm font-bold transition-colors"
+          >
+            ← Voltar para a Home
+          </a>
         </div>
       </div>
     </div>

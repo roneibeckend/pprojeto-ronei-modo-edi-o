@@ -115,8 +115,75 @@ export const listTemplates = createServerFn({ method: "GET" })
     const { data, error } = await supabaseAdmin
       .from('certificate_templates' as any)
       .select('*')
-      .eq('is_active', true);
+      .order('created_at', { ascending: false });
       
     if (error) throw new Error(error.message);
     return data;
+  });
+
+export const createTemplate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: unknown) => z.object({
+    name: z.string(),
+    background_url: z.string().optional(),
+    is_default: z.boolean().optional(),
+  }).parse(data))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    const { data: template, error } = await supabaseAdmin
+      .from('certificate_templates' as any)
+      .insert({
+        ...data,
+        is_active: true,
+      } as any)
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return template;
+  });
+
+export const updateTemplate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: unknown) => z.object({
+    id: z.string(),
+    name: z.string().optional(),
+    background_url: z.string().optional(),
+    is_active: z.boolean().optional(),
+    is_default: z.boolean().optional(),
+  }).parse(data))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    const { id, ...updateData } = data;
+    const { data: template, error } = await supabaseAdmin
+      .from('certificate_templates' as any)
+      .update(updateData as any)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return template;
+  });
+
+export const deleteTemplate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: unknown) => z.object({
+    id: z.string(),
+  }).parse(data))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    const { error } = await supabaseAdmin
+      .from('certificate_templates' as any)
+      .update({ is_active: false } as any)
+      .eq('id', data.id);
+
+    if (error) throw new Error(error.message);
+    return { success: true };
   });
