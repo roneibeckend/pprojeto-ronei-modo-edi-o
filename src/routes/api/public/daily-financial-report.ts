@@ -49,9 +49,13 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
           const { data: settings, error: settingsError } = await supabase
             .from("report_settings")
             .select("*")
-            .single();
+            .limit(1)
+            .maybeSingle();
 
           if (settingsError) throw settingsError;
+          if (!settings) {
+            console.log("Configurações de relatório não encontradas. Usando padrões.");
+          }
 
           // 2. Determine date range
           const targetDate = date ? new Date(date) : new Date();

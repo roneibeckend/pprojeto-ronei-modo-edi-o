@@ -1808,6 +1808,7 @@ export type Database = {
           delivery_method: string | null
           enabled: boolean
           id: string
+          recipients: string[] | null
           send_time: string
           send_when_no_activity: boolean
           timezone: string
@@ -1817,6 +1818,7 @@ export type Database = {
           delivery_method?: string | null
           enabled?: boolean
           id?: string
+          recipients?: string[] | null
           send_time?: string
           send_when_no_activity?: boolean
           timezone?: string
@@ -1826,6 +1828,7 @@ export type Database = {
           delivery_method?: string | null
           enabled?: boolean
           id?: string
+          recipients?: string[] | null
           send_time?: string
           send_when_no_activity?: boolean
           timezone?: string

@@ -46,11 +46,11 @@ function AdminDashboard() {
         ticketsRes,
         recentLogsRes
       ] = await Promise.all([
-        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'aluno'),
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).in('status', ['aluno', 'student']),
         supabase.from('courses').select('id'),
         supabase.from('payments').select('net_amount').in('status', ['CONFIRMED', 'RECEIVED', 'RECEIVED_IN_CASH']),
         supabase.from('support_tickets').select('id', { count: 'exact', head: true }).eq('status', 'open'),
-        supabase.from('integration_logs' as any).select('id, integration_name, status, created_at').order('created_at', { ascending: false }).limit(5)
+        supabase.from('integration_logs' as any).select('id, integration_name, status, message, created_at').order('created_at', { ascending: false }).limit(5)
       ]);
 
       const totalRevenue = (paymentsRes.data || []).reduce((acc, p) => acc + Number(p.net_amount || 0), 0);
@@ -174,7 +174,12 @@ function AdminDashboard() {
               {stats?.recentLogs && stats.recentLogs.length > 0 ? (
                 stats.recentLogs.map((log: any) => (
                   <div key={log.id} className="flex items-center justify-between text-[10px]">
-                    <span className="text-white/40">{log.integration_name}</span>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-white/40">{log.integration_name}</span>
+                      {log.status !== 'success' && log.message && (
+                        <span className="text-[8px] text-red-500/50 truncate max-w-[120px]" title={log.message}>{log.message}</span>
+                      )}
+                    </div>
                     <span className={log.status === 'success' ? 'text-emerald-400' : 'text-red-400'}>
                       {log.status === 'success' ? 'OK' : 'Falha'}
                     </span>
