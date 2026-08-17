@@ -132,6 +132,7 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
               <div className={cn(
                 "absolute top-1 w-4 h-4 rounded-full bg-black transition-all",
                 config.is_enabled ? "left-7" : "left-1"
+
               )} />
             </button>
           </div>
