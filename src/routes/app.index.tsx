@@ -24,6 +24,7 @@ export const Route = createFileRoute("/app/")({
 });
 
 function Dashboard() {
+  const navigate = useNavigate();
   const { isEnrolledInCourse, isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
   const { syncWithDatabase } = usePostPurchaseOfferStore();
   const [showOffer, setShowOffer] = useState(false);
