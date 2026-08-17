@@ -2,7 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Play, ShoppingCart, Sparkles, Lock, Loader2 } from "lucide-react";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { createAsaasPaymentLink } from "@/lib/asaas.functions";
+import { savePendingCheckout, getPendingCheckout, completePendingCheckout } from "@/lib/checkout.functions";
 import { useServerFn } from "@tanstack/react-start";
+
 import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
@@ -31,11 +33,24 @@ function Dashboard() {
   const [discountPercentage, setDiscountPercentage] = useState(15);
   const { isEnabled: isOfferEnabled } = usePostPurchaseOfferStore();
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
+  const saveCheckout = useServerFn(savePendingCheckout);
+  const getPending = useServerFn(getPendingCheckout);
+  const completeCheckout = useServerFn(completePendingCheckout);
   const { openPayment } = usePaymentModal();
 
   const executeCheckout = async (targetItem: any, additionalItems: any[]) => {
     try {
       setIsProcessing(true);
+      
+      // Persiste a intenção antes de criar o link
+      await saveCheckout({
+        data: {
+          productId: targetItem.id,
+          productType: targetItem.type,
+          metadata: { additionalItems }
+        }
+      });
+
       
       const products = [
         {
@@ -137,7 +152,15 @@ function Dashboard() {
 
       if (buyId && buyType && !isLoadingEnrollments) {
         const alreadyEnrolled = buyType === 'course' ? isEnrolledInCourse(buyId) : isEnrolledInEbook(buyId);
-        if (alreadyEnrolled) return;
+        
+        // Se já tem acesso, limpa a URL e não faz nada
+        if (alreadyEnrolled) {
+          const newUrl = new URL(window.location.href);
+          newUrl.searchParams.delete('buy');
+          newUrl.searchParams.delete('type');
+          window.history.replaceState({}, '', newUrl.pathname + newUrl.search);
+          return;
+        }
 
         const table = buyType === 'course' ? 'courses' : 'ebooks';
         const { data: item } = await supabase
@@ -147,17 +170,64 @@ function Dashboard() {
           .maybeSingle();
 
         if (item) {
-          executeCheckout({ ...item, type: buyType }, []);
+          // Se for uma compra direta da Landing Page, acionamos o fluxo de compra
+          const targetItem = { ...item, type: buyType };
+          
+          if (isOfferEnabled) {
+             // Se houver upsell, abre o modal de oferta
+             setOfferItem(targetItem);
+             setShowOffer(true);
+          } else {
+             // Senão vai direto pro checkout
+             executeCheckout(targetItem, []);
+          }
+
           const newUrl = new URL(window.location.href);
           newUrl.searchParams.delete('buy');
           newUrl.searchParams.delete('type');
           window.history.replaceState({}, '', newUrl.pathname + newUrl.search);
         }
+      } else if (!isLoadingEnrollments) {
+        // Se não tem params, verifica se há checkout pendente no banco
+        try {
+          const pending = await getPending({});
+          if (pending && pending.status === 'pending') {
+            const alreadyEnrolled = pending.product_type === 'course' 
+              ? isEnrolledInCourse(pending.product_id) 
+              : isEnrolledInEbook(pending.product_id);
+            
+            if (alreadyEnrolled) {
+              await completeCheckout({ data: { checkoutId: pending.id } });
+              return;
+            }
+
+            const table = pending.product_type === 'course' ? 'courses' : 'ebooks';
+            const { data: item } = await supabase
+              .from(table)
+              .select('id, title, description, price')
+              .eq('id', pending.product_id)
+              .maybeSingle();
+
+            if (item) {
+               const targetItem = { ...item, type: pending.product_type };
+               // Se existe checkout pendente, reabre o fluxo
+               if (isOfferEnabled) {
+                  setOfferItem(targetItem);
+                  setShowOffer(true);
+               } else {
+                  executeCheckout(targetItem, []);
+               }
+            }
+          }
+        } catch (err) {
+          console.error("Erro ao recuperar checkout pendente:", err);
+        }
       }
     };
 
     handleBuyParam();
-  }, [isLoadingEnrollments]);
+  }, [isLoadingEnrollments, isOfferEnabled]);
+
 
   if (isLoadingItems || isLoadingEnrollments) {
     return (
@@ -176,6 +246,19 @@ function Dashboard() {
 
   return (
     <div className="space-y-8">
+      {offerItem && (
+        <PostPurchaseOffer
+          isOpen={showOffer}
+          onClose={() => {
+            setShowOffer(false);
+            setOfferItem(null);
+          }}
+          onProceedWithOffers={(selected) => executeCheckout(offerItem, selected)}
+          onProceedWithoutOffers={() => executeCheckout(offerItem, [])}
+          originalProductId={offerItem.id}
+        />
+      )}
+
       {resumeItem && (
         <section className="animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="glass flex flex-col items-center justify-between gap-4 rounded-2xl p-6 sm:flex-row">

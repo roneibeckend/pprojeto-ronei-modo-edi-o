@@ -34,16 +34,21 @@ function LoginPage() {
     // Capturar referência do afiliado da URL para persistir após login/signup
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
+    const redirectTo = urlParams.get('redirectTo');
+    
     if (ref) {
       localStorage.setItem('affiliate_referrer_code', ref);
     }
 
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
-        navigate({ to: "/inicio", replace: true });
+        // Se houver redirectTo, usa ele, senão vai para /inicio
+        const target = redirectTo || "/inicio";
+        navigate({ to: target, replace: true });
       }
     });
   }, [navigate]);
+
 
   const handleGoogle = async () => {
     setLoading(true);
@@ -58,8 +63,11 @@ function LoginPage() {
       }
       if (result.redirected) return;
       // Tokens já setados; segue pra plataforma
-      navigate({ to: "/inicio" });
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectTo = urlParams.get('redirectTo');
+      navigate({ to: redirectTo || "/inicio" });
     } catch (err) {
+
       toast.error("Erro ao conectar com Google");
       console.error(err);
       setLoading(false);
@@ -117,14 +125,19 @@ function LoginPage() {
           console.error("[Auth] Erro ao disparar e-mail de boas-vindas:", emailErr);
         }
         
-        navigate({ to: "/inicio", replace: true });
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectTo = urlParams.get('redirectTo');
+        navigate({ to: redirectTo || "/inicio", replace: true });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Bem-vindo de volta!");
-        navigate({ to: "/inicio" });
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectTo = urlParams.get('redirectTo');
+        navigate({ to: redirectTo || "/inicio" });
       }
     } catch (err: any) {
+
       const msg = err?.message ?? "Falha ao autenticar";
       if (/invalid login credentials/i.test(msg)) {
         toast.error("E-mail ou senha incorretos");

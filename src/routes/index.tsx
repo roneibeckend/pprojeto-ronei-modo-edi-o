@@ -360,7 +360,8 @@ function CTAButton({
 
 // Configuração do checkout — redireciona para o login com contexto de redirecionamento
 const MAIN_EBOOK_ID = "ee1a776c-6c7d-4a88-a980-7e671ad8d4fb";
-const CHECKOUT_URL = `/login?redirectTo=${encodeURIComponent(`/app?buy=${MAIN_EBOOK_ID}&type=ebook`)}`;
+const CHECKOUT_URL = (ref?: string) => `/login?redirectTo=${encodeURIComponent(`/app?buy=${MAIN_EBOOK_ID}&type=ebook${ref ? `&ref=${ref}` : ''}`)}`;
+
 
 function CheckoutButton({ className = "", label = "Quero garantir meu acesso" }: { className?: string; label?: string }) {
   const [loading, setLoading] = useState(false);
@@ -372,11 +373,13 @@ function CheckoutButton({ className = "", label = "Quero garantir meu acesso" }:
     try {
       // Simula pequena latência antes de redirecionar (evita clique duplo e mostra feedback).
       await new Promise((r) => setTimeout(r, 600));
-      if (!CHECKOUT_URL) {
-        throw new Error("URL de checkout ainda não configurada.");
-      }
-      window.location.href = CHECKOUT_URL;
+      
+      const ref = localStorage.getItem('affiliate_referrer_code') || undefined;
+      const url = CHECKOUT_URL(ref);
+      
+      window.location.href = url;
     } catch (err) {
+
       console.error("[checkout] falha ao redirecionar:", err);
       toast.error("Não conseguimos abrir o checkout", {
         description:
