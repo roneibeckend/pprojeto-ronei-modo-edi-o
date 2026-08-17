@@ -155,7 +155,7 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
               type="number"
               min="0"
               max="100"
-              value={config.min_progress_percentage}
+              value={config.min_progress_percentage ?? 100}
               onChange={e => setConfig({ ...config, min_progress_percentage: parseInt(e.target.value) || 0 })}
               className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00]"
             />
