@@ -2094,7 +2094,35 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_course_feedback: {
+        Row: {
+          admin_reply: string | null
+          comment: string | null
+          course_id: string | null
+          created_at: string | null
+          ebook_id: string | null
+          id: string | null
+          rating: number | null
+          reviewer_avatar_url: string | null
+          reviewer_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_feedback_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_feedback_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "ebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       acquire_asaas_webhook_claim:
