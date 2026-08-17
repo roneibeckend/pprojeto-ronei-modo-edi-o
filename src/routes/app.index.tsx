@@ -173,54 +173,15 @@ function Dashboard() {
           // Se for uma compra direta da Landing Page, acionamos o fluxo de compra
           const targetItem = { ...item, type: buyType };
           
-          if (isOfferEnabled) {
-             // Se houver upsell, abre o modal de oferta
-             setOfferItem(targetItem);
-             setShowOffer(true);
-          } else {
-             // Senão vai direto pro checkout
-             executeCheckout(targetItem, []);
-          }
+          // O popup de oferta exclusiva agora deve ser exibido APENAS se o usuário clicar no botão comprar
+          // e NÃO automaticamente ao entrar na página inicial, mesmo que vindo da Landing Page
+          // Portanto, ignoramos a verificação automática aqui e vamos direto para o checkout
+          executeCheckout(targetItem, []);
 
           const newUrl = new URL(window.location.href);
           newUrl.searchParams.delete('buy');
           newUrl.searchParams.delete('type');
           window.history.replaceState({}, '', newUrl.pathname + newUrl.search);
-        }
-      } else if (!isLoadingEnrollments) {
-        // Se não tem params, verifica se há checkout pendente no banco
-        try {
-          const pending = await getPending({});
-          if (pending && pending.status === 'pending') {
-            const alreadyEnrolled = pending.product_type === 'course' 
-              ? isEnrolledInCourse(pending.product_id) 
-              : isEnrolledInEbook(pending.product_id);
-            
-            if (alreadyEnrolled) {
-              await completeCheckout({ data: { checkoutId: pending.id } });
-              return;
-            }
-
-            const table = pending.product_type === 'course' ? 'courses' : 'ebooks';
-            const { data: item } = await supabase
-              .from(table)
-              .select('id, title, description, price')
-              .eq('id', pending.product_id)
-              .maybeSingle();
-
-            if (item) {
-               const targetItem = { ...item, type: pending.product_type };
-               // Se existe checkout pendente, reabre o fluxo
-               if (isOfferEnabled) {
-                  setOfferItem(targetItem);
-                  setShowOffer(true);
-               } else {
-                  executeCheckout(targetItem, []);
-               }
-            }
-          }
-        } catch (err) {
-          console.error("Erro ao recuperar checkout pendente:", err);
         }
       }
     };
