@@ -1488,10 +1488,7 @@ function Testimonials() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("course_feedback")
-        .select(`
-          *,
-          profile:profiles(name, avatar_url)
-        `)
+        .select("id, rating, comment, created_at")
         .eq("status", "approved")
         .order("created_at", { ascending: false })
         .limit(6);
