@@ -138,7 +138,7 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Template de Certificado</label>
             <select 
-              value={config.template_id || ""} 
+              value={config.template_id || (templates.length > 0 ? templates[0].id : "")} 
               onChange={e => setConfig({ ...config, template_id: e.target.value })}
               className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] appearance-none"
             >
