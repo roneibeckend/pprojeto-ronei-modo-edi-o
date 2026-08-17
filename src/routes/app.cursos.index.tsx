@@ -185,7 +185,7 @@ function CoursesPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("courses")
-        .select("id, title, description, price, cover_url, badge, status")
+        .select("id, title, description, price, cover_url, badge, status, is_locked")
         .eq("status", "published");
       if (error) throw error;
       return data;
@@ -198,7 +198,7 @@ function CoursesPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("ebooks")
-        .select("id, title, description, price, cover_url, cover, badge, status")
+        .select("id, title, description, price, cover_url, cover, badge, status, is_locked")
         .eq("status", "published");
       if (error) throw error;
       return data;
