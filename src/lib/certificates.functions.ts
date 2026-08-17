@@ -108,6 +108,7 @@ export const generateCertificateManually = createServerFn({ method: "POST" })
 export const listTemplates = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from('certificate_templates' as any)
