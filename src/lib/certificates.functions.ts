@@ -10,35 +10,42 @@ async function assertAdmin(context: any) {
   if (error || !isAdmin) throw new Error("Acesso negado: permissão de administrador necessária.");
 }
 
+// Utility to validate UUID format
+const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+
 export const getContentCertificate = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
-    contentId: z.string(),
+    contentId: z.string().uuid("ID de conteúdo inválido (deve ser um UUID)."),
   }).parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
-    // Use maybeSingle and validate the id if necessary
+    // Explicit check to prevent syntax errors even if Zod passes a non-uuid string somehow
+    if (!isUUID(data.contentId)) {
+      throw new Error(`O identificador "${data.contentId}" não é um UUID válido.`);
+    }
+
     const { data: existing, error: fetchError } = await supabaseAdmin
       .from('content_certificates' as any)
       .select('*')
-      .filter('content_id', 'eq', data.contentId)
+      .eq('content_id', data.contentId)
       .maybeSingle();
 
     if (fetchError) {
       console.error(`Error fetching certificate for content ${data.contentId}:`, fetchError);
-      throw new Error(fetchError.message);
+      throw new Error("Erro ao buscar configuração de certificado.");
     }
 
     if (!existing) {
       // Determine content type safely
       let contentType: 'course' | 'ebook' = 'course';
       
-      const { data: course, error: courseError } = await supabaseAdmin
+      const { data: course } = await supabaseAdmin
         .from('courses' as any)
         .select('id')
-        .filter('id', 'eq', data.contentId)
+        .eq('id', data.contentId)
         .maybeSingle();
         
       if (!course) {
@@ -58,7 +65,7 @@ export const getContentCertificate = createServerFn({ method: "GET" })
       
       if (insertError) {
         console.error(`Error creating certificate for content ${data.contentId}:`, insertError);
-        throw new Error(insertError.message);
+        throw new Error("Erro ao inicializar configuração de certificado.");
       }
       return inserted;
     }
@@ -69,9 +76,9 @@ export const getContentCertificate = createServerFn({ method: "GET" })
 export const saveContentCertificate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
-    content_id: z.string(),
+    content_id: z.string().uuid("ID de conteúdo inválido."),
     content_type: z.enum(['course', 'ebook']),
-    template_id: z.string().nullable().optional(),
+    template_id: z.string().uuid().nullable().optional(),
     is_enabled: z.boolean(),
     custom_text: z.string().nullable().optional(),
     min_progress_percentage: z.number().min(0).max(100),
@@ -93,7 +100,7 @@ export const saveContentCertificate = createServerFn({ method: "POST" })
 
     if (error) {
       console.error(`Error saving certificate for content ${content_id}:`, error);
-      throw new Error(error.message);
+      throw new Error("Erro ao salvar configurações do certificado.");
     }
     return { success: true };
   });
@@ -101,8 +108,8 @@ export const saveContentCertificate = createServerFn({ method: "POST" })
 export const generateCertificateManually = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
-    student_id: z.string(),
-    content_id: z.string(),
+    student_id: z.string().uuid("ID do aluno inválido."),
+    content_id: z.string().uuid("ID do conteúdo inválido."),
     content_type: z.enum(['course', 'ebook']),
     custom_data: z.record(z.any()).optional(),
   }).parse(data))
@@ -124,7 +131,7 @@ export const generateCertificateManually = createServerFn({ method: "POST" })
       .select()
       .single();
 
-    if (error) throw new Error(error.message);
+    if (error) throw new Error("Erro ao gerar certificado manualmente.");
     return result;
   });
 
@@ -138,7 +145,7 @@ export const listTemplates = createServerFn({ method: "GET" })
       .select('*')
       .order('created_at', { ascending: false });
       
-    if (error) throw new Error(error.message);
+    if (error) throw new Error("Erro ao listar modelos de certificado.");
     return data;
   });
 
@@ -162,14 +169,14 @@ export const createTemplate = createServerFn({ method: "POST" })
       .select()
       .single();
 
-    if (error) throw new Error(error.message);
+    if (error) throw new Error("Erro ao criar modelo de certificado.");
     return template;
   });
 
 export const updateTemplate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
-    id: z.string(),
+    id: z.string().uuid(),
     name: z.string().optional(),
     background_url: z.string().optional(),
     is_active: z.boolean().optional(),
@@ -187,14 +194,14 @@ export const updateTemplate = createServerFn({ method: "POST" })
       .select()
       .single();
 
-    if (error) throw new Error(error.message);
+    if (error) throw new Error("Erro ao atualizar modelo de certificado.");
     return template;
   });
 
 export const deleteTemplate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
-    id: z.string(),
+    id: z.string().uuid(),
   }).parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
@@ -205,6 +212,6 @@ export const deleteTemplate = createServerFn({ method: "POST" })
       .update({ is_active: false } as any)
       .eq('id', data.id);
 
-    if (error) throw new Error(error.message);
+    if (error) throw new Error("Erro ao remover modelo de certificado.");
     return { success: true };
   });
