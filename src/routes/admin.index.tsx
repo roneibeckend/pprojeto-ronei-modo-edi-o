@@ -50,10 +50,10 @@ function AdminDashboard() {
         supabase.from('courses').select('id'),
         supabase.from('payments').select('net_amount').in('status', ['CONFIRMED', 'RECEIVED', 'RECEIVED_IN_CASH']),
         supabase.from('support_tickets').select('id', { count: 'exact', head: true }).eq('status', 'open'),
-        supabase.from('integration_logs' as any).select('id, integration_name, status, created_at').order('created_at', { ascending: false }).limit(3)
+        supabase.from('integration_logs' as any).select('id, integration_name, status, created_at').order('created_at', { ascending: false }).limit(5)
       ]);
 
-      const totalRevenue = paymentsRes.data?.reduce((acc, p) => acc + Number(p.net_amount), 0) || 0;
+      const totalRevenue = (paymentsRes.data || []).reduce((acc, p) => acc + Number(p.net_amount || 0), 0);
 
       return {
         students: studentsRes.count || 0,
@@ -64,7 +64,8 @@ function AdminDashboard() {
         recentLogs: recentLogsRes.data || []
       };
     },
-    enabled: role !== 'student' && !authLoading
+    enabled: role !== 'student' && !authLoading,
+    staleTime: 1000 * 60 * 5 // 5 minutes cache
   });
 
   if (authLoading) {
