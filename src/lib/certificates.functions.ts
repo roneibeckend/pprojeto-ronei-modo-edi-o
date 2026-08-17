@@ -19,35 +19,47 @@ export const getContentCertificate = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
-    // First try to find by content_id
+    // Use maybeSingle and validate the id if necessary
     const { data: existing, error: fetchError } = await supabaseAdmin
       .from('content_certificates' as any)
       .select('*')
-      .eq('content_id', data.contentId)
+      .filter('content_id', 'eq', data.contentId)
       .maybeSingle();
 
-    if (fetchError) throw new Error(fetchError.message);
+    if (fetchError) {
+      console.error(`Error fetching certificate for content ${data.contentId}:`, fetchError);
+      throw new Error(fetchError.message);
+    }
 
     if (!existing) {
-      // Check if it's a course or ebook to set content_type
-      const { data: course } = await supabaseAdmin
+      // Determine content type safely
+      let contentType: 'course' | 'ebook' = 'course';
+      
+      const { data: course, error: courseError } = await supabaseAdmin
         .from('courses' as any)
         .select('id')
-        .eq('id', data.contentId)
+        .filter('id', 'eq', data.contentId)
         .maybeSingle();
         
-      const contentType = course ? 'course' : 'ebook';
+      if (!course) {
+        contentType = 'ebook';
+      }
       
       const { data: inserted, error: insertError } = await supabaseAdmin
         .from('content_certificates' as any)
         .insert({
           content_id: data.contentId,
           content_type: contentType,
+          is_enabled: false,
+          min_progress_percentage: 100
         } as any)
         .select()
         .single();
       
-      if (insertError) throw new Error(insertError.message);
+      if (insertError) {
+        console.error(`Error creating certificate for content ${data.contentId}:`, insertError);
+        throw new Error(insertError.message);
+      }
       return inserted;
     }
 
