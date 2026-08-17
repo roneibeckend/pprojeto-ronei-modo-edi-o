@@ -61,24 +61,29 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
           const startOfDay = `${dateStr}T00:00:00.000Z`;
           const endOfDay = `${dateStr}T23:59:59.999Z`;
 
-          // 3. Fetch Data
-          const { data: sales, error: salesError } = await supabase
-            .from("course_enrollments")
-            .select("*, courses(price)")
+          // 3. Fetch Data from payments (more accurate than enrollments for finance)
+          const { data: payments, error: paymentsError } = await supabase
+            .from("payments")
+            .select("*")
+            .in("status", ["CONFIRMED", "RECEIVED", "RECEIVED_IN_CASH"])
             .gte("created_at", startOfDay)
             .lte("created_at", endOfDay);
 
-          if (salesError) throw salesError;
+          if (paymentsError) throw paymentsError;
 
           // Calculate metrics
-          const totalRevenue = (sales || []).reduce((sum, sale: any) => sum + (sale.courses?.price || 0), 0);
-          const salesCount = (sales || []).length;
+          const totalRevenue = (payments || []).reduce((sum, p: any) => sum + Number(p.net_amount || 0), 0);
+          const salesCount = (payments || []).length;
           const avgTicket = salesCount > 0 ? totalRevenue / salesCount : 0;
           
-          // Cost calculation (simplified as per plan)
-          const platformFees = totalRevenue * 0.1; 
-          const estimatedCosts = 0; // Future enhancement: fetch from settings or expenses table
-          const totalCosts = platformFees + estimatedCosts;
+          // Cost calculation: Asaas fees are already deducted from net_amount usually, 
+          // but we might have other costs in financial_costs
+          const { data: costsData } = await supabase
+            .from("financial_costs")
+            .select("value");
+          
+          const dailyCosts = (costsData || []).reduce((sum, c: any) => sum + (Number(c.value) / 30), 0); // Pro-rated monthly costs
+          const totalCosts = dailyCosts; 
           const netProfit = totalRevenue - totalCosts;
           const margin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
 
@@ -187,7 +192,7 @@ async function sendReportEmail(to: string, subject: string, content: string) {
   const { data: emailSettings, error: settingsError } = await supabase
     .from("email_settings")
     .select("*")
-    .single();
+    .maybeSingle();
 
   if (settingsError || !emailSettings || !emailSettings.is_enabled) {
     console.log(`[Email Fallback] Email desativado ou não configurado. Simulação para: ${to}`);
@@ -200,25 +205,37 @@ async function sendReportEmail(to: string, subject: string, content: string) {
   }
 
   // 2. Chamar a Edge Function de envio de e-mail (Resend)
-  // Utilizamos a estrutura já existente no projeto
-  const { data: result, error: invokeError } = await supabase.functions.invoke('send-email', {
-    body: { 
-      to, 
-      template: 'relatorio_financeiro', // Template que deve existir ou ser tratado na function
-      data: { 
-        subject,
-        content
+  try {
+    const { data: result, error: invokeError } = await supabase.functions.invoke('send-email', {
+      body: { 
+        to, 
+        template: 'relatorio_financeiro',
+        data: { 
+          subject,
+          content
+        }
       }
+    });
+
+    if (invokeError) throw invokeError;
+    return { id: result?.id || `email_msg_${Date.now()}` };
+  } catch (err: any) {
+    console.warn("[Resend] Falha ao invocar edge function 'send-email', tentando via server function interna...");
+    
+    // Tenta via lib interna se disponível (fallback para ambientes onde edge functions falham)
+    try {
+      const { triggerEmailEvent } = await import("@/lib/resend.server");
+      const res = await triggerEmailEvent({
+        event: 'relatorio_financeiro',
+        to,
+        data: { subject, content },
+        idempotencyKey: `report_${to}_${new Date().toISOString().split('T')[0]}`
+      });
+      return { id: res?.id || `email_msg_${Date.now()}` };
+    } catch (innerErr: any) {
+      throw new Error(`Erro ao enviar e-mail: ${err.message}. Fallback também falhou: ${innerErr.message}`);
     }
-  });
-
-  if (invokeError) {
-    // Se a Edge Function não estiver pronta, simulamos sucesso em dev para não travar o fluxo
-    console.warn("[Resend] Edge Function 'send-email' falhou ou não existe. Simulando sucesso...");
-    return { id: `email_msg_${Date.now()}` };
   }
-
-  return { id: result?.id || `email_msg_${Date.now()}` };
 }
 
 // Removendo função sendWhatsApp obsoleta
