@@ -6,13 +6,13 @@ import {
   ChevronLeft, 
   GraduationCap, 
   ChefHat, 
-  Library, 
   TrendingUp, 
   CheckCircle2,
-  Rocket,
-  Award
+  Rocket
 } from 'lucide-react';
-import { useNavigate } from '@tanstack/react-router';
+import { useServerFn } from '@tanstack/react-start';
+import { getOnboardingStatus, completeOnboarding } from '@/lib/onboarding.functions';
+import { supabase } from '@/integrations/supabase/client';
 
 const STEPS = [
   {
@@ -55,18 +55,43 @@ const STEPS = [
 export function OnboardingGuide() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const navigate = useNavigate();
+  const getStatus = useServerFn(getOnboardingStatus);
+  const completeStatus = useServerFn(completeOnboarding);
 
   useEffect(() => {
-    const hasSeenOnboarding = localStorage.getItem('onboarding_completed');
-    if (!hasSeenOnboarding) {
-      setIsOpen(true);
-    }
-  }, []);
+    const checkStatus = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
 
-  const handleClose = () => {
+        // First check local storage for speed
+        const hasSeenLocal = localStorage.getItem('onboarding_completed');
+        if (hasSeenLocal) return;
+
+        // Then check database for persistence
+        const { hasSeenOnboarding } = await getStatus();
+        if (!hasSeenOnboarding) {
+          setIsOpen(true);
+        } else {
+          // Sync local storage if DB says we've seen it
+          localStorage.setItem('onboarding_completed', 'true');
+        }
+      } catch (error) {
+        console.error("Erro ao verificar status de onboarding:", error);
+      }
+    };
+
+    checkStatus();
+  }, [getStatus]);
+
+  const handleClose = async () => {
     setIsOpen(false);
     localStorage.setItem('onboarding_completed', 'true');
+    try {
+      await completeStatus();
+    } catch (error) {
+      console.error("Erro ao salvar progresso de onboarding:", error);
+    }
   };
 
   const nextStep = () => {
@@ -170,8 +195,13 @@ export function OnboardingGuide() {
 }
 
 export function OnboardingLauncher() {
-  const resetOnboarding = () => {
+  const completeStatus = useServerFn(completeOnboarding);
+
+  const resetOnboarding = async () => {
     localStorage.removeItem('onboarding_completed');
+    // We could also reset it in DB if we want the launcher to be a "re-watch"
+    // but usually launcher is just to trigger the UI again.
+    // For now, let's just reload to trigger the useEffect in OnboardingGuide
     window.location.reload();
   };
 
@@ -185,3 +215,4 @@ export function OnboardingLauncher() {
     </button>
   );
 }
+
