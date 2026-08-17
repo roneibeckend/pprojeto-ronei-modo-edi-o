@@ -126,15 +126,15 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
               onClick={() => setConfig({ ...config, is_enabled: !config.is_enabled })}
               className={cn(
                 "w-12 h-6 rounded-full transition-colors relative",
-                config.is_enabled ? "bg-[#ff6a00]" : "bg-white/10"
+                config?.is_enabled ? "bg-[#ff6a00]" : "bg-white/10"
               )}
             >
               <div className={cn(
                 "absolute top-1 w-4 h-4 rounded-full bg-black transition-all",
-                config.is_enabled ? "left-7" : "left-1"
-
+                config?.is_enabled ? "left-7" : "left-1"
               )} />
             </button>
+
           </div>
 
           <div className="space-y-1.5">
