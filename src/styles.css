@@ -124,8 +124,8 @@
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overscroll-behavior-y: none;
-    user-select: none;
+    overscroll-behavior-y: auto;
+    user-select: auto;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     -webkit-user-drag: none;
