@@ -1523,10 +1523,10 @@ function Testimonials() {
 
   const displayItems = realFeedbacks && realFeedbacks.length > 0 
     ? realFeedbacks.map((f: any) => ({
-        name: f.profile?.name || "Aluno",
+        name: "Aluno",
         role: "Aluno do Curso",
         text: f.comment || "",
-        img: f.profile?.avatar_url || author.url,
+        img: author.url,
         rating: f.rating
       }))
     : staticItems;
