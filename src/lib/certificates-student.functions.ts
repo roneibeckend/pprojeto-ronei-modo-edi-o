@@ -25,7 +25,7 @@ export const generateCertificate = createServerFn({ method: "POST" })
     const { data: config } = await supabaseAdmin
       .from('content_certificates' as any)
       .select('*' as any)
-      .eq('content_id', data.content_id)
+      .filter('content_id', 'eq', data.content_id)
       .maybeSingle();
 
     if (config && (config as any).is_enabled === false) {
