@@ -16,7 +16,6 @@ interface KnowledgeItem {
 export const getChatbotResponse = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data) => z.object({ 
-
     message: z.string(),
     context: z.object({
       url: z.string().optional(),
@@ -24,9 +23,19 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     }).optional()
   }).parse(data))
   .handler(async ({ data, context }: { data: any, context: any }) => {
-
     const { message, context: requestContext } = data;
-    const query = message.toLowerCase();
+    
+    // Normalização básica: minúsculas, remover acentos, pontuação, espaços extras
+    const normalize = (str: string) => {
+      return str
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+        .replace(/[^\w\s]/gi, "") // Remove pontuação
+        .trim();
+    };
+
+    const query = normalize(message);
 
     if (!context) throw new Error("Internal Server Error: No context");
 
@@ -44,27 +53,43 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
       };
     }
 
-    // 2. Lógica de Matching
+    // 2. Lógica de Matching em Camadas
     let bestMatch: KnowledgeItem | null = null;
     let maxScore = 0;
 
     for (const item of (knowledge as KnowledgeItem[])) {
       let score = 0;
       
-      // Peso 1: Palavras-chave
-      const keywords = item.keywords || [];
-      keywords.forEach(kw => {
-        if (query.includes(kw.toLowerCase())) score += 0.3;
-      });
+      const titleNormalized = normalize(item.title);
+      const variations = (item.questions || []).map(normalize);
+      const keywords = (item.keywords || []).map(normalize);
 
-      // Peso 2: Perguntas de variação
-      const variations = item.questions || [];
+      // Camada 1: Correspondência Exata em variações ou título (Boost Alto)
+      if (variations.some(v => v === query) || titleNormalized === query) {
+        score += 1.0;
+      }
+
+      // Camada 2: Contenção de Variações
       variations.forEach(v => {
-        if (query.includes(v.toLowerCase()) || v.toLowerCase().includes(query)) score += 0.5;
+        if (query.includes(v) || v.includes(query)) score += 0.6;
       });
 
-      // Peso 3: Título
-      if (query.includes(item.title.toLowerCase())) score += 0.4;
+      // Camada 3: Título contém query ou vice-versa
+      if (query.includes(titleNormalized) || titleNormalized.includes(query)) score += 0.5;
+
+      // Camada 4: Palavras-chave
+      keywords.forEach(kw => {
+        if (query.includes(kw)) score += 0.3;
+      });
+
+      // Camada 5: Contexto da Rota
+      if (requestContext?.path) {
+        const path = requestContext.path.toLowerCase();
+        if (item.category === 'PWA' && path === '/app') score += 0.1;
+        if (item.category === 'CURSOS' && path.includes('/cursos')) score += 0.1;
+        if (item.category === 'EBOOKS' && path.includes('/ebooks')) score += 0.1;
+        if (item.category === 'MATERIAIS' && path.includes('/materiais')) score += 0.1;
+      }
 
       if (score > maxScore) {
         maxScore = score;
@@ -72,11 +97,12 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
       }
     }
 
-    // Normalizar score (cap at 0.95)
-    const confidence = Math.min(maxScore, 0.95);
+    // Normalizar score (cap at 1.0)
+    const confidence = Math.min(maxScore, 1.0);
 
     // 3. Resposta Baseada em Confiança
-    if (bestMatch && confidence > 0.4) {
+    // Threshold reduzido para 0.3 para ser mais permissivo com sinônimos, mas exigindo feedback se < 0.6
+    if (bestMatch && confidence > 0.3) {
       return {
         answer: bestMatch.content,
         confidence,
@@ -94,7 +120,7 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     });
 
     return {
-      answer: "Ainda estou aprendendo sobre isso e não tenho uma resposta exata. Você gostaria de falar com um atendente humano agora?",
+      answer: "Ainda estou aprendendo sobre isso e não tenho uma resposta exata agora. Mas não se preocupe! Você pode abrir um chamado ou perguntar de outra forma.",
       confidence,
       needsHuman: true
     };
