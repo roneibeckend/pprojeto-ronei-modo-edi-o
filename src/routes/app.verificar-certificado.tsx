@@ -63,14 +63,14 @@ function VerificarCertificado() {
         const { data: course } = await supabase
           .from("courses" as any)
           .select("title")
-          .eq("id", certData.content_id)
+          .filter("id", "eq", certData.content_id)
           .maybeSingle();
         contentTitle = (course as any)?.title || "Curso";
       } else {
         const { data: ebook } = await supabase
           .from("ebooks" as any)
           .select("title")
-          .eq("id", certData.content_id)
+          .filter("id", "eq", certData.content_id)
           .maybeSingle();
         contentTitle = (ebook as any)?.title || "E-book";
       }
