@@ -839,6 +839,7 @@ export type Database = {
           category: string | null
           checkpoints: Json | null
           content_url: string | null
+          course_id: string | null
           cover: string | null
           cover_url: string | null
           created_at: string | null
@@ -864,6 +865,7 @@ export type Database = {
           category?: string | null
           checkpoints?: Json | null
           content_url?: string | null
+          course_id?: string | null
           cover?: string | null
           cover_url?: string | null
           created_at?: string | null
@@ -889,6 +891,7 @@ export type Database = {
           category?: string | null
           checkpoints?: Json | null
           content_url?: string | null
+          course_id?: string | null
           cover?: string | null
           cover_url?: string | null
           created_at?: string | null
@@ -909,7 +912,15 @@ export type Database = {
           updated_at?: string | null
           video_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ebooks_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_logs: {
         Row: {
@@ -2183,6 +2194,10 @@ export type Database = {
       }
       award_points: {
         Args: { p_points: number; p_user_id: string }
+        Returns: undefined
+      }
+      complete_linked_course: {
+        Args: { _ebook_id: string; _user_id: string }
         Returns: undefined
       }
       distribute_partner_profits: {
