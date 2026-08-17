@@ -128,7 +128,7 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
   });
 
 export const submitKnowledgeFeedback = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  // Removido requireSupabaseAuth para permitir feedback anônimo na Landing Page
   .inputValidator((data) => z.object({
 
     knowledgeId: z.string(),
