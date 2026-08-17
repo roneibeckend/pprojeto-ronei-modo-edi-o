@@ -2199,6 +2199,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      has_any_enrollment: { Args: { _user_id: string }; Returns: boolean }
       has_module_access: {
         Args: { _module: string; _user_id: string }
         Returns: boolean
