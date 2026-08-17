@@ -167,7 +167,12 @@ function CoursePage() {
   const isEnrolled = course ? isEnrolledInCourse(course.id) : false;
   const hasAccess = isFree || isEnrolled;
 
-  const flat = course?.modules?.flatMap((m: any) => m.lessons || []) || [];
+  const flat = course?.modules
+    ?.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
+    ?.flatMap((m: any) => 
+      (m.lessons || [])
+        .sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
+    ) || [];
   const completedCount = flat.filter((l: any) => isLessonCompleted(l.id)).length;
   const isCompleted = flat.length > 0 && completedCount === flat.length;
 

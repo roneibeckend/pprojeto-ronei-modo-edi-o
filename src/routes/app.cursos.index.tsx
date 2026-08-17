@@ -185,7 +185,7 @@ function CoursesPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("courses")
-        .select("id, title, description, price, cover_url, badge, status")
+        .select("id, title, description, price, cover_url, badge, status, is_locked")
         .eq("status", "published");
       if (error) throw error;
       return data;
@@ -198,17 +198,17 @@ function CoursesPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("ebooks")
-        .select("id, title, description, price, cover_url, cover, badge, status")
+        .select("id, title, description, price, cover_url, cover, badge, status, is_locked")
         .eq("status", "published");
       if (error) throw error;
       return data;
     },
   });
 
-  const ownedCourses = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || (c.price || 0) === 0) || [];
+  const ownedCourses = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || (c.price || 0) === 0 || (c.status === 'published' && !c.is_locked && (c.price || 0) === 0)) || [];
   const otherCourses = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0) || [];
   
-  const ownedEbooks = dbEbooks?.filter((e) => ebookEnrollments.includes(e.id) || (e.price || 0) === 0) || [];
+  const ownedEbooks = dbEbooks?.filter((e) => ebookEnrollments.includes(e.id) || (e.price || 0) === 0 || (e.status === 'published' && !e.is_locked && (e.price || 0) === 0)) || [];
   const otherEbooks = dbEbooks?.filter((e) => !ebookEnrollments.includes(e.id) && (e.price || 0) > 0) || [];
 
   if (isLoadingCourses || isLoadingEnrollments || isLoadingEbooks || isLoadingProgress) {
