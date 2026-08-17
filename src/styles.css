@@ -110,6 +110,8 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
     background-image:
       radial-gradient(ellipse 80% 50% at 20% -10%, oklch(0.63 0.24 27 / 0.18), transparent 60%),
       radial-gradient(ellipse 60% 40% at 90% 10%, oklch(0.72 0.20 50 / 0.12), transparent 60%),
@@ -122,9 +124,11 @@
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overscroll-behavior-y: none; /* Previne bounce indesejado no PWA */
-    user-select: none; /* Comportamento mais nativo, evita seleção acidental */
+    overscroll-behavior-y: none;
+    user-select: none;
     -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
     
     /* Previne atrasos de clique em mobile */
     touch-action: manipulation;
