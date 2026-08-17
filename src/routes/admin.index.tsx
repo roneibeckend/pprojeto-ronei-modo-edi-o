@@ -46,7 +46,7 @@ function AdminDashboard() {
         ticketsRes,
         recentLogsRes
       ] = await Promise.all([
-        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'aluno'),
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).in('status', ['aluno', 'student']),
         supabase.from('courses').select('id'),
         supabase.from('payments').select('net_amount').in('status', ['CONFIRMED', 'RECEIVED', 'RECEIVED_IN_CASH']),
         supabase.from('support_tickets').select('id', { count: 'exact', head: true }).eq('status', 'open'),
