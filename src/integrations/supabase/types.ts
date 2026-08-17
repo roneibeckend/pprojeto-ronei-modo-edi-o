@@ -1346,47 +1346,6 @@ export type Database = {
           },
         ]
       }
-      lessons: {
-        Row: {
-          created_at: string
-          duration: string | null
-          id: string
-          is_locked: boolean | null
-          module_id: string | null
-          order_index: number | null
-          title: string
-          video_url: string | null
-        }
-        Insert: {
-          created_at?: string
-          duration?: string | null
-          id: string
-          is_locked?: boolean | null
-          module_id?: string | null
-          order_index?: number | null
-          title: string
-          video_url?: string | null
-        }
-        Update: {
-          created_at?: string
-          duration?: string | null
-          id?: string
-          is_locked?: boolean | null
-          module_id?: string | null
-          order_index?: number | null
-          title?: string
-          video_url?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "lessons_module_id_fkey"
-            columns: ["module_id"]
-            isOneToOne: false
-            referencedRelation: "modules"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       live_classes: {
         Row: {
           cover_url: string | null
@@ -1422,38 +1381,6 @@ export type Database = {
           title?: string
         }
         Relationships: []
-      }
-      modules: {
-        Row: {
-          course_id: string | null
-          created_at: string
-          id: string
-          order_index: number | null
-          title: string
-        }
-        Insert: {
-          course_id?: string | null
-          created_at?: string
-          id: string
-          order_index?: number | null
-          title: string
-        }
-        Update: {
-          course_id?: string | null
-          created_at?: string
-          id?: string
-          order_index?: number | null
-          title?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "modules_course_id_fkey"
-            columns: ["course_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       notifications: {
         Row: {
