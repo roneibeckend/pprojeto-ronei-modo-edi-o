@@ -30,6 +30,7 @@ import { FeedbackList } from "@/components/platform/FeedbackList";
 import { FeedbackModal } from "@/components/platform/FeedbackModal";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 import { getSignedVideoUrl } from "@/lib/video.functions";
+import { generateCertificate } from "@/lib/certificates-student.functions";
 
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
@@ -91,6 +92,7 @@ function EbookReaderPage() {
   const getSignedUrl = useServerFn(getSignedVideoUrl);
   const { openPayment } = usePaymentModal();
   const [signedIntroUrl, setSignedIntroUrl] = useState<string | null>(null);
+  const generateCertFn = useServerFn(generateCertificate);
   const introNeedsSigning = Boolean(
     ebook?.opening_video_url &&
     !ebook.opening_video_url.includes('youtube') &&
@@ -261,26 +263,33 @@ function EbookReaderPage() {
     
     const completedCount = chapters.filter((c: any) => isChapterCompleted(c.id)).length;
     if (completedCount >= chapters.length && chapters.length > 0) {
-      const checkFeedback = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-        
-        const { data } = await supabase
-          .from("course_feedback")
-          .select("id")
-          .eq("user_id", user.id)
-          .eq("ebook_id", ebook.id)
-          .maybeSingle();
-        
-        if (data) {
-          setHasSubmittedFeedback(true);
-        } else {
-          setShowFeedbackModal(true);
+      const handleFinalization = async () => {
+        try {
+          // Generate certificate automatically first
+          await generateCertFn({ data: { content_id: ebook.id, content_type: 'ebook' } });
+          
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const { data } = await supabase
+            .from("course_feedback")
+            .select("id")
+            .eq("user_id", user.id)
+            .eq("ebook_id", ebook.id)
+            .maybeSingle();
+          
+          if (data) {
+            setHasSubmittedFeedback(true);
+          } else {
+            setShowFeedbackModal(true);
+          }
+        } catch (error) {
+          console.error("Erro na finalização automática:", error);
         }
       };
-      checkFeedback();
+      handleFinalization();
     }
-  }, [ebookProgress, chapters.length, hasAccess, hasSubmittedFeedback, ebook.id, isLoadingEnrollments]);
+  }, [ebookProgress, chapters.length, hasAccess, hasSubmittedFeedback, ebook.id, isLoadingEnrollments, generateCertFn]);
 
 
   const handlePurchase = async () => {
@@ -610,19 +619,33 @@ function EbookReaderPage() {
               </div>
             </button>
 
-            <button
-              disabled={!nextChapter}
-              onClick={() => setActiveChapterId(nextChapter?.id)}
-              className="group flex flex-1 items-center justify-end gap-4 rounded-2xl bg-white/5 p-4 text-right transition-all hover:bg-white/10 disabled:opacity-30"
-            >
-              <div className="hidden md:block">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Próximo</div>
-                <div className="line-clamp-2 text-sm font-bold break-words">{nextChapter?.title || "Fim"}</div>
-              </div>
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-fire text-white shadow-lg shadow-fire/20">
-                <ChevronRight className="h-5 w-5" />
-              </div>
-            </button>
+            {!nextChapter ? (
+              <button
+                onClick={() => setShowFeedbackModal(true)}
+                className="group flex flex-1 items-center justify-end gap-4 rounded-2xl bg-[#ff6a00] p-4 text-right transition-all hover:bg-[#ff8c33] shadow-lg shadow-fire/20"
+              >
+                <div className="hidden md:block">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-black/60">Finalizar</div>
+                  <div className="line-clamp-2 text-sm font-bold text-black">Concluir E-book</div>
+                </div>
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-black/20 text-black">
+                  <Award className="h-5 w-5" />
+                </div>
+              </button>
+            ) : (
+              <button
+                onClick={() => setActiveChapterId(nextChapter?.id)}
+                className="group flex flex-1 items-center justify-end gap-4 rounded-2xl bg-white/5 p-4 text-right transition-all hover:bg-white/10"
+              >
+                <div className="hidden md:block">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Próximo</div>
+                  <div className="line-clamp-2 text-sm font-bold break-words">{nextChapter?.title}</div>
+                </div>
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-fire text-white shadow-lg shadow-fire/20">
+                  <ChevronRight className="h-5 w-5" />
+                </div>
+              </button>
+            )}
           </div>
           <FeedbackList ebookId={ebook.id} />
         </div>
