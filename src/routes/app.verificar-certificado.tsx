@@ -50,34 +50,36 @@ function VerificarCertificado() {
         return;
       }
 
-      if (data.is_revoked) {
+      const certData = data as any;
+
+      if (certData.is_revoked) {
         setError("Este certificado foi revogado e não é mais válido.");
         return;
       }
 
       // Fetch content title
       let contentTitle = "";
-      if (data.content_type === "course") {
+      if (certData.content_type === "course") {
         const { data: course } = await supabase
           .from("courses" as any)
           .select("title")
-          .eq("id", data.content_id)
+          .eq("id", certData.content_id)
           .maybeSingle();
-        contentTitle = course?.title || "Curso";
+        contentTitle = (course as any)?.title || "Curso";
       } else {
         const { data: ebook } = await supabase
           .from("ebooks" as any)
           .select("title")
-          .eq("id", data.content_id)
+          .eq("id", certData.content_id)
           .maybeSingle();
-        contentTitle = ebook?.title || "E-book";
+        contentTitle = (ebook as any)?.title || "E-book";
       }
 
       setCertificate({
-        ...data,
+        ...certData,
         contentTitle,
-        studentName: data.profile?.full_name || "Aluno",
-        template: data.template
+        studentName: certData.profile?.full_name || "Aluno",
+        template: certData.template
       });
     } catch (err: any) {
       setError("Erro ao verificar certificado. Tente novamente mais tarde.");
