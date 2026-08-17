@@ -88,7 +88,7 @@ function CoursePage() {
   const [signedLessonUrl, setSignedLessonUrl] = useState<string | null>(null);
   const [signedIntroUrl, setSignedIntroUrl] = useState<string | null>(null);
   const [isLoadingSignedUrl, setIsLoadingSignedUrl] = useState(false);
-
+  const generateCertFn = useServerFn(generateCertificate);
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
 
 
