@@ -80,10 +80,10 @@ export const getStudentCertificates = createServerFn({ method: "GET" })
 
     const [courseRes, ebookRes] = await Promise.all([
       courseIds.length > 0 
-        ? supabaseAdmin.from('courses' as any).select('id, title').in('id', courseIds)
+        ? supabaseAdmin.from('courses' as any).select('id, title').filter('id', 'in', `(${courseIds.join(',')})`)
         : Promise.resolve({ data: [] as any[] }),
       ebookIds.length > 0
-        ? supabaseAdmin.from('ebooks' as any).select('id, title').in('id', ebookIds)
+        ? supabaseAdmin.from('ebooks' as any).select('id, title').filter('id', 'in', `(${ebookIds.join(',')})`)
         : Promise.resolve({ data: [] as any[] })
     ]);
 
