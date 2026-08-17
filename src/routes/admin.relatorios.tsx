@@ -66,7 +66,7 @@ function AdminRelatoriosPage() {
       setLoading(true);
       const [recipientsRes, settingsRes, logsRes] = await Promise.all([
         supabase.from('report_recipients').select('*').order('created_at', { ascending: false }),
-        supabase.from('report_settings').select('*').single(),
+        supabase.from('report_settings').select('*').maybeSingle(),
         supabase.from('report_logs').select('*, recipient:report_recipients(name)').order('created_at', { ascending: false }).limit(20)
       ]);
 

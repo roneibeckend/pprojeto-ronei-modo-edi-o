@@ -2199,6 +2199,17 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_student_ranking_v2: {
+        Args: { p_end_date?: string; p_limit?: number; p_start_date?: string }
+        Returns: {
+          avatar_url: string
+          global_rank: number
+          name: string
+          total_points: number
+          user_id: string
+        }[]
+      }
+      has_any_enrollment: { Args: { _user_id: string }; Returns: boolean }
       has_module_access: {
         Args: { _module: string; _user_id: string }
         Returns: boolean
