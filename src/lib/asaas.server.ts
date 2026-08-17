@@ -100,7 +100,19 @@ export async function grantAccess(
       return false;
     }
     
+    
     // Auto-generate certificate if enabled and progess check passes (handled in separate logic usually, but here we can trigger initial check)
+    // Marca checkout pendente como concluído se existir
+    const { error: checkoutError } = await supabaseAdmin
+      .from('pending_checkouts')
+      .update({ status: 'completed' })
+      .eq('user_id', userId)
+      .eq('product_id', productId)
+      .eq('product_type', 'course')
+      .eq('status', 'pending');
+      
+    if (checkoutError) console.error("[Asaas] Erro ao concluir checkout pendente:", checkoutError);
+
     return true;
   }
   if (productType === "ebook") {
@@ -111,8 +123,21 @@ export async function grantAccess(
       console.error("[Asaas] Falha ao matricular em ebook:", error);
       return false;
     }
+    
+    // Marca checkout pendente como concluído se existir
+    const { error: checkoutError } = await supabaseAdmin
+      .from('pending_checkouts')
+      .update({ status: 'completed' })
+      .eq('user_id', userId)
+      .eq('product_id', productId)
+      .eq('product_type', 'ebook')
+      .eq('status', 'pending');
+
+    if (checkoutError) console.error("[Asaas] Erro ao concluir checkout pendente:", checkoutError);
+    
     return true;
   }
+
   return false;
 }
 

@@ -1,4 +1,6 @@
 import React from 'react';
+import { supabase } from "@/integrations/supabase/client";
+
 import {
   Dialog,
   DialogContent,
@@ -12,7 +14,10 @@ import { useEnrollments } from "@/hooks/use-enrollments";
 import { useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { verifyAsaasPayment } from "@/lib/asaas.functions";
+import { completePendingCheckout } from "@/lib/checkout.functions";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+
 
 export function AsaasPaymentModal() {
   const { isOpen, paymentUrl, title, productId, productType, status, closePayment, setStatus } = usePaymentModal();
@@ -20,6 +25,8 @@ export function AsaasPaymentModal() {
   const [opened, setOpened] = React.useState(false);
   const [checking, setChecking] = React.useState(false);
   const navigate = useNavigate();
+  const completeCheckout = useServerFn(completePendingCheckout);
+
 
   React.useEffect(() => {
     if (isOpen) setOpened(false);
@@ -39,7 +46,26 @@ export function AsaasPaymentModal() {
         : isEnrolledInEbook(productId);
       if (isEnrolled) {
         setStatus('confirmed');
+        // Limpa checkout pendente ao confirmar
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+             const { data: pending } = await supabase
+               .from('pending_checkouts')
+               .select('id')
+               .eq('user_id', session.user.id)
+               .eq('status', 'pending')
+               .maybeSingle();
+             
+             if (pending) {
+               await completeCheckout({ data: { checkoutId: pending.id } });
+             }
+          }
+        } catch (e) {
+          console.error("Erro ao completar checkout:", e);
+        }
       }
+
     };
 
     const interval = window.setInterval(check, 4000);

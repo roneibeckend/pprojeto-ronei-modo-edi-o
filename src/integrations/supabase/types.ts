@@ -1596,6 +1596,39 @@ export type Database = {
           },
         ]
       }
+      pending_checkouts: {
+        Row: {
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          product_id: string
+          product_type: string
+          status: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          product_id: string
+          product_type: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          product_id?: string
+          product_type?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       platform_materials: {
         Row: {
           category: string | null
