@@ -587,10 +587,15 @@ function CoursePage() {
             </button>
             {!next ? (
               <button
-                onClick={() => setShowFeedbackModal(true)}
-                className="btn-fire text-xs sm:text-sm flex-1 sm:flex-none h-10 sm:h-auto px-6 shadow-lg shadow-fire/20"
+                onClick={() => !hasSubmittedFeedback && setShowFeedbackModal(true)}
+                disabled={hasSubmittedFeedback}
+                className={`text-xs sm:text-sm flex-1 sm:flex-none h-10 sm:h-auto px-6 shadow-lg shadow-fire/20 transition-all ${
+                  hasSubmittedFeedback 
+                    ? "bg-white/5 opacity-50 cursor-not-allowed pointer-events-none text-muted-foreground border border-white/5" 
+                    : "btn-fire"
+                }`}
               >
-                {hasSubmittedFeedback ? "Concluído curso finalizado" : "Finalizar Curso"} <Award className="ml-2 h-4 w-4" />
+                {hasSubmittedFeedback ? "Concluído curso finalizado" : "Finalizar Curso"} <Award className={`ml-2 h-4 w-4 ${hasSubmittedFeedback ? "text-muted-foreground" : ""}`} />
               </button>
             ) : (
               <button
