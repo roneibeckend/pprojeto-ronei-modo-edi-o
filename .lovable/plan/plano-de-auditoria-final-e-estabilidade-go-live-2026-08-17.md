@@ -1,55 +1,48 @@
 # Plano de Auditoria Final e Estabilidade ("GO-LIVE")
 
-Este plano foca na estabilidade do produto, correções críticas identificadas na auditoria pré-lançamento e garantia de privacidade.
+Este plano visa garantir que a plataforma "Espetinho na Veia" esteja 100% operacional, segura e performática para o lançamento oficial, preservando todas as correções de auditorias anteriores.
 
-## 1. Privacidade no Ranking de Alunos
-- **Objetivo:** Impedir a exposição de e-mails completos e garantir anonimato parcial quando necessário.
-- **Ações:**
-    - Criar nova migração SQL para atualizar a função `get_student_ranking_v2`.
-    - Lógica de fallback: `COALESCE(p.full_name, p.display_name, 'Aluno #' || substring(p.id::text, 1, 4))`.
-    - Garantir que administradores continuem excluídos do ranking.
-    - Testar visualização no `/app/progresso`.
+## Objetivo
+Validar fluxos críticos, segurança RLS, responsividade mobile e performance, corrigindo apenas o estritamente necessário para o lançamento.
 
-## 2. Otimização do PWA
-- **Objetivo:** Garantir que o PWA utilize ativos locais e possua ícones corretos.
-- **Ações:**
-    - Baixar/Criar ícones oficiais (192x192, 512x512) e salvar em `public/icons/`.
-    - Atualizar `public/manifest.json` para apontar para caminhos locais.
-    - Adicionar `apple-touch-icon` em `src/routes/__root.tsx`.
+## Etapas de Execução
 
-## 3. Preservação de Tabelas Legadas
-- **Objetivo:** Manter `modules` e `lessons` por segurança técnica.
-- **Ações:**
-    - Realizar busca exaustiva (concluído: existem referências em `types.ts` e migrações antigas).
-    - Classificar como "Dívida Técnica" na documentação interna.
+### 1. PWA e Ícones (Concluído)
+- [x] Garantir que os ícones do PWA sejam carregados localmente (`public/icons/`).
+- [x] Validar `manifest.json` e `apple-touch-icon`.
 
-## 4. Auditoria de Rotas Administrativas (`/admin`)
-- **Objetivo:** Validar funcionalidade e estabilidade de todas as rotas de gestão.
-- **Inventário de Rotas:**
+### 2. Privacidade e Ranking (Concluído)
+- [x] Validar que o ranking de alunos oculta nomes/e-mails sensíveis (usando fallback de ID).
+- [x] Garantir que a função `get_student_ranking_v2` é segura.
 
-| # | Rota | Página | Funções Principais | Status |
-|---|------|--------|--------------------|--------|
-| 1 | `/admin` | Dashboard | Visão geral, estatísticas rápidas | Não Aprovada |
-| 2 | `/admin/alunos` | Gestão de Alunos | Lista, busca, detalhes de aluno | Não Aprovada |
-| 3 | `/admin/cursos` | Gestão de Cursos | CRUD de cursos, módulos e aulas | Não Aprovada |
-| 4 | `/admin/ebooks` | Gestão de E-books | CRUD de e-books e capítulos | Não Aprovada |
-| 5 | `/admin/financeiro` | Financeiro | Dashboard financeiro, saques | Não Aprovada |
-| 6 | `/admin/materiais` | Materiais | Gestão de arquivos e links externos | Não Aprovada |
-| 7 | `/admin/suporte` | Suporte | Atendimento de tickets | Não Aprovada |
-| 8 | `/admin/relatorios` | Relatórios | Exportação e análise de dados | Não Aprovada |
-| 9 | `/admin/ranking` | Config. Ranking | Filtros de período e global | Não Aprovada |
-| 10 | `/admin/ao-vivo` | Aulas ao Vivo | Agendamento e notificações | Não Aprovada |
-| 11 | `/admin/usuarios` | Equipe | Gestão de administradores/gerentes | Não Aprovada |
-| 12 | `/admin/integracoes`| Hub de Integrações| Configuração de APIs (Asaas, Resend) | Não Aprovada |
-| 13 | `/admin/chatbot` | Gestão do Brasa | Base de conhecimento e IA | Não Aprovada |
+### 3. Segurança de Conteúdo e Aulas ao Vivo (Concluído)
+- [x] Implementar RLS restrito em `live_classes` (Apenas matriculados ou admin podem ver links).
+- [x] Validar notificações de e-mail automatizadas no backend.
 
-## 5. Fluxos Críticos e Regressão
-- **Ações ao Vivo:** Validar acesso restrito por matrícula.
-- **E-mails (Resend):** Testar recuperação de senha e boas-vindas.
-- **Asaas:** Validar carregamento do hub financeiro sem erros de coerção.
-- **PWA:** Testar instalação e navegação standalone.
+### 4. Auditoria de Rotas Admin (Em Andamento)
+- [ ] **Visão Geral (`/admin`):** Validar cards de estatísticas (vendas, alunos, suporte).
+- [ ] **Financeiro (`/admin/financeiro`):** Validar integração Asaas e distribuição de lucros.
+- [ ] **Relatórios (`/admin/relatorios`):** Corrigir crashes relatados e testar envio de logs.
+- [ ] **Alunos (`/admin/alunos`):** Testar edição de perfis e visualização de detalhes.
+- [ ] **Suporte (`/admin/suporte`):** Validar sistema de tickets e respostas Brasa.
+- [ ] **Materiais (`/admin/materiais`):** Testar upload/download seguro de arquivos.
+
+### 5. Fluxo de Compra e Pós-Venda
+- [ ] Validar persistência de checkout (`pending_checkouts`) após login.
+- [ ] Garantir que o upsell (`PostPurchaseOffer`) é exibido corretamente no primeiro acesso.
+- [ ] Testar redirecionamento automático pós-pagamento.
+
+### 6. Estabilidade de UI/UX Mobile
+- [ ] Revisar `VideoPlayer.tsx` para garantir 9:16 estável e autoplay silenciado.
+- [ ] Validar safe-areas em iPhones (notch) e evitar zoom em inputs.
 
 ## Detalhes Técnicos
-- **SQL Migration:** Atualização da função `get_student_ranking_v2` com lógica de nomes.
-- **PWA Manifest:** Correção de URLs absolutas para caminhos relativos.
-- **Admin Shell:** Garantir que o `Shell.tsx` administrativo seja responsivo em mobile.
+
+### Resiliência Visual
+Foi injetado um script no `__root.tsx` para detectar falhas de carregamento de chunk (comum em redes móveis) e forçar o reload da aplicação, evitando a "tela branca".
+
+### Segurança RLS
+As políticas de `live_classes` foram reforçadas para verificar a existência de matrículas (`course_enrollments` ou `ebook_enrollments`) antes de liberar acesso aos dados via API.
+
+### Melhorias no Ranking
+A função SQL agora garante anonimato por padrão: `COALESCE(p.name, 'Aluno #' || substring(p.id::text, 1, 4))`.
