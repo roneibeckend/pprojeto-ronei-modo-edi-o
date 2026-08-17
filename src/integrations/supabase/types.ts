@@ -2049,6 +2049,24 @@ export type Database = {
           },
         ]
       }
+      user_onboarding: {
+        Row: {
+          has_seen_onboarding: boolean | null
+          last_seen_at: string | null
+          user_id: string
+        }
+        Insert: {
+          has_seen_onboarding?: boolean | null
+          last_seen_at?: string | null
+          user_id: string
+        }
+        Update: {
+          has_seen_onboarding?: boolean | null
+          last_seen_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
