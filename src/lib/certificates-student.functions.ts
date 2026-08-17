@@ -32,6 +32,18 @@ export const generateCertificate = createServerFn({ method: "POST" })
       throw new Error("Certificado não está habilitado para este conteúdo.");
     }
 
+    // If it's an ebook, check for linked course and complete it
+    if (data.content_type === 'ebook') {
+      try {
+        await supabaseAdmin.rpc('complete_linked_course', {
+          _ebook_id: data.content_id,
+          _user_id: context.userId
+        });
+      } catch (e) {
+        console.error("Erro ao completar curso vinculado:", e);
+      }
+    }
+
     const certificateCode = `CERT-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
     
     const { data: result, error } = await supabaseAdmin
