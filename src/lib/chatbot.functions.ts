@@ -14,7 +14,8 @@ interface KnowledgeItem {
 }
 
 export const getChatbotResponse = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  // Removido requireSupabaseAuth para permitir acesso via Landing Page (anônimo)
+  // Segurança garantida via RLS (GRANT SELECT TO anon) na tabela knowledge_base
   .inputValidator((data) => z.object({ 
     message: z.string(),
     context: z.object({
@@ -127,7 +128,7 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
   });
 
 export const submitKnowledgeFeedback = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  // Removido requireSupabaseAuth para permitir feedback anônimo na Landing Page
   .inputValidator((data) => z.object({
 
     knowledgeId: z.string(),
