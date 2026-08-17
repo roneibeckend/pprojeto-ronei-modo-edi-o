@@ -205,10 +205,10 @@ function CoursesPage() {
     },
   });
 
-  const ownedCourses = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || (c.price || 0) === 0) || [];
+  const ownedCourses = dbCourses?.filter((c) => courseEnrollments.includes(c.id) || (c.price || 0) === 0 || (c.status === 'published' && !c.is_locked && (c.price || 0) === 0)) || [];
   const otherCourses = dbCourses?.filter((c) => !courseEnrollments.includes(c.id) && (c.price || 0) > 0) || [];
   
-  const ownedEbooks = dbEbooks?.filter((e) => ebookEnrollments.includes(e.id) || (e.price || 0) === 0) || [];
+  const ownedEbooks = dbEbooks?.filter((e) => ebookEnrollments.includes(e.id) || (e.price || 0) === 0 || (e.status === 'published' && !e.is_locked && (e.price || 0) === 0)) || [];
   const otherEbooks = dbEbooks?.filter((e) => !ebookEnrollments.includes(e.id) && (e.price || 0) > 0) || [];
 
   if (isLoadingCourses || isLoadingEnrollments || isLoadingEbooks || isLoadingProgress) {
