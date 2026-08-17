@@ -16,7 +16,7 @@ export const generateCertificate = createServerFn({ method: "POST" })
       .from('certificates' as any)
       .select('id' as any)
       .eq('student_id', context.userId)
-      .eq('content_id', data.content_id)
+      .filter('content_id', 'eq', data.content_id)
       .maybeSingle();
       
     if (existing) return { success: true, certificate_id: (existing as any).id };
