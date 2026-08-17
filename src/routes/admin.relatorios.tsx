@@ -124,7 +124,7 @@ function AdminRelatoriosPage() {
 
   async function handleSettingsUpdate(patch: any) {
     try {
-      const { error } = await supabase.from('report_settings').update(patch).eq('id', settings.id);
+      const { error } = await supabase.from('report_settings').upsert({ ...patch, id: settings?.id || 0 });
       if (error) throw error;
       setSettings((prev: any) => ({ ...prev, ...patch }));
       toast.success("Configurações atualizadas!");
