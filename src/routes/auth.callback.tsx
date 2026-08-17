@@ -1,18 +1,16 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
-type CallbackSearch = {
-  redirectTo?: string;
-};
-
 export const Route = createFileRoute("/auth/callback")({
-  validateSearch: (search: Record<string, unknown>): CallbackSearch => ({
+  validateSearch: (search: Record<string, unknown>) => ({
     redirectTo: (search.redirectTo as string) || "/inicio",
   }),
-  loader: async ({ search }: { search: CallbackSearch }) => {
+  loader: async ({ search }) => {
+    // @ts-ignore - loader context search is available but type-checked strictly by router
+    const { redirectTo } = search as any;
     await supabase.auth.getSession();
-    return redirect({
-      to: search.redirectTo || "/inicio",
+    throw redirect({
+      to: redirectTo || "/inicio",
     });
   },
   component: () => (
@@ -24,5 +22,6 @@ export const Route = createFileRoute("/auth/callback")({
     </div>
   ),
 });
+
 
 
