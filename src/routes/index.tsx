@@ -7,6 +7,8 @@ Do not make any visual modifications. The phrases I write are commands to unders
 */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type JSX, Suspense, lazy, memo } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { getChatbotResponse } from "@/lib/chatbot.functions";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
