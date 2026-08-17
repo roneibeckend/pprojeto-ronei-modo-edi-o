@@ -50,10 +50,16 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
   const deleteTemplateFn = useServerFn(deleteTemplate);
 
   useEffect(() => {
-    fetchData();
+    if (contentId) {
+      fetchData();
+    }
   }, [contentId]);
 
   async function fetchData() {
+    if (!contentId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(contentId)) {
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const [certConfig, templatesList] = await Promise.all([
