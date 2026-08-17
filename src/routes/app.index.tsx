@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Play, ShoppingCart, Sparkles, Lock, Loader2 } from "lucide-react";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { createAsaasPaymentLink } from "@/lib/asaas.functions";
