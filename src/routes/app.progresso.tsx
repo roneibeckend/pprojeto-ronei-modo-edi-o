@@ -2,11 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/platform/Shell";
-import { Trophy, Medal, Star, Target, TrendingUp, Loader2, Calendar } from "lucide-react";
+import { Trophy, Medal, Star, Target, TrendingUp, Loader2, Calendar, Award, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { getRankingSettings } from "@/lib/ranking.functions";
+import { getCampaigns } from "@/lib/campaigns.functions";
 import { useServerFn } from "@tanstack/react-start";
-import { format } from "date-fns";
+import { format, isAfter, isBefore } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 export const Route = createFileRoute("/app/progresso")({
