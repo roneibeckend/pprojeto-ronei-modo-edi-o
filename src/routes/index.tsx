@@ -120,7 +120,7 @@ export const Route = createFileRoute("/")({
           description:
             "eBook com 7 Módulos e 27 Capítulos + 4 bônus exclusivos para montar, temperar, precificar e vender espetinhos com alto lucro.",
           image: [OG_IMAGE],
-          brand: { "@type": "Brand", name: "Espetinho na Veia" },
+          brand: { "@type": "Brand", name: "Ronnei na Veia" },
           author: { "@type": "Person", name: "Ronnei" },
           offers: {
             "@type": "Oferta",
