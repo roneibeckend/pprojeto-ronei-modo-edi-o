@@ -2190,6 +2190,14 @@ export type Database = {
         Args: { p_content: string; p_ticket_id: string }
         Returns: undefined
       }
+      test_adversarial_concurrency: {
+        Args: { p_enrollment_id: string; p_lesson_id: string }
+        Returns: {
+          message: string
+          scenario: string
+          success: boolean
+        }[]
+      }
       test_duplicate_lesson_completion: {
         Args: { p_enrollment_id: string; p_lesson_id: string }
         Returns: {
