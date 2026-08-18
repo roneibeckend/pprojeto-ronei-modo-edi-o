@@ -98,7 +98,7 @@ export const Route = createFileRoute("/")({
       { property: "og:image", content: OG_IMAGE },
       { property: "og:image:alt", content: "Chef especialista em espetinhos com espetos flamejantes" },
       { property: "og:locale", content: "pt_BR" },
-      { property: "og:site_name", content: "Espetinho na Veia" },
+      { property: "og:site_name", content: "Ronnei na Veia" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
       {
