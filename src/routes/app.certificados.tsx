@@ -66,7 +66,7 @@ async function downloadCertificatePDF(node: HTMLElement, cert: { id: string; cou
 }
 
 export const Route = createFileRoute("/app/certificados")({
-  head: () => ({ meta: [{ title: "Certificados — Espetinho na Veia" }] }),
+  head: () => ({ meta: [{ title: "Certificados — Ronnei na Veia" }] }),
   component: CertificatesPage,
 });
 
