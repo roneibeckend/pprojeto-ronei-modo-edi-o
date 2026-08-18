@@ -119,6 +119,7 @@ export const generateCertificateManually = createServerFn({ method: "POST" })
     content_id: z.string().uuid("ID do conteúdo inválido."),
     content_type: z.enum(['course', 'ebook']),
     custom_data: z.record(z.any()).optional(),
+    city_of_issue: z.string().optional(),
   }).parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
