@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { processPixPayout, detectPixKeyType } from "./asaas-payouts.server";
 
 export const requestPayout = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -111,10 +112,36 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
       .maybeSingle();
 
     if (fetchError || !payout) throw new Error("Solicitação não encontrada.");
-    if (payout.status === 'paid') return { success: true }; // Já processado
+    if (payout.status === 'paid' && data.status === 'paid') return { success: true }; // Já processado
+
+    // AUTOMATION: Se o status for alterado para 'paid', tentamos realizar o pagamento via Asaas se for Pix
+    let asaasResult = null;
+    if (data.status === 'paid' && payout.status !== 'paid') {
+      if (payout.method.toUpperCase().includes('PIX') && payout.pix_key) {
+        try {
+          console.log(`[Admin Payout] Iniciando pagamento automático Pix via Asaas para Payout ID: ${payout.id}`);
+          const keyType = detectPixKeyType(payout.pix_key);
+          
+          asaasResult = await processPixPayout({
+            amount: payout.amount,
+            pixKey: payout.pix_key,
+            pixKeyType: keyType,
+            description: `Saque ${(payout.metadata as any)?.user_type === 'partner' ? 'Sócio' : 'Afiliado'} - Ronnei na Veia`
+          });
+          
+          console.log(`[Admin Payout] Pagamento Asaas processado com sucesso:`, asaasResult.id);
+        } catch (error: any) {
+          console.error(`[Admin Payout] Falha no pagamento Asaas:`, error);
+          throw new Error(`Falha ao processar pagamento no Asaas: ${error.message}. O status não foi alterado.`);
+        }
+      } else if (data.status === 'paid') {
+        // Se for manual, permitimos mudar para pago sem Asaas, mas avisamos no log
+        console.log(`[Admin Payout] Marcando como pago manualmente (sem Pix Asaas) para Payout ID: ${payout.id}`);
+      }
+    }
 
     // 2. Se o novo status for 'paid', atualizar o acumulado retirado do sócio
-    if (data.status === 'paid') {
+    if (data.status === 'paid' && payout.status !== 'paid') {
       const userType = (payout.metadata as any)?.user_type;
       
       if (userType === 'partner') {
@@ -126,13 +153,31 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
       }
     }
 
-    // 3. Atualizar o status do saque
+    // 3. Atualizar o status do saque e salvar ID do Asaas se houver
+    const updateData: any = { 
+      status: data.status,
+      updated_at: new Date().toISOString()
+    };
+    
+    if (asaasResult?.id) {
+      updateData.asaas_payment_id = asaasResult.id;
+    }
+
     const { error } = await supabaseAdmin
       .from('payout_requests')
-      .update({ status: data.status })
+      .update(updateData)
       .eq('id', data.payoutId);
 
     if (error) throw error;
+    
+    // Logar evento de sistema
+    await supabaseAdmin.rpc('log_system_event', {
+      _level: 'info',
+      _source: 'payout_system',
+      _message: `Saque ${data.payoutId} alterado para ${data.status}. ${asaasResult?.id ? 'Pagamento Asaas: ' + asaasResult.id : ''}`,
+      _details: { payoutId: data.payoutId, status: data.status, asaasId: asaasResult?.id }
+    });
+
     return { success: true };
   });
 
@@ -157,5 +202,45 @@ export const distributeProfits = createServerFn({ method: "POST" })
     });
 
     if (error) throw error;
+    
+    // Tentar buscar a chave Pix do sócio para criar a solicitação automática
+    const { data: affiliate } = await supabaseAdmin
+      .from('affiliates') // Sócios costumam estar aqui também ou ter perfil com pix
+      .select('pix_key')
+      .eq('id', data.partnerId)
+      .maybeSingle();
+      
+    // Se tiver chave Pix, podemos criar a solicitação de saque imediatamente como 'approved' para processamento rápido
+    if (affiliate?.pix_key) {
+      // 1. Descontar do saldo recém adicionado (Atomicamente já foi adicionado pelo RPC acima)
+      // 2. Criar solicitação aprovada
+      const { error: payoutError } = await supabaseAdmin
+        .from('payout_requests')
+        .insert({
+          user_id: data.partnerId,
+          amount: data.amount,
+          method: 'PIX',
+          pix_key: affiliate.pix_key,
+          status: 'approved', // Já aprovado para facilitar o clique final do admin ou automação
+          metadata: { user_type: 'partner', auto_distributed: true }
+        });
+        
+      if (!payoutError) {
+        // Descontar do saldo (partner_balances)
+        const { data: balance } = await supabaseAdmin
+          .from('partner_balances')
+          .select('balance')
+          .eq('user_id', data.partnerId)
+          .maybeSingle();
+          
+        if (balance) {
+          await supabaseAdmin
+            .from('partner_balances')
+            .update({ balance: balance.balance - data.amount })
+            .eq('user_id', data.partnerId);
+        }
+      }
+    }
+
     return { success: true };
   });
