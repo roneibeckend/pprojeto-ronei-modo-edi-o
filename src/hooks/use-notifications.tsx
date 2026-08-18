@@ -57,7 +57,11 @@ export function useNotifications() {
     (n) => !userNotifications.some((un) => un.notification_id === n.id && un.read_at)
   ).length;
 
-  const markAsRead = async (notificationId: string) => {
+  const markAsRead = async (notificationId: string, event?: React.MouseEvent) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     if (!user) return;
 
     try {
