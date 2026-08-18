@@ -1967,7 +1967,7 @@ function Footer() {
           <div className="flex items-center gap-2">
             <img
               src={logo}
-              alt="Espetinho na Veia"
+              alt="Ronnei na Veia"
               width={40}
               height={40}
               loading="lazy"
