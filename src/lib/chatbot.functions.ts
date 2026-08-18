@@ -26,14 +26,21 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
   .handler(async ({ data, context }: { data: any, context: any }) => {
     const { message, context: requestContext } = data;
     
-    // Normalização básica: minúsculas, remover acentos, pontuação, espaços extras
+    // Normalização aprimorada: minúsculas, remover acentos, pontuação, espaços extras
     const normalize = (str: string) => {
+      if (!str) return "";
       return str
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "") // Remove acentos
-        .replace(/[^\w\s]/gi, "") // Remove pontuação
+        .replace(/[^\w\s]/gi, " ") // Substitui pontuação por espaço para não colar palavras
+        .replace(/\s+/g, " ") // Remove espaços duplos
         .trim();
+    };
+
+    // Tokenização básica para matching de palavras
+    const tokenize = (str: string) => {
+      return normalize(str).split(" ").filter(word => word.length > 2);
     };
 
     const query = normalize(message);
