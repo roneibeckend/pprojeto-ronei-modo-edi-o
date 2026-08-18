@@ -120,10 +120,13 @@ export function useNotifications() {
 
         const { error } = await supabase
           .from("user_notifications")
-          .upsert(rows, { onConflict: "user_id,notification_id" });
+          .upsert(rows, { 
+            onConflict: "user_id,notification_id",
+            ignoreDuplicates: false 
+          });
 
         if (error) throw error;
-        queryClient.invalidateQueries({ queryKey: ["user_notifications", user?.id || "anonymous"] });
+        await queryClient.invalidateQueries({ queryKey: ["user_notifications", user?.id || "anonymous"] });
         toast.success("Todas as notificações foram marcadas como lidas.");
       } catch (error) {
         console.error("Erro ao marcar todas como lidas:", error);
