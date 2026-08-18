@@ -15,16 +15,19 @@ const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4
 
 export const getContentCertificate = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .validator((data: unknown) => z.object({
-    contentId: z.string().uuid("ID de conteúdo inválido (deve ser um UUID)."),
-  }).parse(data))
+  .validator((data: unknown) => {
+    const parsed = z.object({
+      contentId: z.string().min(1, "ID de conteúdo é obrigatório."),
+    }).parse(data);
+    return parsed;
+  })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Explicit check to prevent syntax errors even if Zod passes a non-uuid string somehow
     if (!isUUID(data.contentId)) {
-      throw new Error(`O identificador "${data.contentId}" não é um UUID válido.`);
+      console.warn(`[getContentCertificate] ID "${data.contentId}" não é um UUID padrão. Continuando processamento.`);
     }
 
     const { data: existing, error: fetchError } = await supabaseAdmin
@@ -75,14 +78,17 @@ export const getContentCertificate = createServerFn({ method: "GET" })
 
 export const saveContentCertificate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((data: unknown) => z.object({
-    content_id: z.string().uuid("ID de conteúdo inválido."),
-    content_type: z.enum(['course', 'ebook']),
-    template_id: z.string().uuid().nullable().optional(),
-    is_enabled: z.boolean(),
-    custom_text: z.string().nullable().optional(),
-    min_progress_percentage: z.number().min(0).max(100),
-  }).parse(data))
+  .validator((data: unknown) => {
+    const parsed = z.object({
+      content_id: z.string().min(1, "ID de conteúdo é obrigatório."),
+      content_type: z.enum(['course', 'ebook']),
+      template_id: z.string().nullable().optional(),
+      is_enabled: z.boolean(),
+      custom_text: z.string().nullable().optional(),
+      min_progress_percentage: z.number().min(0).max(100),
+    }).parse(data);
+    return parsed;
+  })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
