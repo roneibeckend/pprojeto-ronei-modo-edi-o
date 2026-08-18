@@ -8,10 +8,7 @@ export async function processPixPayout(params: {
 }) {
   const { apiKey, baseUrl } = await getAsaasConfig();
 
-  // 1. Asaas requer que o pagador tenha saldo em conta.
-  // Em sandbox, o saldo é simulado. Em produção, precisa de saldo real.
-  
-  // 2. Realizar a transferência (Pix Payout)
+  // Asaas Pix Payout (Transferência)
   const response = await fetch(`${baseUrl}/transfers`, {
     method: 'POST',
     headers: asaasHeaders(apiKey),
@@ -20,7 +17,7 @@ export async function processPixPayout(params: {
       pixAddressKey: params.pixKey,
       pixAddressKeyType: params.pixKeyType,
       description: params.description || 'Distribuição de Lucros - Ronnei na Veia',
-      scheduleDate: null, // Imediato
+      scheduleDate: null, // Pagamento imediato
     })
   });
 
@@ -28,15 +25,15 @@ export async function processPixPayout(params: {
 
   if (!response.ok) {
     console.error("[Asaas Payout] Erro:", result);
-    throw new Error(result.errors?.[0]?.description || "Erro ao processar pagamento Pix no Asaas");
+    const errorMsg = result.errors?.[0]?.description || "Erro ao processar pagamento Pix no Asaas";
+    throw new Error(errorMsg);
   }
 
   return result;
 }
 
 /** 
- * Detecta o tipo de chave Pix baseado no formato
- * Nota: Simples detecção, em um caso real pode ser mais robusto.
+ * Detecta o tipo de chave Pix baseado no formato.
  */
 export function detectPixKeyType(key: string): 'CPF' | 'CNPJ' | 'EMAIL' | 'PHONE' | 'RANDOM' {
   const cleanKey = key.replace(/\D/g, '');
@@ -44,6 +41,7 @@ export function detectPixKeyType(key: string): 'CPF' | 'CNPJ' | 'EMAIL' | 'PHONE
   if (cleanKey.length === 11) return 'CPF';
   if (cleanKey.length === 14) return 'CNPJ';
   if (key.includes('@')) return 'EMAIL';
+  // Celular com DDD (10 ou 11 dígitos) ou com DDI +55 (12 ou 13 dígitos)
   if (cleanKey.length >= 10 && cleanKey.length <= 13) return 'PHONE';
   
   return 'RANDOM';
