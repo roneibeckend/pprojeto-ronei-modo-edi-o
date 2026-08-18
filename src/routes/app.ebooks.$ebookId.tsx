@@ -99,7 +99,7 @@ function EbookReaderPage() {
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
   const isFree = ebook ? (ebook.price || 0) === 0 : false;
-  const isEnrolled = ebook ? isEnrolledInEbook(ebook.id) : false;
+  const isEnrolled = serverSideEnrolled || (ebook ? isEnrolledInEbook(ebook.id) : false);
   const hasAccess = isFree || isEnrolled;
 
   const { data: interactivePreviewsStatus } = useQuery({
