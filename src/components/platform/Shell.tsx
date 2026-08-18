@@ -125,7 +125,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
         <div className="min-w-0">
           <div className="font-display text-base font-extrabold uppercase leading-tight tracking-wide text-sidebar-foreground">
-            Espetinho <span className="text-primary">na Veia</span>
+            Ronnei <span className="text-primary">na Veia</span>
           </div>
           <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-sidebar-foreground/40">
             Área de membros
@@ -257,7 +257,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
           <div className="min-w-0 flex-1">
             <div className="font-display text-lg font-extrabold uppercase tracking-wide sm:text-xl text-foreground">
-              Espetinho <span className="text-primary">na Veia</span>
+              Ronnei <span className="text-primary">na Veia</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
