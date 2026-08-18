@@ -592,9 +592,20 @@ function EbookReaderPage() {
                       [&_.table-wrapper]:overflow-x-auto [&_.table-wrapper]:max-w-full [&_.table-wrapper]:mb-8" 
                       dangerouslySetInnerHTML={{ __html: activeChapter.content }} 
                     />
+                  ) : activeChapter ? (
+                    <div className="flex flex-col items-center justify-center py-20 opacity-50 text-center">
+                      <Loader2 className="h-8 w-8 animate-spin text-fire mb-4" />
+                      <p className="italic mb-2">Carregando conteúdo do capítulo...</p>
+                      <button 
+                        onClick={() => window.location.reload()}
+                        className="text-xs underline hover:text-fire transition-colors"
+                      >
+                        Recarregar página se demorar
+                      </button>
+                    </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-20 opacity-50">
-                      <p className="italic text-center mb-4">Este capítulo ainda não possui conteúdo cadastrado.</p>
+                    <div className="flex flex-col items-center justify-center py-20 opacity-50 text-center">
+                      <p className="italic mb-4">Selecione um capítulo no menu lateral para começar a leitura.</p>
                       <button 
                         onClick={() => window.location.reload()}
                         className="text-xs underline hover:text-fire transition-colors"
