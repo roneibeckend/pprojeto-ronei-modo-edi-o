@@ -38,7 +38,7 @@ export const Route = createFileRoute("/app/cursos/$courseId")({
   head: ({ params }) => {
     return {
       meta: [
-        { title: "Curso — Espetinho na Veia" },
+        { title: "Curso — Ronnei na Veia" },
       ],
     };
   },
@@ -450,7 +450,7 @@ function CoursePage() {
           </div>
           <PageHeader
             title={course.title}
-            subtitle={`Professor: ${course.teacher_name || "Equipe Espetinho na Veia"}`}
+            subtitle={`Professor: ${course.teacher_name || "Equipe Ronnei na Veia"}`}
           />
         </div>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">

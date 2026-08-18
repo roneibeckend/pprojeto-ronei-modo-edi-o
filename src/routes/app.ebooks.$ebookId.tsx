@@ -35,7 +35,7 @@ import { generateCertificate } from "@/lib/certificates-student.functions";
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
   head: () => ({
-    meta: [{ title: "E-book Interativo — Espetinho na Veia" }],
+    meta: [{ title: "E-book Interativo — Ronnei na Veia" }],
   }),
   loader: async ({ params }) => {
     const { data: ebook, error } = await supabase
