@@ -28,25 +28,49 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
     meta: [{ title: "E-book Interativo — Ronnei na Veia" }],
   }),
   loader: async ({ params }) => {
-    const { data: ebook, error } = await supabase
+    // Busca o ebook e seus módulos
+    const { data: ebook, error: ebookError } = await supabase
       .from("ebooks")
       .select(`
         id, title, subtitle, description, price, opening_video_url, payment_type, due_days, status,
         modules:ebook_modules (
-          id, title, order_index,
-          chapters:ebook_chapters (id, title, content, video_url, reading_minutes, order_index, module_id)
+          id, title, order_index
         )
       `)
       .eq("id", params.ebookId)
       .in("status", ["active", "published"])
       .single();
 
-
-    if (error || !ebook) {
+    if (ebookError || !ebook) {
       console.warn(`E-book with ID ${params.ebookId} not found or inactive.`);
       throw notFound();
     }
-    return { ebook };
+
+    // Busca os capítulos separadamente para evitar problemas com junções complexas
+    // e garantir que o campo 'content' seja recuperado corretamente.
+    const { data: chapters, error: chaptersError } = await supabase
+      .from("ebook_chapters")
+      .select(`id, title, content, video_url, reading_minutes, order_index, module_id`)
+      .eq("ebook_id", params.ebookId);
+
+    if (chaptersError) {
+      console.error("Error fetching ebook chapters:", chaptersError);
+    }
+
+    // Mapeia os capítulos para seus respectivos módulos
+    const modulesWithChapters = (ebook.modules || []).map((mod: any) => ({
+      ...mod,
+      chapters: (chapters || [])
+        .filter((chap: any) => chap.module_id === mod.id)
+        .sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
+    }));
+
+    return { 
+      ebook: { 
+        ...ebook, 
+        modules: modulesWithChapters 
+      } 
+    };
   },
   component: EbookReaderPage,
 });
