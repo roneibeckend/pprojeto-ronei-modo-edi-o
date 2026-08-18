@@ -258,6 +258,45 @@ export type Database = {
           },
         ]
       }
+      asaas_transfers: {
+        Row: {
+          amount: number
+          asaas_id: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          metadata: Json | null
+          status: string
+          transaction_type: string | null
+          transfer_date: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          asaas_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          status: string
+          transaction_type?: string | null
+          transfer_date?: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          asaas_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          status?: string
+          transaction_type?: string | null
+          transfer_date?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       asaas_webhook_events: {
         Row: {
           claim_token: string | null
