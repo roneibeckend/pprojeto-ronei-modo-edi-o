@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabase } from "@/integrations/supabase/client";
 
 // Definindo tipos para evitar erros de 'never'
 interface KnowledgeItem {
@@ -14,8 +14,6 @@ interface KnowledgeItem {
 }
 
 export const getChatbotResponse = createServerFn({ method: "POST" })
-  // Removido requireSupabaseAuth para permitir acesso via Landing Page (anônimo)
-  // Segurança garantida via RLS (GRANT SELECT TO anon) na tabela knowledge_base
   .inputValidator((data) => z.object({ 
     message: z.string(),
     context: z.object({
@@ -23,7 +21,7 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
       path: z.string().optional()
     }).optional()
   }).parse(data))
-  .handler(async ({ data, context }: { data: any, context: any }) => {
+  .handler(async ({ data }) => {
     const { message, context: requestContext } = data;
     
     // Normalização aprimorada: minúsculas, remover acentos, pontuação, espaços extras
@@ -46,10 +44,8 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     const query = normalize(message);
     const queryTokens = tokenize(message);
 
-    if (!context) throw new Error("Internal Server Error: No context");
-
     // 1. Buscar base de conhecimento
-    const { data: knowledge, error } = await context.supabase
+    const { data: knowledge, error } = await supabase
       .from("knowledge_base")
       .select("*")
       .eq("status", "active");
@@ -124,7 +120,7 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
 
     // 4. Fallback: Gravar pergunta não respondida
     try {
-      await context.supabase.from("unhandled_questions").insert({
+      await supabase.from("unhandled_questions").insert({
         question: message,
         confidence,
         context: requestContext || {},
@@ -148,9 +144,8 @@ export const submitKnowledgeFeedback = createServerFn({ method: "POST" })
     knowledgeId: z.string(),
     isPositive: z.boolean()
   }).parse(data))
-  .handler(async ({ data, context }: { data: any, context: any }) => {
-    if (!context) throw new Error("Internal Server Error: No context");
-    const { error } = await context.supabase
+  .handler(async ({ data }) => {
+    const { error } = await supabase
       .from("knowledge_feedback")
       .insert({
         knowledge_id: data.knowledgeId,
