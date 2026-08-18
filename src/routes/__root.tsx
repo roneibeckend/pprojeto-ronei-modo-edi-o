@@ -121,7 +121,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
       { title: "Ronnei na Veia" },
       {
         name: "description",
@@ -137,6 +137,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "Ronnei na Veia" },
       { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-touch-fullscreen", content: "yes" },
+      { name: "full-screen", content: "yes" },
+      { name: "browsermode", content: "application" },
+      { name: "application-name", content: "Ronnei na Veia" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
