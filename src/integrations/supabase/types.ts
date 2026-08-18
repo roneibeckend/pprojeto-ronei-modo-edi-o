@@ -336,6 +336,7 @@ export type Database = {
       certificates: {
         Row: {
           certificate_code: string
+          city_of_issue: string | null
           content_id: string
           content_type: string
           created_at: string | null
@@ -350,6 +351,7 @@ export type Database = {
         }
         Insert: {
           certificate_code: string
+          city_of_issue?: string | null
           content_id: string
           content_type: string
           created_at?: string | null
@@ -364,6 +366,7 @@ export type Database = {
         }
         Update: {
           certificate_code?: string
+          city_of_issue?: string | null
           content_id?: string
           content_type?: string
           created_at?: string | null
@@ -388,6 +391,7 @@ export type Database = {
       }
       content_certificates: {
         Row: {
+          city_of_issue: string | null
           content_id: string
           content_type: string
           created_at: string | null
@@ -399,6 +403,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          city_of_issue?: string | null
           content_id: string
           content_type: string
           created_at?: string | null
@@ -410,6 +415,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          city_of_issue?: string | null
           content_id?: string
           content_type?: string
           created_at?: string | null
