@@ -10,7 +10,7 @@ export const Route = createFileRoute("/app/notificacoes")({
 });
 
 function NotificationsPage() {
-  const { notifications, userNotifications, markAsRead, markAllAsRead, isLoading } = useNotifications();
+  const { notifications, userNotifications, markAsRead, markAllAsRead, isLoading, unreadCount } = useNotifications();
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -37,7 +37,7 @@ function NotificationsPage() {
           title="Notificações" 
           subtitle="Fique por dentro das últimas novidades da plataforma."
         />
-        {notifications.length > 0 && (
+        {unreadCount > 0 && (
           <button
             onClick={() => {
               if (confirm("Deseja marcar todas as notificações como lidas?")) {
