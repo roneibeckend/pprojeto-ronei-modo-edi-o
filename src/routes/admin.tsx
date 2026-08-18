@@ -20,7 +20,8 @@ import {
   Wallet,
   TrendingUp,
   Menu,
-  Star
+  Star,
+  Terminal
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
