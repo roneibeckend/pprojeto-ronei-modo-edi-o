@@ -81,6 +81,7 @@ function AdminEbooksPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("info");
   const [isSaving, setIsSaving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -285,7 +286,7 @@ function AdminEbooksPage() {
                         <ShieldCheck className="h-4 w-4" />
                       </button>
                       <button 
-                        onClick={() => { setEditingItem(ebook); setIsModalOpen(true); }}
+                        onClick={() => { setEditingItem(ebook); setActiveTab("info"); setIsModalOpen(true); }}
                         className="p-2 text-white/40 hover:text-white transition-colors"
                       >
                         <Edit3 className="h-4 w-4" />
