@@ -213,6 +213,8 @@ function EbookReaderPage() {
 
   const [signedChapterUrl, setSignedChapterUrl] = useState<string | null>(null);
   const [isLoadingSignedChapter, setIsLoadingSignedChapter] = useState(false);
+  // We use find to get the current chapter based on activeChapterId
+  // Fallback to the first chapter if not found, to avoid "content not found" message
   const activeChapter = chapters.find((c: any) => c.id === activeChapterId) || chapters[0];
   const activeIndex = chapters.findIndex((c: any) => c.id === activeChapter?.id);
 
