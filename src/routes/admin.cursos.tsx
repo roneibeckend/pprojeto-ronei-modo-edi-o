@@ -46,6 +46,7 @@ function AdminCursosPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("info");
   const [isSaving, setIsSaving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -290,7 +291,7 @@ function AdminCursosPage() {
                         {course.status === 'published' ? <Eye className="h-4 w-4" /> : <Archive className="h-4 w-4" />}
                       </button>
                       <button 
-                        onClick={() => { setEditingItem(course); setIsModalOpen(true); }}
+                        onClick={() => { setEditingItem(course); setActiveTab("info"); setIsModalOpen(true); }}
                         className="p-1.5 sm:p-2 text-white/40 hover:text-white transition-colors"
                       >
                         <Edit3 className="h-4 w-4" />
@@ -342,8 +343,8 @@ function AdminCursosPage() {
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors shrink-0"><X className="h-5 w-5" /></button>
             </div>
 
-            <Tabs defaultValue="info" className="flex-1 flex flex-col">
-              <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+              <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start shrink-0">
                 <TabsTrigger value="info" className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Info className="h-4 w-4" /> Informações
                 </TabsTrigger>
