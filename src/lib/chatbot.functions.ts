@@ -26,17 +26,25 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
   .handler(async ({ data, context }: { data: any, context: any }) => {
     const { message, context: requestContext } = data;
     
-    // Normalização básica: minúsculas, remover acentos, pontuação, espaços extras
+    // Normalização aprimorada: minúsculas, remover acentos, pontuação, espaços extras
     const normalize = (str: string) => {
+      if (!str) return "";
       return str
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "") // Remove acentos
-        .replace(/[^\w\s]/gi, "") // Remove pontuação
+        .replace(/[^\w\s]/gi, " ") // Substitui pontuação por espaço para não colar palavras
+        .replace(/\s+/g, " ") // Remove espaços duplos
         .trim();
     };
 
+    // Tokenização básica para matching de palavras
+    const tokenize = (str: string) => {
+      return normalize(str).split(" ").filter(word => word.length > 2);
+    };
+
     const query = normalize(message);
+    const queryTokens = tokenize(message);
 
     if (!context) throw new Error("Internal Server Error: No context");
 
@@ -62,34 +70,36 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
       let score = 0;
       
       const titleNormalized = normalize(item.title);
+      const titleTokens = tokenize(item.title);
       const variations = (item.questions || []).map(normalize);
       const keywords = (item.keywords || []).map(normalize);
 
-      // Camada 1: Correspondência Exata em variações ou título (Boost Alto)
+      // Camada 1: Correspondência Exata em variações ou título (Boost Máximo)
       if (variations.some(v => v === query) || titleNormalized === query) {
+        score += 2.0; // Garantir match total
+      }
+
+      // Camada 2: Contenção Total (String Contém)
+      if (variations.some(v => query.includes(v)) || query.includes(titleNormalized)) {
         score += 1.0;
       }
 
-      // Camada 2: Contenção de Variações
-      variations.forEach(v => {
-        if (query.includes(v) || v.includes(query)) score += 0.6;
-      });
-
-      // Camada 3: Título contém query ou vice-versa
-      if (query.includes(titleNormalized) || titleNormalized.includes(query)) score += 0.5;
+      // Camada 3: Título contém query ou query contém título tokens
+      const matchesTitleToken = titleTokens.some(t => queryTokens.includes(t));
+      if (matchesTitleToken) score += 0.5;
 
       // Camada 4: Palavras-chave
       keywords.forEach(kw => {
-        if (query.includes(kw)) score += 0.3;
+        if (query.includes(kw)) score += 0.4;
       });
 
       // Camada 5: Contexto da Rota
       if (requestContext?.path) {
         const path = requestContext.path.toLowerCase();
-        if (item.category === 'PWA' && path === '/app') score += 0.1;
-        if (item.category === 'CURSOS' && path.includes('/cursos')) score += 0.1;
-        if (item.category === 'EBOOKS' && path.includes('/ebooks')) score += 0.1;
-        if (item.category === 'MATERIAIS' && path.includes('/materiais')) score += 0.1;
+        if (item.category === 'PWA' && path === '/app') score += 0.2;
+        if (item.category === 'CURSOS' && path.includes('/cursos')) score += 0.2;
+        if (item.category === 'EBOOKS' && path.includes('/ebooks')) score += 0.2;
+        if (item.category === 'MATERIAIS' && path.includes('/materiais')) score += 0.2;
       }
 
       if (score > maxScore) {
@@ -98,30 +108,34 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
       }
     }
 
-    // Normalizar score (cap at 1.0)
-    const confidence = Math.min(maxScore, 1.0);
+    // Normalizar score (cap at 1.0 para a UI)
+    const confidence = Math.min(maxScore / 2.0, 1.0);
 
     // 3. Resposta Baseada em Confiança
-    // Threshold reduzido para 0.3 para ser mais permissivo com sinônimos, mas exigindo feedback se < 0.6
-    if (bestMatch && confidence > 0.3) {
+    // Threshold ajustado para 0.25 para capturar intenções parciais
+    if (bestMatch && maxScore >= 0.5) {
       return {
         answer: bestMatch.content,
         confidence,
         knowledgeId: bestMatch.id,
-        needsHuman: confidence < 0.6
+        needsHuman: maxScore < 0.8 // Precisa de ajuda se não houver match forte (> 0.8 real score)
       };
     }
 
     // 4. Fallback: Gravar pergunta não respondida
-    await context.supabase.from("unhandled_questions").insert({
-      question: message,
-      confidence,
-      context: requestContext || {},
-      status: 'pending'
-    });
+    try {
+      await context.supabase.from("unhandled_questions").insert({
+        question: message,
+        confidence,
+        context: requestContext || {},
+        status: 'pending'
+      });
+    } catch (dbError) {
+      console.error("Erro ao registrar pergunta não respondida:", dbError);
+    }
 
     return {
-      answer: "Ainda estou aprendendo sobre isso e não tenho uma resposta exata agora. Mas não se preocupe! Você pode abrir um chamado ou perguntar de outra forma.",
+      answer: "Ainda estou aprendendo sobre isso e não tenho uma resposta exata agora. Mas não se preocupe! Você pode abrir um chamado na aba 'Meus Chamados' ou tentar perguntar com outras palavras.",
       confidence,
       needsHuman: true
     };
