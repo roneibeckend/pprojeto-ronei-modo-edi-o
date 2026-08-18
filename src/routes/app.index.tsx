@@ -18,7 +18,7 @@ import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({
-    meta: [{ title: "Visão Geral — Espetinho na Veia" }],
+    meta: [{ title: "Visão Geral — Ronnei na Veia" }],
   }),
   component: Dashboard,
 });

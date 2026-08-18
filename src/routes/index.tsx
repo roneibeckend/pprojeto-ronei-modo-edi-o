@@ -78,7 +78,7 @@ export const Route = createFileRoute("/")({
   component: LandingPage,
   head: () => ({
     meta: [
-      { title: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
+      { title: "Ronnei na Veia — Do Zero aos 10k | eBook Ronnei" },
       {
         name: "description",
         content:
@@ -89,7 +89,7 @@ export const Route = createFileRoute("/")({
       { name: "robots", content: "index, follow, max-image-preview:large" },
       { property: "og:type", content: "product" },
       { property: "og:url", content: `${SITE_URL}/` },
-      { property: "og:title", content: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
+      { property: "og:title", content: "Ronnei na Veia — Do Zero aos 10k | eBook Ronnei" },
       {
         property: "og:description",
         content:
@@ -98,9 +98,9 @@ export const Route = createFileRoute("/")({
       { property: "og:image", content: OG_IMAGE },
       { property: "og:image:alt", content: "Chef especialista em espetinhos com espetos flamejantes" },
       { property: "og:locale", content: "pt_BR" },
-      { property: "og:site_name", content: "Espetinho na Veia" },
+      { property: "og:site_name", content: "Ronnei na Veia" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
+      { name: "twitter:title", content: "Ronnei na Veia — Do Zero aos 10k | eBook Ronnei" },
       {
         name: "twitter:description",
         content:
@@ -116,11 +116,11 @@ export const Route = createFileRoute("/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
-          name: "Espetinho na Veia — Do Zero aos 10k",
+          name: "Ronnei na Veia — Do Zero aos 10k",
           description:
             "eBook com 7 Módulos e 27 Capítulos + 4 bônus exclusivos para montar, temperar, precificar e vender espetinhos com alto lucro.",
           image: [OG_IMAGE],
-          brand: { "@type": "Brand", name: "Espetinho na Veia" },
+          brand: { "@type": "Brand", name: "Ronnei na Veia" },
           author: { "@type": "Person", name: "Ronnei" },
           offers: {
             "@type": "Oferta",
@@ -685,14 +685,14 @@ function Nav() {
         <a href="#top" className="flex min-w-0 items-center gap-2">
           <img
             src={logo}
-            alt="Espetinho na Veia — Do Zero aos 10k"
+            alt="Ronnei na Veia — Do Zero aos 10k"
             width={40}
             height={40}
             fetchPriority="high"
             className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_12px_oklch(0.72_0.20_50/0.55)]"
           />
           <span className="truncate font-display text-base tracking-wide sm:text-xl">
-            ESPETINHO <span className="text-gradient-fire">NA VEIA</span>
+            RONNEI <span className="text-gradient-fire">NA VEIA</span>
           </span>
         </a>
         <nav className="hidden gap-6 text-sm text-muted-foreground lg:flex xl:gap-8">
@@ -1967,13 +1967,13 @@ function Footer() {
           <div className="flex items-center gap-2">
             <img
               src={logo}
-              alt="Espetinho na Veia"
+              alt="Ronnei na Veia"
               width={40}
               height={40}
               loading="lazy"
               className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_12px_oklch(0.72_0.20_50/0.55)]"
             />
-            <span className="font-display text-xl">ESPETINHO <span className="text-gradient-fire">NA VEIA</span></span>
+            <span className="font-display text-xl uppercase tracking-tighter italic">RONNEI <span className="text-gradient-fire">NA VEIA</span></span>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
             O método completo do <strong className="text-foreground">Ronnei</strong> para sair do zero, montar sua barraca e faturar com espetinho — mesmo sem experiência, sem capital alto e sem depender de sorte.
@@ -2039,7 +2039,7 @@ function Footer() {
         <p className="mb-2 opacity-80">
           Suporte de segunda a sexta, das 9h às 18h.
         </p>
-        <p>© {new Date().getFullYear()} Espetinho na Veia. Todos os direitos reservados. Este produto não garante retornos financeiros — os resultados dependem da aplicação do método.</p>
+        <p>© {new Date().getFullYear()} Ronnei na Veia. Todos os direitos reservados. Este produto não garante retornos financeiros — os resultados dependem da aplicação do método.</p>
       </div>
     </footer>
   );

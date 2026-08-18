@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/receitas")({
-  head: () => ({ meta: [{ title: "Receitas — Espetinho na Veia" }] }),
+  head: () => ({ meta: [{ title: "Receitas — Ronnei na Veia" }] }),
   component: RecipesPage,
 });
 

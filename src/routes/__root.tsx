@@ -122,7 +122,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" },
-      { title: "Espetinho na Veia" },
+      { title: "Ronnei na Veia" },
       {
         name: "description",
         content:
@@ -135,7 +135,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "Espetinho na Veia" },
+      { name: "apple-mobile-web-app-title", content: "Ronnei na Veia" },
       { name: "mobile-web-app-capable", content: "yes" },
     ],
     links: [

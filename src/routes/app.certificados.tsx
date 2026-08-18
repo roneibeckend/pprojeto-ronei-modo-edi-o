@@ -66,7 +66,7 @@ async function downloadCertificatePDF(node: HTMLElement, cert: { id: string; cou
 }
 
 export const Route = createFileRoute("/app/certificados")({
-  head: () => ({ meta: [{ title: "Certificados — Espetinho na Veia" }] }),
+  head: () => ({ meta: [{ title: "Certificados — Ronnei na Veia" }] }),
   component: CertificatesPage,
 });
 
@@ -137,7 +137,7 @@ function CertificatesPage() {
           <div className="text-sm font-bold text-white">Verificação pública</div>
           <div className="text-xs text-white/50">
             Cada certificado tem código único (ex.: EVNA-2026-XXXX) e pode ser validado em
-            <span className="ml-1 font-mono text-white/70">verifica.espetinhonaveia.com</span>
+            <span className="ml-1 font-mono text-white/70">verifica.ronneinaveia.com</span>
           </div>
         </div>
       </div>
@@ -264,7 +264,7 @@ function MiniCertificate({ cert, locked }: { cert: any; locked: boolean }) {
       {/* Content */}
       <div className="relative flex h-full flex-col items-center justify-center px-6 text-center">
         <div className="flex items-center gap-1.5 text-[7px] font-bold uppercase tracking-[0.28em] text-[#ff6a00]">
-          <Flame className="h-2.5 w-2.5" strokeWidth={3} /> Espetinho na Veia
+          <Flame className="h-2.5 w-2.5" strokeWidth={3} /> Ronnei na Veia
         </div>
         <div className="mt-2 font-display text-[10px] font-bold uppercase tracking-[0.18em] text-black/70">Certificado de Conclusão</div>
         <div className="mt-1 font-display text-lg font-extrabold uppercase text-black break-words">{fallbackStudent.name}</div>
@@ -368,7 +368,7 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose:
 }
 
 function FullCertificate({ cert }: { cert: any }) {
-  const verifyUrl = `verifica.espetinhonaveia.com/${cert.code ?? "—"}`;
+  const verifyUrl = `verifica.ronneinaveia.com/${cert.code ?? "—"}`;
   return (
     <div className="relative overflow-hidden bg-[#f5efe4] text-[#1a1207] shadow-2xl">
       {/* Guilloché background */}
