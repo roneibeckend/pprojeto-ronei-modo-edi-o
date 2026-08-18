@@ -73,7 +73,6 @@ export const getCampaignWinners = createServerFn({ method: "GET" })
     campaignId: z.string()
   }).parse(data))
   .handler(async ({ data }) => {
-    // We'll perform two queries to ensure we get the data correctly without relation issues
     const { data: winners, error: winnersError } = await supabaseAdmin
       .from("campaign_winners")
       .select("*")
@@ -83,7 +82,9 @@ export const getCampaignWinners = createServerFn({ method: "GET" })
     if (winnersError) throw winnersError;
     if (!winners || winners.length === 0) return [];
 
-    const userIds = winners.map(w => w.user_id);
+    const userIds = winners.map(w => w.user_id).filter((id): id is string => !!id);
+    if (userIds.length === 0) return winners.map(w => ({ ...w, profiles: null }));
+
     const { data: profiles, error: profilesError } = await supabaseAdmin
       .from("profiles")
       .select("id, name, avatar_url")
