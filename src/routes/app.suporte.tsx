@@ -36,7 +36,7 @@ type Msg = {
 };
 
 export const Route = createFileRoute("/app/suporte")({
-  head: () => ({ meta: [{ title: "Suporte e Central de Ajuda — Espetinho na Veia" }] }),
+  head: () => ({ meta: [{ title: "Suporte e Central de Ajuda — Ronnei na Veia" }] }),
   component: SupportPage,
 });
 
