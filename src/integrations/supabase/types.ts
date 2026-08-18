@@ -2191,7 +2191,7 @@ export type Database = {
         Returns: undefined
       }
       test_adversarial_concurrency: {
-        Args: { p_enrollment_id: string; p_lesson_id: string }
+        Args: { p_lesson_id: string; p_user_id: string }
         Returns: {
           message: string
           scenario: string
