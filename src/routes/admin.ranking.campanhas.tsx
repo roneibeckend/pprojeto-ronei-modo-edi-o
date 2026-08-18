@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 export const Route = createFileRoute("/admin/ranking/campanhas")({
+  head: () => ({ meta: [{ title: "Campanhas e Premiações · Admin" }] }),
   component: AdminCampaigns,
 });
 
