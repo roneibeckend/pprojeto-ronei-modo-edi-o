@@ -2190,6 +2190,13 @@ export type Database = {
         Args: { p_content: string; p_ticket_id: string }
         Returns: undefined
       }
+      test_duplicate_lesson_completion: {
+        Args: { p_enrollment_id: string; p_lesson_id: string }
+        Returns: {
+          message: string
+          success: boolean
+        }[]
+      }
       update_expired_live_classes: { Args: never; Returns: undefined }
     }
     Enums: {
