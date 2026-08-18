@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { processPixPayout, detectPixKeyType } from "./asaas-payouts.server";
 
@@ -13,9 +12,9 @@ export const requestPayout = createServerFn({ method: "POST" })
     user_type: z.enum(['affiliate', 'partner']).default('affiliate'),
   }).parse(data))
   .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
 
-    // 1. Validar saldo baseado no tipo de usuário
     if (data.user_type === 'affiliate') {
       const { data: affiliate, error: affError } = await supabaseAdmin
         .from('affiliates')
@@ -26,7 +25,6 @@ export const requestPayout = createServerFn({ method: "POST" })
       if (affError || !affiliate) throw new Error("Afiliado não encontrado.");
       if (affiliate.balance < data.amount) throw new Error("Saldo insuficiente.");
 
-      // 2. Criar solicitação e descontar saldo
       const { error: payoutError } = await supabaseAdmin
         .from('payout_requests')
         .insert({
@@ -79,6 +77,7 @@ export const requestPayout = createServerFn({ method: "POST" })
 export const getPayoutHistory = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
     const { data, error } = await supabaseAdmin
       .from('payout_requests')
@@ -97,6 +96,8 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
     status: z.enum(['analyzing', 'approved', 'paid', 'rejected']),
   }).parse(data))
   .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
     // 0. Apenas admins podem alterar status de saques
     const { data: isAdmin } = await supabaseAdmin.rpc('has_role', {
       _user_id: context.userId,
@@ -104,7 +105,7 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
     });
     if (!isAdmin) throw new Error("Acesso negado.");
 
-    // 1. Verificar se o registro existe e qual o valor/tipo
+    // 1. Verificar se o registro existe
     const { data: payout, error: fetchError } = await supabaseAdmin
       .from('payout_requests')
       .select('*')
@@ -112,14 +113,18 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
       .maybeSingle();
 
     if (fetchError || !payout) throw new Error("Solicitação não encontrada.");
-    if (payout.status === 'paid' && data.status === 'paid') return { success: true }; // Já processado
+    
+    // Se já está pago e o novo status é pago, não faz nada
+    if (payout.status === 'paid' && data.status === 'paid') return { success: true };
 
-    // AUTOMATION: Se o status for alterado para 'paid', tentamos realizar o pagamento via Asaas se for Pix
+    // AUTOMATION: Se o status for alterado para 'paid', processa via Asaas se for Pix
     let asaasResult = null;
     if (data.status === 'paid' && payout.status !== 'paid') {
-      if (payout.method.toUpperCase().includes('PIX') && payout.pix_key) {
+      const isPix = payout.method.toUpperCase().includes('PIX') || (payout.pix_key && payout.pix_key.length > 5);
+      
+      if (isPix && payout.pix_key) {
         try {
-          console.log(`[Admin Payout] Iniciando pagamento automático Pix via Asaas para Payout ID: ${payout.id}`);
+          console.log(`[Payout Automation] Iniciando pagamento Pix Asaas para Payout: ${payout.id}`);
           const keyType = detectPixKeyType(payout.pix_key);
           
           asaasResult = await processPixPayout({
@@ -129,31 +134,29 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
             description: `Saque ${(payout.metadata as any)?.user_type === 'partner' ? 'Sócio' : 'Afiliado'} - Ronnei na Veia`
           });
           
-          console.log(`[Admin Payout] Pagamento Asaas processado com sucesso:`, asaasResult.id);
+          console.log(`[Payout Automation] Pagamento Asaas confirmado: ${asaasResult.id}`);
         } catch (error: any) {
-          console.error(`[Admin Payout] Falha no pagamento Asaas:`, error);
-          throw new Error(`Falha ao processar pagamento no Asaas: ${error.message}. O status não foi alterado.`);
+          console.error(`[Payout Automation] Falha no Asaas:`, error);
+          throw new Error(`Erro no Asaas: ${error.message}. O status do saque não foi alterado.`);
         }
-      } else if (data.status === 'paid') {
-        // Se for manual, permitimos mudar para pago sem Asaas, mas avisamos no log
-        console.log(`[Admin Payout] Marcando como pago manualmente (sem Pix Asaas) para Payout ID: ${payout.id}`);
+      } else {
+        console.log(`[Payout Automation] Marcando como pago manualmente para Payout: ${payout.id}`);
       }
     }
 
-    // 2. Se o novo status for 'paid', atualizar o acumulado retirado do sócio
+    // 2. Se o novo status for 'paid', atualizar acumulado do sócio
     if (data.status === 'paid' && payout.status !== 'paid') {
       const userType = (payout.metadata as any)?.user_type;
-      
       if (userType === 'partner') {
         const { error: balanceError } = await supabaseAdmin.rpc('increment_partner_withdrawn', {
           p_user_id: payout.user_id,
           p_amount: payout.amount
         });
-        if (balanceError) throw new Error("Erro ao atualizar acumulado: " + balanceError.message);
+        if (balanceError) console.error("Erro ao atualizar acumulado de sócio:", balanceError);
       }
     }
 
-    // 3. Atualizar o status do saque e salvar ID do Asaas se houver
+    // 3. Persistir novo status e ID do Asaas
     const updateData: any = { 
       status: data.status,
       updated_at: new Date().toISOString()
@@ -170,11 +173,11 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
 
     if (error) throw error;
     
-    // Logar evento de sistema
+    // Log de auditoria
     await supabaseAdmin.rpc('log_system_event', {
       _level: 'info',
-      _source: 'payout_system',
-      _message: `Saque ${data.payoutId} alterado para ${data.status}. ${asaasResult?.id ? 'Pagamento Asaas: ' + asaasResult.id : ''}`,
+      _source: 'payout_service',
+      _message: `Saque ${data.payoutId} atualizado para ${data.status}. ${asaasResult?.id ? 'Asaas ID: ' + asaasResult.id : ''}`,
       _details: { payoutId: data.payoutId, status: data.status, asaasId: asaasResult?.id }
     });
 
@@ -188,55 +191,53 @@ export const distributeProfits = createServerFn({ method: "POST" })
     partnerId: z.string(),
   }).parse(data))
   .handler(async ({ data, context }) => {
-    // Apenas admins podem distribuir
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
     const { data: isAdmin } = await supabaseAdmin.rpc('has_role', { 
       _user_id: context.userId, 
       _role: 'admin' 
     });
-    
     if (!isAdmin) throw new Error("Acesso negado.");
 
-    const { error } = await supabaseAdmin.rpc('distribute_partner_profits', {
+    // Distribuição de lucros no banco
+    const { error: distError } = await supabaseAdmin.rpc('distribute_partner_profits', {
       p_amount: data.amount,
       p_partner_id: data.partnerId
     });
+    if (distError) throw distError;
 
-    if (error) throw error;
-    
-    // Tentar buscar a chave Pix do sócio para criar a solicitação automática
-    const { data: affiliate } = await supabaseAdmin
-      .from('affiliates') // Sócios costumam estar aqui também ou ter perfil com pix
+    // Automação: Criar solicitação de saque se o sócio tiver chave Pix
+    const { data: partnerProfile } = await supabaseAdmin
+      .from('affiliates') 
       .select('pix_key')
       .eq('id', data.partnerId)
       .maybeSingle();
       
-    // Se tiver chave Pix, podemos criar a solicitação de saque imediatamente como 'approved' para processamento rápido
-    if (affiliate?.pix_key) {
-      // 1. Descontar do saldo recém adicionado (Atomicamente já foi adicionado pelo RPC acima)
-      // 2. Criar solicitação aprovada
+    if (partnerProfile?.pix_key) {
+      // Criar solicitação já aprovada para processamento rápido
       const { error: payoutError } = await supabaseAdmin
         .from('payout_requests')
         .insert({
           user_id: data.partnerId,
           amount: data.amount,
           method: 'PIX',
-          pix_key: affiliate.pix_key,
-          status: 'approved', // Já aprovado para facilitar o clique final do admin ou automação
+          pix_key: partnerProfile.pix_key,
+          status: 'approved',
           metadata: { user_type: 'partner', auto_distributed: true }
         });
         
       if (!payoutError) {
-        // Descontar do saldo (partner_balances)
-        const { data: balance } = await supabaseAdmin
+        // Deduz do saldo disponível que acabamos de adicionar
+        const { data: balanceRow } = await supabaseAdmin
           .from('partner_balances')
           .select('balance')
           .eq('user_id', data.partnerId)
           .maybeSingle();
           
-        if (balance) {
+        if (balanceRow) {
           await supabaseAdmin
             .from('partner_balances')
-            .update({ balance: balance.balance - data.amount })
+            .update({ balance: Math.max(0, balanceRow.balance - data.amount) })
             .eq('user_id', data.partnerId);
         }
       }
