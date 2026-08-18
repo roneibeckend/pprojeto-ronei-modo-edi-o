@@ -58,7 +58,8 @@ export const generateCertificate = createServerFn({ method: "POST" })
         custom_data: {
           hours: (config as any)?.min_progress_percentage === 100 ? 40 : 10,
           text: (config as any)?.custom_text
-        }
+        },
+        city_of_issue: (config as any)?.city_of_issue || 'Goiânia - Goiás'
       } as any)
       .select()
       .single();
