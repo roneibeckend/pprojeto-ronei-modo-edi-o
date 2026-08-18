@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 
 // Definindo tipos para evitar erros de 'never'
 interface KnowledgeItem {
@@ -24,6 +23,9 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { message, context: requestContext } = data;
     
+    // Importação dinâmica do supabaseAdmin para evitar problemas de serialização e bundling
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
     // Normalização aprimorada: minúsculas, remover acentos, pontuação, espaços extras
     const normalize = (str: string) => {
       if (!str) return "";
@@ -45,12 +47,13 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     const queryTokens = tokenize(message);
 
     // 1. Buscar base de conhecimento
-    const { data: knowledge, error } = await supabase
+    const { data: knowledge, error } = await supabaseAdmin
       .from("knowledge_base")
       .select("*")
       .eq("status", "active");
 
     if (error || !knowledge) {
+      console.error("[Chatbot] Erro ao buscar knowledge_base:", error);
       return {
         answer: "Desculpe, tive um problema ao acessar minha base de conhecimento. Tente novamente mais tarde.",
         confidence: 0,
@@ -120,14 +123,14 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
 
     // 4. Fallback: Gravar pergunta não respondida
     try {
-      await supabase.from("unhandled_questions").insert({
+      await supabaseAdmin.from("unhandled_questions").insert({
         question: message,
         confidence,
         context: requestContext || {},
         status: 'pending'
       });
     } catch (dbError) {
-      console.error("Erro ao registrar pergunta não respondida:", dbError);
+      console.error("[Chatbot] Erro ao registrar pergunta não respondida:", dbError);
     }
 
     return {
@@ -138,20 +141,22 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
   });
 
 export const submitKnowledgeFeedback = createServerFn({ method: "POST" })
-  // Removido requireSupabaseAuth para permitir feedback anônimo na Landing Page
   .inputValidator((data) => z.object({
-
     knowledgeId: z.string(),
     isPositive: z.boolean()
   }).parse(data))
   .handler(async ({ data }) => {
-    const { error } = await supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
       .from("knowledge_feedback")
       .insert({
         knowledge_id: data.knowledgeId,
         is_positive: data.isPositive
       });
     
-    if (error) throw error;
+    if (error) {
+      console.error("[Chatbot] Erro ao enviar feedback:", error);
+      throw error;
+    }
     return { success: true };
   });
