@@ -57,7 +57,11 @@ export function useNotifications() {
     (n) => !userNotifications.some((un) => un.notification_id === n.id && un.read_at)
   ).length;
 
-  const markAsRead = async (notificationId: string) => {
+  const markAsRead = async (notificationId: string, event?: React.MouseEvent) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     if (!user) return;
 
     try {
@@ -71,7 +75,7 @@ export function useNotifications() {
       );
 
       if (error) throw error;
-      queryClient.invalidateQueries({ queryKey: ["user_notifications", user?.id || "anonymous"] });
+      await queryClient.invalidateQueries({ queryKey: ["user_notifications", user?.id || "anonymous"] });
     } catch (error) {
       console.error("Erro ao marcar como lida:", error);
     }
@@ -109,10 +113,14 @@ export function useNotifications() {
     isLoading,
     markAsRead,
     markAllAsRead: async () => {
-      if (!user || notifications.length === 0) return;
+      if (!user) return;
+      const unreadNotifications = notifications.filter(
+        (n) => !userNotifications.some((un) => un.notification_id === n.id && un.read_at)
+      );
+      if (unreadNotifications.length === 0) return;
       
       try {
-        const rows = notifications.map(n => ({
+        const rows = unreadNotifications.map(n => ({
           user_id: user.id,
           notification_id: n.id,
           read_at: new Date().toISOString(),
@@ -120,10 +128,13 @@ export function useNotifications() {
 
         const { error } = await supabase
           .from("user_notifications")
-          .upsert(rows, { onConflict: "user_id,notification_id" });
+          .upsert(rows, { 
+            onConflict: "user_id,notification_id",
+            ignoreDuplicates: false 
+          });
 
         if (error) throw error;
-        queryClient.invalidateQueries({ queryKey: ["user_notifications", user?.id || "anonymous"] });
+        await queryClient.invalidateQueries({ queryKey: ["user_notifications", user?.id || "anonymous"] });
         toast.success("Todas as notificações foram marcadas como lidas.");
       } catch (error) {
         console.error("Erro ao marcar todas como lidas:", error);
