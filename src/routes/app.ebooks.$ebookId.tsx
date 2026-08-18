@@ -28,31 +28,68 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
     meta: [{ title: "E-book Interativo — Ronnei na Veia" }],
   }),
   loader: async ({ params }) => {
-    const { data: ebook, error } = await supabase
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
+
+    // Busca o ebook e seus módulos
+    const ebookQuery = supabase
       .from("ebooks")
       .select(`
         id, title, subtitle, description, price, opening_video_url, payment_type, due_days, status,
         modules:ebook_modules (
-          id, title, order_index,
-          chapters:ebook_chapters (id, title, content, video_url, reading_minutes, order_index, module_id)
+          id, title, order_index
         )
       `)
       .eq("id", params.ebookId)
-      .in("status", ["active", "published"])
       .single();
 
+    // Busca os capítulos separadamente para evitar problemas com junções complexas
+    const chaptersQuery = supabase
+      .from("ebook_chapters")
+      .select(`id, title, content, video_url, reading_minutes, order_index, module_id`)
+      .eq("ebook_id", params.ebookId);
 
-    if (error || !ebook) {
-      console.warn(`E-book with ID ${params.ebookId} not found or inactive.`);
+    // Verifica matricula se o usuário estiver logado
+    const enrollmentQuery = userId 
+      ? supabase.from("ebook_enrollments").select("id").eq("ebook_id", params.ebookId).eq("user_id", userId).maybeSingle()
+      : Promise.resolve({ data: null });
+
+    const [ebookRes, chaptersRes, enrollmentRes] = await Promise.all([
+      ebookQuery,
+      chaptersQuery,
+      enrollmentQuery
+    ]);
+
+    if (ebookRes.error || !ebookRes.data) {
+      console.warn(`E-book with ID ${params.ebookId} not found.`);
       throw notFound();
     }
-    return { ebook };
+
+    const ebook = ebookRes.data;
+    const chapters = chaptersRes.data || [];
+    const isEnrolled = !!enrollmentRes.data;
+
+    // Mapeia os capítulos para seus respectivos módulos
+    const modulesWithChapters = (ebook.modules || []).map((mod: any) => ({
+      ...mod,
+      chapters: chapters
+        .filter((chap: any) => chap.module_id === mod.id)
+        .sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
+    }));
+
+    return { 
+      ebook: { 
+        ...ebook, 
+        modules: modulesWithChapters 
+      },
+      serverSideEnrolled: isEnrolled
+    };
   },
   component: EbookReaderPage,
 });
 
 function EbookReaderPage() {
-  const { ebook } = Route.useLoaderData() as { ebook: any };
+  const { ebook, serverSideEnrolled } = Route.useLoaderData() as { ebook: any, serverSideEnrolled: boolean };
   const { isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
   const { isChapterCompleted, completeChapter, ebookProgress } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -62,7 +99,7 @@ function EbookReaderPage() {
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
 
   const isFree = ebook ? (ebook.price || 0) === 0 : false;
-  const isEnrolled = ebook ? isEnrolledInEbook(ebook.id) : false;
+  const isEnrolled = serverSideEnrolled || (ebook ? isEnrolledInEbook(ebook.id) : false);
   const hasAccess = isFree || isEnrolled;
 
   const { data: interactivePreviewsStatus } = useQuery({
@@ -127,12 +164,13 @@ function EbookReaderPage() {
     localStorage.setItem(`ebook_opening_${ebook.id}`, 'true');
   };
 
-  const chapters = ebook.modules
-    ?.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
-    ?.flatMap((m: any) => 
+  const chapters = (ebook.modules || [])
+    .sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
+    .flatMap((m: any) => 
       (m.chapters || [])
         .sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
-    ) || [];
+    );
+
   const [activeChapterId, setActiveChapterId] = useState<string | undefined>(() => {
     if (typeof window === 'undefined') return undefined;
     const lastRead = localStorage.getItem(`ebook_last_read_${ebook.id}`);
@@ -141,6 +179,13 @@ function EbookReaderPage() {
     }
     return chapters.length > 0 ? chapters[0].id : undefined;
   });
+
+  // Effect to ensure activeChapterId is set if it becomes undefined or null during re-renders
+  useEffect(() => {
+    if (!activeChapterId && chapters.length > 0) {
+      setActiveChapterId(chapters[0].id);
+    }
+  }, [chapters, activeChapterId]);
   
   // Prefetch next chapter content
   useEffect(() => {
@@ -182,13 +227,13 @@ function EbookReaderPage() {
       
       const scrollToTop = () => {
         if (scrollContainer) {
-          scrollContainer.scrollTop = 0;
+          scrollContainer.scrollTo({ top: 0, behavior: 'instant' });
         }
-        window.scrollTo({ top: 0, behavior: 'auto' });
+        window.scrollTo({ top: 0, behavior: 'instant' });
         
         // Also use the anchor as a fallback/reinforcement
         if (chapterTopRef.current) {
-          chapterTopRef.current.scrollIntoView({ block: 'start', behavior: 'auto' });
+          chapterTopRef.current.scrollIntoView({ block: 'start', behavior: 'instant' });
         }
       };
 
@@ -205,6 +250,8 @@ function EbookReaderPage() {
 
   const [signedChapterUrl, setSignedChapterUrl] = useState<string | null>(null);
   const [isLoadingSignedChapter, setIsLoadingSignedChapter] = useState(false);
+  // We use find to get the current chapter based on activeChapterId
+  // Fallback to the first chapter if not found, to avoid "content not found" message
   const activeChapter = chapters.find((c: any) => c.id === activeChapterId) || chapters[0];
   const activeIndex = chapters.findIndex((c: any) => c.id === activeChapter?.id);
 
@@ -521,9 +568,9 @@ function EbookReaderPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="glass min-h-[500px] overflow-hidden rounded-none sm:rounded-3xl pb-12 sm:min-h-[600px] w-full max-w-full"
+              className="glass min-h-[500px] overflow-hidden rounded-none sm:rounded-3xl pb-12 sm:min-h-[600px] w-full max-w-full relative"
             >
-              <div ref={chapterTopRef} className="scroll-mt-24" />
+              <div ref={chapterTopRef} className="absolute -top-32" />
               {activeChapter?.video_url && (
                 <div className="w-full bg-black/40 border-b border-white/5">
                   <div className="max-w-4xl mx-auto py-4 sm:py-8 px-0 sm:px-4">
@@ -582,9 +629,20 @@ function EbookReaderPage() {
                       [&_.table-wrapper]:overflow-x-auto [&_.table-wrapper]:max-w-full [&_.table-wrapper]:mb-8" 
                       dangerouslySetInnerHTML={{ __html: activeChapter.content }} 
                     />
+                  ) : activeChapter ? (
+                    <div className="flex flex-col items-center justify-center py-20 opacity-50 text-center">
+                      <Loader2 className="h-8 w-8 animate-spin text-fire mb-4" />
+                      <p className="italic mb-2">Carregando conteúdo do capítulo...</p>
+                      <button 
+                        onClick={() => window.location.reload()}
+                        className="text-xs underline hover:text-fire transition-colors"
+                      >
+                        Recarregar página se demorar
+                      </button>
+                    </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-20 opacity-50">
-                      <p className="italic text-center mb-4">Este capítulo ainda não possui conteúdo cadastrado.</p>
+                    <div className="flex flex-col items-center justify-center py-20 opacity-50 text-center">
+                      <p className="italic mb-4">Selecione um capítulo no menu lateral para começar a leitura.</p>
                       <button 
                         onClick={() => window.location.reload()}
                         className="text-xs underline hover:text-fire transition-colors"
