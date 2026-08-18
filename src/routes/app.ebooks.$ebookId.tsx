@@ -122,8 +122,7 @@ function EbookReaderPage() {
 
 
 
-  // Opening video removed from auto-trigger to optimize UX
-  /*
+  // Restaura o trigger automático para vídeos de intro
   useEffect(() => {
     if (ebook?.opening_video_url) {
       const hasSeen = localStorage.getItem(`ebook_opening_${ebook.id}`);
@@ -132,7 +131,6 @@ function EbookReaderPage() {
       }
     }
   }, [ebook.id, ebook.opening_video_url]);
-  */
 
   const markVideoAsSeen = () => {
     setShowOpeningVideo(false);
@@ -599,7 +597,15 @@ function EbookReaderPage() {
                       dangerouslySetInnerHTML={{ __html: activeChapter.content }} 
                     />
                   ) : (
-                    <p className="italic opacity-50 text-center py-20">Este capítulo ainda não possui conteúdo cadastrado.</p>
+                    <div className="flex flex-col items-center justify-center py-20 opacity-50">
+                      <p className="italic text-center mb-4">Este capítulo ainda não possui conteúdo cadastrado.</p>
+                      <button 
+                        onClick={() => window.location.reload()}
+                        className="text-xs underline hover:text-fire transition-colors"
+                      >
+                        Recarregar página
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
