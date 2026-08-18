@@ -52,14 +52,30 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
 
       const totalValue = pricedProducts.reduce((acc, p) => acc + p.value, 0);
       const mainProduct = pricedProducts[0];
-      const titles = pricedProducts.map(p => p.title).join(' + ');
+      const rawTitles = pricedProducts.map(p => p.title).join(' + ');
+
+      // Sanitização rigorosa para o Asaas: apenas alfanuméricos, espaços, hífen e underscore.
+      // Remove acentos e caracteres especiais que causam o erro "O nome do link de pagamento não pode conter caracteres especiais."
+      const sanitizeAsaasName = (text: string) => {
+        return text
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+          .replace(/[^\w\s-]/g, "") // Remove tudo que não é alfanumérico, espaço, hífen ou underscore
+          .replace(/\s+/g, " ") // Colapsa múltiplos espaços
+          .trim();
+      };
+
+      const sanitizedName = sanitizeAsaasName(rawTitles);
+      const finalName = sanitizedName.length > 100 
+        ? sanitizedName.substring(0, 97) + '...' 
+        : sanitizedName;
 
       const response = await fetch(`${baseUrl}/paymentLinks`, {
         method: 'POST',
         headers: asaasHeaders(apiKey),
         body: JSON.stringify({
-          name: titles.length > 100 ? titles.substring(0, 97) + '...' : titles,
-          description: `Acesso a: ${titles}`,
+          name: finalName || `Pedido ${mainProduct.productId}`,
+          description: `Acesso a: ${rawTitles.substring(0, 450)}`, // Descrição pode ser mais permissiva, mas limitamos tamanho
           value: totalValue,
           billingType: 'UNDEFINED',
           chargeType: data.paymentType === 'recurring' ? 'RECURRENT' : 'DETACHED',
@@ -67,12 +83,10 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
           endDate: null,
           notificationEnabled: true,
           externalReference: buildExternalReference({
-            productType: mainProduct.productType, // Referência ao principal para automação simples
+            productType: mainProduct.productType,
             productId: mainProduct.productId,
             userId: context.userId,
             affiliateRef: data.affiliateRef || null,
-            // Nota: Em um sistema real, externalReference precisaria suportar múltiplos IDs 
-            // ou salvaríamos os secundários em uma tabela de transação pendente.
           }),
         })
       });
