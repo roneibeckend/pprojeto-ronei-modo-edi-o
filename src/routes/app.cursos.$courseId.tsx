@@ -57,7 +57,10 @@ export const Route = createFileRoute("/app/cursos/$courseId")({
       .single();
 
 
-    if (error || !course) throw notFound();
+    if (error || !course) {
+      console.warn(`Course with ID ${params.courseId} not found or inactive.`);
+      throw notFound();
+    }
     return { course };
   },
   component: CoursePage,

@@ -115,6 +115,7 @@ export const getMaterialDownloadUrl = createServerFn({ method: "GET" })
       throw new Error("Erro ao buscar material.");
     }
     if (!material) {
+      console.warn(`[getMaterialDownloadUrl] Material ${data.materialId} not found for user ${userId}`);
       throw new Error("Material não encontrado.");
     }
 
