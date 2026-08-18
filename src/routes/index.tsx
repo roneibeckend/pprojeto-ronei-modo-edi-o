@@ -100,7 +100,7 @@ export const Route = createFileRoute("/")({
       { property: "og:locale", content: "pt_BR" },
       { property: "og:site_name", content: "Ronnei na Veia" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
+      { name: "twitter:title", content: "Ronnei na Veia — Do Zero aos 10k | eBook Ronnei" },
       {
         name: "twitter:description",
         content:
