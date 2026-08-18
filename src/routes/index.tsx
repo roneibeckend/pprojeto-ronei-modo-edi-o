@@ -685,7 +685,7 @@ function Nav() {
         <a href="#top" className="flex min-w-0 items-center gap-2">
           <img
             src={logo}
-            alt="Espetinho na Veia — Do Zero aos 10k"
+            alt="Ronnei na Veia — Do Zero aos 10k"
             width={40}
             height={40}
             fetchPriority="high"
