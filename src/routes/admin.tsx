@@ -81,6 +81,7 @@ function AdminRootLayout() {
     { to: "/admin/materiais", label: "Materiais", icon: Library },
     { to: "/admin/ranking", label: "Configuração Ranking", icon: Star },
     { to: "/admin/chatbot", label: "Inteligência Brasa", icon: BrainCircuit },
+    { to: "/admin/logs", label: "Logs do Sistema", icon: Terminal },
   ];
 
   return (
