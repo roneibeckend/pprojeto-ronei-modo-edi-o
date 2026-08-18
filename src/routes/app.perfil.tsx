@@ -186,7 +186,7 @@ function ProfilePage() {
         
         if (profileData) {
           setProfile(profileData);
-          setNewPhone(profileData.phone || "");
+          setNewPhone(formatPhone(profileData.phone || ""));
         }
 
 
