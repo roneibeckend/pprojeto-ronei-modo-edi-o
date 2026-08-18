@@ -11,7 +11,7 @@ import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/perfil")({
-  head: () => ({ meta: [{ title: "Meu perfil — Espetinho na Veia" }] }),
+  head: () => ({ meta: [{ title: "Meu perfil — Ronnei na Veia" }] }),
   component: ProfilePage,
 });
 
