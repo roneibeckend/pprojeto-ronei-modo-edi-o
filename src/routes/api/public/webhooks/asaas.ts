@@ -196,7 +196,48 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             console.error('[Webhook Asaas] Erro em efeitos secundários (matrícula OK):', secondaryError);
           }
 
-          // 10. Mark as Completed (OWNER CHECK)
+          // 10. Update Gateway Fees in Financial Dashboard
+          try {
+            // Find the "Taxas de gateway" cost row
+            const { data: costRow } = await supabaseAdmin
+              .from('financial_costs')
+              .select('id')
+              .ilike('label', 'Taxas de gateway')
+              .maybeSingle();
+
+            // Calculate total fees for the current month to keep the dashboard accurate
+            const now = new Date();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+            
+            const { data: feeSum } = await supabaseAdmin
+              .from('payments')
+              .select('fee')
+              .gte('confirmed_at', startOfMonth)
+              .in('status', ['CONFIRMED', 'RECEIVED', 'RECEIVED_IN_CASH']);
+
+            const totalFees = feeSum?.reduce((acc, p) => acc + Number(p.fee || 0), 0) || 0;
+
+            if (costRow) {
+              await supabaseAdmin
+                .from('financial_costs')
+                .update({ 
+                  value: totalFees,
+                  updated_at: new Date().toISOString()
+                })
+                .eq('id', costRow.id);
+            } else {
+              await supabaseAdmin
+                .from('financial_costs')
+                .insert({
+                  label: 'Taxas de gateway',
+                  value: totalFees
+                });
+            }
+          } catch (feeError) {
+            console.error('[Webhook Asaas] Erro ao atualizar taxas de gateway:', feeError);
+          }
+
+          // 11. Mark as Completed (OWNER CHECK)
           const { error: completeError } = await supabaseAdmin
             .from('asaas_webhook_events')
             .update({
