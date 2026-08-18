@@ -127,12 +127,13 @@ function EbookReaderPage() {
     localStorage.setItem(`ebook_opening_${ebook.id}`, 'true');
   };
 
-  const chapters = ebook.modules
-    ?.sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
-    ?.flatMap((m: any) => 
+  const chapters = (ebook.modules || [])
+    .sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
+    .flatMap((m: any) => 
       (m.chapters || [])
         .sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
-    ) || [];
+    );
+
   const [activeChapterId, setActiveChapterId] = useState<string | undefined>(() => {
     if (typeof window === 'undefined') return undefined;
     const lastRead = localStorage.getItem(`ebook_last_read_${ebook.id}`);
@@ -141,6 +142,13 @@ function EbookReaderPage() {
     }
     return chapters.length > 0 ? chapters[0].id : undefined;
   });
+
+  // Effect to ensure activeChapterId is set if it becomes undefined or null during re-renders
+  useEffect(() => {
+    if (!activeChapterId && chapters.length > 0) {
+      setActiveChapterId(chapters[0].id);
+    }
+  }, [chapters, activeChapterId]);
   
   // Prefetch next chapter content
   useEffect(() => {
