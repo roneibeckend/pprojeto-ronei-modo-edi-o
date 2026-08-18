@@ -28,8 +28,11 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
     meta: [{ title: "E-book Interativo — Ronnei na Veia" }],
   }),
   loader: async ({ params }) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
+
     // Busca o ebook e seus módulos
-    const { data: ebook, error: ebookError } = await supabase
+    const ebookQuery = supabase
       .from("ebooks")
       .select(`
         id, title, subtitle, description, price, opening_video_url, payment_type, due_days, status,
@@ -40,26 +43,36 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
       .eq("id", params.ebookId)
       .single();
 
-    if (ebookError || !ebook) {
-      console.warn(`E-book with ID ${params.ebookId} not found or inactive.`);
-      throw notFound();
-    }
-
     // Busca os capítulos separadamente para evitar problemas com junções complexas
-    // e garantir que o campo 'content' seja recuperado corretamente.
-    const { data: chapters, error: chaptersError } = await supabase
+    const chaptersQuery = supabase
       .from("ebook_chapters")
       .select(`id, title, content, video_url, reading_minutes, order_index, module_id`)
       .eq("ebook_id", params.ebookId);
 
-    if (chaptersError) {
-      console.error("Error fetching ebook chapters:", chaptersError);
+    // Verifica matricula se o usuário estiver logado
+    const enrollmentQuery = userId 
+      ? supabase.from("ebook_enrollments").select("id").eq("ebook_id", params.ebookId).eq("user_id", userId).maybeSingle()
+      : Promise.resolve({ data: null });
+
+    const [ebookRes, chaptersRes, enrollmentRes] = await Promise.all([
+      ebookQuery,
+      chaptersQuery,
+      enrollmentQuery
+    ]);
+
+    if (ebookRes.error || !ebookRes.data) {
+      console.warn(`E-book with ID ${params.ebookId} not found.`);
+      throw notFound();
     }
+
+    const ebook = ebookRes.data;
+    const chapters = chaptersRes.data || [];
+    const isEnrolled = !!enrollmentRes.data;
 
     // Mapeia os capítulos para seus respectivos módulos
     const modulesWithChapters = (ebook.modules || []).map((mod: any) => ({
       ...mod,
-      chapters: (chapters || [])
+      chapters: chapters
         .filter((chap: any) => chap.module_id === mod.id)
         .sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
     }));
@@ -68,7 +81,8 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
       ebook: { 
         ...ebook, 
         modules: modulesWithChapters 
-      } 
+      },
+      serverSideEnrolled: isEnrolled
     };
   },
   component: EbookReaderPage,
