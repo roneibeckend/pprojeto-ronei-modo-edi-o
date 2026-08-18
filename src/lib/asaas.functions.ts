@@ -56,7 +56,7 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
 
       // Sanitização rigorosa para o Asaas: apenas alfanuméricos, espaços, hífen e underscore.
       // Remove acentos e caracteres especiais que causam o erro "O nome do link de pagamento não pode conter caracteres especiais."
-      const sanitizeAsaasName = (text: str) => {
+      const sanitizeAsaasName = (text: string) => {
         return text
           .normalize("NFD")
           .replace(/[\u0300-\u036f]/g, "") // Remove acentos
