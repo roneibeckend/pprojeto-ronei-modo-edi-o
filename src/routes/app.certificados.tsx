@@ -264,7 +264,7 @@ function MiniCertificate({ cert, locked }: { cert: any; locked: boolean }) {
       {/* Content */}
       <div className="relative flex h-full flex-col items-center justify-center px-6 text-center">
         <div className="flex items-center gap-1.5 text-[7px] font-bold uppercase tracking-[0.28em] text-[#ff6a00]">
-          <Flame className="h-2.5 w-2.5" strokeWidth={3} /> Espetinho na Veia
+          <Flame className="h-2.5 w-2.5" strokeWidth={3} /> Ronnei na Veia
         </div>
         <div className="mt-2 font-display text-[10px] font-bold uppercase tracking-[0.18em] text-black/70">Certificado de Conclusão</div>
         <div className="mt-1 font-display text-lg font-extrabold uppercase text-black break-words">{fallbackStudent.name}</div>
