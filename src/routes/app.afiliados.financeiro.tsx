@@ -23,19 +23,32 @@ export const Route = createFileRoute("/app/afiliados/financeiro")({
 });
 
 function AffiliateFinancialPage() {
-  const [filterDays, setFilterDays] = useState("30");
+  const [filterDays, setFilterDays] = useState<string>("30");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 30),
+    to: new Date(),
+  });
 
   const { data: sales, isLoading } = useQuery({
-    queryKey: ["affiliate-sales-detailed", filterDays],
+    queryKey: ["affiliate-sales-detailed", filterDays, dateRange],
     queryFn: async () => {
-      const date = new Date();
-      date.setDate(date.getDate() - parseInt(filterDays));
-      
-      const { data, error } = await supabase
+      let query = supabase
         .from("affiliate_sales")
         .select("*")
-        .gte("created_at", date.toISOString())
         .order("created_at", { ascending: false });
+
+      if (filterDays !== "custom" && filterDays !== "all") {
+        const date = new Date();
+        date.setDate(date.getDate() - parseInt(filterDays));
+        query = query.gte("created_at", date.toISOString());
+      } else if (filterDays === "custom" && dateRange?.from) {
+        query = query.gte("created_at", startOfDay(dateRange.from).toISOString());
+        if (dateRange.to) {
+          query = query.lte("created_at", endOfDay(dateRange.to).toISOString());
+        }
+      }
+
+      const { data, error } = await query;
       
       if (error) throw error;
       return data;
