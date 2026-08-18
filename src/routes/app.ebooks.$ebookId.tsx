@@ -89,7 +89,7 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
 });
 
 function EbookReaderPage() {
-  const { ebook } = Route.useLoaderData() as { ebook: any };
+  const { ebook, serverSideEnrolled } = Route.useLoaderData() as { ebook: any, serverSideEnrolled: boolean };
   const { isEnrolledInEbook, isLoading: isLoadingEnrollments } = useEnrollments();
   const { isChapterCompleted, completeChapter, ebookProgress } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
