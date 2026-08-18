@@ -9,28 +9,46 @@ import {
   Calendar,
   Filter,
   Download,
-  Loader2
+  Loader2,
+  CalendarDays
 } from "lucide-react";
 import { useState } from "react";
+import { DatePickerWithRange } from "@/components/ui/date-picker-range";
+import { DateRange } from "react-day-picker";
+import { startOfDay, endOfDay, subDays } from "date-fns";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app/afiliados/financeiro")({
   component: AffiliateFinancialPage,
 });
 
 function AffiliateFinancialPage() {
-  const [filterDays, setFilterDays] = useState("30");
+  const [filterDays, setFilterDays] = useState<string>("30");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 30),
+    to: new Date(),
+  });
 
   const { data: sales, isLoading } = useQuery({
-    queryKey: ["affiliate-sales-detailed", filterDays],
+    queryKey: ["affiliate-sales-detailed", filterDays, dateRange],
     queryFn: async () => {
-      const date = new Date();
-      date.setDate(date.getDate() - parseInt(filterDays));
-      
-      const { data, error } = await supabase
+      let query = supabase
         .from("affiliate_sales")
         .select("*")
-        .gte("created_at", date.toISOString())
         .order("created_at", { ascending: false });
+
+      if (filterDays !== "custom" && filterDays !== "all") {
+        const date = new Date();
+        date.setDate(date.getDate() - parseInt(filterDays));
+        query = query.gte("created_at", date.toISOString());
+      } else if (filterDays === "custom" && dateRange?.from) {
+        query = query.gte("created_at", startOfDay(dateRange.from).toISOString());
+        if (dateRange.to) {
+          query = query.lte("created_at", endOfDay(dateRange.to).toISOString());
+        }
+      }
+
+      const { data, error } = await query;
       
       if (error) throw error;
       return data;
@@ -55,20 +73,49 @@ function AffiliateFinancialPage() {
           <h2 className="text-xl font-bold">Relatório Financeiro</h2>
           <p className="text-sm text-muted-foreground mt-1">Detalhamento de comissões e performance.</p>
         </div>
-        <div className="flex items-center justify-center gap-2">
-           <div className="bg-white/5 border border-white/10 rounded-lg p-1 flex items-center gap-1 overflow-x-auto">
-              {["7", "15", "30", "90"].map(days => (
-                <button
-                  key={days}
-                  onClick={() => setFilterDays(days)}
-                  className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase transition whitespace-nowrap ${
-                    filterDays === days ? "bg-fire text-white shadow-lg shadow-fire/20" : "text-white/40 hover:text-white"
-                  }`}
-                >
-                  {days}D
-                </button>
-              ))}
-           </div>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-1 flex items-center gap-1 overflow-x-auto">
+            <button
+              onClick={() => setFilterDays("all")}
+              className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase transition whitespace-nowrap ${
+                filterDays === "all" ? "bg-fire text-white shadow-lg shadow-fire/20" : "text-white/40 hover:text-white"
+              }`}
+            >
+              Tudo
+            </button>
+            {["7", "15", "30", "90"].map(days => (
+              <button
+                key={days}
+                onClick={() => {
+                  setFilterDays(days);
+                  const newFrom = subDays(new Date(), parseInt(days));
+                  setDateRange({ from: newFrom, to: new Date() });
+                }}
+                className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase transition whitespace-nowrap ${
+                  filterDays === days ? "bg-fire text-white shadow-lg shadow-fire/20" : "text-white/40 hover:text-white"
+                }`}
+              >
+                {days}D
+              </button>
+            ))}
+            <button
+              onClick={() => setFilterDays("custom")}
+              className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase transition whitespace-nowrap ${
+                filterDays === "custom" ? "bg-fire text-white shadow-lg shadow-fire/20" : "text-white/40 hover:text-white"
+              }`}
+            >
+              Personalizado
+            </button>
+          </div>
+
+          {filterDays === "custom" && (
+            <div className="animate-in fade-in slide-in-from-right-2 duration-300">
+              <DatePickerWithRange 
+                date={dateRange} 
+                setDate={setDateRange} 
+              />
+            </div>
+          )}
         </div>
       </div>
 
