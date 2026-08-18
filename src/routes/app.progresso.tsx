@@ -25,10 +25,16 @@ type RankingRow = {
 
 function RankingPage() {
   const fetchSettings = useServerFn(getRankingSettings);
+  const fetchCampaigns = useServerFn(getCampaigns);
 
   const { data: rankingSettings, isLoading: isLoadingSettings } = useQuery({
     queryKey: ["ranking-settings"],
-    queryFn: () => fetchSettings()
+    queryFn: () => fetchSettings({})
+  });
+
+  const { data: campaigns } = useQuery({
+    queryKey: ["active-campaigns"],
+    queryFn: () => fetchCampaigns({})
   });
 
   const { data: ranking, isLoading: isLoadingRanking } = useQuery({
@@ -89,6 +95,70 @@ function RankingPage() {
           </div>
         )}
       </div>
+
+      {/* Active Campaigns */}
+      {campaigns?.filter(c => c.is_active && isBefore(new Date(), new Date(c.end_date))).map(campaign => (
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          key={campaign.id}
+          className="relative overflow-hidden rounded-2xl border border-[#ff6a00]/30 bg-gradient-to-br from-[#ff6a00]/10 to-transparent p-6 sm:p-8"
+        >
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <Trophy size={80} className="text-[#ff6a00]" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="px-2 py-0.5 rounded bg-[#ff6a00] text-black text-[8px] font-black uppercase tracking-tighter animate-pulse">
+                  Campanha Ativa
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-white/60 font-medium">
+                  <Clock size={12} className="text-[#ff6a00]" />
+                  Termina em: {format(new Date(campaign.end_date), "dd/MM 'às' HH:mm", { locale: ptBR })}
+                </div>
+              </div>
+              
+              <h3 className="text-2xl font-black uppercase tracking-tight text-white">{campaign.name}</h3>
+              <p className="text-sm text-white/70 max-w-xl leading-relaxed">{campaign.description}</p>
+              
+              <div className="flex flex-wrap gap-4 pt-2">
+                <div className="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-lg border border-white/5">
+                  <Award size={16} className="text-[#ff6a00]" />
+                  <div className="text-xs">
+                    <span className="text-white/40 uppercase font-bold tracking-widest block text-[8px]">Premiação</span>
+                    <span className="font-bold text-white">{campaign.prize_description}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-lg border border-white/5">
+                  <Target size={16} className="text-[#ff6a00]" />
+                  <div className="text-xs">
+                    <span className="text-white/40 uppercase font-bold tracking-widest block text-[8px]">Quem ganha</span>
+                    <span className="font-bold text-white">Top {campaign.rewarded_positions.join(", ")}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="shrink-0 flex flex-col items-center justify-center p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm min-w-[160px]">
+              <div className="text-[10px] uppercase tracking-[0.2em] font-black text-[#ff6a00] mb-1">Sua Posição</div>
+              <div className="text-5xl font-black text-white mb-1 leading-none">
+                {ranking?.find(r => r.user_id === userStats?.user_id)?.global_rank || "—"}º
+              </div>
+              <div className="text-[10px] text-white/40 uppercase tracking-widest font-bold">no ranking geral</div>
+              
+              {ranking?.find(r => r.user_id === userStats?.user_id && campaign.rewarded_positions.includes(r.global_rank)) ? (
+                <div className="mt-4 text-[10px] font-bold text-green-500 flex items-center gap-1 bg-green-500/10 px-2 py-1 rounded">
+                  <Star size={10} fill="currentColor" /> Você está na zona de prêmio!
+                </div>
+              ) : (
+                <div className="mt-4 text-[10px] font-bold text-white/30 italic">Continue subindo!</div>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      ))}
 
       {/* User Stats Summary */}
       <div className="grid gap-4 sm:grid-cols-3">
