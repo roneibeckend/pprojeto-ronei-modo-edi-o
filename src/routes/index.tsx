@@ -78,7 +78,7 @@ export const Route = createFileRoute("/")({
   component: LandingPage,
   head: () => ({
     meta: [
-      { title: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
+      { title: "Ronnei na Veia — Do Zero aos 10k | eBook Ronnei" },
       {
         name: "description",
         content:
