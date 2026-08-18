@@ -86,6 +86,7 @@ export const saveContentCertificate = createServerFn({ method: "POST" })
       is_enabled: z.boolean(),
       custom_text: z.string().nullable().optional(),
       min_progress_percentage: z.number().min(0).max(100),
+      city_of_issue: z.string().optional(),
     }).parse(data);
     return parsed;
   })
