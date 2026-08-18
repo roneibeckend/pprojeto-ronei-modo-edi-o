@@ -137,7 +137,7 @@ function CertificatesPage() {
           <div className="text-sm font-bold text-white">Verificação pública</div>
           <div className="text-xs text-white/50">
             Cada certificado tem código único (ex.: EVNA-2026-XXXX) e pode ser validado em
-            <span className="ml-1 font-mono text-white/70">verifica.espetinhonaveia.com</span>
+            <span className="ml-1 font-mono text-white/70">verifica.ronneinaveia.com</span>
           </div>
         </div>
       </div>
