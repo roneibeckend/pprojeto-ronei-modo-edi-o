@@ -153,7 +153,11 @@ function LoginPage() {
 
       const msg = err?.message ?? "Falha ao autenticar";
       if (/invalid login credentials/i.test(msg)) {
-        toast.error("E-mail ou senha incorretos");
+        if (mode === "signup") {
+          toast.error("Erro ao criar conta", { description: "Por favor, verifique os dados informados." });
+        } else {
+          toast.error("E-mail ou senha incorretos");
+        }
       } else if (/already registered/i.test(msg) || /user already/i.test(msg)) {
         toast.error("E-mail já cadastrado", { description: "Faça login em vez de criar conta." });
         setMode("login");
