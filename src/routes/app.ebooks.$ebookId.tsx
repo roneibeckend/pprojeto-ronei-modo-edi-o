@@ -227,13 +227,13 @@ function EbookReaderPage() {
       
       const scrollToTop = () => {
         if (scrollContainer) {
-          scrollContainer.scrollTop = 0;
+          scrollContainer.scrollTo({ top: 0, behavior: 'instant' });
         }
-        window.scrollTo({ top: 0, behavior: 'auto' });
+        window.scrollTo({ top: 0, behavior: 'instant' });
         
         // Also use the anchor as a fallback/reinforcement
         if (chapterTopRef.current) {
-          chapterTopRef.current.scrollIntoView({ block: 'start', behavior: 'auto' });
+          chapterTopRef.current.scrollIntoView({ block: 'start', behavior: 'instant' });
         }
       };
 
