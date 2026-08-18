@@ -25,11 +25,6 @@ export const getContentCertificate = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
-    // Explicit check to prevent syntax errors even if Zod passes a non-uuid string somehow
-    if (!isUUID(data.contentId)) {
-      console.warn(`[getContentCertificate] ID "${data.contentId}" não é um UUID padrão. Continuando processamento.`);
-    }
-
     const { data: existing, error: fetchError } = await supabaseAdmin
       .from('content_certificates' as any)
       .select('*')
@@ -116,7 +111,7 @@ export const generateCertificateManually = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     student_id: z.string().uuid("ID do aluno inválido."),
-    content_id: z.string().uuid("ID do conteúdo inválido."),
+    content_id: z.string().min(1, "ID do conteúdo inválido."),
     content_type: z.enum(['course', 'ebook']),
     custom_data: z.record(z.any()).optional(),
     city_of_issue: z.string().optional(),
