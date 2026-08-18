@@ -47,7 +47,19 @@ export const getContentCertificate = createServerFn({ method: "GET" })
         .maybeSingle();
         
       if (!course) {
-        contentType = 'ebook';
+        const { data: ebook } = await supabaseAdmin
+          .from('ebooks' as any)
+          .select('id')
+          .eq('id', data.contentId)
+          .maybeSingle();
+          
+        if (ebook) {
+          contentType = 'ebook';
+        } else {
+          // If neither, we might be dealing with a new item or a fallback
+          // Default to 'course' as specified but maybe log a warning
+          console.warn(`Content ${data.contentId} not found in courses or ebooks, defaulting to 'course' for certificate initialization.`);
+        }
       }
       
       const { data: inserted, error: insertError } = await supabaseAdmin
