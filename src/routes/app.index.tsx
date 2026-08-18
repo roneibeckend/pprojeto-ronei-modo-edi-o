@@ -368,11 +368,11 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
         originalProductId={item.id}
       />
       <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"} flex flex-col h-full active:scale-[0.99] touch-action-manipulation`}>
-      <div className="relative aspect-video bg-muted/20 shrink-0">
+      <div className="relative aspect-video max-h-[220px] bg-muted/20 shrink-0 overflow-hidden">
         <img 
           src={item.cover_url || IMG.hero} 
           alt={item.title} 
-          className={`h-full w-full object-cover ${isLocked ? "blur-[1px] brightness-75" : ""}`} 
+          className={`h-full w-full object-contain sm:object-cover transition-transform duration-500 group-hover:scale-110 ${isLocked ? "blur-[1px] brightness-75" : ""}`} 
           loading="lazy"
           onError={(e) => {
             (e.target as HTMLImageElement).src = IMG.hero;
