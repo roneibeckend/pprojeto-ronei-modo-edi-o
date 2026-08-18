@@ -44,13 +44,18 @@ function ProfilePage() {
   const handleSave = async () => {
     if (!user) return;
     
+    if (!newPhone.trim()) {
+      toast.error("O número de telefone é obrigatório.");
+      return;
+    }
+    
     try {
       setIsSaving(true);
       
       const { error } = await supabase
         .from("profiles")
         .update({ 
-          phone: newPhone,
+          phone: newPhone.replace(/\D/g, ""), // Salvar apenas dígitos
           updated_at: new Date().toISOString()
         })
         .eq("id", user.id);
@@ -181,7 +186,7 @@ function ProfilePage() {
         
         if (profileData) {
           setProfile(profileData);
-          setNewPhone(profileData.phone || "");
+          setNewPhone(formatPhone(profileData.phone || ""));
         }
 
 

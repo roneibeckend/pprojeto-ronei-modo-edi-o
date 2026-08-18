@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Flame, Mail, Lock, ArrowRight, Loader2, User } from "lucide-react";
+import { Flame, Mail, Lock, ArrowRight, Loader2, User, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { IMG } from "@/lib/platform-data";
@@ -26,6 +26,7 @@ function LoginPage() {
   const [mode, setMode] = useState<Mode>("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -79,6 +80,15 @@ function LoginPage() {
     if (loading) return;
 
     if (mode === "signup") {
+      if (!name.trim()) {
+        toast.error("O nome completo é obrigatório.");
+        return;
+      }
+      if (!phone.trim()) {
+        toast.error("O número de telefone é obrigatório.");
+        return;
+      }
+      
       const validation = validatePassword(password);
       if (!validation.isValid) {
         toast.error("Senha inválida", { description: validation.message });
@@ -93,7 +103,10 @@ function LoginPage() {
           email,
           password,
           options: {
-            data: { name },
+            data: { 
+              name,
+              phone: phone.replace(/\D/g, "") // Enviar apenas dígitos
+            },
             emailRedirectTo: `${window.location.origin}/inicio`,
           },
         });
@@ -160,6 +173,19 @@ function LoginPage() {
 
   const isSignup = mode === "signup";
 
+  const formatPhone = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhone(e.target.value);
+    setPhone(formatted);
+  };
+
   return (
     <div className="grid min-h-dvh w-full lg:grid-cols-2 safe-top safe-bottom">
       <div className="relative hidden overflow-hidden lg:block">
@@ -219,20 +245,37 @@ function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {isSignup && (
-              <label className="block">
-                <span className="mb-1.5 block text-sm">Nome completo</span>
-                <div className="relative">
-                  <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-xl border border-white/10 bg-secondary/50 px-10 py-3 outline-none focus:border-primary"
-                    required
-                    autoComplete="name"
-                  />
-                </div>
-              </label>
+              <>
+                <label className="block">
+                  <span className="mb-1.5 block text-sm">Nome completo</span>
+                  <div className="relative">
+                    <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full rounded-xl border border-white/10 bg-secondary/50 px-10 py-3 outline-none focus:border-primary"
+                      required
+                      autoComplete="name"
+                    />
+                  </div>
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-sm">WhatsApp / Telefone</span>
+                  <div className="relative">
+                    <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={handlePhoneChange}
+                      placeholder="(00) 00000-0000"
+                      className="w-full rounded-xl border border-white/10 bg-secondary/50 px-10 py-3 outline-none focus:border-primary"
+                      required
+                    />
+                  </div>
+                </label>
+              </>
             )}
 
             <label className="block">
