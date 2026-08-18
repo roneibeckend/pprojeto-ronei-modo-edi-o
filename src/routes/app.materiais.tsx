@@ -134,7 +134,7 @@ function MaterialsPage() {
     <div>
       <PageHeader 
         title="Planilhas e materiais" 
-        subtitle="Materiais profissionais e funcionais para gestão completa do seu negócio de espetinhos." 
+        subtitle="Materiais profissionais e funcionais para gestão completa do seu negócio de churrasco." 
       />
       
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
