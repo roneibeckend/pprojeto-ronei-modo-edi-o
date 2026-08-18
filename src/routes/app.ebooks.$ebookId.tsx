@@ -52,7 +52,10 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
       .single();
 
 
-    if (error || !ebook) throw notFound();
+    if (error || !ebook) {
+      console.warn(`E-book with ID ${params.ebookId} not found or inactive.`);
+      throw notFound();
+    }
     return { ebook };
   },
   component: EbookReaderPage,
