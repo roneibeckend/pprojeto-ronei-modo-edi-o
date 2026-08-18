@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/admin/ranking")({
 const ORANGE = "#ff6a00";
 
 function AdminRankingConfig() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fetchSettings = useServerFn(getRankingSettings);
   const saveSettings = useServerFn(updateRankingSettings);
@@ -83,7 +84,12 @@ function AdminRankingConfig() {
           <p className="text-sm text-white/40 text-left">Configure o período do ranking e gerencie as campanhas de premiação.</p>
         </div>
         <button 
-          onClick={() => window.location.href = "/admin/ranking/campanhas"}
+        <Link 
+          to="/admin/ranking/campanhas"
+          className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors"
+        >
+          <Trophy className="h-4 w-4 text-[#ff6a00]" /> Campanhas e Premiações
+        </Link>
           className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors"
         >
           <Trophy className="h-4 w-4 text-[#ff6a00]" /> Campanhas e Premiações
