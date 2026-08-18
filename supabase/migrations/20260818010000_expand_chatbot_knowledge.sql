@@ -1,0 +1,5 @@
+-- Expansão da base de conhecimento do chatbot
+INSERT INTO public.knowledge_base (title, content, category, questions, keywords, status) VALUES 
+('Garantia e Reembolso', 'Oferecemos 7 dias de garantia incondicional. Se não gostar do conteúdo, você pode solicitar o reembolso total dentro desse prazo diretamente na plataforma ou via suporte.', 'SUPORTE', ARRAY['como peco reembolso?', 'tem garantia?', 'quero meu dinheiro de volta', 'cancelar compra'], ARRAY['reembolso', 'garantia', 'dinheiro', 'devolução', 'cancelar'], 'active'),
+('Métodos de Pagamento', 'Aceitamos cartões de crédito (parcelamento em até 12x), Pix e boleto bancário via Asaas.', 'SUPORTE', ARRAY['quais as formas de pagamento?', 'aceita pix?', 'posso parcelar?', 'aceita boleto?'], ARRAY['pix', 'cartao', 'parcelado', 'boleto', 'pagamento'], 'active'),
+('Espetinho de Carne', 'O melhor corte para espetinho é a alcatra ou contrafilé. Tempere com sal grosso, alho e um toque de azeite. Veja o passo a passo completo no Módulo 2 do eBook.', 'CURSOS', ARRAY['como fazer espetinho de carne?', 'qual melhor carne?', 'tempero para carne'], ARRAY['carne', 'alcatra', 'contrafile', 'preparo', 'tempero'], 'active');

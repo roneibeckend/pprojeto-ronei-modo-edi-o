@@ -123,12 +123,16 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
     }
 
     // 4. Fallback: Gravar pergunta não respondida
-    await context.supabase.from("unhandled_questions").insert({
-      question: message,
-      confidence,
-      context: requestContext || {},
-      status: 'pending'
-    });
+    try {
+      await context.supabase.from("unhandled_questions").insert({
+        question: message,
+        confidence,
+        context: requestContext || {},
+        status: 'pending'
+      });
+    } catch (dbError) {
+      console.error("Erro ao registrar pergunta não respondida:", dbError);
+    }
 
     return {
       answer: "Ainda estou aprendendo sobre isso e não tenho uma resposta exata agora. Mas não se preocupe! Você pode abrir um chamado na aba 'Meus Chamados' ou tentar perguntar com outras palavras.",
