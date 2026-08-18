@@ -86,6 +86,7 @@ export const saveContentCertificate = createServerFn({ method: "POST" })
       is_enabled: z.boolean(),
       custom_text: z.string().nullable().optional(),
       min_progress_percentage: z.number().min(0).max(100),
+      city_of_issue: z.string().optional(),
     }).parse(data);
     return parsed;
   })
@@ -118,6 +119,7 @@ export const generateCertificateManually = createServerFn({ method: "POST" })
     content_id: z.string().uuid("ID do conteúdo inválido."),
     content_type: z.enum(['course', 'ebook']),
     custom_data: z.record(z.any()).optional(),
+    city_of_issue: z.string().optional(),
   }).parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
@@ -133,6 +135,7 @@ export const generateCertificateManually = createServerFn({ method: "POST" })
         content_type: data.content_type,
         certificate_code: certificateCode,
         custom_data: data.custom_data || {},
+        city_of_issue: data.city_of_issue || 'Goiânia - Goiás',
       } as any)
       .select()
       .single();
