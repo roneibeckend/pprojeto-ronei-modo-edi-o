@@ -75,7 +75,7 @@ export function useNotifications() {
       );
 
       if (error) throw error;
-      queryClient.invalidateQueries({ queryKey: ["user_notifications", user?.id || "anonymous"] });
+      await queryClient.invalidateQueries({ queryKey: ["user_notifications", user?.id || "anonymous"] });
     } catch (error) {
       console.error("Erro ao marcar como lida:", error);
     }

@@ -78,7 +78,7 @@ function NotificationsPage() {
                     ? "bg-white/[0.02] border-white/5 opacity-60" 
                     : "bg-white/5 border-white/10 hover:bg-white/[0.07]"
                 }`}
-                onClick={() => markAsRead(notification.id)}
+                onClick={(e) => markAsRead(notification.id, e)}
               >
                 <div className="flex gap-4">
                   <div className={`h-12 w-12 shrink-0 rounded-xl bg-black/40 border border-white/5 flex items-center justify-center ${colorClass}`}>
