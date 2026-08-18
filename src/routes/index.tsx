@@ -692,7 +692,7 @@ function Nav() {
             className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_12px_oklch(0.72_0.20_50/0.55)]"
           />
           <span className="truncate font-display text-base tracking-wide sm:text-xl">
-            ESPETINHO <span className="text-gradient-fire">NA VEIA</span>
+            RONNEI <span className="text-gradient-fire">NA VEIA</span>
           </span>
         </a>
         <nav className="hidden gap-6 text-sm text-muted-foreground lg:flex xl:gap-8">
