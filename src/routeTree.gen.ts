@@ -38,6 +38,7 @@ import { Route as AdminReceitasRouteImport } from './routes/admin.receitas'
 import { Route as AdminRankingRouteImport } from './routes/admin.ranking'
 import { Route as AdminNotificacoesRouteImport } from './routes/admin.notificacoes'
 import { Route as AdminMateriaisRouteImport } from './routes/admin.materiais'
+import { Route as AdminLogsRouteImport } from './routes/admin.logs'
 import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
 import { Route as AdminFinanceiroRouteImport } from './routes/admin.financeiro'
 import { Route as AdminFeedbacksRouteImport } from './routes/admin.feedbacks'
@@ -208,6 +209,11 @@ const AdminMateriaisRoute = AdminMateriaisRouteImport.update({
   path: '/materiais',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLogsRoute = AdminLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminIntegracoesRoute = AdminIntegracoesRouteImport.update({
   id: '/integracoes',
   path: '/integracoes',
@@ -349,6 +355,7 @@ export interface FileRoutesByFullPath {
   '/admin/feedbacks': typeof AdminFeedbacksRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/integracoes': typeof AdminIntegracoesRoute
+  '/admin/logs': typeof AdminLogsRoute
   '/admin/materiais': typeof AdminMateriaisRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
   '/admin/ranking': typeof AdminRankingRoute
@@ -402,6 +409,7 @@ export interface FileRoutesByTo {
   '/admin/feedbacks': typeof AdminFeedbacksRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/integracoes': typeof AdminIntegracoesRoute
+  '/admin/logs': typeof AdminLogsRoute
   '/admin/materiais': typeof AdminMateriaisRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
   '/admin/ranking': typeof AdminRankingRoute
@@ -456,6 +464,7 @@ export interface FileRoutesById {
   '/admin/feedbacks': typeof AdminFeedbacksRoute
   '/admin/financeiro': typeof AdminFinanceiroRouteWithChildren
   '/admin/integracoes': typeof AdminIntegracoesRoute
+  '/admin/logs': typeof AdminLogsRoute
   '/admin/materiais': typeof AdminMateriaisRoute
   '/admin/notificacoes': typeof AdminNotificacoesRoute
   '/admin/ranking': typeof AdminRankingRoute
@@ -513,6 +522,7 @@ export interface FileRouteTypes {
     | '/admin/feedbacks'
     | '/admin/financeiro'
     | '/admin/integracoes'
+    | '/admin/logs'
     | '/admin/materiais'
     | '/admin/notificacoes'
     | '/admin/ranking'
@@ -566,6 +576,7 @@ export interface FileRouteTypes {
     | '/admin/feedbacks'
     | '/admin/financeiro'
     | '/admin/integracoes'
+    | '/admin/logs'
     | '/admin/materiais'
     | '/admin/notificacoes'
     | '/admin/ranking'
@@ -619,6 +630,7 @@ export interface FileRouteTypes {
     | '/admin/feedbacks'
     | '/admin/financeiro'
     | '/admin/integracoes'
+    | '/admin/logs'
     | '/admin/materiais'
     | '/admin/notificacoes'
     | '/admin/ranking'
@@ -876,6 +888,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMateriaisRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/logs': {
+      id: '/admin/logs'
+      path: '/logs'
+      fullPath: '/admin/logs'
+      preLoaderRoute: typeof AdminLogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/integracoes': {
       id: '/admin/integracoes'
       path: '/integracoes'
@@ -1081,6 +1100,7 @@ interface AdminRouteChildren {
   AdminFeedbacksRoute: typeof AdminFeedbacksRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRouteWithChildren
   AdminIntegracoesRoute: typeof AdminIntegracoesRoute
+  AdminLogsRoute: typeof AdminLogsRoute
   AdminMateriaisRoute: typeof AdminMateriaisRoute
   AdminNotificacoesRoute: typeof AdminNotificacoesRoute
   AdminRankingRoute: typeof AdminRankingRoute
@@ -1101,6 +1121,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFeedbacksRoute: AdminFeedbacksRoute,
   AdminFinanceiroRoute: AdminFinanceiroRouteWithChildren,
   AdminIntegracoesRoute: AdminIntegracoesRoute,
+  AdminLogsRoute: AdminLogsRoute,
   AdminMateriaisRoute: AdminMateriaisRoute,
   AdminNotificacoesRoute: AdminNotificacoesRoute,
   AdminRankingRoute: AdminRankingRoute,
