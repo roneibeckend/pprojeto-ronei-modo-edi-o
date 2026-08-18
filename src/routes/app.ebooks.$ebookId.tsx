@@ -1,17 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X, Play, ArrowDown, Award } from "lucide-react";
-import { lazy, Suspense } from "react";
-const VideoPlayer = lazy(() => 
-  import("@/components/platform/VideoPlayer")
-    .then(m => ({ default: m.VideoPlayer }))
-    .catch(err => {
-      console.error("Failed to load VideoPlayer chunk in ebook, reloading...", err);
-      if (typeof window !== 'undefined') window.location.reload();
-      return { default: () => <div className="aspect-[9/16] bg-white/5 animate-pulse rounded-3xl" /> };
-    })
-);
-
+import { VideoPlayer } from "@/components/platform/VideoPlayer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/platform/Shell";
 import { useQuery } from "@tanstack/react-query";
@@ -122,8 +112,7 @@ function EbookReaderPage() {
 
 
 
-  // Opening video removed from auto-trigger to optimize UX
-  /*
+  // Restaura o trigger automático para vídeos de intro
   useEffect(() => {
     if (ebook?.opening_video_url) {
       const hasSeen = localStorage.getItem(`ebook_opening_${ebook.id}`);
@@ -132,7 +121,6 @@ function EbookReaderPage() {
       }
     }
   }, [ebook.id, ebook.opening_video_url]);
-  */
 
   const markVideoAsSeen = () => {
     setShowOpeningVideo(false);
@@ -493,15 +481,13 @@ function EbookReaderPage() {
                 {introNeedsSigning && !signedIntroUrl ? (
                   <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>
                 ) : (
-                  <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
-                    <VideoPlayer
-                      key={signedIntroUrl || ebook.opening_video_url}
-                      videoId={`intro-${ebook.id}`}
-                      src={signedIntroUrl || ebook.opening_video_url}
-                      isIntro={true}
-                      className="w-full h-full"
-                    />
-                  </Suspense>
+                  <VideoPlayer
+                    key={signedIntroUrl || ebook.opening_video_url}
+                    videoId={`intro-${ebook.id}`}
+                    src={signedIntroUrl || ebook.opening_video_url}
+                    isIntro={true}
+                    className="w-full h-full"
+                  />
                 )}
               </div>
 
@@ -556,13 +542,11 @@ function EbookReaderPage() {
                       ) : (isLoadingSignedChapter || !signedChapterUrl) ? (
                         <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>
                       ) : (
-                        <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>}>
-                          <VideoPlayer
-                            videoId={`chapter-${activeChapter.id}`}
-                            src={signedChapterUrl}
-                            className="w-full h-full"
-                          />
-                        </Suspense>
+                        <VideoPlayer
+                          videoId={`chapter-${activeChapter.id}`}
+                          src={signedChapterUrl}
+                          className="w-full h-full"
+                        />
                       )}
 
                       <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-none sm:rounded-2xl"></div>
@@ -599,7 +583,15 @@ function EbookReaderPage() {
                       dangerouslySetInnerHTML={{ __html: activeChapter.content }} 
                     />
                   ) : (
-                    <p className="italic opacity-50 text-center py-20">Este capítulo ainda não possui conteúdo cadastrado.</p>
+                    <div className="flex flex-col items-center justify-center py-20 opacity-50">
+                      <p className="italic text-center mb-4">Este capítulo ainda não possui conteúdo cadastrado.</p>
+                      <button 
+                        onClick={() => window.location.reload()}
+                        className="text-xs underline hover:text-fire transition-colors"
+                      >
+                        Recarregar página
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
