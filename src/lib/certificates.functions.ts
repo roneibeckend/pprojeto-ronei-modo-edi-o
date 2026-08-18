@@ -10,8 +10,8 @@ async function assertAdmin(context: any) {
   if (error || !isAdmin) throw new Error("Acesso negado: permissão de administrador necessária.");
 }
 
-// Utility to validate UUID format
-const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+// ID validation - accepting UUID or slug-like strings
+const isValidId = (str: string) => /^[a-z0-9-]+$/i.test(str);
 
 export const getContentCertificate = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
