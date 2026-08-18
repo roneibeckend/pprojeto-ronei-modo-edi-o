@@ -19,7 +19,7 @@ import { PostPurchaseOffer } from "@/components/platform/PostPurchaseOffer";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 
 export const Route = createFileRoute("/app/cursos/")({
-  head: () => ({ meta: [{ title: "Meus cursos — Espetinho na Veia" }] }),
+  head: () => ({ meta: [{ title: "Meus cursos — Ronnei na Veia" }] }),
   component: CoursesPage,
 });
 
