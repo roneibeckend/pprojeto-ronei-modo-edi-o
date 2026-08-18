@@ -103,7 +103,10 @@ function LoginPage() {
           email,
           password,
           options: {
-            data: { name },
+            data: { 
+              name,
+              phone: phone.replace(/\D/g, "") // Enviar apenas dígitos
+            },
             emailRedirectTo: `${window.location.origin}/inicio`,
           },
         });
