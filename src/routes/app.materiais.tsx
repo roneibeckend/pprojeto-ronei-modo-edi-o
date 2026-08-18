@@ -13,7 +13,7 @@ import { getMaterialDownloadUrl } from "@/lib/materials.functions";
 
 
 export const Route = createFileRoute("/app/materiais")({
-  head: () => ({ meta: [{ title: "Planilhas e materiais — Espetinho na Veia" }] }),
+  head: () => ({ meta: [{ title: "Planilhas e materiais — Ronnei na Veia" }] }),
   component: MaterialsPage,
 });
 
