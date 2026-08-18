@@ -1931,6 +1931,50 @@ export type Database = {
           },
         ]
       }
+      system_logs: {
+        Row: {
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: string | null
+          level: string
+          message: string
+          source: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          level: string
+          message: string
+          source: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          level?: string
+          message?: string
+          source?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "system_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       unhandled_questions: {
         Row: {
           confidence: number | null
@@ -2185,6 +2229,15 @@ export type Database = {
       increment_partner_withdrawn: {
         Args: { p_amount: number; p_user_id: string }
         Returns: undefined
+      }
+      log_system_event: {
+        Args: {
+          _details?: Json
+          _level: string
+          _message: string
+          _source: string
+        }
+        Returns: string
       }
       save_assistant_response: {
         Args: { p_content: string; p_ticket_id: string }
