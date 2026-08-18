@@ -1499,6 +1499,7 @@ export type Database = {
         Row: {
           balance: number
           id: string
+          total_earned: number | null
           total_withdrawn: number
           updated_at: string
           user_id: string
@@ -1506,6 +1507,7 @@ export type Database = {
         Insert: {
           balance?: number
           id?: string
+          total_earned?: number | null
           total_withdrawn?: number
           updated_at?: string
           user_id: string
@@ -1513,6 +1515,7 @@ export type Database = {
         Update: {
           balance?: number
           id?: string
+          total_earned?: number | null
           total_withdrawn?: number
           updated_at?: string
           user_id?: string
