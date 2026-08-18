@@ -116,7 +116,7 @@ export const Route = createFileRoute("/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
-          name: "Espetinho na Veia — Do Zero aos 10k",
+          name: "Ronnei na Veia — Do Zero aos 10k",
           description:
             "eBook com 7 Módulos e 27 Capítulos + 4 bônus exclusivos para montar, temperar, precificar e vender espetinhos com alto lucro.",
           image: [OG_IMAGE],
