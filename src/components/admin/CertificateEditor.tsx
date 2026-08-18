@@ -173,6 +173,20 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
     </div>
   );
 
+  if (!config) return (
+    <div className="flex flex-col items-center justify-center py-12 text-center text-white/40">
+      <Settings2 className="h-12 w-12 mb-4 opacity-20" />
+      <p className="text-sm font-bold uppercase tracking-widest">Configuração não encontrada</p>
+      <p className="text-xs mt-2">Salve as informações básicas do e-book/curso primeiro ou tente recarregar.</p>
+      <button 
+        onClick={fetchData}
+        className="mt-4 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs transition-colors"
+      >
+        Tentar Novamente
+      </button>
+    </div>
+  );
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500 text-left">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
