@@ -1973,7 +1973,7 @@ function Footer() {
               loading="lazy"
               className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_12px_oklch(0.72_0.20_50/0.55)]"
             />
-            <span className="font-display text-xl">ESPETINHO <span className="text-gradient-fire">NA VEIA</span></span>
+            <span className="font-display text-xl uppercase tracking-tighter italic">RONNEI <span className="text-gradient-fire">NA VEIA</span></span>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
             O método completo do <strong className="text-foreground">Ronnei</strong> para sair do zero, montar sua barraca e faturar com espetinho — mesmo sem experiência, sem capital alto e sem depender de sorte.
