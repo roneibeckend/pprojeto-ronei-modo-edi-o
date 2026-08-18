@@ -109,10 +109,14 @@ export function useNotifications() {
     isLoading,
     markAsRead,
     markAllAsRead: async () => {
-      if (!user || notifications.length === 0) return;
+      if (!user) return;
+      const unreadNotifications = notifications.filter(
+        (n) => !userNotifications.some((un) => un.notification_id === n.id && un.read_at)
+      );
+      if (unreadNotifications.length === 0) return;
       
       try {
-        const rows = notifications.map(n => ({
+        const rows = unreadNotifications.map(n => ({
           user_id: user.id,
           notification_id: n.id,
           read_at: new Date().toISOString(),
