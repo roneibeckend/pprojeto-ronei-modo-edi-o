@@ -9,9 +9,14 @@ import {
   Calendar,
   Filter,
   Download,
-  Loader2
+  Loader2,
+  CalendarDays
 } from "lucide-react";
 import { useState } from "react";
+import { DatePickerWithRange } from "@/components/ui/date-picker-range";
+import { DateRange } from "react-day-picker";
+import { startOfDay, endOfDay, subDays } from "date-fns";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app/afiliados/financeiro")({
   component: AffiliateFinancialPage,
