@@ -1,39 +1,36 @@
-# Plano de Branding: Ronnei na Veia
+# Plano: Tornar Número de Telefone Obrigatório no Cadastro
 
-Este plano detalha a transição completa da identidade visual e textual de "Espetinho na Veia" para "Ronnei na Veia", garantindo consistência em toda a plataforma (PWA, SEO, Dashboards e Conteúdo).
+Este plano descreve as alterações necessárias para tornar o campo de telefone (WhatsApp) obrigatório durante o registro de novos usuários na plataforma **Ronnei na Veia**.
 
-## Alterações Realizadas
+## Alterações Propostas
 
-### 1. Identidade do Aplicativo (PWA & Metadados)
-- [x] **Manifesto PWA:** Atualizado `public/manifest.json` com `name` e `short_name` para "Ronnei na Veia".
-- [x] **Metadados Globais:** Atualizado `src/routes/__root.tsx` (Title e Apple Mobile Web App Title).
-- [x] **SEO Landing Page:** Atualizado `src/routes/index.tsx` (Title, OG tags, Schema JSON-LD).
+### Frontend
 
-### 2. Branding da Interface (UI)
-- [x] **Sidebar & Header:** Atualizado `src/components/platform/Shell.tsx` para exibir "Ronnei na Veia" no topo e no menu lateral.
-- [x] **Footer:** Atualizado rodapé da landing page (`src/routes/index.tsx`) com o novo copyright e logo.
+#### 1. Rota de Login (`src/routes/login.tsx`)
+- Adicionar um novo estado `phone` para armazenar o número de telefone no modo de cadastro.
+- Implementar uma função de formatação para o campo de telefone (máscara: `(XX) XXXXX-XXXX`).
+- Incluir o campo de entrada visual para o telefone no formulário de cadastro, logo após o campo de nome.
+- Atualizar a lógica de submissão (`handleSubmit`) para validar se o telefone foi preenchido.
+- Enviar o telefone nos metadados do usuário (`options.data`) durante a chamada `supabase.auth.signUp`.
 
-### 3. Títulos de Rotas da Área do Aluno
-- [x] **Visão Geral:** `src/routes/app.index.tsx`
-- [x] **Meus Cursos:** `src/routes/app.cursos.index.tsx`
-- [x] **Meu Perfil:** `src/routes/app.perfil.tsx`
-- [x] **Suporte:** `src/routes/app.suporte.tsx`
-- [x] **Certificados:** `src/routes/app.certificados.tsx`
-- [x] **Receitas:** `src/routes/app.receitas.tsx`
-- [x] **Planilhas/Materiais:** `src/routes/app.materiais.tsx`
-- [x] **Ranking:** `src/routes/app.progresso.tsx`
+#### 2. Página de Perfil (`src/routes/app.perfil.tsx`)
+- Garantir que a validação de obrigatoriedade também seja refletida na edição de perfil, se necessário, embora o foco principal seja o cadastro.
 
-### 4. Conteúdo Específico e Certificados
-- [x] **Certificados:** Atualizado logo interno, rodapé de verificação e títulos em `src/routes/app.certificados.tsx`.
-- [x] **Curso Individual:** Atualizado título de SEO e equipe em `src/routes/app.cursos.$courseId.tsx`.
-- [x] **E-book Individual:** Atualizado título de SEO em `src/routes/app.ebooks.$ebookId.tsx`.
-- [x] **Materiais:** Ajustado subtítulo para remover menção a "espetinhos" genéricos em favor de "churrasco" (alinhado ao branding de Ronnei).
+### Backend (Banco de Dados)
 
-## Próximos Passos Sugeridos
-1. **Ativos Visuais:** Recomenda-se que o usuário faça o upload do novo logo oficial em `public/logo.png` e ícones PWA para substituir os placeholders.
-2. **Domínio:** Caso deseje, configurar o domínio customizado `ronneinaveia.com` no painel de publicação para total alinhamento.
+#### 1. Migração SQL
+- Embora o Supabase Auth armazene metadados de forma flexível, a tabela `public.profiles` já possui uma coluna `phone`.
+- O gatilho `handle_new_user` (ou similar) deve ser verificado para garantir que ele mapeia o campo `phone` dos metadados do Auth para a tabela de perfis.
+- Adicionar uma restrição `CHECK` ou `NOT NULL` na coluna `phone` da tabela `profiles` para garantir a integridade dos dados no nível do banco de dados para novos registros.
 
 ## Detalhes Técnicos
-- A mudança foi realizada principalmente via substituição de strings em componentes de SEO e Layout.
-- O nome exibido abaixo do ícone no celular (PWA) agora é estritamente "Ronnei na Veia".
-- A persistência do branding no PWA depende do cache do navegador, podendo exigir uma nova instalação ou recarregamento forçado.
+
+- **Componente de Input:** Utilizaremos o componente `Phone` da biblioteca `lucide-react` como ícone.
+- **Validação:** A validação no frontend impedirá o envio se o campo estiver vazio ou com formato incompleto.
+- **Experiência do Usuário:** O erro será exibido via `toast.error("Número de telefone é obrigatório")`.
+
+## Próximos Passos
+
+1. Criar a migração para garantir que a coluna `phone` seja obrigatória para novos perfis.
+2. Modificar o arquivo `src/routes/login.tsx` para incluir o campo e a validação.
+3. Testar o fluxo de cadastro para confirmar que o bloqueio funciona conforme esperado.
