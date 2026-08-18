@@ -80,6 +80,15 @@ function LoginPage() {
     if (loading) return;
 
     if (mode === "signup") {
+      if (!name.trim()) {
+        toast.error("O nome completo é obrigatório.");
+        return;
+      }
+      if (!phone.trim()) {
+        toast.error("O número de telefone é obrigatório.");
+        return;
+      }
+      
       const validation = validatePassword(password);
       if (!validation.isValid) {
         toast.error("Senha inválida", { description: validation.message });
