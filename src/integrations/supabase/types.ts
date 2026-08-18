@@ -333,6 +333,41 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_winners: {
+        Row: {
+          campaign_id: string | null
+          created_at: string | null
+          id: string
+          points_at_time: number
+          position: number
+          user_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string | null
+          id?: string
+          points_at_time: number
+          position: number
+          user_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string | null
+          id?: string
+          points_at_time?: number
+          position?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_winners_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "ranking_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       certificate_templates: {
         Row: {
           background_url: string | null
@@ -1723,6 +1758,45 @@ export type Database = {
         }
         Relationships: []
       }
+      ranking_campaigns: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          end_date: string
+          id: string
+          is_active: boolean | null
+          name: string
+          prize_description: string
+          rewarded_positions: number[]
+          start_date: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          end_date: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          prize_description: string
+          rewarded_positions: number[]
+          start_date: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          end_date?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          prize_description?: string
+          rewarded_positions?: number[]
+          start_date?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       recipes: {
         Row: {
           category: string | null
@@ -2233,6 +2307,10 @@ export type Database = {
       }
       distribute_partner_profits: {
         Args: { p_amount: number; p_partner_id: string }
+        Returns: undefined
+      }
+      finish_ranking_campaign: {
+        Args: { _campaign_id: string }
         Returns: undefined
       }
       get_student_ranking: {

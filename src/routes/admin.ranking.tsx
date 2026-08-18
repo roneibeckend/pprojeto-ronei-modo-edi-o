@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -77,9 +77,17 @@ function AdminRankingConfig() {
 
   return (
     <div className="space-y-8 pb-10 max-w-4xl">
-      <div>
-        <h2 className="text-xl font-bold">Filtro de Período do Ranking</h2>
-        <p className="text-sm text-white/40 text-left">Configure o período que será exibido para todos os alunos na plataforma.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold">Gerenciamento de Ranking</h2>
+          <p className="text-sm text-white/40 text-left">Configure o período do ranking e gerencie as campanhas de premiação.</p>
+        </div>
+        <Link 
+          to="/admin/ranking/campanhas"
+          className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors"
+        >
+          <Trophy className="h-4 w-4 text-[#ff6a00]" /> Campanhas e Premiações
+        </Link>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
