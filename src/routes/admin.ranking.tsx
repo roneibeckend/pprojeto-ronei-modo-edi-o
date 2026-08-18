@@ -83,7 +83,7 @@ function AdminRankingConfig() {
           <p className="text-sm text-white/40 text-left">Configure o período do ranking e gerencie as campanhas de premiação.</p>
         </div>
         <button 
-          onClick={() => queryClient.getQueryCache().find({ queryKey: ['admin-campaigns'] }) ? navigate({ to: "/admin/ranking/campanhas" }) : (window.location.href = "/admin/ranking/campanhas")}
+          onClick={() => window.location.href = "/admin/ranking/campanhas"}
           className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors"
         >
           <Trophy className="h-4 w-4 text-[#ff6a00]" /> Campanhas e Premiações
