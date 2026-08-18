@@ -407,7 +407,7 @@ function FullCertificate({ cert }: { cert: any }) {
                   <Flame className="h-7 w-7" strokeWidth={2.5} />
                 </div>
               </div>
-              <div className="mt-3 text-[10px] font-bold uppercase tracking-[0.35em] text-[#ff6a00]">Espetinho na Veia · Academia</div>
+              <div className="mt-3 text-[10px] font-bold uppercase tracking-[0.35em] text-[#ff6a00]">Ronnei na Veia · Academia</div>
               <h1 className="mt-5 font-display text-4xl font-black uppercase tracking-wide sm:text-5xl">Certificado</h1>
               <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.4em] text-black/60">de Conclusão</div>
               <div className="mt-4 h-[2px] w-24 bg-[#ff6a00]" />
@@ -421,7 +421,7 @@ function FullCertificate({ cert }: { cert: any }) {
               <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-black/75 sm:text-base">
                 concluiu com aproveitamento integral o curso
                 <span className="mx-1.5 font-bold text-black">"{cert.course}"</span>
-                oferecido pela plataforma <span className="font-bold">Espetinho na Veia</span>, cumprindo
+                oferecido pela plataforma <span className="font-bold">Ronnei na Veia</span>, cumprindo
                 a carga horária de <span className="font-bold">{cert.hours} horas</span> e demonstrando
                 competência prática em produção, precificação e vendas.
               </p>
@@ -433,7 +433,7 @@ function FullCertificate({ cert }: { cert: any }) {
                 <div className="mx-auto font-[cursive] text-2xl italic text-black/90">Ronnei</div>
                 <div className="mx-auto mt-1 h-px w-48 bg-black/50" />
                 <div className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-black/60">Ronnei — Fundador</div>
-                <div className="text-[10px] text-black/40">Espetos Grill · Espetinho na Veia</div>
+                <div className="text-[10px] text-black/40">Espetos Grill · Ronnei na Veia</div>
               </div>
 
               {/* Wax seal */}
@@ -454,7 +454,7 @@ function FullCertificate({ cert }: { cert: any }) {
                 <div className="font-display text-lg font-bold text-black">{cert.completedAt}</div>
                 <div className="mx-auto mt-1 h-px w-48 bg-black/50" />
                 <div className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-black/60">Data de emissão</div>
-                <div className="text-[10px] text-black/40">São Paulo · Brasil</div>
+                <div className="text-[10px] text-black/40">{cert.city_of_issue || 'Goiânia · Goiás'}</div>
               </div>
             </div>
 
@@ -484,7 +484,7 @@ function FullCertificate({ cert }: { cert: any }) {
 
       {/* Micro-text security border */}
       <div className="border-t border-black/10 bg-[#efe7d6] px-6 py-2 font-mono text-[7px] uppercase tracking-[0.32em] text-black/40">
-        espetinho na veia · documento oficial · válido em todo território nacional · verificação online · espetinho na veia · documento oficial · válido em todo território nacional
+        ronnei na veia · documento oficial · válido em todo território nacional · verificação online · ronnei na veia · documento oficial · válido em todo território nacional
       </div>
     </div>
   );
