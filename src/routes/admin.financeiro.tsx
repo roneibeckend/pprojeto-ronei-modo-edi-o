@@ -383,23 +383,31 @@ function FinancePage() {
                 <div className="flex-1 min-w-0">
                   <input
                     value={c.label}
+                    readOnly={c.label.toLowerCase().includes("gateway")}
                     onChange={(e) => updateCost(c.id, { label: e.target.value })}
-                    className="w-full bg-transparent px-2 py-1 text-sm font-medium text-white/80 outline-none focus:text-white"
+                    className={`w-full bg-transparent px-2 py-1 text-sm font-medium text-white/80 outline-none focus:text-white ${c.label.toLowerCase().includes("gateway") ? 'opacity-60 cursor-not-allowed' : ''}`}
                     placeholder="Descrição do custo"
                   />
                 </div>
-                <div className="relative w-28">
+                <div className="relative w-28 group">
                   <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-white/20">R$</span>
                   <input
                     type="number"
                     value={c.value}
+                    readOnly={c.label.toLowerCase().includes("gateway")}
                     onChange={(e) => updateCost(c.id, { value: parseFloat(e.target.value) || 0 })}
-                    className="w-full rounded-sm bg-black/60 pl-6 pr-2 py-1 text-right text-sm text-white outline-none focus:bg-black text-[16px]"
+                    className={`w-full rounded-sm bg-black/60 pl-6 pr-2 py-1 text-right text-sm text-white outline-none focus:bg-black text-[16px] ${c.label.toLowerCase().includes("gateway") ? 'text-orange-400 cursor-not-allowed' : ''}`}
                   />
+                  {c.label.toLowerCase().includes("gateway") && (
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 rounded-sm">
+                      <span className="text-[7px] text-white/60 uppercase font-black">Auto Asaas</span>
+                    </div>
+                  )}
                 </div>
                 <button
                   onClick={() => removeCost(c.id)}
-                  className="p-1 text-white/20 transition hover:text-red-400"
+                  disabled={c.label.toLowerCase().includes("gateway")}
+                  className="p-1 text-white/20 transition hover:text-red-400 disabled:opacity-0 disabled:pointer-events-none"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
