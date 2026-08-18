@@ -89,7 +89,7 @@ export const Route = createFileRoute("/")({
       { name: "robots", content: "index, follow, max-image-preview:large" },
       { property: "og:type", content: "product" },
       { property: "og:url", content: `${SITE_URL}/` },
-      { property: "og:title", content: "Espetinho na Veia — Do Zero aos 10k | eBook Ronnei" },
+      { property: "og:title", content: "Ronnei na Veia — Do Zero aos 10k | eBook Ronnei" },
       {
         property: "og:description",
         content:
