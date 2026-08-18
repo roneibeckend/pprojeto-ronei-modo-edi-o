@@ -2039,7 +2039,7 @@ function Footer() {
         <p className="mb-2 opacity-80">
           Suporte de segunda a sexta, das 9h às 18h.
         </p>
-        <p>© {new Date().getFullYear()} Espetinho na Veia. Todos os direitos reservados. Este produto não garante retornos financeiros — os resultados dependem da aplicação do método.</p>
+        <p>© {new Date().getFullYear()} Ronnei na Veia. Todos os direitos reservados. Este produto não garante retornos financeiros — os resultados dependem da aplicação do método.</p>
       </div>
     </footer>
   );
