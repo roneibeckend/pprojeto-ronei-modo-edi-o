@@ -151,10 +151,12 @@ function LoginPage() {
       }
     } catch (err: any) {
 
-      const msg = err?.message ?? "Falha ao autenticar";
+      const msg = err?.message ?? "Falha ao processar solicitação";
+      console.error("[Auth Error]", { mode, msg, err });
+      
       if (/invalid login credentials/i.test(msg)) {
         if (mode === "signup") {
-          toast.error("Erro ao criar conta", { description: "Por favor, verifique os dados informados." });
+          toast.error("Erro ao criar conta", { description: "Por favor, verifique os dados informados ou tente outro e-mail." });
         } else {
           toast.error("E-mail ou senha incorretos");
         }
@@ -165,10 +167,13 @@ function LoginPage() {
         toast.error("Problema com a senha", { 
           description: msg.includes("weak") 
             ? "Sua senha é muito fraca. Tente misturar letras e números." 
-            : msg 
+            : "Senha inválida. Certifique-se de que ela atende aos requisitos."
         });
+      } else if (/rate limit/i.test(msg) || /too many requests/i.test(msg)) {
+        toast.error("Muitas tentativas", { description: "Aguarde alguns instantes e tente novamente." });
       } else {
-        toast.error("Não foi possível continuar", { description: msg });
+        const contextMsg = mode === "signup" ? "Erro no cadastro" : "Erro no login";
+        toast.error(contextMsg, { description: msg });
       }
     } finally {
       setLoading(false);
