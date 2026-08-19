@@ -399,7 +399,6 @@ export function VideoPlayer({
         }}
         onError={(e) => {
           setIsLoading(false);
-          setIsPlaying(true); // Don't block the UI if it's just a temporary error
           const video = videoRef.current;
           if (video?.error) {
             console.error('Video error code:', video.error.code, 'message:', video.error.message);
