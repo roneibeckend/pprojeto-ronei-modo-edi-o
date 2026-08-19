@@ -593,12 +593,13 @@ function EbookReaderPage() {
                         <iframe
                           key={activeChapter.video_url}
                           src={activeChapter.video_url.includes('youtube.com') || activeChapter.video_url.includes('youtu.be')
-                            ? (activeChapter.video_url.includes('watch?v=') ? activeChapter.video_url.replace('watch?v=', 'embed/').split('&')[0] : `https://www.youtube.com/embed/${activeChapter.video_url.split('youtu.be/')[1].split('?')[0]}`)
+                            ? (activeChapter.video_url.includes('watch?v=') ? `${activeChapter.video_url.replace('watch?v=', 'embed/').split('&')[0]}?autoplay=1&mute=1&playsinline=1` : `https://www.youtube.com/embed/${activeChapter.video_url.split('youtu.be/')[1].split('?')[0]}?autoplay=1&mute=1&playsinline=1`)
                             : activeChapter.video_url.includes('drive.google.com')
-                            ? (activeChapter.video_url.includes('/preview') ? activeChapter.video_url : `https://drive.google.com/file/d/${(activeChapter.video_url.match(/\/file\/d\/([^\/]+)/) || activeChapter.video_url.match(/id=([^&]+)/))?.[1]}/preview`)
+                            ? (activeChapter.video_url.includes('/preview') ? `${activeChapter.video_url}${activeChapter.video_url.includes('?') ? '&' : '?'}autoplay=1&mute=1&playsinline=1` : `https://drive.google.com/file/d/${(activeChapter.video_url.match(/\/file\/d\/([^\/]+)/) || activeChapter.video_url.match(/id=([^&]+)/))?.[1]}/preview?autoplay=1&mute=1&playsinline=1`)
                             : activeChapter.video_url}
                           className="h-[100.5%] w-[100.5%] -left-[0.25%] -top-[0.25%] scale-[1.12]"
                           allowFullScreen
+                          {...(activeChapter.video_url.includes('drive.google.com') ? { "webkit-playsinline": "true", "playsinline": "true" } : {})}
                         />
                       ) : (isLoadingSignedChapter || !signedChapterUrl) ? (
                         <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>

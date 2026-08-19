@@ -328,7 +328,7 @@ function BrasaTicker() {
 }
 
 function SectionTag({ children }: { children: React.ReactNode }) {
-  const isHidden = children === "\u2063" || (typeof children === "string" && children.trim() === "");
+  const isHidden = children === "\u2063" || (typeof children === "string" && (children.trim() === "" || children === "\u2063"));
   if (isHidden) return null;
 
   return (
