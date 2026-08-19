@@ -121,13 +121,12 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
       };
     }
 
-    // 4. Fallback: Gravar pergunta não respondida
+    // 4. Fallback: Gravar pergunta não respondida via RPC SECURITY DEFINER
     try {
-      await supabaseAdmin.from("unhandled_questions").insert({
-        question: message,
-        confidence,
-        context: requestContext || {},
-        status: 'pending'
+      await supabaseAdmin.rpc("log_unhandled_question_v2", {
+        p_message: message,
+        p_confidence: confidence,
+        p_context: requestContext || {}
       });
     } catch (dbError) {
       console.error("[Chatbot] Erro ao registrar pergunta não respondida:", dbError);
