@@ -101,7 +101,7 @@ export function VideoPlayer({
       if (url.includes('/preview')) return url;
       const match = url.match(/\/file\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
       if (match && match[1]) {
-        return `https://drive.google.com/file/d/${match[1]}/preview?autoplay=1&mute=1`;
+        return `https://drive.google.com/file/d/${match[1]}/preview?autoplay=1&mute=1&playsinline=1`;
       }
     }
     
@@ -336,6 +336,8 @@ export function VideoPlayer({
             : "object-cover"
         )}
         playsInline
+        webkit-playsinline="true"
+        x5-playsinline="true"
         muted={isIntro}
         autoPlay={isIntro}
         loop={isIntro}
