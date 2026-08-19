@@ -32,9 +32,9 @@ function AdminRankingConfig() {
   const fetchSettings = useServerFn(getRankingSettings);
   const saveSettings = useServerFn(updateRankingSettings);
 
-  const { data: settings, isLoading } = useQuery({
+  const { data: settings, isLoading, refetch } = useQuery({
     queryKey: ["admin-ranking-settings"],
-    queryFn: () => fetchSettings()
+    queryFn: () => fetchSettings({})
   });
 
   const [startDate, setStartDate] = useState<string>("");
