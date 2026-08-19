@@ -176,24 +176,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
-  useEffect(() => {
-    // Aplicação forçada de overscroll-behavior via JS para contornar limitações de runtime/Vite
-    if (typeof document !== 'undefined') {
-      const applyOverscrollNone = () => {
-        // Aplica diretamente no atributo style para máxima prioridade
-        document.documentElement.setAttribute('style', (document.documentElement.getAttribute('style') || '') + '; overscroll-behavior: none !important;');
-        document.body.setAttribute('style', (document.body.getAttribute('style') || '') + '; overscroll-behavior: none !important;');
-      };
-      
-      applyOverscrollNone();
-      
-      // Atraso curto para garantir que o hydration não sobrescreva
-      setTimeout(applyOverscrollNone, 100);
-      
-      
-    }
-  }, []);
-
   return (
     <html lang="pt-BR" className="dark">
       <head>
