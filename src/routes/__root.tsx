@@ -187,6 +187,7 @@ function RootShell({ children }: { children: ReactNode }) {
             __html: `
               // Script de Resiliência Visual: Detecta se o CSS principal falhou ou se há erros de chunk precoces
               (function() {
+                
                 window.addEventListener('error', function(e) {
                   if (e.message && (e.message.indexOf('chunk') > -1 || e.message.indexOf('dynamically imported') > -1)) {
                     console.warn('Recuperação de Layout: Detectada falha crítica. Recarregando...');

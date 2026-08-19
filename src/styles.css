@@ -100,6 +100,8 @@
   }
   html { 
     scroll-behavior: smooth;
+    overscroll-behavior: none !important;
+    -webkit-overflow-scrolling: touch;
     height: auto;
     min-height: 100%;
     overflow-x: hidden;
@@ -124,7 +126,12 @@
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overscroll-behavior-y: auto;
+    overscroll-behavior-y: none !important;
+    overscroll-behavior: none !important;
+    user-select: auto;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
     user-select: auto;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
