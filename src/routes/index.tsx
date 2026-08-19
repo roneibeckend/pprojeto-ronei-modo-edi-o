@@ -8,7 +8,8 @@ Do not make any visual modifications. The phrases I write are commands to unders
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type JSX, Suspense, lazy, memo } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { getChatbotResponse } from "@/lib/chatbot.functions";
+import { getChatbotResponse, submitKnowledgeFeedback } from "@/lib/chatbot.functions";
+import { ThumbsUp, ThumbsDown, Ticket as TicketIcon } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
@@ -1526,7 +1527,16 @@ function FAQ() {
   ];
 
   const getChatbot = useServerFn(getChatbotResponse);
-  type Msg = { role: "user" | "ai"; text: string };
+  const sendFeedback = useServerFn(submitKnowledgeFeedback);
+  
+  type Msg = { 
+    role: "user" | "ai"; 
+    text: string;
+    knowledgeId?: string | null;
+    feedbackGiven?: boolean;
+    needsHuman?: boolean;
+  };
+  
   const [messages, setMessages] = useState<Msg[]>([
     { role: "ai", text: "Olá! 👋 Eu sou a Brasa, sua assistente. Escolha uma pergunta ao lado ou escreva sua dúvida que eu te respondo na hora." },
   ]);
@@ -1539,6 +1549,16 @@ function FAQ() {
     const el = scrollRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [messages, typing]);
+
+  const handleFeedback = async (msgIndex: number, knowledgeId: string, isPositive: boolean) => {
+    try {
+      await sendFeedback({ data: { knowledgeId, isPositive } });
+      setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, feedbackGiven: true } : m));
+      toast.success(isPositive ? "Obrigado!" : "Entendido. Vamos melhorar.");
+    } catch (error) {
+      console.error("Erro ao enviar feedback:", error);
+    }
+  };
 
   const ask = async (text: string, index?: number) => {
     if (typing || !text.trim()) return;
@@ -1561,7 +1581,9 @@ function FAQ() {
       
       setMessages((m) => [...m, { 
         role: "ai", 
-        text: result.answer
+        text: result.answer,
+        knowledgeId: result.knowledgeId,
+        needsHuman: result.needsHuman
       }]);
     } catch (error) {
       console.error("Erro no chatbot:", error);
@@ -1641,13 +1663,29 @@ function FAQ() {
             <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-5">
               {messages.map((m, i) =>
                 m.role === "ai" ? (
-                  <div key={i} className="flex items-end gap-2">
-                    <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-fire">
-                      <Flame className="h-3.5 w-3.5 text-white" />
+                  <div key={i} className="flex flex-col items-start gap-1">
+                    <div className="flex items-end gap-2">
+                      <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-fire">
+                        <Flame className="h-3.5 w-3.5 text-white" />
+                      </div>
+                      <div className="max-w-[80%] rounded-2xl rounded-bl-sm border border-border bg-background/70 px-4 py-2.5 text-sm leading-relaxed text-foreground">
+                        {m.text}
+                      </div>
                     </div>
-                    <div className="max-w-[80%] rounded-2xl rounded-bl-sm border border-border bg-background/70 px-4 py-2.5 text-sm leading-relaxed text-foreground">
-                      {m.text}
-                    </div>
+                    {m.knowledgeId && !m.feedbackGiven && (
+                      <div className="ml-9 mt-1 flex items-center gap-2">
+                        <span className="text-[10px] text-muted-foreground">Ajudou?</span>
+                        <button onClick={() => handleFeedback(i, m.knowledgeId!, true)} className="text-muted-foreground hover:text-emerald-500 transition-colors"><ThumbsUp className="h-3 w-3" /></button>
+                        <button onClick={() => handleFeedback(i, m.knowledgeId!, false)} className="text-muted-foreground hover:text-fire transition-colors"><ThumbsDown className="h-3 w-3" /></button>
+                      </div>
+                    )}
+                    {m.needsHuman && (
+                      <div className="ml-9 mt-1">
+                        <Link to="/login" className="flex items-center gap-1.5 rounded-lg bg-fire/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-fire hover:bg-fire/20 transition">
+                          <TicketIcon className="h-3 w-3" /> Falar com suporte
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div key={i} className="flex justify-end">
