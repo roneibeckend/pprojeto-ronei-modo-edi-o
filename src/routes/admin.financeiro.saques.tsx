@@ -209,6 +209,88 @@ function AdminAsaasTransfersPage() {
             </table>
           </div>
         </TabsContent>
+
+        <TabsContent value="manual" className="space-y-6 pt-4">
+          <div className="flex justify-end">
+            <Dialog open={isManualModalOpen} onOpenChange={setIsManualModalOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-fire text-white hover:bg-fire/90">
+                  <Plus className="w-4 h-4 mr-2" /> Novo Registro Manual
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-[#111] border-white/10 text-white">
+                <DialogHeader>
+                  <DialogTitle>Registrar Saída Manual</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="amount">Valor (R$)</Label>
+                    <Input 
+                      id="amount" 
+                      type="number" 
+                      step="0.01"
+                      placeholder="0,00"
+                      value={manualAmount}
+                      onChange={(e) => setManualAmount(e.target.value)}
+                      className="bg-white/5 border-white/10 text-white"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Data</Label>
+                    <Input 
+                      id="date" 
+                      type="date"
+                      value={manualDate}
+                      onChange={(e) => setManualDate(e.target.value)}
+                      className="bg-white/5 border-white/10 text-white"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="desc">Descrição</Label>
+                    <Textarea 
+                      id="desc" 
+                      placeholder="Motivo da saída..."
+                      value={manualDesc}
+                      onChange={(e) => setManualDesc(e.target.value)}
+                      className="bg-white/5 border-white/10 text-white"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="ghost" onClick={() => setIsManualModalOpen(false)}>Cancelar</Button>
+                  <Button 
+                    className="bg-fire hover:bg-fire/90"
+                    onClick={() => manualMutation.mutate()}
+                    disabled={manualMutation.isPending || !manualAmount}
+                  >
+                    {manualMutation.isPending ? <Loader2 className="animate-spin" /> : "Salvar Registro"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className="border border-white/5 rounded-2xl overflow-hidden bg-[#111]">
+            <table className="w-full text-sm">
+              <thead className="text-[10px] uppercase font-bold text-white/40 bg-white/[0.02]">
+                <tr>
+                  <th className="px-6 py-4">Data</th>
+                  <th className="px-6 py-4">Descrição</th>
+                  <th className="px-6 py-4">Valor</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {transfers?.filter(t => t.transaction_type === 'manual').map((t) => (
+                  <tr key={t.id}>
+                    <td className="px-6 py-4">{new Date(t.transfer_date).toLocaleDateString('pt-BR')}</td>
+                    <td className="px-6 py-4">{t.description}</td>
+                    <td className="px-6 py-4 font-black text-indigo-400">R$ {Number(t.amount).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </TabsContent>
       </Tabs>
     </div>
   );
