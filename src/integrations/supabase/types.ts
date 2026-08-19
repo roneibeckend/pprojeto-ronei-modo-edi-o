@@ -2365,6 +2365,10 @@ export type Database = {
         }
         Returns: string
       }
+      log_unhandled_question_v2: {
+        Args: { p_confidence: number; p_context: Json; p_message: string }
+        Returns: undefined
+      }
       save_assistant_response: {
         Args: { p_content: string; p_ticket_id: string }
         Returns: undefined
