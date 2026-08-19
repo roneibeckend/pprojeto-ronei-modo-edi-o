@@ -1398,22 +1398,8 @@ function Offer() {
               </span>
             </div>
 
-            {/* eBook Cover & Price Container */}
-            <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:items-center">
-              {/* eBook Cover Visual */}
-              <div className="relative group">
-                <div className="absolute -inset-4 bg-gradient-to-r from-[color:var(--ember)]/20 to-[color:var(--gold)]/20 blur-2xl opacity-0 group-hover:opacity-100 transition duration-500" />
-                <div className="relative aspect-[3/4] w-full max-w-[240px] mx-auto overflow-hidden rounded-lg border border-white/10 bg-black/40 shadow-2xl transition duration-500 group-hover:scale-[1.02] group-hover:-rotate-2">
-                  <img 
-                    src={heroChef.url} 
-                    alt="Capa do eBook Do Zero aos 10K"
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-tr from-[color:var(--ember)]/10 to-transparent pointer-events-none" />
-                </div>
-              </div>
-
+            {/* eBook Price Container */}
+            <div className="mt-8">
               <div className="text-center lg:text-left [font-variant-numeric:tabular-nums]">
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--ember)]" />
