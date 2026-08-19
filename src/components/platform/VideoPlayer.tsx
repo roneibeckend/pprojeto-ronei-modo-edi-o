@@ -288,6 +288,8 @@ export function VideoPlayer({
       ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&enablejsapi=1${isGoogleDrive && !embedUrl.includes('playsinline') ? '&playsinline=1' : ''}`
       : `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1${isGoogleDrive && !embedUrl.includes('playsinline') ? '&playsinline=1' : ''}`;
 
+    console.log('[VideoPlayer:Render] finalUrl:', finalUrl);
+
     return (
       <div className={cn("relative aspect-video w-full mx-auto bg-black rounded-xl overflow-hidden glass shadow-2xl", className)}>
         <div className="absolute inset-0 z-10 overflow-hidden">
