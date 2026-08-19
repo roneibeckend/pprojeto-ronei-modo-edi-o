@@ -345,8 +345,14 @@ function AdminAffiliatesPage() {
                       <span className="text-sm text-white/40">% sobre as vendas realizadas por indicados.</span>
                    </div>
                 </div>
-                <div className="pt-4 border-t border-white/5">
+                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
                    <button className="btn-fire px-6 py-2 font-bold text-sm">Salvar Configurações</button>
+                   <Link 
+                     to="/admin/financeiro/saques" 
+                     className="text-[10px] font-bold uppercase text-white/40 hover:text-white transition-colors"
+                   >
+                     Gerenciar Saques →
+                   </Link>
                 </div>
              </div>
           </div>
