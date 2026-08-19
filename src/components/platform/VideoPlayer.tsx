@@ -14,7 +14,7 @@ interface VideoPlayerProps {
 }
 
 export function VideoPlayer({ 
-  src, 
+  src: initialSrc, 
   poster, 
   title, 
   videoId,
@@ -22,6 +22,8 @@ export function VideoPlayer({
   className,
   isIntro = false
 }: VideoPlayerProps) {
+  // Use a constant for the processed src to ensure it's not bypassed
+  const src = initialSrc;
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
