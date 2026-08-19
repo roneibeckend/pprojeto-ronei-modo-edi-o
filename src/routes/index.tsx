@@ -1405,10 +1405,10 @@ function Offer() {
                 <div className="absolute -inset-4 bg-gradient-to-r from-[color:var(--ember)]/20 to-[color:var(--gold)]/20 blur-2xl opacity-0 group-hover:opacity-100 transition duration-500" />
                 <div className="relative aspect-[3/4] w-full max-w-[240px] mx-auto overflow-hidden rounded-lg border border-white/10 bg-black/40 shadow-2xl transition duration-500 group-hover:scale-[1.02] group-hover:-rotate-2">
                   <img 
-                    src="https://jpapgdwrjjvhmniqtukg.supabase.co/storage/v1/object/public/content-covers/ebook-do-zero-10k.png" 
+                    src={heroChef.url} 
                     alt="Capa do eBook Do Zero aos 10K"
                     loading="lazy"
-                    className="h-full w-full object-contain p-2"
+                    className="h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-tr from-[color:var(--ember)]/10 to-transparent pointer-events-none" />
                 </div>
