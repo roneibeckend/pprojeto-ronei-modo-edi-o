@@ -192,7 +192,10 @@ function CoursePage() {
     const currentCompletedCount = flat.filter((l: any) => isLessonCompleted(l.id)).length;
     const isActuallyCompleted = flat.length > 0 && currentCompletedCount === flat.length;
 
-    if (isActuallyCompleted) {
+    // Check if we should show feedback modal (only if just finished)
+    const justFinished = localStorage.getItem(`course_just_finished_${course.id}`) === 'true';
+
+    if (isActuallyCompleted && justFinished) {
       const handleFinalization = async () => {
         try {
           // Generate certificate automatically first
@@ -212,6 +215,7 @@ function CoursePage() {
             setHasSubmittedFeedback(true);
           } else {
             setShowFeedbackModal(true);
+            localStorage.removeItem(`course_just_finished_${course.id}`);
           }
         } catch (error) {
           console.error("Erro na finalização automática do curso:", error);
