@@ -180,15 +180,15 @@ function RootShell({ children }: { children: ReactNode }) {
     // Aplicação forçada de overscroll-behavior via JS para contornar limitações de runtime/Vite
     if (typeof document !== 'undefined') {
       const applyOverscrollNone = () => {
-        document.documentElement.style.setProperty('overscroll-behavior', 'none', 'important');
-        document.body.style.setProperty('overscroll-behavior', 'none', 'important');
+        // Aplica diretamente no atributo style para máxima prioridade
+        document.documentElement.setAttribute('style', (document.documentElement.getAttribute('style') || '') + '; overscroll-behavior: none !important;');
+        document.body.setAttribute('style', (document.body.getAttribute('style') || '') + '; overscroll-behavior: none !important;');
       };
       
       applyOverscrollNone();
       
-      // Observar mudanças no DOM que possam resetar o estilo (ex: HMR ou roteamento)
-      const observer = new MutationObserver(applyOverscrollNone);
-      observer.observe(document.documentElement, { attributes: true });
+      // Atraso curto para garantir que o hydration não sobrescreva
+      setTimeout(applyOverscrollNone, 100);
       
       return () => observer.disconnect();
     }
