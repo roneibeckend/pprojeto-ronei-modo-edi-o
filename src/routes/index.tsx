@@ -1663,13 +1663,29 @@ function FAQ() {
             <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-5">
               {messages.map((m, i) =>
                 m.role === "ai" ? (
-                  <div key={i} className="flex items-end gap-2">
-                    <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-fire">
-                      <Flame className="h-3.5 w-3.5 text-white" />
+                  <div key={i} className="flex flex-col items-start gap-1">
+                    <div className="flex items-end gap-2">
+                      <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-fire">
+                        <Flame className="h-3.5 w-3.5 text-white" />
+                      </div>
+                      <div className="max-w-[80%] rounded-2xl rounded-bl-sm border border-border bg-background/70 px-4 py-2.5 text-sm leading-relaxed text-foreground">
+                        {m.text}
+                      </div>
                     </div>
-                    <div className="max-w-[80%] rounded-2xl rounded-bl-sm border border-border bg-background/70 px-4 py-2.5 text-sm leading-relaxed text-foreground">
-                      {m.text}
-                    </div>
+                    {m.knowledgeId && !m.feedbackGiven && (
+                      <div className="ml-9 mt-1 flex items-center gap-2">
+                        <span className="text-[10px] text-muted-foreground">Ajudou?</span>
+                        <button onClick={() => handleFeedback(i, m.knowledgeId!, true)} className="text-muted-foreground hover:text-emerald-500 transition-colors"><ThumbsUp className="h-3 w-3" /></button>
+                        <button onClick={() => handleFeedback(i, m.knowledgeId!, false)} className="text-muted-foreground hover:text-fire transition-colors"><ThumbsDown className="h-3 w-3" /></button>
+                      </div>
+                    )}
+                    {m.needsHuman && (
+                      <div className="ml-9 mt-1">
+                        <Link to="/login" className="flex items-center gap-1.5 rounded-lg bg-fire/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-fire hover:bg-fire/20 transition">
+                          <TicketIcon className="h-3 w-3" /> Falar com suporte
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div key={i} className="flex justify-end">
