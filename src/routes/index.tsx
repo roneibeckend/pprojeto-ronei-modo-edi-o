@@ -2068,7 +2068,11 @@ function LandingPage() {
     });
 
     const revealNow = (n: HTMLElement) => {
-      if (n.dataset.visible !== "true") n.dataset.visible = "true";
+      if (n.dataset.visible !== "true") {
+        n.dataset.visible = "true";
+        // Remove individual observers to save memory once visible
+        io.unobserve(n);
+      }
     };
 
     const isMobile = window.innerWidth < 768;
@@ -2077,21 +2081,20 @@ function LandingPage() {
         for (const e of entries) {
           if (e.isIntersecting) {
             revealNow(e.target as HTMLElement);
-            io.unobserve(e.target);
           }
         }
       },
       { 
         threshold: 0, 
-        rootMargin: isMobile ? "0px 0px 400px 0px" : "0px 0px -10% 0px" 
+        rootMargin: isMobile ? "0px 0px 600px 0px" : "0px 0px 200px 0px" 
       },
     );
 
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     nodes.forEach((n) => {
-      // Immediate reveal for elements already in viewport
       const r = n.getBoundingClientRect();
-      if (r.top < window.innerHeight) {
+      // Increase buffer to reveal earlier and avoid "popping"
+      if (r.top < window.innerHeight + (isMobile ? 300 : 100)) {
         revealNow(n);
       } else {
         io.observe(n);
@@ -2100,12 +2103,12 @@ function LandingPage() {
 
     const onScroll = () => {
       const vh = window.innerHeight;
+      const buffer = isMobile ? 400 : 200;
       for (const n of nodes) {
         if (n.dataset.visible === "true") continue;
         const r = n.getBoundingClientRect();
-        if (r.top < vh * 0.95 && r.bottom > 0) {
+        if (r.top < vh + buffer) {
           revealNow(n);
-          io.unobserve(n);
         }
       }
     };
