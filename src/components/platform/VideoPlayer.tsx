@@ -289,11 +289,10 @@ export function VideoPlayer({
 
   if (isYouTube || isGoogleDrive) {
     const embedUrl = getEmbedUrl(src);
+    const baseDriveParams = isGoogleDrive && !embedUrl.includes('playsinline') ? '&playsinline=1' : '';
     const finalUrl = hideAllUI 
-      ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&enablejsapi=1${isGoogleDrive && !embedUrl.includes('playsinline') ? '&playsinline=1' : ''}`
-      : `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1${isGoogleDrive && !embedUrl.includes('playsinline') ? '&playsinline=1' : ''}`;
-
-    console.log('[VideoPlayer:Render] finalUrl:', finalUrl);
+      ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&enablejsapi=1${baseDriveParams}`
+      : `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1${baseDriveParams}`;
 
     return (
       <div className={cn("relative aspect-video w-full mx-auto bg-black rounded-xl overflow-hidden glass shadow-2xl", className)}>
