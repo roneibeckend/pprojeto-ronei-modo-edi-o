@@ -98,11 +98,21 @@ export function VideoPlayer({
 
     // Google Drive
     if (isGoogleDrive) {
-      if (url.includes('/preview')) return url;
-      const match = url.match(/\/file\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
-      if (match && match[1]) {
-        return `https://drive.google.com/file/d/${match[1]}/preview?autoplay=1&mute=1`;
+      let finalDriveUrl = url;
+      if (!url.includes('/preview')) {
+        const match = url.match(/\/file\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
+        if (match && match[1]) {
+          finalDriveUrl = `https://drive.google.com/file/d/${match[1]}/preview?autoplay=1&mute=1`;
+        }
       }
+      
+      // Force playsinline=1 for mobile compatibility on all Drive URLs
+      if (!finalDriveUrl.includes('playsinline=1')) {
+        finalDriveUrl = finalDriveUrl.includes('?') 
+          ? `${finalDriveUrl}&playsinline=1`
+          : `${finalDriveUrl}?playsinline=1`;
+      }
+      return finalDriveUrl;
     }
     
     return url;
@@ -280,8 +290,8 @@ export function VideoPlayer({
   if (isYouTube || isGoogleDrive) {
     const embedUrl = getEmbedUrl(src);
     const finalUrl = hideAllUI 
-      ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&enablejsapi=1`
-      : `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1`;
+      ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&enablejsapi=1${!embedUrl.includes('playsinline') ? '&playsinline=1' : ''}`
+      : `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1${!embedUrl.includes('playsinline') ? '&playsinline=1' : ''}`;
 
     return (
       <div className={cn("relative aspect-video w-full mx-auto bg-black rounded-xl overflow-hidden glass shadow-2xl", className)}>
@@ -293,6 +303,7 @@ export function VideoPlayer({
             allowFullScreen
             title={title || "Video Player"}
             loading="lazy"
+            {...(isGoogleDrive ? { "webkit-playsinline": "true", "playsinline": "true" } : {})}
           />
         </div>
 
@@ -336,6 +347,8 @@ export function VideoPlayer({
             : "object-cover"
         )}
         playsInline
+        webkit-playsinline="true"
+        x5-playsinline="true"
         muted={isIntro}
         autoPlay={isIntro}
         loop={isIntro}
