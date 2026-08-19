@@ -1080,20 +1080,13 @@ function SocialProof() {
 
 function Modules() {
   const modules = [
-    { icon: BookOpen, title: "A história por trás do Espetinho na Veia", desc: "A trajetória real que deu origem ao método." },
-    { icon: TrendingUp, title: "Por que espetinho é um dos negócios mais lucrativos da rua", desc: "Entenda o potencial desse mercado bilionário." },
-    { icon: DollarSign, title: "Quanto dá para ganhar vendendo espetinhos", desc: "Números reais de faturamento e margem." },
-    { icon: Target, title: "O que você precisa para começar do zero", desc: "Estrutura, equipamentos e investimento inicial." },
-    { icon: Flame, title: "Os espetinhos que mais vendem", desc: "Os campeões de venda que não podem faltar no seu cardápio." },
-    { icon: ChefHat, title: "Como escolher a carne certa para lucrar mais", desc: "Cortes ideais, onde comprar e como economizar." },
-    { icon: ClipboardList, title: "Como montar o espetinho perfeito", desc: "Técnica de montagem para padrão profissional." },
-    { icon: Sparkles, title: "O segredo do tempero simples e saboroso", desc: "A fórmula de tempero que fideliza clientes." },
-    { icon: Calculator, title: "Como assar espetinhos do jeito certo", desc: "Domine a brasa, o ponto e o tempo de cada carne." },
-    { icon: Target, title: "Os melhores lugares para vender espetinhos", desc: "Onde e como se posicionar para vender todo dia." },
-    { icon: TrendingUp, title: "Estratégias simples para vender muito mais", desc: "Táticas práticas para escalar suas vendas." },
-    { icon: Award, title: "Os erros que fazem muitos desistirem do negócio", desc: "O que evitar para não perder tempo e dinheiro." },
-    { icon: DollarSign, title: "O caminho para chegar aos 10k por mês", desc: "Passo a passo para alcançar o primeiro grande resultado." },
-    { icon: MessageCircle, title: "Próximos passos para crescer ainda mais", desc: "Como transformar o espetinho em uma marca sólida." },
+    { icon: BookOpen, title: "Introdução", desc: "A trajetória real que deu origem ao método." },
+    { icon: TrendingUp, title: "Mentalidade e Oportunidade", desc: "Entenda o potencial desse mercado bilionário." },
+    { icon: Target, title: "Começando do Zero", desc: "Estrutura, equipamentos e investimento inicial." },
+    { icon: Utensils, title: "Produto e Produção", desc: "Os espetinhos que mais vendem e cortes ideais." },
+    { icon: DollarSign, title: "Vendas e Faturamento", desc: "Estratégias para vender e lucrar todos os dias." },
+    { icon: TrendingUp, title: "Crescimento e Escala", desc: "Como escalar seu negócio para os 10k por mês." },
+    { icon: Award, title: "Próximos Passos Finais", desc: "Como transformar o negócio em uma marca sólida." },
   ];
   const [open, setOpen] = useState(false);
   return (
