@@ -9,15 +9,15 @@ export const syncAsaasTransfers = createServerFn({ method: "POST" })
   });
 
 export const createManualTransfer = createServerFn({ method: "POST" })
-  .input(z.object({
+  .validator((data: any) => z.object({
     data: z.object({
       amount: z.number(),
       transfer_date: z.string(),
       description: z.string(),
       status: z.string().default('DONE')
     })
-  }))
-  .handler(async ({ input }) => {
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     const { data, error } = await supabaseAdmin
