@@ -112,12 +112,12 @@ export const getChatbotResponse = createServerFn({ method: "POST" })
 
     // 3. Resposta Baseada em Confiança
     // Threshold ajustado para 0.25 para capturar intenções parciais
-    if (bestMatch && maxScore >= 0.5) {
+    if (bestMatch && maxScore >= 0.4) {
       return {
         answer: bestMatch.content,
         confidence,
         knowledgeId: bestMatch.id,
-        needsHuman: maxScore < 0.8 // Precisa de ajuda se não houver match forte (> 0.8 real score)
+        needsHuman: maxScore < 0.7 // Precisa de ajuda se não houver match forte (> 0.7 real score)
       };
     }
 
