@@ -128,10 +128,10 @@
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: none !important;
     overscroll-behavior: none !important;
-    position: relative;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow-x: hidden;
+    user-select: auto;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
     user-select: auto;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
