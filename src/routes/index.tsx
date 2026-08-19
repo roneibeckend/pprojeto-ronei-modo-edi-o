@@ -1402,9 +1402,9 @@ function Offer() {
             {/* eBook Price Container */}
             <div className="mt-8">
               <div className="text-center lg:text-left [font-variant-numeric:tabular-nums]">
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1 invisible h-0 overflow-hidden">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--ember)]" />
-                <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--ember)]">Preço de lançamento</span>
+                <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--ember)]"></span>
               </div>
               <div className="text-[11px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
                 De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 97,90</span> por apenas
