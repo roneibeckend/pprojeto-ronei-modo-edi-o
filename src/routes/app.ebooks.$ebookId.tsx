@@ -288,11 +288,22 @@ function EbookReaderPage() {
     if (markedChaptersRef.current.has(activeChapterId)) return;
     markedChaptersRef.current.add(activeChapterId);
 
+    const wasCompleted = isChapterCompleted(activeChapterId);
+    
     completeChapter({
       chapterId: activeChapterId,
       ebookId: ebook.id,
       moduleId: activeChapter.module_id,
     });
+
+    // Se o ebook foi concluído agora, marca para mostrar feedback
+    const newCompletedCount = chapters.filter((c: any) => 
+      c.id === activeChapterId ? true : isChapterCompleted(c.id)
+    ).length;
+
+    if (newCompletedCount === chapters.length && !wasCompleted) {
+      localStorage.setItem(`ebook_just_finished_${ebook.id}`, 'true');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChapterId, hasAccess]);
 
@@ -300,7 +311,9 @@ function EbookReaderPage() {
     if (!hasAccess || hasSubmittedFeedback || chapters.length === 0 || isLoadingEnrollments) return;
     
     const completedCount = chapters.filter((c: any) => isChapterCompleted(c.id)).length;
-    if (completedCount >= chapters.length && chapters.length > 0) {
+    const justFinished = localStorage.getItem(`ebook_just_finished_${ebook.id}`) === 'true';
+
+    if (completedCount >= chapters.length && chapters.length > 0 && justFinished) {
       const handleFinalization = async () => {
         try {
           // Generate certificate automatically first
@@ -320,6 +333,7 @@ function EbookReaderPage() {
             setHasSubmittedFeedback(true);
           } else {
             setShowFeedbackModal(true);
+            localStorage.removeItem(`ebook_just_finished_${ebook.id}`);
           }
         } catch (error) {
           console.error("Erro na finalização automática:", error);

@@ -192,7 +192,10 @@ function CoursePage() {
     const currentCompletedCount = flat.filter((l: any) => isLessonCompleted(l.id)).length;
     const isActuallyCompleted = flat.length > 0 && currentCompletedCount === flat.length;
 
-    if (isActuallyCompleted) {
+    // Check if we should show feedback modal (only if just finished)
+    const justFinished = localStorage.getItem(`course_just_finished_${course.id}`) === 'true';
+
+    if (isActuallyCompleted && justFinished) {
       const handleFinalization = async () => {
         try {
           // Generate certificate automatically first
@@ -212,6 +215,7 @@ function CoursePage() {
             setHasSubmittedFeedback(true);
           } else {
             setShowFeedbackModal(true);
+            localStorage.removeItem(`course_just_finished_${course.id}`);
           }
         } catch (error) {
           console.error("Erro na finalização automática do curso:", error);
@@ -559,12 +563,24 @@ function CoursePage() {
                 <div className="font-display text-base sm:text-lg font-bold break-words">{active.title}</div>
               </div>
               <button 
-                onClick={() => toggleLessonProgress({ 
-                  lessonId: active.id, 
-                  completed: !isLessonCompleted(active.id),
-                  moduleId: active.module_id,
-                  courseId: course.id
-                })}
+                onClick={async () => {
+                  const wasCompleted = isLessonCompleted(active.id);
+                  await toggleLessonProgress({ 
+                    lessonId: active.id, 
+                    completed: !wasCompleted,
+                    moduleId: active.module_id,
+                    courseId: course.id
+                  });
+                  
+                  // Se o curso foi concluído agora, marca para mostrar feedback
+                  const newCompletedCount = flat.filter((item: any) => 
+                    item.id === active.id ? !wasCompleted : isLessonCompleted(item.id)
+                  ).length;
+                  
+                  if (newCompletedCount === flat.length && !wasCompleted) {
+                    localStorage.setItem(`course_just_finished_${course.id}`, 'true');
+                  }
+                }}
                 disabled={isTogglingLesson}
                 className={`btn-fire text-xs sm:text-sm touch-target flex items-center justify-center gap-2 w-full sm:w-auto py-3 sm:py-4 h-12 sm:h-auto ${isLessonCompleted(active.id) ? 'bg-green-600 shadow-green-600/20' : ''}`}
               >
