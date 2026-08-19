@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { 
   Calculator, 
   Plus, 
@@ -313,18 +313,18 @@ function FinancePage() {
               Gerenciamento Financeiro
             </div>
             <div className="grid gap-3">
-              <button
-                onClick={() => window.location.href = '/admin/financeiro/saques'}
+              <Link
+                to="/admin/financeiro/saques"
                 className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/10 transition-colors text-left group"
               >
                 <div>
-                  <div className="text-[10px] font-bold text-white uppercase mb-0.5">Dashboard de Saídas</div>
+                  <div className="text-[10px] font-bold text-white uppercase mb-0.5">Gestão de Saídas</div>
                   <div className="text-[9px] text-white/40">Controle de saídas Asaas e manuais</div>
                 </div>
                 <div className="h-6 w-6 rounded-full bg-fire/10 flex items-center justify-center group-hover:bg-fire/20 transition-colors">
                   <TrendingUp className="h-3 w-3 text-fire" />
                 </div>
-              </button>
+              </Link>
             </div>
           </section>
 
