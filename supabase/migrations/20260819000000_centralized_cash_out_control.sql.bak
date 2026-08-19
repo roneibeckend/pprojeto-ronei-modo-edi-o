@@ -20,21 +20,11 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.asaas_transfers TO authenticated;
 GRANT ALL ON public.asaas_transfers TO service_role;
 
 -- Policies: only admins can manage transfers
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_policies 
-        WHERE tablename = 'asaas_transfers' 
-        AND policyname = 'Admins can manage all transfers'
-    ) THEN
-        CREATE POLICY "Admins can manage all transfers" 
-        ON public.asaas_transfers
-        FOR ALL 
-        TO authenticated 
-        USING (public.has_role(auth.uid(), 'admin'));
-    END IF;
-END
-$$;
+CREATE POLICY "Admins can manage all transfers" 
+ON public.asaas_transfers
+FOR ALL 
+TO authenticated 
+USING (public.has_role(auth.uid(), 'admin'));
 
 -- Index for performance
 CREATE INDEX IF NOT EXISTS idx_asaas_transfers_date ON public.asaas_transfers(transfer_date DESC);
