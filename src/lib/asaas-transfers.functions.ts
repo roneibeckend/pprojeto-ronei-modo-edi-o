@@ -17,13 +17,13 @@ export const createManualTransfer = createServerFn({ method: "POST" })
       status: z.string().default('DONE')
     })
   }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data: inputData }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     const { data, error } = await supabaseAdmin
       .from('asaas_transfers')
       .insert({
-        ...input.data,
+        ...inputData.data,
         transaction_type: 'manual'
       })
       .select()
