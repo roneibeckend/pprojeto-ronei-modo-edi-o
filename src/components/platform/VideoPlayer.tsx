@@ -98,7 +98,12 @@ export function VideoPlayer({
 
     // Google Drive
     if (isGoogleDrive) {
-      if (url.includes('/preview')) return url;
+      if (url.includes('/preview')) {
+        // Ensure playsinline=1 is present for mobile compatibility
+        return url.includes('?') 
+          ? (url.includes('playsinline=1') ? url : `${url}&playsinline=1`)
+          : `${url}?playsinline=1`;
+      }
       const match = url.match(/\/file\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
       if (match && match[1]) {
         return `https://drive.google.com/file/d/${match[1]}/preview?autoplay=1&mute=1&playsinline=1`;
