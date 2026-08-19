@@ -141,8 +141,8 @@ function AdminAsaasTransfersPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <PageHeader 
-          title="Gestão de Saques Asaas" 
-          subtitle="Histórico e controle de todas as saídas e transferências da conta Asaas." 
+          title="Dashboard de Saídas" 
+          subtitle="Controle centralizado de fluxo de caixa: saques Asaas e registros manuais." 
         />
         
         <div className="flex items-center gap-2">
