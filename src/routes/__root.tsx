@@ -177,10 +177,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   useEffect(() => {
-    // Aplicação forçada de overscroll-behavior no HTML via JS para garantir compatibilidade
+    // Aplicação forçada de overscroll-behavior via JS para contornar limitações de runtime/Vite
     if (typeof document !== 'undefined') {
-      document.documentElement.style.overscrollBehavior = 'none';
-      document.body.style.overscrollBehavior = 'none';
+      const applyOverscrollNone = () => {
+        document.documentElement.style.setProperty('overscroll-behavior', 'none', 'important');
+        document.body.style.setProperty('overscroll-behavior', 'none', 'important');
+      };
+      
+      applyOverscrollNone();
+      
+      // Observar mudanças no DOM que possam resetar o estilo (ex: HMR ou roteamento)
+      const observer = new MutationObserver(applyOverscrollNone);
+      observer.observe(document.documentElement, { attributes: true });
+      
+      return () => observer.disconnect();
     }
   }, []);
 
