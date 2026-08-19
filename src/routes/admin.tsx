@@ -80,7 +80,11 @@ function AdminRootLayout() {
     { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
     { to: "/admin/materiais", label: "Materiais", icon: Library },
-    { to: "/admin/ranking", label: "Configuração Ranking", icon: Star },
+    { to: "/admin/ranking", label: "Ranking", icon: Star, subItems: [
+      { to: "/admin/ranking", label: "Configuração" },
+      { to: "/admin/ranking/campanhas", label: "Campanhas" },
+      { to: "/admin/ranking/campanhas", label: "Premiações" },
+    ]},
     { to: "/admin/chatbot", label: "Inteligência Brasa", icon: BrainCircuit },
     { to: "/admin/logs", label: "Logs do Sistema", icon: Terminal },
   ];
@@ -104,17 +108,39 @@ function AdminRootLayout() {
           }).map((item) => {
             const Icon = item.icon;
             const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+            
             return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition shrink-0 ${
-                  active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                <span className="truncate">{item.label}</span>
-              </Link>
+              <div key={item.to} className="space-y-1">
+                <Link
+                  to={item.to}
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition shrink-0 ${
+                    active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span className="truncate">{item.label}</span>
+                </Link>
+
+                {/* Submenu para o Ranking */}
+                {item.subItems && active && (
+                  <div className="ml-9 space-y-1 animate-in slide-in-from-left-2 duration-200">
+                    {item.subItems.map((sub) => {
+                      const isSubActive = pathname === sub.to;
+                      return (
+                        <Link
+                          key={`${item.to}-${sub.label}`}
+                          to={sub.to}
+                          className={`block px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition ${
+                            isSubActive ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
+                          }`}
+                        >
+                          {sub.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             );
           })}
         </nav>
@@ -137,22 +163,43 @@ function AdminRootLayout() {
               {navItems.filter(item => {
                 if (role !== "student") return true;
                 return item.to === "/admin";
-              }).map((item) => {
-                const Icon = item.icon;
-                const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition shrink-0 ${
-                      active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
-                    }`}
-                  >
-                    <Icon className="h-5 w-5" />
-                    {item.label}
-                  </Link>
-                );
-              })}
+                }).map((item) => {
+                  const Icon = item.icon;
+                  const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+                  return (
+                    <div key={item.to} className="space-y-1">
+                      <Link
+                        to={item.to}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition shrink-0 ${
+                          active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        <Icon className="h-5 w-5" />
+                        {item.label}
+                      </Link>
+
+                      {/* Submenu Mobile */}
+                      {item.subItems && active && (
+                        <div className="ml-12 space-y-1">
+                          {item.subItems.map((sub) => {
+                            const isSubActive = pathname === sub.to;
+                            return (
+                              <Link
+                                key={`${item.to}-${sub.label}-mobile`}
+                                to={sub.to}
+                                className={`block px-3 py-2 rounded-md text-[11px] font-bold uppercase tracking-wider transition ${
+                                  isSubActive ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
+                                }`}
+                              >
+                                {sub.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
             </nav>
           </SheetContent>
         </Sheet>
