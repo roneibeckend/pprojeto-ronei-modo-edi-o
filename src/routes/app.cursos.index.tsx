@@ -285,7 +285,8 @@ function CoursesPage() {
                   <img 
                     src={c.cover_url || IMG.hero} 
                     alt={c.title} 
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                    className="h-full w-full object-contain bg-black transition-transform duration-500 group-hover:scale-110" 
+
 
 
                     loading="lazy" 
@@ -326,7 +327,7 @@ function CoursesPage() {
                   <img 
                     src={e.cover_url || e.cover || IMG.hero} 
                     alt={e.title} 
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                    className="h-full w-full object-contain bg-black transition-transform duration-500 group-hover:scale-110" 
 
 
                     loading="lazy" 
@@ -377,7 +378,7 @@ function CoursesPage() {
                   <img 
                     src={c.cover_url || IMG.hero} 
                     alt={c.title} 
-                    className="h-full w-full object-cover" 
+                    className="h-full w-full object-contain bg-black" 
 
 
                     loading="lazy" 
