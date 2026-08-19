@@ -372,7 +372,8 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
         <img 
           src={item.cover_url || IMG.hero} 
           alt={item.title} 
-          className={`h-full w-full object-contain sm:object-cover transition-transform duration-500 group-hover:scale-110 ${isLocked ? "blur-[1px] brightness-75" : ""}`} 
+          className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 ${isLocked ? "blur-[1px] brightness-75" : ""}`} 
+
           loading="lazy"
           onError={(e) => {
             (e.target as HTMLImageElement).src = IMG.hero;
