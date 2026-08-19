@@ -176,12 +176,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    // Aplicação forçada de overscroll-behavior no HTML via JS para garantir compatibilidade
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.overscrollBehavior = 'none';
+      document.body.style.overscrollBehavior = 'none';
+    }
+  }, []);
+
   return (
-    <html lang="pt-BR" className="dark" style={{ overscrollBehavior: 'none' }}>
+    <html lang="pt-BR" className="dark">
       <head>
         <HeadContent />
       </head>
-      <body className="antialiased overflow-x-hidden selection:bg-primary/30" style={{ overscrollBehavior: 'none' }}>
+      <body className="antialiased overflow-x-hidden selection:bg-primary/30">
         <script
           dangerouslySetInnerHTML={{
             __html: `
