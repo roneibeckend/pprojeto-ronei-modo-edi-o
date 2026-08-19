@@ -853,18 +853,18 @@ function Hero() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl animate-scale-in"
+            className="relative w-full max-w-[min(420px,85vh*9/16)] animate-scale-in"
           >
             <button
               type="button"
               onClick={() => setVideoOpen(false)}
               aria-label="Fechar vídeo"
-              className="absolute -top-14 right-0 z-[110] inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white backdrop-blur-md transition hover:bg-white/20 sm:-right-4"
+              className="absolute -top-12 right-0 z-[110] inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur-md transition hover:bg-black/80 hover:scale-110 active:scale-95 sm:-right-4 sm:-top-4"
             >
               <X className="h-6 w-6" />
             </button>
             <div className="glass gradient-border overflow-hidden rounded-2xl p-1 shadow-fire relative bg-black group/intro">
-              <div className="relative aspect-[9/16] h-[80vh] w-full max-w-[420px] mx-auto overflow-hidden rounded-xl bg-black shadow-2xl">
+              <div className="relative aspect-[9/16] max-h-[85vh] w-full overflow-hidden rounded-xl bg-black shadow-2xl">
                 <Suspense fallback={<div className="flex h-full items-center justify-center text-white"><Loader2 className="animate-spin" /></div>}>
                   <VideoPlayer 
                     src="https://drive.google.com/file/d/1hkFkHXPwzwWTYSW3Qm_B5kjlUTkLYRZT/preview?autoplay=1&mute=1"
