@@ -1526,7 +1526,16 @@ function FAQ() {
   ];
 
   const getChatbot = useServerFn(getChatbotResponse);
-  type Msg = { role: "user" | "ai"; text: string };
+  const sendFeedback = useServerFn(submitKnowledgeFeedback);
+  
+  type Msg = { 
+    role: "user" | "ai"; 
+    text: string;
+    knowledgeId?: string | null;
+    feedbackGiven?: boolean;
+    needsHuman?: boolean;
+  };
+  
   const [messages, setMessages] = useState<Msg[]>([
     { role: "ai", text: "Olá! 👋 Eu sou a Brasa, sua assistente. Escolha uma pergunta ao lado ou escreva sua dúvida que eu te respondo na hora." },
   ]);
