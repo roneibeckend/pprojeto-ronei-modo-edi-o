@@ -33,16 +33,21 @@ export const updateRankingSettings = createServerFn({ method: "POST" })
       throw new Error("Unauthorized: Only admins can manage ranking settings");
     }
 
-    const { error } = await supabaseAdmin
-      .from("integrations")
-      .upsert({
+      const upsertData: any = {
         category: "ranking_settings",
         name: "Configuração de Ranking Global",
         status: true,
         type: "ia",
         settings: data as any,
-        credentials: {} // Add missing required credentials column
-      }, { onConflict: "category" });
+        updated_at: new Date().toISOString()
+      };
+
+      // Garantindo que a coluna credentials (geralmente obrigatória) esteja presente
+      upsertData.credentials = {};
+
+      const { error } = await supabaseAdmin
+        .from("integrations")
+        .upsert(upsertData, { onConflict: "category" });
     
     if (error) throw error;
     return { success: true };

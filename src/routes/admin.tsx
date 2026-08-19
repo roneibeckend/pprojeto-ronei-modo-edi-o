@@ -81,9 +81,9 @@ function AdminRootLayout() {
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
     { to: "/admin/materiais", label: "Materiais", icon: Library },
     { to: "/admin/ranking", label: "Ranking", icon: Star, subItems: [
-      { to: "/admin/ranking", label: "Configuração" },
-      { to: "/admin/ranking/campanhas", label: "Campanhas" },
-      { to: "/admin/ranking/campanhas", label: "Premiações" },
+      { to: "/admin/ranking", label: "Configuração", exact: true },
+      { to: "/admin/ranking/campanhas", label: "Campanhas", exact: true },
+      { to: "/admin/ranking/campanhas", label: "Premiações", exact: true },
     ]},
     { to: "/admin/chatbot", label: "Inteligência Brasa", icon: BrainCircuit },
     { to: "/admin/logs", label: "Logs do Sistema", icon: Terminal },
@@ -125,7 +125,7 @@ function AdminRootLayout() {
                 {item.subItems && active && (
                   <div className="ml-9 space-y-1 animate-in slide-in-from-left-2 duration-200">
                     {item.subItems.map((sub) => {
-                      const isSubActive = pathname === sub.to;
+                      const isSubActive = sub.exact ? pathname === sub.to : pathname.startsWith(sub.to);
                       return (
                         <Link
                           key={`${item.to}-${sub.label}`}
@@ -188,7 +188,7 @@ function AdminRootLayout() {
                                 key={`${item.to}-${sub.label}-mobile`}
                                 to={sub.to}
                                 className={`block px-3 py-2 rounded-md text-[11px] font-bold uppercase tracking-wider transition ${
-                                  isSubActive ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
+                                  (sub.exact ? pathname === sub.to : pathname.startsWith(sub.to)) ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
                                 }`}
                               >
                                 {sub.label}
