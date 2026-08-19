@@ -199,9 +199,9 @@ function AdminAsaasTransfersPage() {
               <tbody className="divide-y divide-white/5">
                 {payouts?.map((p) => (
                   <tr key={p.id}>
-                    <td className="px-6 py-4">{(p.profile as any)?.name}</td>
-                    <td className="px-6 py-4">{new Date(p.created_at).toLocaleDateString('pt-BR')}</td>
-                    <td className="px-6 py-4 font-black text-emerald-400">R$ {Number(p.amount).toFixed(2)}</td>
+                    <td className="px-6 py-4">{(p.profile as any)?.name || "N/A"}</td>
+                    <td className="px-6 py-4">{new Date(p.created_at || Date.now()).toLocaleDateString('pt-BR')}</td>
+                    <td className="px-6 py-4 font-black text-emerald-400">R$ {Number(p.amount || 0).toFixed(2)}</td>
                     <td className="px-6 py-4">{statusMap[p.status]?.label || p.status}</td>
                   </tr>
                 ))}
