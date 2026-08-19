@@ -1561,7 +1561,9 @@ function FAQ() {
       
       setMessages((m) => [...m, { 
         role: "ai", 
-        text: result.answer
+        text: result.answer,
+        knowledgeId: result.knowledgeId,
+        needsHuman: result.needsHuman
       }]);
     } catch (error) {
       console.error("Erro no chatbot:", error);
