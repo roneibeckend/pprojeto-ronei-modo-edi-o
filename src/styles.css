@@ -102,9 +102,8 @@
     scroll-behavior: smooth;
     overscroll-behavior: none !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    min-height: 100%;
-    overflow-x: hidden;
+    height: 100%;
+    overflow: auto;
     width: 100%;
   }
   body {
@@ -129,8 +128,8 @@
     overscroll-behavior-y: none !important;
     overscroll-behavior: none !important;
     position: relative;
-    min-height: 100vh;
-    min-height: 100dvh;
+    height: 100%;
+    overflow: auto;
     user-select: auto;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
