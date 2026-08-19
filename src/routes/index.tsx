@@ -1550,6 +1550,16 @@ function FAQ() {
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [messages, typing]);
 
+  const handleFeedback = async (msgIndex: number, knowledgeId: string, isPositive: boolean) => {
+    try {
+      await sendFeedback({ data: { knowledgeId, isPositive } });
+      setMessages(prev => prev.map((m, i) => i === msgIndex ? { ...m, feedbackGiven: true } : m));
+      toast.success(isPositive ? "Obrigado!" : "Entendido. Vamos melhorar.");
+    } catch (error) {
+      console.error("Erro ao enviar feedback:", error);
+    }
+  };
+
   const ask = async (text: string, index?: number) => {
     if (typing || !text.trim()) return;
     
