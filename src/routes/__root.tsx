@@ -190,7 +190,7 @@ function RootShell({ children }: { children: ReactNode }) {
       // Atraso curto para garantir que o hydration não sobrescreva
       setTimeout(applyOverscrollNone, 100);
       
-      return () => observer.disconnect();
+      
     }
   }, []);
 
@@ -205,6 +205,10 @@ function RootShell({ children }: { children: ReactNode }) {
             __html: `
               // Script de Resiliência Visual: Detecta se o CSS principal falhou ou se há erros de chunk precoces
               (function() {
+                // Prevenção imediata de overscroll via inline script
+                document.documentElement.style.overscrollBehavior = 'none';
+                document.body.style.overscrollBehavior = 'none';
+                
                 window.addEventListener('error', function(e) {
                   if (e.message && (e.message.indexOf('chunk') > -1 || e.message.indexOf('dynamically imported') > -1)) {
                     console.warn('Recuperação de Layout: Detectada falha crítica. Recarregando...');
