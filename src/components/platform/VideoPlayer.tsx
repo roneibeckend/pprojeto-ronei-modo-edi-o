@@ -298,6 +298,7 @@ export function VideoPlayer({
             allowFullScreen
             title={title || "Video Player"}
             loading="lazy"
+            {...(isGoogleDrive ? { "webkit-playsinline": "true", "playsinline": "true" } : {})}
           />
         </div>
 
