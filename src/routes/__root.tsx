@@ -177,11 +177,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR" className="dark">
+    <html lang="pt-BR" className="dark" style={{ overscrollBehavior: 'none' }}>
       <head>
         <HeadContent />
       </head>
-      <body className="antialiased overflow-x-hidden selection:bg-primary/30">
+      <body className="antialiased overflow-x-hidden selection:bg-primary/30" style={{ overscrollBehavior: 'none' }}>
         <script
           dangerouslySetInnerHTML={{
             __html: `
