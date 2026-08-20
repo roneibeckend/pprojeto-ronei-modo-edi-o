@@ -1,19 +1,7 @@
--- ==========================================================
--- BOOTSTRAP SQL FINAL - ESTRUTURA COMPLETA RECONCILIADA
--- ==========================================================
-
--- 1. EXTENSÕES
-CREATE SCHEMA IF NOT EXISTS extensions;
-CREATE EXTENSION IF NOT EXISTS pgcrypto SCHEMA extensions;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA extensions;
-CREATE EXTENSION IF NOT EXISTS pg_cron SCHEMA pg_catalog;
-CREATE EXTENSION IF NOT EXISTS pg_net SCHEMA public;
-CREATE SCHEMA IF NOT EXISTS vault;
-CREATE EXTENSION IF NOT EXISTS supabase_vault SCHEMA vault;
-
 --
 -- PostgreSQL database dump
 --
+
 
 
 -- Dumped from database version 17.6
@@ -989,7 +977,7 @@ DECLARE
     cron_time TEXT;
     project_url TEXT;
 BEGIN
-    project_url := 'https://ronneinaveia.com/api/public/daily-financial-report';
+    project_url := 'https://espetinhonaveia.lovable.app/api/public/daily-financial-report';
     
     -- Unschedule existing if it exists, ignore if not found
     BEGIN
@@ -5898,82 +5886,3 @@ ALTER DEFAULT PRIVILEGES FOR ROLE supabase_admin IN SCHEMA public GRANT ALL ON T
  INSERT INTO storage.buckets (id, name, public) VALUES ('ebook-assets', 'ebook-assets', 'f') ON CONFLICT (id) DO NOTHING;
  INSERT INTO storage.buckets (id, name, public) VALUES ('profiles', 'profiles', 'f') ON CONFLICT (id) DO NOTHING;
 
-
--- ==========================================================
--- V2 OVERRIDES: SECURITY & AUDIT FIXES
--- ==========================================================
-
--- 3. FUNCTION HANDLE_NEW_USER (Idempotente)
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path TO 'public'
-AS $$
-BEGIN
-  INSERT INTO public.profiles (id, name, email, phone)
-  VALUES (
-    new.id,
-    COALESCE(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1)),
-    new.email,
-    new.raw_user_meta_data->>'phone'
-  )
-  ON CONFLICT (id) DO NOTHING;
-  RETURN new;
-END;
-$$;
-
--- 4. REALTIME (Idempotente)
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_publication_tables 
-        WHERE pubname = 'supabase_realtime' 
-        AND schemaname = 'public' 
-        AND tablename = 'notifications'
-    ) THEN
-        ALTER PUBLICATION supabase_realtime ADD TABLE public.notifications;
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        NULL;
-END $$;
-
--- 5. STORAGE (BUCKETS & POLICIES - 16 REAL POLICIES)
-INSERT INTO storage.buckets (id, name, public)
-VALUES
-    ('content-covers',     'content-covers',     false),
-    ('course-assets',      'course-assets',      false),
-    ('ebook-assets',       'ebook-assets',       false),
-    ('platform-materials', 'platform-materials', false),
-    ('profiles',           'profiles',           false)
-ON CONFLICT (id) DO NOTHING;
-
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "content_covers_public_read" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'content-covers');
-CREATE POLICY "content_covers_admin_upload" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'content-covers' AND public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "content_covers_admin_update" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'content-covers' AND public.has_role(auth.uid(), 'admin')) WITH CHECK (bucket_id = 'content-covers' AND public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "content_covers_admin_delete" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'content-covers' AND public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admins can upload to course-assets" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'course-assets' AND public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admins can update course-assets" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'course-assets' AND public.has_role(auth.uid(), 'admin')) WITH CHECK (bucket_id = 'course-assets' AND public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admins can delete from course-assets" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'course-assets' AND public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admins manage ebook-assets" ON storage.objects FOR ALL TO authenticated USING (bucket_id = 'ebook-assets' AND public.has_role(auth.uid(), 'admin')) WITH CHECK (bucket_id = 'ebook-assets' AND public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admin Insert Materials" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'platform-materials' AND public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admin Update Materials" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'platform-materials' AND public.has_role(auth.uid(), 'admin')) WITH CHECK (bucket_id = 'platform-materials' AND public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Admin Delete Materials" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'platform-materials' AND public.has_role(auth.uid(), 'admin'));
-CREATE POLICY "Staff can read course and ebook assets" ON storage.objects FOR SELECT TO authenticated USING (bucket_id IN ('course-assets', 'ebook-assets', 'platform-materials') AND EXISTS (SELECT 1 FROM public.user_roles ur WHERE ur.user_id = auth.uid() AND ur.role IN ('admin', 'manager', 'agent')));
-CREATE POLICY "Users can read their own avatar" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'profiles' AND (storage.foldername(name))[1] = auth.uid()::text);
-CREATE POLICY "Users can upload their own avatar" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'profiles' AND (storage.foldername(name))[1] = auth.uid()::text);
-CREATE POLICY "Users can update their own avatar" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'profiles' AND (storage.foldername(name))[1] = auth.uid()::text) WITH CHECK (bucket_id = 'profiles' AND (storage.foldername(name))[1] = auth.uid()::text);
-CREATE POLICY "Users can delete their own avatar" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'profiles' AND (storage.foldername(name))[1] = auth.uid()::text);
-
--- 6. TRIGGER AUTH (Final)
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'on_auth_user_created') THEN
-        CREATE TRIGGER on_auth_user_created
-        AFTER INSERT ON auth.users
-        FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-    END IF;
-END $$;
