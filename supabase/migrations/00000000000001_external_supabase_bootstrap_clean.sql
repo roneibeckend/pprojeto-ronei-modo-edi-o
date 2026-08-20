@@ -989,7 +989,7 @@ DECLARE
     cron_time TEXT;
     project_url TEXT;
 BEGIN
-    project_url := 'https://espetinhonaveia.lovable.app/api/public/daily-financial-report';
+    project_url := 'https://ronneinaveia.com/api/public/daily-financial-report';
     
     -- Unschedule existing if it exists, ignore if not found
     BEGIN
