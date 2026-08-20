@@ -58,6 +58,7 @@ import { Route as AppAfiliadosMateriaisRouteImport } from './routes/app.afiliado
 import { Route as AppAfiliadosLinksRouteImport } from './routes/app.afiliados.links'
 import { Route as AppAfiliadosFinanceiroRouteImport } from './routes/app.afiliados.financeiro'
 import { Route as AppAfiliadosConfigRouteImport } from './routes/app.afiliados.config'
+import { Route as ApiPublicDownloadMigracaoTempRouteImport } from './routes/api/public/download-migracao-temp'
 import { Route as ApiPublicDailyFinancialReportRouteImport } from './routes/api/public/daily-financial-report'
 import { Route as AdminRankingCampanhasRouteImport } from './routes/admin.ranking.campanhas'
 import { Route as AdminFinanceiroSaquesRouteImport } from './routes/admin.financeiro.saques'
@@ -310,6 +311,12 @@ const AppAfiliadosConfigRoute = AppAfiliadosConfigRouteImport.update({
   path: '/config',
   getParentRoute: () => AppAfiliadosRoute,
 } as any)
+const ApiPublicDownloadMigracaoTempRoute =
+  ApiPublicDownloadMigracaoTempRouteImport.update({
+    id: '/api/public/download-migracao-temp',
+    path: '/api/public/download-migracao-temp',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicDailyFinancialReportRoute =
   ApiPublicDailyFinancialReportRouteImport.update({
     id: '/api/public/daily-financial-report',
@@ -387,6 +394,7 @@ export interface FileRoutesByFullPath {
   '/admin/financeiro/saques': typeof AdminFinanceiroSaquesRoute
   '/admin/ranking/campanhas': typeof AdminRankingCampanhasRoute
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
+  '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
@@ -440,6 +448,7 @@ export interface FileRoutesByTo {
   '/admin/financeiro/saques': typeof AdminFinanceiroSaquesRoute
   '/admin/ranking/campanhas': typeof AdminRankingCampanhasRoute
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
+  '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
@@ -498,6 +507,7 @@ export interface FileRoutesById {
   '/admin/financeiro/saques': typeof AdminFinanceiroSaquesRoute
   '/admin/ranking/campanhas': typeof AdminRankingCampanhasRoute
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
+  '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
@@ -557,6 +567,7 @@ export interface FileRouteTypes {
     | '/admin/financeiro/saques'
     | '/admin/ranking/campanhas'
     | '/api/public/daily-financial-report'
+    | '/api/public/download-migracao-temp'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
@@ -610,6 +621,7 @@ export interface FileRouteTypes {
     | '/admin/financeiro/saques'
     | '/admin/ranking/campanhas'
     | '/api/public/daily-financial-report'
+    | '/api/public/download-migracao-temp'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
@@ -667,6 +679,7 @@ export interface FileRouteTypes {
     | '/admin/financeiro/saques'
     | '/admin/ranking/campanhas'
     | '/api/public/daily-financial-report'
+    | '/api/public/download-migracao-temp'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
@@ -691,6 +704,7 @@ export interface RootRouteChildren {
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
   ApiPublicDailyFinancialReportRoute: typeof ApiPublicDailyFinancialReportRoute
+  ApiPublicDownloadMigracaoTempRoute: typeof ApiPublicDownloadMigracaoTempRoute
   ApiPublicManifestWebmanifestRoute: typeof ApiPublicManifestWebmanifestRoute
   ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
 }
@@ -1040,6 +1054,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAfiliadosConfigRouteImport
       parentRoute: typeof AppAfiliadosRoute
     }
+    '/api/public/download-migracao-temp': {
+      id: '/api/public/download-migracao-temp'
+      path: '/api/public/download-migracao-temp'
+      fullPath: '/api/public/download-migracao-temp'
+      preLoaderRoute: typeof ApiPublicDownloadMigracaoTempRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/daily-financial-report': {
       id: '/api/public/daily-financial-report'
       path: '/api/public/daily-financial-report'
@@ -1249,6 +1270,7 @@ const rootRouteChildren: RootRouteChildren = {
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
   ApiPublicDailyFinancialReportRoute: ApiPublicDailyFinancialReportRoute,
+  ApiPublicDownloadMigracaoTempRoute: ApiPublicDownloadMigracaoTempRoute,
   ApiPublicManifestWebmanifestRoute: ApiPublicManifestWebmanifestRoute,
   ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
 }
