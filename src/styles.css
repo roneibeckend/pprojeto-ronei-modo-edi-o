@@ -122,13 +122,13 @@
     background-attachment: fixed;
     min-height: 100vh;
     min-height: 100dvh;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     width: 100%;
     position: relative;
     min-height: 100vh;
+    min-height: 100dvh;
     height: auto !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
+    overflow-y: initial !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: auto;
