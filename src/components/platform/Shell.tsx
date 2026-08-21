@@ -285,7 +285,7 @@ export function Shell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 overflow-y-auto px-4 py-4 pb-safe lg:px-8 lg:py-8 lg:pb-8 3xl:max-w-[1800px] 3xl:mx-auto w-full overscroll-contain">
+        <main className="min-w-0 flex-1 px-4 py-4 pb-safe lg:px-8 lg:py-8 lg:pb-8 3xl:max-w-[1800px] 3xl:mx-auto w-full overscroll-contain">
           <Outlet />
         </main>
         <PwaInstallBanner />
