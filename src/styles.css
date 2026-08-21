@@ -100,11 +100,12 @@
   }
   html { 
     scroll-behavior: smooth;
-    overscroll-behavior: none !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: auto !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
+    height: auto !important;
     min-height: 100%;
-    overflow-x: hidden;
     width: 100%;
   }
   body {
@@ -121,21 +122,23 @@
     background-attachment: fixed;
     min-height: 100vh;
     min-height: 100dvh;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     width: 100%;
     position: relative;
+    height: auto !important;
+    overflow-y: visible !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overscroll-behavior-y: none !important;
-    overscroll-behavior: none !important;
+    overscroll-behavior-y: auto;
+    overscroll-behavior: auto;
     user-select: auto;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
-    -webkit-user-drag: none;
+    -webkit-user-drag: auto;
     user-select: auto;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
-    -webkit-user-drag: none;
+    -webkit-user-drag: auto;
     
     /* Previne atrasos de clique em mobile */
     touch-action: manipulation;
