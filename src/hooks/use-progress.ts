@@ -31,24 +31,42 @@ export function useProgress() {
     queryKey: ["global-progress-tracking", user?.id],
     queryFn: async () => {
       if (!user?.id) return { lessonCount: 0, chapterCount: 0, tracking: [] };
-      const [
-        { data: allLessons },
-        { data: allChapters },
-        { data: progressTracking }
-      ] = await Promise.all([
-        supabase.from("course_lessons").select("id"),
-        supabase.from("ebook_chapters").select("id"),
-        supabase.from("progress_tracking").select("item_type, started_at, completed_at").eq("user_id", user.id)
+
+      // Considera apenas o conteúdo que o aluno realmente possui
+      const [{ data: courseEnrollments }, { data: ebookEnrollments }, { data: progressTracking }] = await Promise.all([
+        supabase.from("course_enrollments").select("course_id").eq("user_id", user.id),
+        supabase.from("ebook_enrollments").select("ebook_id").eq("user_id", user.id),
+        supabase.from("progress_tracking").select("item_type, started_at, completed_at").eq("user_id", user.id),
       ]);
 
+      const courseIds = (courseEnrollments || []).map((c: any) => c.course_id);
+      const ebookIds = (ebookEnrollments || []).map((e: any) => e.ebook_id);
+
+      let lessonCount = 0;
+      if (courseIds.length > 0) {
+        const { data: modules } = await supabase.from("course_modules").select("id").in("course_id", courseIds);
+        const moduleIds = (modules || []).map((m: any) => m.id);
+        if (moduleIds.length > 0) {
+          const { data: lessons } = await supabase.from("course_lessons").select("id").in("module_id", moduleIds);
+          lessonCount = lessons?.length || 0;
+        }
+      }
+
+      let chapterCount = 0;
+      if (ebookIds.length > 0) {
+        const { data: chapters } = await supabase.from("ebook_chapters").select("id").in("ebook_id", ebookIds);
+        chapterCount = chapters?.length || 0;
+      }
+
       return {
-        lessonCount: allLessons?.length || 0,
-        chapterCount: allChapters?.length || 0,
+        lessonCount,
+        chapterCount,
         tracking: progressTracking || []
       };
     },
     enabled: !!user?.id,
   });
+
 
   const toggleLessonMutation = useMutation({
     mutationFn: async ({ lessonId, completed, moduleId, courseId }: { lessonId: string, completed: boolean, moduleId?: string, courseId?: string }) => {
