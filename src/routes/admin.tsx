@@ -25,6 +25,9 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { BottomNav } from "@/components/platform/BottomNav";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { usePwaInstall } from "@/hooks/use-pwa-install";
 
 export const Route = createFileRoute("/admin")({
   component: AdminRootLayout,
