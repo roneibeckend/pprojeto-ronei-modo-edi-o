@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2, Printer } from "lucide-react";
+import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2, Printer, Check } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { courses as baseCourses, student as fallbackStudent } from "@/lib/platform-data";
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +8,7 @@ import jsPDF from "jspdf";
 import { useServerFn } from "@tanstack/react-start";
 import { getStudentCertificates } from "@/lib/certificates-student.functions";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 
 // Estilos específicos para impressão
@@ -63,6 +64,34 @@ async function downloadCertificatePDF(node: HTMLElement, cert: { id: string; cou
   pdf.addImage(imgData, "JPEG", x, y, w, h);
   const safe = cert.course.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
   pdf.save(`certificado-${safe}-${cert.id}.pdf`);
+}
+
+
+async function handleShareCertificate(cert: any) {
+  const verifyUrl = `https://verifica.ronneinaveia.com/${cert.code || cert.id}`;
+  const shareData = {
+    title: `Certificado: ${cert.course}`,
+    text: `Acabei de concluir o curso "${cert.course}" na Ronnei na Veia! Confira meu certificado:`,
+    url: verifyUrl,
+  };
+
+  if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+    try {
+      await navigator.share(shareData);
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') {
+        console.error("Error sharing:", err);
+      }
+    }
+  } else {
+    try {
+      await navigator.clipboard.writeText(verifyUrl);
+      toast.success("Link de verificação copiado para a área de transferência!");
+    } catch (err) {
+      console.error("Clipboard error:", err);
+      toast.error("Não foi possível copiar o link.");
+    }
+  }
 }
 
 export const Route = createFileRoute("/app/certificados")({
@@ -222,7 +251,11 @@ function CertCard({ cert, onPreview, onDownload }: { cert: any; onPreview: () =>
             <button onClick={onDownload} className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 text-white/70 transition hover:border-[#ff6a00]/50 hover:text-[#ff6a00]" title="Baixar PDF">
               <Download className="h-4 w-4" />
             </button>
-            <button className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 text-white/70 transition hover:border-[#ff6a00]/50 hover:text-[#ff6a00]" title="Compartilhar">
+            <button 
+              onClick={() => handleShareCertificate(cert)}
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 text-white/70 transition hover:border-[#ff6a00]/50 hover:text-[#ff6a00]" 
+              title="Compartilhar"
+            >
               <Share2 className="h-4 w-4" />
             </button>
           </div>
@@ -349,7 +382,10 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose:
             >
               <Printer className="h-4 w-4" /> Imprimir
             </button>
-            <button className="flex items-center gap-1.5 rounded-md border border-white/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:border-[#ff6a00]/50">
+            <button 
+              onClick={() => handleShareCertificate(cert)}
+              className="flex items-center gap-1.5 rounded-md border border-white/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:border-[#ff6a00]/50"
+            >
               <Share2 className="h-4 w-4" /> Compartilhar
             </button>
             <button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-md border border-white/10 text-white/70 hover:text-white">
