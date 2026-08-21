@@ -125,8 +125,6 @@
     overflow-x: hidden !important;
     width: 100%;
     position: relative;
-    min-height: 100vh;
-    min-height: 100dvh;
     height: auto !important;
     overflow-y: visible !important;
     -webkit-font-smoothing: antialiased;
