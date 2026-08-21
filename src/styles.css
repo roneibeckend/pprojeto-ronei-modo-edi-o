@@ -125,8 +125,8 @@
     overflow-x: hidden;
     width: 100%;
     position: relative;
-    overflow-y: visible;
-    overflow-x: hidden;
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: auto;
