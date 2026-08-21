@@ -151,11 +151,13 @@
   }
   
   /* Desabilita gradientes pesados no mobile para performance de scroll */
-  @media (max-width: 768px) {
+  @media (max-width: 1023px) {
     body {
       background-attachment: scroll;
       background-image: none;
       background-color: var(--color-background);
+      /* Respiro inferior global: evita corte da última frase/botão em mobile e PWA */
+      padding-bottom: calc(6rem + env(safe-area-inset-bottom)) !important;
     }
     
     /* Remove filtros de desfoque pesados em containers de scroll */
