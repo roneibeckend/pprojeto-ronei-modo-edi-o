@@ -100,7 +100,7 @@
   }
   html { 
     scroll-behavior: smooth;
-    overscroll-behavior: none !important;
+    overscroll-behavior: auto;
     -webkit-overflow-scrolling: touch;
     height: auto;
     min-height: 100%;
@@ -126,16 +126,16 @@
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overscroll-behavior-y: none !important;
-    overscroll-behavior: none !important;
+    overscroll-behavior-y: auto;
+    overscroll-behavior: auto;
     user-select: auto;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
-    -webkit-user-drag: none;
+    -webkit-user-drag: auto;
     user-select: auto;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
-    -webkit-user-drag: none;
+    -webkit-user-drag: auto;
     
     /* Previne atrasos de clique em mobile */
     touch-action: manipulation;
