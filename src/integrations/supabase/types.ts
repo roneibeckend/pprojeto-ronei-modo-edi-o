@@ -2312,6 +2312,7 @@ export type Database = {
         Args: { p_amount: number; p_partner_id: string }
         Returns: undefined
       }
+      finalize_ebook_completion: { Args: { _ebook_id: string }; Returns: Json }
       finish_ranking_campaign: {
         Args: { _campaign_id: string }
         Returns: undefined

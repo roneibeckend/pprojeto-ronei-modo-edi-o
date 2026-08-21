@@ -352,48 +352,12 @@ function EbookReaderPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Sessão expirada. Faça login novamente.");
 
-      const now = new Date().toISOString();
+      // 1. Marca capítulos, módulos e o e-book como concluídos (server-side, atômico)
+      const { error: rpcError } = await supabase.rpc("finalize_ebook_completion" as any, {
+        _ebook_id: ebook.id,
+      } as any);
+      if (rpcError) throw rpcError;
 
-      // 1. Marca todos os capítulos como concluídos
-      if (chapters.length > 0) {
-        const { error: chapterError } = await supabase.from("ebook_progress").upsert(
-          chapters.map((c: any) => ({
-            user_id: user.id,
-            chapter_id: c.id,
-            completed_at: now,
-            last_read_at: now,
-          })),
-          { onConflict: "user_id,chapter_id" }
-        );
-        if (chapterError) throw chapterError;
-      }
-
-      // 2. Marca módulos e o e-book como concluídos
-      const moduleIds = (ebook.modules || []).map((m: any) => m.id);
-      if (moduleIds.length > 0) {
-        await supabase.from("progress_tracking").upsert(
-          moduleIds.map((id: string) => ({
-            user_id: user.id,
-            item_type: "ebook_module",
-            item_id: id,
-            started_at: now,
-            completed_at: now,
-          })),
-          { onConflict: "user_id,item_type,item_id" }
-        );
-      }
-
-      const { error: trackingError } = await supabase.from("progress_tracking").upsert(
-        {
-          user_id: user.id,
-          item_type: "ebook",
-          item_id: ebook.id,
-          started_at: now,
-          completed_at: now,
-        },
-        { onConflict: "user_id,item_type,item_id" }
-      );
-      if (trackingError) throw trackingError;
 
       // 3. Gera o certificado
       try {

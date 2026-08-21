@@ -78,9 +78,7 @@ export const getStudentCertificates = createServerFn({ method: "GET" })
       .from('certificates' as any)
       .select(`
         *,
-        template:certificate_templates(*),
-        student:profiles!certificates_student_id_fkey(*)
-      
+        template:certificate_templates(*)
       `)
       .eq('student_id', context.userId)
       .eq('is_revoked', false);
@@ -89,6 +87,13 @@ export const getStudentCertificates = createServerFn({ method: "GET" })
 
     const certs = (certificates || []) as any[];
     if (certs.length === 0) return [];
+
+    const { data: profile } = await supabaseAdmin
+      .from('profiles' as any)
+      .select('name')
+      .eq('id', context.userId)
+      .maybeSingle();
+
 
     const courseIds = certs.filter(c => c.content_type === 'course').map(c => c.content_id);
     const ebookIds = certs.filter(c => c.content_type === 'ebook').map(c => c.content_id);
@@ -112,7 +117,7 @@ export const getStudentCertificates = createServerFn({ method: "GET" })
 
       return {
         ...cert,
-        student_name: (cert as any).student?.full_name || 'Aluno',
+        student_name: (profile as any)?.name || 'Aluno',
         course: content?.title || 'Conteúdo Removido',
         completedAt: new Date(cert.issue_date).toLocaleDateString('pt-BR'),
         hours: cert.custom_data?.hours || 10,
