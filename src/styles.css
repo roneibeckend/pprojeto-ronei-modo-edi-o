@@ -247,6 +247,8 @@
     display: block;
     width: 100%;
     height: calc(9rem + env(safe-area-inset-bottom));
+    min-height: calc(9rem + env(safe-area-inset-bottom));
+    flex: 0 0 auto;
     pointer-events: none;
   }
   @media (min-width: 1024px) {

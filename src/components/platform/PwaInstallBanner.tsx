@@ -12,7 +12,7 @@ export function PwaInstallBanner() {
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
-          className="fixed bottom-20 left-4 right-4 z-[50] sm:bottom-6 sm:left-auto sm:right-6 sm:w-80"
+          className="relative z-[50] mx-4 mb-[calc(1rem+env(safe-area-inset-bottom))] shrink-0 sm:fixed sm:bottom-6 sm:left-auto sm:right-6 sm:mx-0 sm:mb-0 sm:w-80"
         >
           <div className="glass overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/50">
             <div className="bg-primary/10 p-4">
