@@ -89,153 +89,143 @@ function AdminRootLayout() {
     { to: "/admin/logs", label: "Logs do Sistema", icon: Terminal },
   ];
 
+  const visibleItems = navItems.filter((item) => {
+    if (role !== "student") return true;
+    return item.to === "/admin";
+  });
+
+  const renderNav = (onNavigate?: () => void) => (
+    <>
+      {visibleItems.map((item) => {
+        const Icon = item.icon;
+        const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+
+        return (
+          <div key={item.to} className="space-y-1">
+            <Link
+              to={item.to}
+              onClick={onNavigate}
+              preload="intent"
+              className={`flex min-h-11 items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition touch-action-manipulation active:scale-[0.98] ${
+                active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
+              }`}
+            >
+              <Icon className="h-[18px] w-[18px] shrink-0" />
+              <span className="min-w-0 truncate">{item.label}</span>
+            </Link>
+
+            {item.subItems && active && (
+              <div className="ml-9 space-y-1">
+                {item.subItems.map((sub) => {
+                  const isSubActive = sub.exact ? pathname === sub.to : pathname.startsWith(sub.to);
+                  return (
+                    <Link
+                      key={`${item.to}-${sub.label}`}
+                      to={sub.to}
+                      onClick={onNavigate}
+                      className={`block rounded-md px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition ${
+                        isSubActive ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
+                      }`}
+                    >
+                      {sub.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+
   return (
-    <div className="flex h-dvh bg-[#0a0a0a] text-white overflow-hidden safe-top safe-bottom">
+    <div className="flex min-h-dvh w-full bg-[#0a0a0a] text-white lg:h-dvh lg:overflow-hidden">
       {/* Sidebar - Desktop */}
-      <aside className="hidden lg:flex w-64 border-r border-white/10 flex-col shrink-0">
-        <div className="p-6 border-b border-white/10 flex items-center gap-2 shrink-0 h-20">
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 lg:flex">
+        <div className="flex h-20 shrink-0 items-center gap-2 border-b border-white/10 p-6">
           <ShieldCheck className="h-6 w-6" style={{ color: ORANGE }} />
-          <span className="font-bold tracking-widest text-sm uppercase truncate">
+          <span className="truncate text-sm font-bold uppercase tracking-widest">
             {role === "student" ? "Painel Central" : "Painel Admin"}
           </span>
         </div>
-        
-        <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden">
-          {navItems.filter(item => {
-            if (role !== "student") return true;
-            // Para alunos, só o dashboard principal
-            return item.to === "/admin";
-          }).map((item) => {
-            const Icon = item.icon;
-            const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
-            
-            return (
-              <div key={item.to} className="space-y-1">
-                <Link
-                  to={item.to}
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition shrink-0 ${
-                    active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span className="truncate">{item.label}</span>
-                </Link>
 
-                {/* Submenu para o Ranking */}
-                {item.subItems && active && (
-                  <div className="ml-9 space-y-1 animate-in slide-in-from-left-2 duration-200">
-                    {item.subItems.map((sub) => {
-                      const isSubActive = sub.exact ? pathname === sub.to : pathname.startsWith(sub.to);
-                      return (
-                        <Link
-                          key={`${item.to}-${sub.label}`}
-                          to={sub.to}
-                          className={`block px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition ${
-                            isSubActive ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
-                          }`}
-                        >
-                          {sub.label}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+        <nav className="custom-scrollbar min-h-0 flex-1 space-y-1 overflow-y-auto p-4">
+          {renderNav()}
         </nav>
 
-        <div className="p-4 border-t border-white/10 shrink-0">
-          <Link to="/app" className="flex items-center gap-2 text-white/40 hover:text-white text-[10px] font-bold uppercase tracking-widest transition-colors">
+        <div className="shrink-0 border-t border-white/10 p-4">
+          <Link to="/app" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 transition-colors hover:text-white">
             <ArrowLeft className="h-3.5 w-3.5" /> Voltar ao App
           </Link>
         </div>
       </aside>
 
-      {/* Sidebar - Mobile */}
-      <div className="lg:hidden flex items-center p-4 border-b border-white/10 absolute top-0 w-full z-10 bg-[#0a0a0a]">
-        <Sheet>
-          <SheetTrigger className="p-2">
-            <Menu className="h-6 w-6" />
-          </SheetTrigger>
-          <SheetContent side="left" className="bg-[#0a0a0a] border-white/10 w-64 p-0">
-            <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden mt-12">
-              {navItems.filter(item => {
-                if (role !== "student") return true;
-                return item.to === "/admin";
-                }).map((item) => {
-                  const Icon = item.icon;
-                  const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
-                  return (
-                    <div key={item.to} className="space-y-1">
-                      <Link
-                        to={item.to}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition shrink-0 ${
-                          active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
-                        }`}
-                      >
-                        <Icon className="h-5 w-5" />
-                        {item.label}
-                      </Link>
-
-                      {/* Submenu Mobile */}
-                      {item.subItems && active && (
-                        <div className="ml-12 space-y-1">
-                          {item.subItems.map((sub) => {
-                            const isSubActive = pathname === sub.to;
-                            return (
-                              <Link
-                                key={`${item.to}-${sub.label}-mobile`}
-                                to={sub.to}
-                                className={`block px-3 py-2 rounded-md text-[11px] font-bold uppercase tracking-wider transition ${
-                                  (sub.exact ? pathname === sub.to : pathname.startsWith(sub.to)) ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
-                                }`}
-                              >
-                                {sub.label}
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-            </nav>
-          </SheetContent>
-        </Sheet>
-        <span className="font-bold tracking-widest text-[10px] sm:text-sm uppercase ml-4 truncate flex-1 pr-4">Painel Administrativo</span>
-        <div className="flex items-center gap-2">
-          <Link 
+      <div className="flex min-w-0 flex-1 flex-col lg:h-dvh lg:overflow-hidden">
+        {/* Header - Mobile */}
+        <div className="sticky top-0 z-40 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-white/10 bg-[#0a0a0a]/95 px-3 py-2 backdrop-blur pt-safe lg:hidden">
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 touch-action-manipulation" aria-label="Abrir menu">
+              <Menu className="h-5 w-5" />
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[17rem] max-w-[85vw] border-white/10 bg-[#0a0a0a] p-0">
+              <div className="flex h-dvh flex-col overflow-hidden safe-top safe-bottom">
+                <div className="flex shrink-0 items-center gap-2 border-b border-white/10 px-4 py-4 pt-safe">
+                  <ShieldCheck className="h-5 w-5 shrink-0" style={{ color: ORANGE }} />
+                  <span className="truncate text-xs font-bold uppercase tracking-widest">
+                    {role === "student" ? "Painel Central" : "Painel Admin"}
+                  </span>
+                </div>
+                <nav className="scrollbar-hidden min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain p-3 [-webkit-overflow-scrolling:touch]">
+                  {renderNav(() => setMobileOpen(false))}
+                </nav>
+                <div className="shrink-0 border-t border-white/10 p-4">
+                  <Link
+                    to="/app"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 transition-colors hover:text-white"
+                  >
+                    <ArrowLeft className="h-3.5 w-3.5" /> Voltar ao App
+                  </Link>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+          <span className="min-w-0 truncate text-center text-[11px] font-bold uppercase tracking-widest">
+            {role === "student" ? "Painel Central" : "Painel Admin"}
+          </span>
+          <Link
             to="/admin/notificacoes"
-            className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 hover:border-[#ff6a00]/50 hover:text-[#ff6a00] transition-colors touch-target"
+            className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 transition-colors hover:border-[#ff6a00]/50 hover:text-[#ff6a00]"
+            aria-label="Notificações"
           >
             <Bell className="h-5 w-5" />
           </Link>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto pt-20 lg:pt-0 w-full">
-        <header className="px-8 border-b border-white/10 hidden lg:flex items-center justify-between shrink-0 h-20">
-          <h1 className="font-display text-xl font-extrabold uppercase tracking-tight">
-            {role === "student" ? "Painel Central" : (
-              <>Painel Central <span style={{ color: ORANGE }}>Administrativo</span></>
-            )}
-          </h1>
-          <div className="flex items-center gap-3">
-            <Link 
-              to="/admin/notificacoes"
-              className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 hover:border-[#ff6a00]/50 hover:text-[#ff6a00] transition-colors"
-              title="Notificações"
-            >
-              <Bell className="h-5 w-5" />
-            </Link>
+        {/* Main Content */}
+        <main className="min-w-0 flex-1 lg:min-h-0 lg:overflow-y-auto custom-scrollbar">
+          <header className="hidden h-20 shrink-0 items-center justify-between border-b border-white/10 px-8 lg:flex">
+            <h1 className="font-display text-xl font-extrabold uppercase tracking-tight">
+              {role === "student" ? "Painel Central" : (
+                <>Painel Central <span style={{ color: ORANGE }}>Administrativo</span></>
+              )}
+            </h1>
+            <div className="flex items-center gap-3">
+              <Link
+                to="/admin/notificacoes"
+                className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 transition-colors hover:border-[#ff6a00]/50 hover:text-[#ff6a00]"
+                title="Notificações"
+              >
+                <Bell className="h-5 w-5" />
+              </Link>
+            </div>
+          </header>
+          <div className="w-full min-w-0 overflow-x-hidden p-3 pb-24 sm:p-6 lg:p-8 lg:pb-8 3xl:mx-auto 3xl:max-w-[1800px]">
+            <Outlet />
           </div>
-        </header>
-        <div className="p-4 sm:p-6 lg:p-8 3xl:max-w-[1800px] 3xl:mx-auto">
-          <Outlet />
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
