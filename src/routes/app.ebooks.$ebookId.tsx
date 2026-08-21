@@ -878,6 +878,7 @@ function EbookReaderPage() {
         }}
         onSuccess={() => {
           setHasSubmittedFeedback(true);
+          queryClient.invalidateQueries({ queryKey: ["ebook-completion-state", ebook.id] });
         }}
       />
     </div>
