@@ -4,7 +4,7 @@ import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, Check
 import { VideoPlayer } from "@/components/platform/VideoPlayer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/platform/Shell";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { useProgress } from "@/hooks/use-progress";
