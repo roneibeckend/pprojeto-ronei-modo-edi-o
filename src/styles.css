@@ -158,10 +158,18 @@
       background-color: var(--color-background);
     }
 
-    /* Respiro inferior global: evita corte da última frase/botão em mobile e PWA.
-       Não se aplica a telas com shell de altura fixa (que já rolam internamente). */
+    /* O espaçador real no fim do documento funciona também no Safari/PWA,
+       onde padding no body pode ficar atrás da barra inferior do sistema. */
     body:not(:has(.app-shell)) {
-      padding-bottom: calc(6rem + env(safe-area-inset-bottom)) !important;
+      padding-bottom: 0 !important;
+    }
+
+    body:not(:has(.app-shell))::after {
+      content: "";
+      display: block;
+      width: 100%;
+      height: calc(7rem + env(safe-area-inset-bottom));
+      pointer-events: none;
     }
 
     /* Com shell de altura fixa, o respiro fica na área de rolagem interna */
@@ -231,10 +239,19 @@
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
   .touch-target { min-width: 44px; min-height: 44px; }
 
-  /* Respiro inferior seguro para áreas de rolagem (mobile/PWA) */
-  .pb-safe-scroll { padding-bottom: calc(9rem + env(safe-area-inset-bottom)); }
+  /* Espaçador interno real: padding no último filho de overflow pode ser
+     ignorado pelo WebKit quando a PWA usa um flex container de altura fixa. */
+  .pb-safe-scroll { padding-bottom: 0; }
+  .pb-safe-scroll::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: calc(9rem + env(safe-area-inset-bottom));
+    pointer-events: none;
+  }
   @media (min-width: 1024px) {
     .pb-safe-scroll { padding-bottom: 2.5rem; }
+    .pb-safe-scroll::after { display: none; }
   }
   
   .scrollbar-hidden, .no-scrollbar {
