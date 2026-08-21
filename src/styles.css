@@ -100,6 +100,7 @@
   }
   html { 
     scroll-behavior: smooth;
+    overflow-y: scroll;
     overscroll-behavior: auto;
     -webkit-overflow-scrolling: touch;
     height: auto;
