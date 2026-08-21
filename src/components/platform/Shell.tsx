@@ -230,7 +230,7 @@ export function Shell({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div className="flex h-dvh w-full overflow-hidden bg-[#0a0a0a] text-foreground">
+    <div className="app-shell flex h-[100svh] lg:h-dvh w-full overflow-hidden bg-[#0a0a0a] text-foreground">
       {/* Desktop sidebar */}
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-white/5 lg:block transition-[width] duration-300 ease-in-out">
         {SidebarInner}
