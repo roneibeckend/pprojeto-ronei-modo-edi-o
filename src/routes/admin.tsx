@@ -259,10 +259,11 @@ function AdminRootLayout() {
             </Link>
           </div>
         </header>
-        <div className="p-4 sm:p-6 lg:p-8 3xl:max-w-[1800px] 3xl:mx-auto">
+        <div className={`p-4 sm:p-6 lg:p-8 3xl:max-w-[1800px] 3xl:mx-auto ${isMobileOrPwa ? 'pb-20' : ''}`}>
           <Outlet />
         </div>
       </main>
+      {isMobileOrPwa && <BottomNav />}
     </div>
   );
 }
