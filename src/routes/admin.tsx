@@ -171,7 +171,7 @@ function AdminRootLayout() {
             </SheetTrigger>
             <SheetContent side="left" className="w-[17rem] max-w-[85vw] border-white/10 bg-[#0a0a0a] p-0">
               <div className="flex h-dvh flex-col overflow-hidden safe-top safe-bottom">
-                <div className="flex shrink-0 items-center gap-2 border-b border-white/10 px-4 py-4 pt-safe">
+                <div className="flex shrink-0 items-center gap-2 border-b border-white/10 px-4 py-4">
                   <ShieldCheck className="h-5 w-5 shrink-0" style={{ color: ORANGE }} />
                   <span className="truncate text-xs font-bold uppercase tracking-widest">
                     {role === "student" ? "Painel Central" : "Painel Admin"}

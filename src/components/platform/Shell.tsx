@@ -119,7 +119,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const SidebarInner = (
     <div className="flex h-dvh flex-col overflow-hidden bg-sidebar text-sidebar-foreground safe-top safe-bottom">
       {/* Brand */}
-      <div className="flex shrink-0 items-center gap-3 border-b border-sidebar-border px-5 py-4 pt-safe">
+      <div className="flex shrink-0 items-center gap-3 border-b border-sidebar-border px-5 py-4">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary">
           <Flame className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} />
         </div>
@@ -237,7 +237,7 @@ export function Shell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-3 border-b border-white/5 bg-[#0a0a0a]/90 px-4 backdrop-blur lg:px-8 pt-safe h-[calc(3.5rem+env(safe-area-inset-top))]">
+        <header className="sticky top-0 z-40 flex shrink-0 items-center gap-3 border-b border-white/5 bg-[#0a0a0a]/90 px-4 backdrop-blur lg:px-8 pt-safe min-h-[calc(3.5rem+env(safe-area-inset-top))] h-[calc(3.5rem+env(safe-area-inset-top))]">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button
