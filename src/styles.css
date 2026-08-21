@@ -156,7 +156,11 @@
       background-attachment: scroll;
       background-image: none;
       background-color: var(--color-background);
-      /* Respiro inferior global: evita corte da última frase/botão em mobile e PWA */
+    }
+
+    /* Respiro inferior global: evita corte da última frase/botão em mobile e PWA.
+       Não se aplica a telas com shell de altura fixa (que já rolam internamente). */
+    body:not(:has(.app-shell)) {
       padding-bottom: calc(6rem + env(safe-area-inset-bottom)) !important;
     }
     
