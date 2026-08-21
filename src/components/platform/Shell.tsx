@@ -248,24 +248,22 @@ export function Shell({ children }: { children: ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-3 border-b border-white/5 bg-[#0a0a0a]/90 px-4 backdrop-blur lg:px-8 pt-safe h-[calc(3.5rem+env(safe-area-inset-top))]">
-          {!isMobileOrPwa && (
-            <Sheet open={open} onOpenChange={setOpen}>
-              <SheetTrigger asChild>
-                <button
-                  className="grid h-10 w-10 place-items-center rounded-md border border-white/10 lg:hidden touch-target"
-                  aria-label="Abrir menu"
-                >
-                  <Menu className="h-5 w-5" />
-                </button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-72 p-0 border-r border-white/10 bg-[#0e0e0e]">
-                <SheetHeader className="sr-only">
-                  <SheetTitle>Menu de Navegação</SheetTitle>
-                </SheetHeader>
-                {SidebarInner}
-              </SheetContent>
-            </Sheet>
-          )}
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <button
+                className={`grid h-10 w-10 place-items-center rounded-md border border-white/10 touch-target ${!isMobileOrPwa ? 'lg:hidden' : ''}`}
+                aria-label="Abrir menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-72 p-0 border-r border-white/10 bg-[#0e0e0e]">
+              <SheetHeader className="sr-only">
+                <SheetTitle>Menu de Navegação</SheetTitle>
+              </SheetHeader>
+              {SidebarInner}
+            </SheetContent>
+          </Sheet>
 
           <div className="min-w-0 flex-1">
             <div className="font-display text-lg font-extrabold uppercase tracking-wide sm:text-xl text-foreground">
