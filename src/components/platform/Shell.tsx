@@ -237,7 +237,7 @@ export function Shell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-3 border-b border-white/5 bg-[#0a0a0a]/90 px-4 backdrop-blur lg:px-8 pt-safe h-[calc(3.5rem+env(safe-area-inset-top))]">
+        <header className="sticky top-0 z-40 flex shrink-0 items-center gap-3 border-b border-white/5 bg-[#0a0a0a]/90 px-4 backdrop-blur lg:px-8 pt-safe min-h-[calc(3.5rem+env(safe-area-inset-top))] h-[calc(3.5rem+env(safe-area-inset-top))]">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button
