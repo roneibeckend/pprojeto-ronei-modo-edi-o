@@ -127,7 +127,7 @@
     width: 100%;
     position: relative;
     min-height: 100vh;
-    overflow-y: auto !important;
+    overflow-y: visible !important;
     overflow-x: hidden !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
