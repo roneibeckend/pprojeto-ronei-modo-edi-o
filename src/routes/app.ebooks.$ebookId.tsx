@@ -774,8 +774,8 @@ function EbookReaderPage() {
 
             {!nextChapter ? (
               <button
-                disabled={hasSubmittedFeedback}
-                onClick={() => !hasSubmittedFeedback && setShowFeedbackModal(true)}
+                disabled={hasSubmittedFeedback || isFinalizing}
+                onClick={handleFinalizeEbook}
                 className={`group flex flex-1 items-center justify-end gap-4 rounded-2xl p-4 text-right transition-all shadow-lg shadow-fire/20 ${
                   hasSubmittedFeedback 
                     ? "bg-white/5 opacity-50 cursor-not-allowed pointer-events-none" 
@@ -787,13 +787,14 @@ function EbookReaderPage() {
                     {hasSubmittedFeedback ? "Concluído" : "Finalizar"}
                   </div>
                   <div className={`line-clamp-2 text-sm font-bold ${hasSubmittedFeedback ? "text-muted-foreground" : "text-black"}`}>
-                    {hasSubmittedFeedback ? "Curso Finalizado" : "Concluir E-book"}
+                    {hasSubmittedFeedback ? "Curso Finalizado" : isFinalizing ? "Finalizando..." : "Concluir E-book"}
                   </div>
                 </div>
                 <div className={`grid h-10 w-10 place-items-center rounded-xl ${hasSubmittedFeedback ? "bg-white/5 text-muted-foreground" : "bg-black/20 text-black"}`}>
-                  <Award className="h-5 w-5" />
+                  {isFinalizing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Award className="h-5 w-5" />}
                 </div>
               </button>
+
             ) : (
               <button
                 onClick={() => setActiveChapterId(nextChapter?.id)}
