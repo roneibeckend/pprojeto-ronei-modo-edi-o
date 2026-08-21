@@ -36,6 +36,7 @@ function AdminRootLayout() {
   const navigate = useNavigate();
   const { isAdmin, role, isLoading } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     if (isLoading) return;
