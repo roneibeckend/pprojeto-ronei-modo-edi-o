@@ -380,7 +380,7 @@ function FinancePage() {
 
         {/* Coluna 2: Custos */}
         <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left lg:col-span-1">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <LayoutTemplate className="h-4 w-4" style={{ color: ORANGE }} /> Quadro de Custos
             </div>
@@ -443,7 +443,7 @@ function FinancePage() {
 
         {/* Coluna 3: Sócios */}
         <section className="border border-white/5 bg-black/40 p-6 flex flex-col text-left lg:col-span-1">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <PieChart className="h-4 w-4" style={{ color: ORANGE }} /> Divisão de Sócios
             </div>

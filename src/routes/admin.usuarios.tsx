@@ -287,7 +287,7 @@ function AdminUsuariosPage() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto py-6 sm:py-4">
           <div className="w-full max-w-xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
               <div>
                 <h3 className="text-xl font-bold">Configurar Acessos</h3>
                 <p className="text-xs text-white/40">{editingUser?.email}</p>

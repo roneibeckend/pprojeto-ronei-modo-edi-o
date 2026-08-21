@@ -402,7 +402,7 @@ function AdminRelatoriosPage() {
         {/* Gestão de Destinatários */}
         <div className="lg:col-span-2 space-y-6">
           <section className="border border-white/5 bg-[#111] p-6 rounded-xl">
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
                 <FileText className="h-4 w-4" style={{ color: ORANGE }} /> Destinatários do Relatório
               </div>
@@ -460,7 +460,7 @@ function AdminRelatoriosPage() {
       {isRecipientModalOpen && (
         <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto py-6 sm:py-4">
           <div className="w-full max-w-md bg-[#0e0e0e] border border-white/10 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
               <h3 className="text-lg font-bold">{editingRecipient?.id ? "Editar Destinatário" : "Novo Destinatário"}</h3>
               <button onClick={() => setIsRecipientModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition"><X className="h-5 w-5" /></button>
             </div>
