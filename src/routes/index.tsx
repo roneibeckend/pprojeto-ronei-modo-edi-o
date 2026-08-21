@@ -1401,37 +1401,43 @@ function Offer() {
 
             {/* eBook Price Container */}
             <div className="mt-8">
-              <div className="text-center lg:text-left [font-variant-numeric:tabular-nums]">
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1 invisible h-0 overflow-hidden">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--ember)]" />
-                <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--ember)]"></span>
-              </div>
-              <div className="text-[11px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
-                De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 97,90</span> por apenas
-              </div>
-              <p className="mx-auto mt-2 max-w-xs text-[11px] leading-relaxed text-muted-foreground">
-                Estamos formando a maior comunidade de espeteiros do Brasil — por isso o valor está simbólico no lançamento.
-              </p>
+              <div className="text-center [font-variant-numeric:tabular-nums]">
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--ember)]/40 bg-[color:var(--ember)]/10 px-3 py-1 invisible h-0 overflow-hidden">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--ember)]" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--ember)]"></span>
+                </div>
+                
+                <div className="text-[11px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
+                  De <span className="text-base font-black text-muted-foreground/90 line-through decoration-[color:var(--ember)]/60 decoration-2">R$ 97,90</span> por apenas
+                </div>
+                
+                <p className="mx-auto mt-2 max-w-xs text-[11px] leading-relaxed text-muted-foreground">
+                  Estamos formando a maior comunidade de espeteiros do Brasil — por isso o valor está simbólico no lançamento.
+                </p>
 
-              <div className="mt-3 flex items-start justify-center lg:justify-start gap-1.5">
-                <span className="mt-3 text-xl font-semibold text-[color:var(--gold)]">R$</span>
-                <span className="font-display text-7xl leading-none tracking-tight text-gradient-fire sm:text-8xl">
-                  47
-                </span>
-                <span className="mt-3 text-xl font-semibold text-[color:var(--gold)]">,90</span>
-              </div>
+                <div className="mt-3 flex items-start justify-center gap-1.5">
+                  <span className="mt-3 text-xl font-semibold text-[color:var(--gold)]">R$</span>
+                  <span className="font-display text-7xl leading-none tracking-tight text-gradient-fire sm:text-8xl">
+                    47
+                  </span>
+                  <span className="mt-3 text-xl font-semibold text-[color:var(--gold)]">,90</span>
+                </div>
 
-              <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-3 py-1">
-                <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--gold)]">Economize 76%</span>
-                <span className="h-3 w-px bg-[color:var(--gold)]/40" />
-                <span className="text-xs font-bold text-[color:var(--gold)]">R$ 50,00 OFF</span>
-              </div>
+                <div className="mt-3 flex justify-center">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-3 py-1">
+                    <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[color:var(--gold)]">Economize 76%</span>
+                    <span className="h-3 w-px bg-[color:var(--gold)]/40" />
+                    <span className="text-xs font-bold text-[color:var(--gold)]">R$ 50,00 OFF</span>
+                  </div>
+                </div>
 
-              <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5">
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">ou</span>
-                <span className="text-sm font-bold text-[color:var(--gold)]">3x de R$ 17,00</span>
-                <span className="text-[11px] text-muted-foreground">no cartão</span>
-              </div>
+                <div className="mt-4 flex justify-center">
+                  <div className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">ou</span>
+                    <span className="text-sm font-bold text-[color:var(--gold)]">3x de R$ 17,00</span>
+                    <span className="text-[11px] text-muted-foreground">no cartão</span>
+                  </div>
+                </div>
               </div>
             </div>
 
