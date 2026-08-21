@@ -237,6 +237,8 @@
 @layer utilities {
   .safe-top { padding-top: env(safe-area-inset-top); }
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
   .touch-target { min-width: 44px; min-height: 44px; }
 
   /* Espaçador interno real: padding no último filho de overflow pode ser
