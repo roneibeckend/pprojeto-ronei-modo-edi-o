@@ -25,9 +25,6 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { BottomNav } from "@/components/platform/BottomNav";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { usePwaInstall } from "@/hooks/use-pwa-install";
 
 export const Route = createFileRoute("/admin")({
   component: AdminRootLayout,
@@ -92,81 +89,73 @@ function AdminRootLayout() {
     { to: "/admin/logs", label: "Logs do Sistema", icon: Terminal },
   ];
 
-  const isMobile = useIsMobile();
-  const { isStandalone } = usePwaInstall();
-  const isPwa = isStandalone;
-  const isMobileOrPwa = isMobile || isPwa;
-
   return (
     <div className="flex h-dvh bg-[#0a0a0a] text-white overflow-hidden safe-top safe-bottom">
-      {/* Sidebar - Desktop - Hidden if Mobile or PWA */}
-      {!isMobileOrPwa && (
-        <aside className="hidden lg:flex w-64 border-r border-white/10 flex-col shrink-0">
-          <div className="p-6 border-b border-white/10 flex items-center gap-2 shrink-0 h-20">
-            <ShieldCheck className="h-6 w-6" style={{ color: ORANGE }} />
-            <span className="font-bold tracking-widest text-sm uppercase truncate">
-              {role === "student" ? "Painel Central" : "Painel Admin"}
-            </span>
-          </div>
-          
-          <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden">
-            {navItems.filter(item => {
-              if (role !== "student") return true;
-              // Para alunos, só o dashboard principal
-              return item.to === "/admin";
-            }).map((item) => {
-              const Icon = item.icon;
-              const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
-              
-              return (
-                <div key={item.to} className="space-y-1">
-                  <Link
-                    to={item.to}
-                    className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition shrink-0 ${
-                      active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span className="truncate">{item.label}</span>
-                  </Link>
+      {/* Sidebar - Desktop */}
+      <aside className="hidden lg:flex w-64 border-r border-white/10 flex-col shrink-0">
+        <div className="p-6 border-b border-white/10 flex items-center gap-2 shrink-0 h-20">
+          <ShieldCheck className="h-6 w-6" style={{ color: ORANGE }} />
+          <span className="font-bold tracking-widest text-sm uppercase truncate">
+            {role === "student" ? "Painel Central" : "Painel Admin"}
+          </span>
+        </div>
+        
+        <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden">
+          {navItems.filter(item => {
+            if (role !== "student") return true;
+            // Para alunos, só o dashboard principal
+            return item.to === "/admin";
+          }).map((item) => {
+            const Icon = item.icon;
+            const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+            
+            return (
+              <div key={item.to} className="space-y-1">
+                <Link
+                  to={item.to}
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition shrink-0 ${
+                    active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span className="truncate">{item.label}</span>
+                </Link>
 
-                  {/* Submenu para o Ranking */}
-                  {item.subItems && active && (
-                    <div className="ml-9 space-y-1 animate-in slide-in-from-left-2 duration-200">
-                      {item.subItems.map((sub) => {
-                        const isSubActive = sub.exact ? pathname === sub.to : pathname.startsWith(sub.to);
-                        return (
-                          <Link
-                            key={`${item.to}-${sub.label}`}
-                            to={sub.to}
-                            className={`block px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition ${
-                              isSubActive ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
-                            }`}
-                          >
-                            {sub.label}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </nav>
+                {/* Submenu para o Ranking */}
+                {item.subItems && active && (
+                  <div className="ml-9 space-y-1 animate-in slide-in-from-left-2 duration-200">
+                    {item.subItems.map((sub) => {
+                      const isSubActive = sub.exact ? pathname === sub.to : pathname.startsWith(sub.to);
+                      return (
+                        <Link
+                          key={`${item.to}-${sub.label}`}
+                          to={sub.to}
+                          className={`block px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition ${
+                            isSubActive ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
+                          }`}
+                        >
+                          {sub.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </nav>
 
-          <div className="p-4 border-t border-white/10 shrink-0">
-            <Link to="/app" className="flex items-center gap-2 text-white/40 hover:text-white text-[10px] font-bold uppercase tracking-widest transition-colors">
-              <ArrowLeft className="h-3.5 w-3.5" /> Voltar ao App
-            </Link>
-          </div>
-        </aside>
-      )}
+        <div className="p-4 border-t border-white/10 shrink-0">
+          <Link to="/app" className="flex items-center gap-2 text-white/40 hover:text-white text-[10px] font-bold uppercase tracking-widest transition-colors">
+            <ArrowLeft className="h-3.5 w-3.5" /> Voltar ao App
+          </Link>
+        </div>
+      </aside>
 
-      {/* Sidebar - Mobile - Hidden if PWA (uses BottomNav) or just keep header minimal */}
-      {/* Sidebar - Mobile/PWA Header */}
-      <div className={`flex items-center p-4 border-b border-white/10 absolute top-0 w-full z-10 bg-[#0a0a0a] ${isPwa ? 'pt-safe' : ''}`}>
+      {/* Sidebar - Mobile */}
+      <div className="lg:hidden flex items-center p-4 border-b border-white/10 absolute top-0 w-full z-10 bg-[#0a0a0a]">
         <Sheet>
-          <SheetTrigger className={`p-2 ${!isMobileOrPwa ? 'lg:hidden' : ''}`}>
+          <SheetTrigger className="p-2">
             <Menu className="h-6 w-6" />
           </SheetTrigger>
           <SheetContent side="left" className="bg-[#0a0a0a] border-white/10 w-64 p-0">
@@ -243,11 +232,10 @@ function AdminRootLayout() {
             </Link>
           </div>
         </header>
-        <div className={`p-4 sm:p-6 lg:p-8 3xl:max-w-[1800px] 3xl:mx-auto ${isMobileOrPwa ? 'pb-20' : ''}`}>
+        <div className="p-4 sm:p-6 lg:p-8 3xl:max-w-[1800px] 3xl:mx-auto">
           <Outlet />
         </div>
       </main>
-      {isMobileOrPwa && <BottomNav />}
     </div>
   );
 }
