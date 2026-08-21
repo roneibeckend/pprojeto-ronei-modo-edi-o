@@ -4,16 +4,14 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export const getOnboardingStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await context.supabase
       .from('user_onboarding' as any)
       .select('*')
       .eq('user_id', context.userId)
       .maybeSingle();
-      
+
     if (error) throw new Error(error.message);
-    
+
     const onboardingData = data as any;
     return { hasSeenOnboarding: onboardingData?.has_seen_onboarding ?? false };
   });
@@ -21,18 +19,15 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
 export const completeOnboarding = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    
-    const { error } = await supabaseAdmin
+    const { error } = await context.supabase
       .from('user_onboarding' as any)
-      .upsert({ 
-        user_id: context.userId, 
+      .upsert({
+        user_id: context.userId,
         has_seen_onboarding: true,
         last_seen_at: new Date().toISOString()
       } as any);
-      
+
     if (error) throw new Error(error.message);
-    
+
     return { success: true };
   });
-
