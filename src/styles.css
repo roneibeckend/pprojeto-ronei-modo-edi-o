@@ -100,9 +100,10 @@
   }
   html { 
     scroll-behavior: smooth;
-    overflow-y: scroll !important;
+    overflow-y: auto !important;
     overflow-x: hidden !important;
     overscroll-behavior: auto !important;
+    height: 100% !important;
     -webkit-overflow-scrolling: touch;
     height: auto;
     min-height: 100%;
