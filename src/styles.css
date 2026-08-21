@@ -163,6 +163,11 @@
     body:not(:has(.app-shell)) {
       padding-bottom: calc(6rem + env(safe-area-inset-bottom)) !important;
     }
+
+    /* Com shell de altura fixa, o respiro fica na área de rolagem interna */
+    body:has(.app-shell) {
+      padding-bottom: 0 !important;
+    }
     
     /* Remove filtros de desfoque pesados em containers de scroll */
     .glass, .backdrop-blur, .backdrop-blur-xl {
