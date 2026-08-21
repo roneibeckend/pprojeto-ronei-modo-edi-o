@@ -295,7 +295,7 @@ function AdminChatbotPage() {
 
       {/* Editing Modal */}
       {isEditing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto py-6 sm:py-4">
           <div className="w-full max-w-2xl animate-in zoom-in-95 duration-300">
             <div className="glass rounded-3xl border border-white/10 bg-[#0f0f0f] overflow-hidden shadow-2xl">
               <div className="flex items-center justify-between border-b border-white/5 px-8 py-6">

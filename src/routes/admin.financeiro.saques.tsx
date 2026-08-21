@@ -161,7 +161,7 @@ function AdminAsaasTransfersPage() {
               {syncMutation.isPending ? <Loader2 className="animate-spin" /> : <RefreshCw />} Sincronizar
             </Button>
           </div>
-          <div className="border border-white/5 rounded-2xl overflow-hidden bg-[#111]">
+          <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
             <table className="w-full text-sm">
               <thead className="text-[10px] uppercase font-bold text-white/40 bg-white/[0.02]">
                 <tr>
@@ -186,7 +186,7 @@ function AdminAsaasTransfersPage() {
         </TabsContent>
         
         <TabsContent value="payouts" className="space-y-4 pt-4">
-          <div className="border border-white/5 rounded-2xl overflow-hidden bg-[#111]">
+          <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
             <table className="w-full text-sm">
               <thead className="text-[10px] uppercase font-bold text-white/40 bg-white/[0.02]">
                 <tr>
@@ -270,7 +270,7 @@ function AdminAsaasTransfersPage() {
             </Dialog>
           </div>
 
-          <div className="border border-white/5 rounded-2xl overflow-hidden bg-[#111]">
+          <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
             <table className="w-full text-sm">
               <thead className="text-[10px] uppercase font-bold text-white/40 bg-white/[0.02]">
                 <tr>

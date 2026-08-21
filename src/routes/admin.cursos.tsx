@@ -336,7 +336,7 @@ function AdminCursosPage() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 backdrop-blur-sm p-0 sm:p-4 text-left overflow-y-auto pointer-events-auto">
+        <div className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center bg-black/95 backdrop-blur-sm p-0 sm:p-4 text-left overflow-y-auto pointer-events-auto py-6 sm:py-4">
           <div className="w-full h-full sm:h-auto sm:max-w-4xl bg-[#0e0e0e] sm:border sm:border-white/10 sm:rounded-2xl p-6 flex flex-col relative z-10">
             <div className="flex items-center justify-between mb-6 shrink-0">
               <h3 className="text-lg sm:text-xl font-bold pr-4">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo Curso"}</h3>

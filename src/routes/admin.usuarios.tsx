@@ -218,7 +218,7 @@ function AdminUsuariosPage() {
           <Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" />
         </div>
       ) : (
-        <div className="border border-white/5 rounded-xl overflow-hidden bg-[#111]">
+        <div className="border border-white/5 rounded-xl overflow-x-auto bg-[#111]">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-white/5 bg-white/[0.02]">
@@ -285,7 +285,7 @@ function AdminUsuariosPage() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto py-6 sm:py-4">
           <div className="w-full max-w-xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-8">
               <div>

@@ -145,7 +145,7 @@ function AdminAffiliatesPage() {
               <Loader2 className="h-8 w-8 animate-spin text-fire" />
             </div>
           ) : (
-            <div className="border border-white/5 rounded-2xl overflow-hidden bg-[#111]">
+            <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/5 bg-white/[0.02] text-[10px] font-bold uppercase tracking-widest text-white/40">

@@ -458,7 +458,7 @@ function AdminRelatoriosPage() {
 
       {/* Modal Recipient */}
       {isRecipientModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto py-6 sm:py-4">
           <div className="w-full max-w-md bg-[#0e0e0e] border border-white/10 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-lg font-bold">{editingRecipient?.id ? "Editar Destinatário" : "Novo Destinatário"}</h3>
@@ -502,7 +502,7 @@ function AdminRelatoriosPage() {
       )}
       {/* Modal Preview */}
       {isPreviewOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto py-6 sm:py-4">
           <div className="w-full max-w-lg bg-[#0e0e0e] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between p-6 border-b border-white/5 bg-white/[0.02]">
               <div className="flex items-center gap-2">

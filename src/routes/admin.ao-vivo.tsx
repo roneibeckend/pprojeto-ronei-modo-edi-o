@@ -184,7 +184,7 @@ function LiveClassesPage() {
 
       {/* Modal de Cadastro/Edição */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/80 p-4 backdrop-blur-sm overflow-y-auto py-6 sm:py-4">
           <div className="w-full max-w-xl animate-in zoom-in-95 rounded-2xl border border-white/10 bg-[#0e0e0e] p-6 shadow-2xl">
             <div className="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
               <h3 className="font-display text-xl font-bold uppercase tracking-tight">
