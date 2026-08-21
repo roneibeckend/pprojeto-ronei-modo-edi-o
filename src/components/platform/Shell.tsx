@@ -119,7 +119,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const SidebarInner = (
     <div className="flex h-dvh flex-col overflow-hidden bg-sidebar text-sidebar-foreground safe-top safe-bottom">
       {/* Brand */}
-      <div className="flex shrink-0 items-center gap-3 border-b border-sidebar-border px-5 py-4 pt-safe">
+      <div className="flex shrink-0 items-center gap-3 border-b border-sidebar-border px-5 py-4">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary">
           <Flame className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} />
         </div>
