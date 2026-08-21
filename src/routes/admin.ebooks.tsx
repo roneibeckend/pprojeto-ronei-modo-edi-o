@@ -228,7 +228,7 @@ function AdminEbooksPage() {
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-white/5 bg-[#111]">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left text-sm min-w-[640px]">
             <thead className="bg-white/5 text-[10px] font-bold uppercase tracking-widest text-white/40">
               <tr>
                 <th className="px-6 py-4">Capa / Título</th>

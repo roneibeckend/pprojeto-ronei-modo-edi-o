@@ -146,7 +146,7 @@ function AdminAffiliatesPage() {
             </div>
           ) : (
             <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm min-w-[640px]">
                 <thead>
                   <tr className="border-b border-white/5 bg-white/[0.02] text-[10px] font-bold uppercase tracking-widest text-white/40">
                     <th className="px-6 py-4">Afiliado</th>

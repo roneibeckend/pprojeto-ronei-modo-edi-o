@@ -162,7 +162,7 @@ function AdminAsaasTransfersPage() {
             </Button>
           </div>
           <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[640px]">
               <thead className="text-[10px] uppercase font-bold text-white/40 bg-white/[0.02]">
                 <tr>
                   <th className="px-6 py-4">Data</th>
@@ -187,7 +187,7 @@ function AdminAsaasTransfersPage() {
         
         <TabsContent value="payouts" className="space-y-4 pt-4">
           <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[640px]">
               <thead className="text-[10px] uppercase font-bold text-white/40 bg-white/[0.02]">
                 <tr>
                   <th className="px-6 py-4">Usuário</th>
@@ -271,7 +271,7 @@ function AdminAsaasTransfersPage() {
           </div>
 
           <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[640px]">
               <thead className="text-[10px] uppercase font-bold text-white/40 bg-white/[0.02]">
                 <tr>
                   <th className="px-6 py-4">Data</th>

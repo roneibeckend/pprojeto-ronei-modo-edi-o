@@ -1027,7 +1027,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
             </CardHeader>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
+                <table className="w-full border-collapse min-w-[640px]">
                   <thead>
                     <tr className="bg-white/[0.02] border-y border-white/5">
                       <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40">Template</th>
