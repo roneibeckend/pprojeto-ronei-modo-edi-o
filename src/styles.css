@@ -160,11 +160,11 @@
 
     /* O espaçador real no fim do documento funciona também no Safari/PWA,
        onde padding no body pode ficar atrás da barra inferior do sistema. */
-    body:not(:has(.app-shell)) {
+    body:not(:has(.app-shell, .admin-shell)) {
       padding-bottom: 0 !important;
     }
 
-    body:not(:has(.app-shell))::after {
+    body:not(:has(.app-shell, .admin-shell))::after {
       content: "";
       display: block;
       width: 100%;
@@ -173,8 +173,8 @@
     }
 
     /* Com shell de altura fixa, o respiro fica na área de rolagem interna */
-    body:has(.app-shell) {
-      padding-bottom: 0 !important;
+    body:has(.app-shell, .admin-shell) {
+      padding: 0 !important;
     }
     
     /* Remove filtros de desfoque pesados em containers de scroll */
