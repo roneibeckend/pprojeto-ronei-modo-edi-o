@@ -140,8 +140,9 @@
     -webkit-touch-callout: none;
     -webkit-user-drag: auto;
     
-    /* Previne atrasos de clique em mobile */
+    /* Previne atrasos de clique em mobile e garante interatividade */
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Permite seleção de texto apenas em áreas de leitura */
