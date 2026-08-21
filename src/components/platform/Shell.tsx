@@ -6,6 +6,9 @@ import { toast } from "sonner";
 import { Bell, Rocket } from "lucide-react";
 import { useNotifications } from "@/hooks/use-notifications";
 import { PwaInstallBanner } from "./PwaInstallBanner";
+import { BottomNav } from "./BottomNav";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { usePwaInstall } from "@/hooks/use-pwa-install";
 import { OnboardingLauncher } from "./OnboardingGuide";
 import {
   Home,
