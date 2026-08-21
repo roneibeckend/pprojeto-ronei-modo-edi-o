@@ -228,7 +228,7 @@ function AdminEbooksPage() {
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-white/5 bg-[#111]">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left text-sm min-w-[640px]">
             <thead className="bg-white/5 text-[10px] font-bold uppercase tracking-widest text-white/40">
               <tr>
                 <th className="px-6 py-4">Capa / Título</th>
@@ -307,9 +307,9 @@ function AdminEbooksPage() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/80 backdrop-blur-sm p-4 text-left overflow-y-auto outline-none" tabIndex={-1}>
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left overflow-y-auto outline-none py-6 sm:py-4" tabIndex={-1}>
           <div className="w-full max-w-[95vw] lg:max-w-7xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-4 min-h-[90vh] flex flex-col relative z-50 shadow-2xl">
-            <div className="flex items-center justify-between mb-6 sticky top-0 z-30 bg-[#0e0e0e] pb-4 border-b border-white/5 pt-2">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 sticky top-0 z-30 bg-[#0e0e0e] pb-4 border-b border-white/5 pt-2">
               <h3 className="text-xl font-bold pr-4">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo E-book"}</h3>
               <button 
                 onClick={() => {

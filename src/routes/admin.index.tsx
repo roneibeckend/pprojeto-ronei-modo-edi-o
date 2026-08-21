@@ -120,7 +120,7 @@ function AdminDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-2 2xl:grid-cols-3">
         <div className="p-4 sm:p-6 rounded-xl border border-white/5 bg-[#111] 2xl:col-span-2">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             <h3 className="font-bold uppercase tracking-tight text-sm sm:text-base">Atalhos Rápidos</h3>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -150,7 +150,7 @@ function AdminDashboard() {
         </div>
 
         <div className="p-4 sm:p-6 rounded-xl border border-white/5 bg-[#111]">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             <h3 className="font-bold uppercase tracking-tight flex items-center gap-2 text-sm sm:text-base">
               <Activity className="h-4 w-4 text-[#ff6a00]" />
               Saúde do Sistema

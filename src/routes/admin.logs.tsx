@@ -211,7 +211,7 @@ function AdminLogsPage() {
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-[640px]">
               <thead>
                 <tr className="border-b border-white/5 text-[10px] font-bold uppercase tracking-widest text-white/20 bg-white/[0.02]">
                   <th className="px-6 py-4 w-[180px]">Data/Hora</th>
