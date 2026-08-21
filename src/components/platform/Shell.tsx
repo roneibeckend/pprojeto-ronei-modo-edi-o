@@ -6,6 +6,9 @@ import { toast } from "sonner";
 import { Bell, Rocket } from "lucide-react";
 import { useNotifications } from "@/hooks/use-notifications";
 import { PwaInstallBanner } from "./PwaInstallBanner";
+import { BottomNav } from "./BottomNav";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { usePwaInstall } from "@/hooks/use-pwa-install";
 import { OnboardingLauncher } from "./OnboardingGuide";
 import {
   Home,
@@ -229,19 +232,26 @@ export function Shell({ children }: { children: ReactNode }) {
     </div>
   );
 
+  const isMobile = useIsMobile();
+  const { isStandalone } = usePwaInstall();
+  const isPwa = isStandalone;
+  const isMobileOrPwa = isMobile || isPwa;
+
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-[#0a0a0a] text-foreground">
-      {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-white/5 lg:block transition-[width] duration-300 ease-in-out">
-        {SidebarInner}
-      </aside>
+      {/* Desktop sidebar - Hidden if Mobile or PWA */}
+      {!isMobileOrPwa && (
+        <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-white/5 lg:block transition-[width] duration-300 ease-in-out">
+          {SidebarInner}
+        </aside>
+      )}
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-3 border-b border-white/5 bg-[#0a0a0a]/90 px-4 backdrop-blur lg:px-8 pt-safe h-[calc(3.5rem+env(safe-area-inset-top))]">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button
-                className="grid h-10 w-10 place-items-center rounded-md border border-white/10 lg:hidden touch-target"
+                className={`grid h-10 w-10 place-items-center rounded-md border border-white/10 touch-target ${!isMobileOrPwa ? 'lg:hidden' : ''}`}
                 aria-label="Abrir menu"
               >
                 <Menu className="h-5 w-5" />
@@ -285,10 +295,11 @@ export function Shell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 px-4 py-4 pb-safe lg:px-8 lg:py-8 lg:pb-8 3xl:max-w-[1800px] 3xl:mx-auto w-full overscroll-contain">
+        <main className={`min-w-0 flex-1 px-4 py-4 pb-safe lg:px-8 lg:py-8 lg:pb-8 3xl:max-w-[1800px] 3xl:mx-auto w-full overscroll-contain ${isMobileOrPwa ? 'pb-20' : ''}`}>
           <Outlet />
         </main>
         <PwaInstallBanner />
+        {isMobileOrPwa && <BottomNav />}
       </div>
     </div>
   );
