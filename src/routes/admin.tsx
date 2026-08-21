@@ -141,7 +141,7 @@ function AdminRootLayout() {
   );
 
   return (
-    <div className="flex min-h-[100dvh] w-full bg-[#0a0a0a] text-white lg:h-dvh lg:overflow-hidden">
+    <div className="admin-shell flex min-h-[100svh] w-full bg-[#0a0a0a] text-white lg:h-dvh lg:overflow-hidden">
       {/* Sidebar - Desktop */}
       <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 lg:flex">
         <div className="flex h-20 shrink-0 items-center gap-2 border-b border-white/10 p-6">
