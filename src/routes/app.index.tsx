@@ -367,7 +367,7 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
         onProceedWithoutOffers={() => executeCheckout([])}
         originalProductId={item.id}
       />
-      <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"} flex flex-col h-full active:scale-[0.99] touch-action-manipulation`}>
+      <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"} flex flex-col h-full active:scale-[0.99] touch-action-manipulation relative z-[1]`}>
       <div className="relative aspect-video max-h-[220px] bg-muted/20 shrink-0 overflow-hidden">
         <img 
           src={item.cover_url || IMG.hero} 
