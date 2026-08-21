@@ -4,7 +4,7 @@ import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, Check
 import { VideoPlayer } from "@/components/platform/VideoPlayer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/platform/Shell";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { useProgress } from "@/hooks/use-progress";
@@ -307,41 +307,126 @@ function EbookReaderPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChapterId, hasAccess]);
 
-  useEffect(() => {
-    if (!hasAccess || hasSubmittedFeedback || chapters.length === 0 || isLoadingEnrollments) return;
-    
-    const completedCount = chapters.filter((c: any) => isChapterCompleted(c.id)).length;
-    const justFinished = localStorage.getItem(`ebook_just_finished_${ebook.id}`) === 'true';
+  const queryClient = useQueryClient();
 
-    if (completedCount >= chapters.length && chapters.length > 0 && justFinished) {
-      const handleFinalization = async () => {
-        try {
-          // Generate certificate automatically first
-          await generateCertFn({ data: { content_id: ebook.id, content_type: 'ebook' } });
-          
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) return;
-          
-          const { data } = await supabase
-            .from("course_feedback")
-            .select("id")
-            .eq("user_id", user.id)
-            .eq("ebook_id", ebook.id)
-            .maybeSingle();
-          
-          if (data) {
-            setHasSubmittedFeedback(true);
-          } else {
-            setShowFeedbackModal(true);
-            localStorage.removeItem(`ebook_just_finished_${ebook.id}`);
-          }
-        } catch (error) {
-          console.error("Erro na finalização automática:", error);
-        }
-      };
-      handleFinalization();
+  // Estado persistido: e-book concluído e/ou feedback já enviado
+  const { data: completionState } = useQuery({
+    queryKey: ["ebook-completion-state", ebook.id],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { completed: false, feedback: false };
+
+      const [{ data: tracking }, { data: feedback }] = await Promise.all([
+        supabase
+          .from("progress_tracking")
+          .select("completed_at")
+          .eq("user_id", user.id)
+          .eq("item_type", "ebook")
+          .eq("item_id", ebook.id)
+          .maybeSingle(),
+        supabase
+          .from("course_feedback")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("ebook_id", ebook.id)
+          .maybeSingle(),
+      ]);
+
+      return { completed: !!tracking?.completed_at, feedback: !!feedback };
+    },
+    enabled: hasAccess,
+  });
+
+  useEffect(() => {
+    if (completionState?.completed || completionState?.feedback) {
+      setHasSubmittedFeedback(true);
     }
-  }, [ebookProgress, chapters.length, hasAccess, hasSubmittedFeedback, ebook.id, isLoadingEnrollments, generateCertFn]);
+  }, [completionState?.completed, completionState?.feedback]);
+
+  const [isFinalizing, setIsFinalizing] = useState(false);
+
+  const handleFinalizeEbook = async () => {
+    if (isFinalizing || hasSubmittedFeedback) return;
+    setIsFinalizing(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Sessão expirada. Faça login novamente.");
+
+      const now = new Date().toISOString();
+
+      // 1. Marca todos os capítulos como concluídos
+      if (chapters.length > 0) {
+        const { error: chapterError } = await supabase.from("ebook_progress").upsert(
+          chapters.map((c: any) => ({
+            user_id: user.id,
+            chapter_id: c.id,
+            completed_at: now,
+            last_read_at: now,
+          })),
+          { onConflict: "user_id,chapter_id" }
+        );
+        if (chapterError) throw chapterError;
+      }
+
+      // 2. Marca módulos e o e-book como concluídos
+      const moduleIds = (ebook.modules || []).map((m: any) => m.id);
+      if (moduleIds.length > 0) {
+        await supabase.from("progress_tracking").upsert(
+          moduleIds.map((id: string) => ({
+            user_id: user.id,
+            item_type: "ebook_module",
+            item_id: id,
+            started_at: now,
+            completed_at: now,
+          })),
+          { onConflict: "user_id,item_type,item_id" }
+        );
+      }
+
+      const { error: trackingError } = await supabase.from("progress_tracking").upsert(
+        {
+          user_id: user.id,
+          item_type: "ebook",
+          item_id: ebook.id,
+          started_at: now,
+          completed_at: now,
+        },
+        { onConflict: "user_id,item_type,item_id" }
+      );
+      if (trackingError) throw trackingError;
+
+      // 3. Gera o certificado
+      try {
+        await generateCertFn({ data: { content_id: ebook.id, content_type: "ebook" } });
+      } catch (certError) {
+        console.error("Erro ao gerar certificado:", certError);
+      }
+
+      localStorage.removeItem(`ebook_just_finished_${ebook.id}`);
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["ebook-progress"] }),
+        queryClient.invalidateQueries({ queryKey: ["lesson-progress"] }),
+        queryClient.invalidateQueries({ queryKey: ["global-progress-tracking"] }),
+        queryClient.invalidateQueries({ queryKey: ["student-certificates"] }),
+        queryClient.invalidateQueries({ queryKey: ["ebook-completion-state", ebook.id] }),
+      ]);
+
+      setHasSubmittedFeedback(true);
+
+      if (!completionState?.feedback) {
+        setShowFeedbackModal(true);
+      } else {
+        toast.success("E-book concluído! Certificado disponível em Certificados.");
+      }
+    } catch (error: any) {
+      console.error("Erro ao finalizar e-book:", error);
+      toast.error(error?.message || "Não foi possível finalizar o e-book. Tente novamente.");
+    } finally {
+      setIsFinalizing(false);
+    }
+  };
+
 
 
   const handlePurchase = async () => {
@@ -689,8 +774,8 @@ function EbookReaderPage() {
 
             {!nextChapter ? (
               <button
-                disabled={hasSubmittedFeedback}
-                onClick={() => !hasSubmittedFeedback && setShowFeedbackModal(true)}
+                disabled={hasSubmittedFeedback || isFinalizing}
+                onClick={handleFinalizeEbook}
                 className={`group flex flex-1 items-center justify-end gap-4 rounded-2xl p-4 text-right transition-all shadow-lg shadow-fire/20 ${
                   hasSubmittedFeedback 
                     ? "bg-white/5 opacity-50 cursor-not-allowed pointer-events-none" 
@@ -702,13 +787,14 @@ function EbookReaderPage() {
                     {hasSubmittedFeedback ? "Concluído" : "Finalizar"}
                   </div>
                   <div className={`line-clamp-2 text-sm font-bold ${hasSubmittedFeedback ? "text-muted-foreground" : "text-black"}`}>
-                    {hasSubmittedFeedback ? "Curso Finalizado" : "Concluir E-book"}
+                    {hasSubmittedFeedback ? "Curso Finalizado" : isFinalizing ? "Finalizando..." : "Concluir E-book"}
                   </div>
                 </div>
                 <div className={`grid h-10 w-10 place-items-center rounded-xl ${hasSubmittedFeedback ? "bg-white/5 text-muted-foreground" : "bg-black/20 text-black"}`}>
-                  <Award className="h-5 w-5" />
+                  {isFinalizing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Award className="h-5 w-5" />}
                 </div>
               </button>
+
             ) : (
               <button
                 onClick={() => setActiveChapterId(nextChapter?.id)}
@@ -792,6 +878,7 @@ function EbookReaderPage() {
         }}
         onSuccess={() => {
           setHasSubmittedFeedback(true);
+          queryClient.invalidateQueries({ queryKey: ["ebook-completion-state", ebook.id] });
         }}
       />
     </div>
