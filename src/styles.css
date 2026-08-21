@@ -229,6 +229,18 @@
     height: 0;
     display: none;
   }
+  @media (max-width: 1023px) {
+    .scrollbar-hidden-mobile {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .scrollbar-hidden-mobile::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+  }
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
