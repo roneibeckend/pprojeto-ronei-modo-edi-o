@@ -98,7 +98,7 @@ export function useProgress() {
   const completedChapters = ebookProgress?.filter(p => !!p.completed_at).length || 0;
   const totalCompleted = completedLessons + completedChapters;
   const totalItems = totalLessons + totalChapters;
-  const totalProgress = totalItems > 0 ? Math.round((totalCompleted / totalItems) * 100) : 0;
+  const totalProgress = totalItems > 0 ? Math.min(100, Math.round((totalCompleted / totalItems) * 100)) : 0;
 
   const startedCount = globalProgressTracking?.tracking.filter((t: any) => 
     (t.item_type === 'course' || t.item_type === 'ebook') && !!t.started_at && !t.completed_at
