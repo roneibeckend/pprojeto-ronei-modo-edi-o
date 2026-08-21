@@ -267,7 +267,7 @@ function MiniCertificate({ cert, locked }: { cert: any; locked: boolean }) {
           <Flame className="h-2.5 w-2.5" strokeWidth={3} /> Ronnei na Veia
         </div>
         <div className="mt-2 font-display text-[10px] font-bold uppercase tracking-[0.18em] text-black/70">Certificado de Conclusão</div>
-        <div className="mt-1 font-display text-lg font-extrabold uppercase text-black break-words">{fallbackStudent.name}</div>
+        <div className="mt-1 font-display text-lg font-extrabold uppercase text-black break-words">{cert.student_name || fallbackStudent.name}</div>
         <div className="mt-1.5 max-w-[85%] whitespace-normal text-[9px] font-medium text-black/60 break-words">{cert.course}</div>
         {!locked && (
           <div className="mt-2 flex items-center gap-2 text-[7px] font-mono uppercase tracking-widest text-black/40">
@@ -416,7 +416,7 @@ function FullCertificate({ cert }: { cert: any }) {
             {/* Body */}
             <div className="mt-8 text-center">
               <p className="text-[12px] uppercase tracking-[0.28em] text-black/50">Certificamos que</p>
-              <p className="mt-3 font-display text-3xl font-extrabold uppercase tracking-wide sm:text-4xl">{fallbackStudent.name}</p>
+              <p className="mt-3 font-display text-3xl font-extrabold uppercase tracking-wide sm:text-4xl">{cert.student_name || fallbackStudent.name}</p>
               <div className="mx-auto mt-2 h-px w-64 bg-black/20" />
               <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-black/75 sm:text-base">
                 concluiu com aproveitamento integral o curso

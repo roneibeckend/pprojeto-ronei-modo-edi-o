@@ -78,7 +78,9 @@ export const getStudentCertificates = createServerFn({ method: "GET" })
       .from('certificates' as any)
       .select(`
         *,
-        template:certificate_templates(*)
+        template:certificate_templates(*),
+        student:profiles!certificates_student_id_fkey(*)
+      
       `)
       .eq('student_id', context.userId)
       .eq('is_revoked', false);
@@ -110,6 +112,7 @@ export const getStudentCertificates = createServerFn({ method: "GET" })
 
       return {
         ...cert,
+        student_name: (cert as any).student?.full_name || 'Aluno',
         course: content?.title || 'Conteúdo Removido',
         completedAt: new Date(cert.issue_date).toLocaleDateString('pt-BR'),
         hours: cert.custom_data?.hours || 10,
