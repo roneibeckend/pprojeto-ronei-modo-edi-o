@@ -1464,7 +1464,7 @@ function Offer() {
             </div>
 
             <div className="mt-6">
-              <CheckoutButton label="Testar por 7 dias sem risco" />
+              <CheckoutButton label="Começar Agora" />
             </div>
 
             <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
