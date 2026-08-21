@@ -163,83 +163,67 @@ function AdminRootLayout() {
       )}
 
       {/* Sidebar - Mobile - Hidden if PWA (uses BottomNav) or just keep header minimal */}
-      {!isPwa && (
-        <div className="lg:hidden flex items-center p-4 border-b border-white/10 absolute top-0 w-full z-10 bg-[#0a0a0a]">
-          <Sheet>
-            <SheetTrigger className="p-2">
-              <Menu className="h-6 w-6" />
-            </SheetTrigger>
-            <SheetContent side="left" className="bg-[#0a0a0a] border-white/10 w-64 p-0">
-              <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden mt-12">
-                {navItems.filter(item => {
-                  if (role !== "student") return true;
-                  return item.to === "/admin";
-                  }).map((item) => {
-                    const Icon = item.icon;
-                    const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
-                    return (
-                      <div key={item.to} className="space-y-1">
-                        <Link
-                          to={item.to}
-                          className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition shrink-0 ${
-                            active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
-                          }`}
-                        >
-                          <Icon className="h-5 w-5" />
-                          {item.label}
-                        </Link>
+      {/* Sidebar - Mobile/PWA Header */}
+      <div className={`flex items-center p-4 border-b border-white/10 absolute top-0 w-full z-10 bg-[#0a0a0a] ${isPwa ? 'pt-safe' : ''}`}>
+        <Sheet>
+          <SheetTrigger className={`p-2 ${!isMobileOrPwa ? 'lg:hidden' : ''}`}>
+            <Menu className="h-6 w-6" />
+          </SheetTrigger>
+          <SheetContent side="left" className="bg-[#0a0a0a] border-white/10 w-64 p-0">
+            <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hidden mt-12">
+              {navItems.filter(item => {
+                if (role !== "student") return true;
+                return item.to === "/admin";
+                }).map((item) => {
+                  const Icon = item.icon;
+                  const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+                  return (
+                    <div key={item.to} className="space-y-1">
+                      <Link
+                        to={item.to}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition shrink-0 ${
+                          active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        <Icon className="h-5 w-5" />
+                        {item.label}
+                      </Link>
 
-                        {/* Submenu Mobile */}
-                        {item.subItems && active && (
-                          <div className="ml-12 space-y-1">
-                            {item.subItems.map((sub) => {
-                              const isSubActive = pathname === sub.to;
-                              return (
-                                <Link
-                                  key={`${item.to}-${sub.label}-mobile`}
-                                  to={sub.to}
-                                  className={`block px-3 py-2 rounded-md text-[11px] font-bold uppercase tracking-wider transition ${
-                                    (sub.exact ? pathname === sub.to : pathname.startsWith(sub.to)) ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
-                                  }`}
-                                >
-                                  {sub.label}
-                                </Link>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-              </nav>
-            </SheetContent>
-          </Sheet>
-          <span className="font-bold tracking-widest text-[10px] sm:text-sm uppercase ml-4 truncate flex-1 pr-4">Painel Administrativo</span>
-          <div className="flex items-center gap-2">
-            <Link 
-              to="/admin/notificacoes"
-              className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 hover:border-[#ff6a00]/50 hover:text-[#ff6a00] transition-colors touch-target"
-            >
-              <Bell className="h-5 w-5" />
-            </Link>
-          </div>
+                      {/* Submenu Mobile */}
+                      {item.subItems && active && (
+                        <div className="ml-12 space-y-1">
+                          {item.subItems.map((sub) => {
+                            const isSubActive = pathname === sub.to;
+                            return (
+                              <Link
+                                key={`${item.to}-${sub.label}-mobile`}
+                                to={sub.to}
+                                className={`block px-3 py-2 rounded-md text-[11px] font-bold uppercase tracking-wider transition ${
+                                  (sub.exact ? pathname === sub.to : pathname.startsWith(sub.to)) ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
+                                }`}
+                              >
+                                {sub.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+            </nav>
+          </SheetContent>
+        </Sheet>
+        <span className="font-bold tracking-widest text-[10px] sm:text-sm uppercase ml-4 truncate flex-1 pr-4">Painel Administrativo</span>
+        <div className="flex items-center gap-2">
+          <Link 
+            to="/admin/notificacoes"
+            className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 hover:border-[#ff6a00]/50 hover:text-[#ff6a00] transition-colors touch-target"
+          >
+            <Bell className="h-5 w-5" />
+          </Link>
         </div>
-      )}
-
-      {/* PWA Header (Minimal) */}
-      {isPwa && (
-        <div className="lg:hidden flex items-center p-4 border-b border-white/10 absolute top-0 w-full z-10 bg-[#0a0a0a] pt-safe">
-           <span className="font-bold tracking-widest text-[10px] sm:text-sm uppercase truncate flex-1 pr-4">Painel Administrativo</span>
-           <div className="flex items-center gap-2">
-            <Link 
-              to="/admin/notificacoes"
-              className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 hover:border-[#ff6a00]/50 hover:text-[#ff6a00] transition-colors touch-target"
-            >
-              <Bell className="h-5 w-5" />
-            </Link>
-          </div>
-        </div>
-      )}
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pt-20 lg:pt-0 w-full">
