@@ -151,11 +151,22 @@
   }
   
   /* Desabilita gradientes pesados no mobile para performance de scroll */
-  @media (max-width: 768px) {
+  @media (max-width: 1023px) {
     body {
       background-attachment: scroll;
       background-image: none;
       background-color: var(--color-background);
+    }
+
+    /* Respiro inferior global: evita corte da última frase/botão em mobile e PWA.
+       Não se aplica a telas com shell de altura fixa (que já rolam internamente). */
+    body:not(:has(.app-shell)) {
+      padding-bottom: calc(6rem + env(safe-area-inset-bottom)) !important;
+    }
+
+    /* Com shell de altura fixa, o respiro fica na área de rolagem interna */
+    body:has(.app-shell) {
+      padding-bottom: 0 !important;
     }
     
     /* Remove filtros de desfoque pesados em containers de scroll */
