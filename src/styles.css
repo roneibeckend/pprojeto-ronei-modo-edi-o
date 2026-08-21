@@ -219,6 +219,12 @@
   .safe-top { padding-top: env(safe-area-inset-top); }
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
   .touch-target { min-width: 44px; min-height: 44px; }
+
+  /* Respiro inferior seguro para áreas de rolagem (mobile/PWA) */
+  .pb-safe-scroll { padding-bottom: calc(9rem + env(safe-area-inset-bottom)); }
+  @media (min-width: 1024px) {
+    .pb-safe-scroll { padding-bottom: 2.5rem; }
+  }
   
   .scrollbar-hidden, .no-scrollbar {
     scrollbar-width: none;

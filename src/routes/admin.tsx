@@ -222,7 +222,7 @@ function AdminRootLayout() {
               </Link>
             </div>
           </header>
-          <div className="w-full min-w-0 overflow-x-hidden p-3 pb-24 sm:p-6 lg:p-8 lg:pb-8 3xl:mx-auto 3xl:max-w-[1800px]">
+          <div className="w-full min-w-0 overflow-x-hidden p-3 pb-safe-scroll sm:p-6 lg:p-8 3xl:mx-auto 3xl:max-w-[1800px]">
             <Outlet />
           </div>
         </main>
