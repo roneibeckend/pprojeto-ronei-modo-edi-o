@@ -128,7 +128,7 @@
     min-height: 100vh;
     min-height: 100dvh;
     height: auto !important;
-    overflow-y: initial !important;
+    overflow-y: visible !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: auto;
