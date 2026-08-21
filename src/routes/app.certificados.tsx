@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2, Printer } from "lucide-react";
+import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Clock, GraduationCap, Loader2, Printer, Check } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
 import { courses as baseCourses, student as fallbackStudent } from "@/lib/platform-data";
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +8,7 @@ import jsPDF from "jspdf";
 import { useServerFn } from "@tanstack/react-start";
 import { getStudentCertificates } from "@/lib/certificates-student.functions";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 
 // Estilos específicos para impressão
