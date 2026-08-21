@@ -117,7 +117,7 @@ export const getStudentCertificates = createServerFn({ method: "GET" })
 
       return {
         ...cert,
-        student_name: (cert as any).student?.full_name || 'Aluno',
+        student_name: (profile as any)?.name || 'Aluno',
         course: content?.title || 'Conteúdo Removido',
         completedAt: new Date(cert.issue_date).toLocaleDateString('pt-BR'),
         hours: cert.custom_data?.hours || 10,
