@@ -172,6 +172,39 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
       .eq('id', data.payoutId);
 
     if (error) throw error;
+
+    // 3.1 Registrar a saída de caixa no livro de movimentações (Gestão de Saídas e Saques)
+    if (data.status === 'paid' && payout.status !== 'paid') {
+      const userType = (payout.metadata as any)?.user_type === 'partner' ? 'Sócio' : 'Afiliado';
+      const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('name, email')
+        .eq('id', payout.user_id)
+        .maybeSingle();
+
+      const { error: ledgerError } = await supabaseAdmin
+        .from('asaas_transfers')
+        .insert({
+          asaas_id: asaasResult?.id ?? null,
+          amount: payout.amount,
+          status: 'DONE',
+          transfer_date: new Date().toISOString(),
+          description: `Saque ${userType} — ${profile?.name || profile?.email || payout.user_id}`,
+          transaction_type: 'payout',
+          metadata: {
+            payout_id: payout.id,
+            user_id: payout.user_id,
+            user_type: (payout.metadata as any)?.user_type || 'affiliate',
+            method: payout.method,
+            pix_key: payout.pix_key ? `***${String(payout.pix_key).slice(-4)}` : null,
+            asaas_id: asaasResult?.id ?? null,
+          },
+        });
+
+      if (ledgerError) console.error('[Payout Ledger] Falha ao registrar saída:', ledgerError);
+    }
+
+
     
     // Log de auditoria
     await supabaseAdmin.rpc('log_system_event', {
