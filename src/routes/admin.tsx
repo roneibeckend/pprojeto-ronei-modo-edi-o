@@ -81,11 +81,7 @@ function AdminRootLayout() {
     { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
     { to: "/admin/materiais", label: "Materiais", icon: Library },
-    { to: "/admin/ranking", label: "Ranking", icon: Star, subItems: [
-      { to: "/admin/ranking", label: "Configuração", exact: true },
-      { to: "/admin/ranking/campanhas", label: "Campanhas", exact: true },
-      { to: "/admin/ranking/campanhas", label: "Premiações", exact: true },
-    ]},
+    { to: "/admin/ranking", label: "Ranking", icon: Star },
     { to: "/admin/chatbot", label: "Inteligência Brasa", icon: BrainCircuit },
     { to: "/admin/logs", label: "Logs do Sistema", icon: Terminal },
   ];
@@ -102,39 +98,18 @@ function AdminRootLayout() {
         const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
 
         return (
-          <div key={item.to} className="space-y-1">
-            <Link
-              to={item.to}
-              onClick={onNavigate}
-              preload="intent"
-              className={`flex min-h-11 items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition touch-action-manipulation active:scale-[0.98] ${
-                active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
-              }`}
-            >
-              <Icon className="h-[18px] w-[18px] shrink-0" />
-              <span className="min-w-0 truncate">{item.label}</span>
-            </Link>
-
-            {item.subItems && active && (
-              <div className="ml-9 space-y-1">
-                {item.subItems.map((sub) => {
-                  const isSubActive = sub.exact ? pathname === sub.to : pathname.startsWith(sub.to);
-                  return (
-                    <Link
-                      key={`${item.to}-${sub.label}`}
-                      to={sub.to}
-                      onClick={onNavigate}
-                      className={`block rounded-md px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition ${
-                        isSubActive ? "text-[#ff6a00]" : "text-white/40 hover:text-white/70"
-                      }`}
-                    >
-                      {sub.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          <Link
+            key={item.to}
+            to={item.to}
+            onClick={onNavigate}
+            preload="intent"
+            className={`flex min-h-11 items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition touch-action-manipulation active:scale-[0.98] ${
+              active ? "bg-[#ff6a00]/10 text-[#ff6a00]" : "text-white/60 hover:bg-white/5 hover:text-white"
+            }`}
+          >
+            <Icon className="h-[18px] w-[18px] shrink-0" />
+            <span className="min-w-0 truncate">{item.label}</span>
+          </Link>
         );
       })}
     </>
