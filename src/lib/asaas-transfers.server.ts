@@ -65,3 +65,54 @@ export async function syncTransfersWithDb() {
 
   return data;
 }
+
+/** Valida o token do webhook do Asaas (mesmo token usado para pagamentos). */
+export async function validateAsaasWebhookToken(token: string | null) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: integration } = await supabaseAdmin
+    .from('integrations')
+    .select('credentials')
+    .eq('category', 'asaas')
+    .maybeSingle();
+
+  const expected = ((integration?.credentials || {}) as Record<string, any>)?.webhookToken;
+  if (!expected) return false;
+  return token === expected;
+}
+
+/** Registra/atualiza automaticamente uma saída da conta Asaas recebida por webhook. */
+export async function upsertTransferFromWebhook(transfer: any, event: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  const row = {
+    asaas_id: transfer.id as string,
+    amount: Number(transfer.value ?? transfer.netValue ?? 0),
+    status: (transfer.status as string) || 'PENDING',
+    transfer_date: transfer.transferDate
+      ? new Date(transfer.transferDate).toISOString()
+      : new Date(transfer.dateCreated || Date.now()).toISOString(),
+    description:
+      transfer.description ||
+      `Transferência Asaas para ${transfer.bankAccount?.bank?.name || transfer.pixAddressKey || 'conta bancária'}`,
+    transaction_type: 'transfer',
+    metadata: {
+      event,
+      receipt_url: transfer.transactionReceiptUrl ?? null,
+      bank_info: transfer.bankAccount ?? null,
+      operation_type: transfer.operationType ?? null,
+      net_value: transfer.netValue ?? null,
+      fee: transfer.transferFee ?? null,
+    },
+  };
+
+  const { error } = await supabaseAdmin
+    .from('asaas_transfers')
+    .upsert(row, { onConflict: 'asaas_id' });
+
+  if (error) {
+    console.error('[Asaas Transfers] Webhook upsert error:', error);
+    throw error;
+  }
+
+  return row;
+}
