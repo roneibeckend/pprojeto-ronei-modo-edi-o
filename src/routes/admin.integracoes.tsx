@@ -309,8 +309,18 @@ function IntegrationsPage() {
           >
             <Sparkles className="h-3.5 w-3.5" /> Recursos
           </Button>
+          <Button 
+            variant="ghost"
+            onClick={() => { setActiveCategory('oauth'); setSelectedItem(null); }}
+            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'oauth' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+          >
+            <ShieldCheck className="h-3.5 w-3.5" /> Login Social
+          </Button>
         </div>
       </div>
+
+      {activeCategory === 'oauth' && <OAuthProvidersPanel />}
+
 
       <div className="grid gap-8 grid-cols-1 lg:grid-cols-12">
         {/* Sidebar List */}
