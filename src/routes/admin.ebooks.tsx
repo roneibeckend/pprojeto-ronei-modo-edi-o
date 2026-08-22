@@ -781,9 +781,10 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
   if (loading) return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" /></div>;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 flex-1">
+    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 flex-1 min-h-0">
       {/* Sidebar - Tree View */}
-      <div className="space-y-4 border-r border-white/5 pr-6">
+      <div className="space-y-4 border-r border-white/5 pr-6 flex flex-col min-h-0 max-h-[70vh] lg:max-h-none lg:overflow-hidden">
+
         <div className="flex items-center justify-between">
           <h4 className="text-[10px] font-bold uppercase tracking-widest text-white/40">Estrutura de Conteúdo</h4>
           <div className="flex items-center gap-2">
