@@ -137,7 +137,7 @@ export const saveOAuthProvider = createServerFn({ method: 'POST' })
     const server = await import('./oauth-admin.server');
     if (!server.managementTokenConfigured()) {
       throw new Error(
-        'Configure o secret SUPABASE_MANAGEMENT_TOKEN para aplicar alterações automaticamente no Supabase.',
+        'Configure o secret SB_MANAGEMENT_TOKEN para aplicar alterações automaticamente no Supabase.',
       );
     }
 
