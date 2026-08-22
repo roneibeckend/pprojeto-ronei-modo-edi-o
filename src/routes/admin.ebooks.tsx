@@ -307,8 +307,8 @@ function AdminEbooksPage() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left outline-none py-6 sm:py-4" tabIndex={-1}>
-          <div className="w-full max-w-[95vw] lg:max-w-7xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 h-[92vh] max-h-[92vh] flex flex-col relative z-50 shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-2 sm:p-4 text-left outline-none" tabIndex={-1}>
+          <div className="w-full max-w-[95vw] lg:max-w-7xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-4 sm:p-6 h-[calc(100dvh-1rem)] sm:h-[min(92dvh,calc(100dvh-2rem))] flex flex-col relative z-50 shadow-2xl overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-6 z-30 bg-[#0e0e0e] pb-4 border-b border-white/5 pt-2 shrink-0">
               <h3 className="text-xl font-bold pr-4">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo E-book"}</h3>
               <button 
@@ -570,7 +570,7 @@ function AdminEbooksPage() {
                   )}
                 </TabsContent>
 
-                <TabsContent value="content" className="flex-1 min-h-0 overflow-y-auto pr-1 mt-0 outline-none">
+                <TabsContent value="content" className="flex-1 min-h-0 overflow-hidden mt-0 outline-none data-[state=active]:flex data-[state=active]:flex-col">
                   {editingItem?.id && <EbookContentEditor ebookId={editingItem.id} />}
                 </TabsContent>
 
@@ -781,15 +781,15 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
   if (loading) return <div className="flex h-64 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-[#ff6a00]" /></div>;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 flex-1 min-h-0">
+    <div className="grid h-full min-h-0 grid-cols-1 grid-rows-[minmax(12rem,35%)_minmax(0,1fr)] gap-4 overflow-hidden md:grid-cols-[240px_minmax(0,1fr)] md:grid-rows-1 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-6">
       {/* Sidebar - Tree View */}
-      <div className="space-y-4 border-r border-white/5 pr-6 flex flex-col min-h-0 max-h-[70vh] lg:max-h-none lg:overflow-hidden">
+      <div className="flex min-h-0 min-w-0 flex-col gap-4 overflow-hidden border-b border-white/5 pb-4 md:border-b-0 md:border-r md:pb-0 md:pr-4 lg:pr-6">
 
         <div className="flex items-center justify-between shrink-0">
 ...
         </div>
 
-        <div className="space-y-2 flex-1 min-h-0 overflow-y-auto pr-1">
+        <div className="custom-scrollbar min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pr-1">
 
           {modules.map((module) => (
             <div key={module.id} className="space-y-1">
@@ -821,7 +821,7 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
       </div>
 
       {/* Editor Area */}
-      <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 flex flex-col">
+      <div className="custom-scrollbar flex min-h-0 min-w-0 flex-col overflow-y-auto overscroll-contain rounded-2xl border border-white/5 bg-white/[0.02] p-4 sm:p-6">
         {editingChapter ? (
           <div className="space-y-6 flex-1 flex flex-col">
             <div className="flex items-center justify-between pb-4 border-b border-white/5">
