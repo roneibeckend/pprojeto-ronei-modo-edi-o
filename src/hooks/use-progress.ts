@@ -42,30 +42,48 @@ export function useProgress() {
       const courseIds = (courseEnrollments || []).map((c: any) => c.course_id);
       const ebookIds = (ebookEnrollments || []).map((e: any) => e.ebook_id);
 
+      // Aulas agrupadas por curso
+      const courseLessonMap: Record<string, string[]> = {};
       let lessonCount = 0;
       if (courseIds.length > 0) {
-        const { data: modules } = await supabase.from("course_modules").select("id").in("course_id", courseIds);
+        const { data: modules } = await supabase.from("course_modules").select("id, course_id").in("course_id", courseIds);
         const moduleIds = (modules || []).map((m: any) => m.id);
         if (moduleIds.length > 0) {
-          const { data: lessons } = await supabase.from("course_lessons").select("id").in("module_id", moduleIds);
+          const { data: lessons } = await supabase.from("course_lessons").select("id, module_id").in("module_id", moduleIds);
+          const moduleToCourse = new Map((modules || []).map((m: any) => [m.id, m.course_id]));
+          (lessons || []).forEach((l: any) => {
+            const cid = moduleToCourse.get(l.module_id);
+            if (!cid) return;
+            (courseLessonMap[cid] ||= []).push(l.id);
+          });
           lessonCount = lessons?.length || 0;
         }
       }
 
+      // Capítulos agrupados por e-book
+      const ebookChapterMap: Record<string, string[]> = {};
       let chapterCount = 0;
       if (ebookIds.length > 0) {
-        const { data: chapters } = await supabase.from("ebook_chapters").select("id").in("ebook_id", ebookIds);
+        const { data: chapters } = await supabase.from("ebook_chapters").select("id, ebook_id").in("ebook_id", ebookIds);
+        (chapters || []).forEach((c: any) => {
+          (ebookChapterMap[c.ebook_id] ||= []).push(c.id);
+        });
         chapterCount = chapters?.length || 0;
       }
 
       return {
         lessonCount,
         chapterCount,
+        courseIds,
+        ebookIds,
+        courseLessonMap,
+        ebookChapterMap,
         tracking: progressTracking || []
       };
     },
     enabled: !!user?.id,
   });
+
 
 
   const toggleLessonMutation = useMutation({
