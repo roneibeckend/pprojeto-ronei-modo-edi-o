@@ -30,6 +30,7 @@ export const recordClientLog = createServerFn({ method: "POST" })
       /* noop */
     }
 
+    console.log("[recordClientLog] recebido", data.source, data.message);
     await logSystemEvent({
       level: data.level,
       source: data.source,
