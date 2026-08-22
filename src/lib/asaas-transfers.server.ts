@@ -19,20 +19,33 @@ export interface AsaasTransfer {
 
 export async function fetchAsaasTransfers() {
   const { apiKey, baseUrl } = await getAsaasConfig();
-  
-  // O Asaas usa GET /transfers para listar transferências
-  const res = await fetch(`${baseUrl}/transfers?limit=50`, {
-    headers: asaasHeaders(apiKey),
-  });
 
-  if (!res.ok) {
-    const errorBody = await res.text().catch(() => "Unknown error");
-    throw new Error(`Asaas API error (${res.status}): ${errorBody}`);
+  const all: AsaasTransfer[] = [];
+  let offset = 0;
+  const limit = 100;
+
+  // Paginação completa: garante o extrato inteiro, não só as últimas 50 saídas
+  while (offset < 2000) {
+    const res = await fetch(`${baseUrl}/transfers?limit=${limit}&offset=${offset}`, {
+      headers: asaasHeaders(apiKey),
+    });
+
+    if (!res.ok) {
+      const errorBody = await res.text().catch(() => "Unknown error");
+      throw new Error(`Asaas API error (${res.status}): ${errorBody}`);
+    }
+
+    const json = await res.json();
+    const page = (json?.data || []) as AsaasTransfer[];
+    all.push(...page);
+
+    if (json?.hasMore !== true || page.length === 0) break;
+    offset += limit;
   }
 
-  const json = await res.json();
-  return (json?.data || []) as AsaasTransfer[];
+  return all;
 }
+
 
 export async function syncTransfersWithDb() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -64,4 +77,55 @@ export async function syncTransfersWithDb() {
   }
 
   return data;
+}
+
+/** Valida o token do webhook do Asaas (mesmo token usado para pagamentos). */
+export async function validateAsaasWebhookToken(token: string | null) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: integration } = await supabaseAdmin
+    .from('integrations')
+    .select('credentials')
+    .eq('category', 'asaas')
+    .maybeSingle();
+
+  const expected = ((integration?.credentials || {}) as Record<string, any>)?.webhookToken;
+  if (!expected) return false;
+  return token === expected;
+}
+
+/** Registra/atualiza automaticamente uma saída da conta Asaas recebida por webhook. */
+export async function upsertTransferFromWebhook(transfer: any, event: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  const row = {
+    asaas_id: transfer.id as string,
+    amount: Number(transfer.value ?? transfer.netValue ?? 0),
+    status: (transfer.status as string) || 'PENDING',
+    transfer_date: transfer.transferDate
+      ? new Date(transfer.transferDate).toISOString()
+      : new Date(transfer.dateCreated || Date.now()).toISOString(),
+    description:
+      transfer.description ||
+      `Transferência Asaas para ${transfer.bankAccount?.bank?.name || transfer.pixAddressKey || 'conta bancária'}`,
+    transaction_type: 'transfer',
+    metadata: {
+      event,
+      receipt_url: transfer.transactionReceiptUrl ?? null,
+      bank_info: transfer.bankAccount ?? null,
+      operation_type: transfer.operationType ?? null,
+      net_value: transfer.netValue ?? null,
+      fee: transfer.transferFee ?? null,
+    },
+  };
+
+  const { error } = await supabaseAdmin
+    .from('asaas_transfers')
+    .upsert(row, { onConflict: 'asaas_id' });
+
+  if (error) {
+    console.error('[Asaas Transfers] Webhook upsert error:', error);
+    throw error;
+  }
+
+  return row;
 }

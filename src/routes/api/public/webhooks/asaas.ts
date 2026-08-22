@@ -26,11 +26,29 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
           const body = await request.json();
           const token = request.headers.get('asaas-access-token');
 
+          // 0. Eventos de TRANSFERÊNCIA (saídas da conta Asaas) -> livro de saídas
+          if (typeof body.event === 'string' && body.event.startsWith('TRANSFER')) {
+            const { validateAsaasWebhookToken, upsertTransferFromWebhook } = await import('@/lib/asaas-transfers.server');
+            const valid = await validateAsaasWebhookToken(token);
+            if (!valid) return new Response('Não autorizado', { status: 401 });
+
+            if (!body.transfer?.id) {
+              return new Response('Requisição inválida', { status: 400 });
+            }
+
+            await upsertTransferFromWebhook(body.transfer, body.event);
+            return new Response(JSON.stringify({ received: true, event: body.event }), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            });
+          }
+
           // 1. Schema Validation
           if (!body.id || !body.event || !body.payment?.id) {
             console.error('[Webhook Asaas] Invalid schema: missing id, event or payment.id');
             return new Response('Requisição inválida', { status: 400 });
           }
+
 
           eventId = body.id as string;
           const paymentId = body.payment.id as string;
