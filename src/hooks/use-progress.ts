@@ -21,7 +21,7 @@ export function useProgress() {
     queryKey: ["ebook-progress", user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data } = await supabase.from("ebook_progress").select("chapter_id, completed_at").eq("user_id", user.id);
+      const { data } = await supabase.from("ebook_progress").select("chapter_id, completed_at, last_read_at").eq("user_id", user.id);
       return data || [];
     },
     enabled: !!user?.id,
