@@ -13,11 +13,11 @@ export type SystemLogInput = {
   userAgent?: string | null;
 };
 
-export async function logSystemEvent(input: SystemLogInput): Promise<void> {
+export async function logSystemEvent(input: SystemLogInput): Promise<string | null> {
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    await supabaseAdmin.from("system_logs").insert({
+    const { error } = await supabaseAdmin.from("system_logs").insert({
       level: input.level,
       source: input.source.slice(0, 80),
       message: String(input.message ?? "").slice(0, 2000),
@@ -26,9 +26,15 @@ export async function logSystemEvent(input: SystemLogInput): Promise<void> {
       ip_address: input.ipAddress ?? null,
       user_agent: input.userAgent ? input.userAgent.slice(0, 500) : null,
     });
+    if (error) {
+      console.error("[system-log] insert error:", error.message);
+      return error.message;
+    }
+    return null;
   } catch (err) {
     // Logging nunca pode quebrar o fluxo principal.
     console.error("[system-log] falha ao gravar log:", err);
+    return String((err as Error)?.message ?? err);
   }
 }
 

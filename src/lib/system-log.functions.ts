@@ -31,7 +31,7 @@ export const recordClientLog = createServerFn({ method: "POST" })
     }
 
     console.log("[recordClientLog] recebido", data.source, data.message);
-    await logSystemEvent({
+    const dbg = await logSystemEvent({
       level: data.level,
       source: data.source,
       message: data.message,
@@ -40,7 +40,7 @@ export const recordClientLog = createServerFn({ method: "POST" })
       ipAddress: ip,
     });
 
-    return { success: true };
+    return { success: true, dbg };
   });
 
 /** Limpa o histórico de logs (somente admin). */
