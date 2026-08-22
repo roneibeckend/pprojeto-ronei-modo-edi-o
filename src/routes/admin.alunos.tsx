@@ -93,14 +93,13 @@ function AdminAlunosPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Tem certeza que deseja remover este aluno? Esta ação não exclui a conta de autenticação, apenas o perfil e dados associados na tabela public.profiles.")) return;
+    if (!confirm("Tem certeza que deseja remover este aluno? Esta ação exclui definitivamente o perfil e a conta de autenticação.")) return;
     try {
-      const { error } = await supabase.from('profiles').delete().eq('id', id);
-      if (error) throw error;
+      await deleteStudent({ data: { studentId: id } });
       toast.success("Aluno removido com sucesso");
-      fetchData();
+      await fetchData();
     } catch (error: any) {
-      toast.error("Erro ao excluir: " + error.message);
+      toast.error("Erro ao excluir: " + (error?.message || "falha desconhecida"));
     }
   }
 
