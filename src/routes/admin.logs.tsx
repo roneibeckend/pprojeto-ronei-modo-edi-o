@@ -107,9 +107,10 @@ function AdminLogsPage() {
   }, [logs, searchTerm]);
 
   const getLevelBadge = (level: string) => {
-    switch (level) {
+    switch ((level || "").toUpperCase()) {
       case 'ERROR':
         return <Badge variant="destructive" className="bg-red-500/10 text-red-500 border-red-500/20"><Bug className="w-3 h-3 mr-1" /> ERROR</Badge>;
+      case 'WARN':
       case 'WARNING':
         return <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20"><AlertTriangle className="w-3 h-3 mr-1" /> WARNING</Badge>;
       case 'INFO':
