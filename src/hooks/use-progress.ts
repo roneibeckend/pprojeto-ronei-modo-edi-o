@@ -36,7 +36,7 @@ export function useProgress() {
       const [{ data: courseEnrollments }, { data: ebookEnrollments }, { data: progressTracking }] = await Promise.all([
         supabase.from("course_enrollments").select("course_id").eq("user_id", user.id),
         supabase.from("ebook_enrollments").select("ebook_id").eq("user_id", user.id),
-        supabase.from("progress_tracking").select("item_type, started_at, completed_at").eq("user_id", user.id),
+        supabase.from("progress_tracking").select("item_type, item_id, started_at, completed_at").eq("user_id", user.id),
       ]);
 
       const courseIds = (courseEnrollments || []).map((c: any) => c.course_id);
