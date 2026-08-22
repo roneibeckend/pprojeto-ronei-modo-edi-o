@@ -11,7 +11,7 @@ export function useProgress() {
     queryKey: ["lesson-progress", user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data } = await supabase.from("lesson_progress").select("lesson_id, is_completed").eq("user_id", user.id);
+      const { data } = await supabase.from("lesson_progress").select("lesson_id, is_completed, updated_at").eq("user_id", user.id);
       return data || [];
     },
     enabled: !!user?.id,
