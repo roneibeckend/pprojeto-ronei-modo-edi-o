@@ -153,8 +153,11 @@ export function useProgress() {
   ) as any[];
 
   // "Iniciados" = todo conteúdo que o aluno começou (inclui os já finalizados)
-  const startedCount = uniqueItems.filter((t) => !!t.started_at).length;
-  const finishedCount = uniqueItems.filter((t) => !!t.completed_at).length;
+  const startedCount = Math.max(
+    uniqueItems.filter((t) => !!t.started_at).length,
+    trainings.filter((t) => t.ratio > 0 || t.done).length
+  );
+  const finishedCount = Math.max(uniqueItems.filter((t) => !!t.completed_at).length, completedTrainings);
 
   // Sequência (dias consecutivos com atividade de estudo)
   const activityDates = new Set<string>();
