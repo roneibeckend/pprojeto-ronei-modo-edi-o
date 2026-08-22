@@ -91,6 +91,18 @@ function AdminAsaasTransfersPage() {
     onError: (error: any) => toast.error("Erro ao sincronizar: " + error.message),
   });
 
+  // Sincroniza automaticamente as saídas do Asaas ao abrir o extrato
+  const autoSyncedRef = useRef(false);
+  useEffect(() => {
+    if (autoSyncedRef.current) return;
+    autoSyncedRef.current = true;
+    syncTransfersFn()
+      .then(() => queryClient.invalidateQueries({ queryKey: ["admin-asaas-transfers"] }))
+      .catch(() => {});
+  }, [syncTransfersFn, queryClient]);
+
+
+
   const manualMutation = useMutation({
     mutationFn: async () => await createManualFn({
       data: {
