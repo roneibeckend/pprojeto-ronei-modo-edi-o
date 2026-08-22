@@ -42,30 +42,48 @@ export function useProgress() {
       const courseIds = (courseEnrollments || []).map((c: any) => c.course_id);
       const ebookIds = (ebookEnrollments || []).map((e: any) => e.ebook_id);
 
+      // Aulas agrupadas por curso
+      const courseLessonMap: Record<string, string[]> = {};
       let lessonCount = 0;
       if (courseIds.length > 0) {
-        const { data: modules } = await supabase.from("course_modules").select("id").in("course_id", courseIds);
+        const { data: modules } = await supabase.from("course_modules").select("id, course_id").in("course_id", courseIds);
         const moduleIds = (modules || []).map((m: any) => m.id);
         if (moduleIds.length > 0) {
-          const { data: lessons } = await supabase.from("course_lessons").select("id").in("module_id", moduleIds);
+          const { data: lessons } = await supabase.from("course_lessons").select("id, module_id").in("module_id", moduleIds);
+          const moduleToCourse = new Map((modules || []).map((m: any) => [m.id, m.course_id]));
+          (lessons || []).forEach((l: any) => {
+            const cid = moduleToCourse.get(l.module_id);
+            if (!cid) return;
+            (courseLessonMap[cid] ||= []).push(l.id);
+          });
           lessonCount = lessons?.length || 0;
         }
       }
 
+      // Capítulos agrupados por e-book
+      const ebookChapterMap: Record<string, string[]> = {};
       let chapterCount = 0;
       if (ebookIds.length > 0) {
-        const { data: chapters } = await supabase.from("ebook_chapters").select("id").in("ebook_id", ebookIds);
+        const { data: chapters } = await supabase.from("ebook_chapters").select("id, ebook_id").in("ebook_id", ebookIds);
+        (chapters || []).forEach((c: any) => {
+          (ebookChapterMap[c.ebook_id] ||= []).push(c.id);
+        });
         chapterCount = chapters?.length || 0;
       }
 
       return {
         lessonCount,
         chapterCount,
+        courseIds,
+        ebookIds,
+        courseLessonMap,
+        ebookChapterMap,
         tracking: progressTracking || []
       };
     },
     enabled: !!user?.id,
   });
+
 
 
   const toggleLessonMutation = useMutation({
@@ -92,13 +110,38 @@ export function useProgress() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["ebook-progress", user?.id] }),
   });
 
-  const totalLessons = globalProgressTracking?.lessonCount || 0;
-  const totalChapters = globalProgressTracking?.chapterCount || 0;
-  const completedLessons = lessonProgress?.filter(p => p.is_completed).length || 0;
-  const completedChapters = ebookProgress?.filter(p => !!p.completed_at).length || 0;
-  const totalCompleted = completedLessons + completedChapters;
-  const totalItems = totalLessons + totalChapters;
-  const totalProgress = totalItems > 0 ? Math.min(100, Math.round((totalCompleted / totalItems) * 100)) : 0;
+  // Progresso total = média por treinamento (curso/e-book) disponível ao aluno
+  const completedLessonIds = new Set((lessonProgress || []).filter((p: any) => p.is_completed).map((p: any) => p.lesson_id));
+  const completedChapterIds = new Set((ebookProgress || []).filter((p: any) => !!p.completed_at).map((p: any) => p.chapter_id));
+
+  const courseLessonMap = globalProgressTracking?.courseLessonMap || {};
+  const ebookChapterMap = globalProgressTracking?.ebookChapterMap || {};
+  const trackingList = (globalProgressTracking?.tracking || []) as any[];
+
+  const isTrackedComplete = (type: string, id: string) =>
+    trackingList.some((t) => t.item_type === type && t.item_id === id && !!t.completed_at);
+
+  const trainings: { key: string; ratio: number; done: boolean }[] = [];
+
+  (globalProgressTracking?.courseIds || []).forEach((id: string) => {
+    const lessons = courseLessonMap[id] || [];
+    const done = lessons.length > 0 ? lessons.filter((l) => completedLessonIds.has(l)).length : 0;
+    const ratio = lessons.length > 0 ? done / lessons.length : (isTrackedComplete('course', id) ? 1 : 0);
+    trainings.push({ key: `course:${id}`, ratio, done: ratio >= 1 || isTrackedComplete('course', id) });
+  });
+
+  (globalProgressTracking?.ebookIds || []).forEach((id: string) => {
+    const chapters = ebookChapterMap[id] || [];
+    const done = chapters.length > 0 ? chapters.filter((c) => completedChapterIds.has(c)).length : 0;
+    const ratio = chapters.length > 0 ? done / chapters.length : (isTrackedComplete('ebook', id) ? 1 : 0);
+    trainings.push({ key: `ebook:${id}`, ratio, done: ratio >= 1 || isTrackedComplete('ebook', id) });
+  });
+
+  const totalProgress = trainings.length > 0
+    ? Math.min(100, Math.round((trainings.reduce((sum, t) => sum + (t.done ? 1 : t.ratio), 0) / trainings.length) * 100))
+    : 0;
+  const completedTrainings = trainings.filter((t) => t.done).length;
+
 
   const trackedItems = (globalProgressTracking?.tracking || []).filter(
     (t: any) => t.item_type === 'course' || t.item_type === 'ebook'
@@ -110,8 +153,11 @@ export function useProgress() {
   ) as any[];
 
   // "Iniciados" = todo conteúdo que o aluno começou (inclui os já finalizados)
-  const startedCount = uniqueItems.filter((t) => !!t.started_at).length;
-  const finishedCount = uniqueItems.filter((t) => !!t.completed_at).length;
+  const startedCount = Math.max(
+    uniqueItems.filter((t) => !!t.started_at).length,
+    trainings.filter((t) => t.ratio > 0 || t.done).length
+  );
+  const finishedCount = Math.max(uniqueItems.filter((t) => !!t.completed_at).length, completedTrainings);
 
   // Sequência (dias consecutivos com atividade de estudo)
   const activityDates = new Set<string>();
