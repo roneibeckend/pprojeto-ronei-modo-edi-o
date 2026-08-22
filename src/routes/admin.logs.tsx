@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useAuth } from "@/hooks/use-auth";
+import { clearSystemLogs } from "@/lib/system-log.functions";
 import { 
   Card, 
   CardContent, 
@@ -235,7 +236,7 @@ function AdminLogsPage() {
                       key={log.id} 
                       className={cn(
                         "group transition-colors hover:bg-white/[0.02] cursor-pointer",
-                        log.level === 'ERROR' && "bg-red-500/[0.02]"
+                        (log.level || '').toUpperCase() === 'ERROR' && "bg-red-500/[0.02]"
                       )}
                       onClick={() => setSelectedLog(log)}
                     >
