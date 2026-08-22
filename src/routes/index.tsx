@@ -1860,7 +1860,7 @@ function Footer() {
       </div>
       <div className="mx-auto mt-10 max-w-6xl border-t border-border/60 px-4 pt-6 text-center text-xs leading-relaxed text-muted-foreground sm:px-6">
         <p className="mb-2 uppercase tracking-widest font-semibold text-[11px]">
-          RONNEI · CNPJ 45.680.415/0001-91
+          CNPJ 45.680.415/0001-91
         </p>
         <p className="mb-2 opacity-80">
           Suporte de segunda a sexta, das 9h às 18h.
