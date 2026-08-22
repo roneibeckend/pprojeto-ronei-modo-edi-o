@@ -379,7 +379,7 @@ export function OAuthProvidersPanel() {
             Controle automático desativado
           </AlertTitle>
           <AlertDescription className="text-xs text-white/60">
-            Salve o secret <span className="font-mono">SUPABASE_MANAGEMENT_TOKEN</span> (Personal Access Token do
+            Salve o secret <span className="font-mono">SB_MANAGEMENT_TOKEN</span> (Personal Access Token do
             Supabase) para que este painel possa ler e alterar os provedores diretamente. Sem ele, as alterações
             continuam exigindo o Dashboard do Supabase.
           </AlertDescription>

@@ -2381,7 +2381,7 @@ export type Database = {
       affiliate_status: "pending" | "active" | "blocked"
       app_role: "admin" | "student" | "manager" | "agent"
       difficulty_level: "Fácil" | "Médio" | "Avançado"
-      integration_type: "ia" | "payment"
+      integration_type: "ia" | "payment" | "oauth"
       knowledge_category:
         | "CONTA"
         | "CURSOS"
@@ -2525,7 +2525,7 @@ export const Constants = {
       affiliate_status: ["pending", "active", "blocked"],
       app_role: ["admin", "student", "manager", "agent"],
       difficulty_level: ["Fácil", "Médio", "Avançado"],
-      integration_type: ["ia", "payment"],
+      integration_type: ["ia", "payment", "oauth"],
       knowledge_category: [
         "CONTA",
         "CURSOS",

@@ -1,6 +1,6 @@
 // Server-only helpers for managing Supabase Auth OAuth providers
 // through the Supabase Management API (https://api.supabase.com).
-// Requires the SUPABASE_MANAGEMENT_TOKEN secret (Personal Access Token).
+// Requires the SB_MANAGEMENT_TOKEN secret (Personal Access Token).
 
 export type ProviderKey =
   | 'google'
@@ -37,17 +37,17 @@ function getProjectRef(): string {
 }
 
 function getToken(): string {
-  const token = process.env['SUPABASE_MANAGEMENT_TOKEN'];
+  const token = process.env['SB_MANAGEMENT_TOKEN'];
   if (!token) {
     throw new Error(
-      'Token de gerenciamento do Supabase ausente. Salve o secret SUPABASE_MANAGEMENT_TOKEN para habilitar o controle automático dos provedores.',
+      'Token de gerenciamento do Supabase ausente. Salve o secret SB_MANAGEMENT_TOKEN para habilitar o controle automático dos provedores.',
     );
   }
   return token;
 }
 
 export function managementTokenConfigured(): boolean {
-  return Boolean(process.env['SUPABASE_MANAGEMENT_TOKEN']);
+  return Boolean(process.env['SB_MANAGEMENT_TOKEN']);
 }
 
 export function callbackUrl(): string {

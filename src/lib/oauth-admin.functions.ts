@@ -52,7 +52,7 @@ async function saveMeta(provider: Provider, patch: Record<string, unknown>) {
   if (existing?.id) {
     await supabaseAdmin
       .from('integrations')
-      .update({ settings, updated_at: new Date().toISOString() })
+      .update({ settings: settings as any, updated_at: new Date().toISOString() })
       .eq('id', existing.id);
   } else {
     await supabaseAdmin.from('integrations').insert([
@@ -62,7 +62,7 @@ async function saveMeta(provider: Provider, patch: Record<string, unknown>) {
         category,
         status: false,
         credentials: {},
-        settings,
+        settings: settings as any,
       },
     ]);
   }
@@ -137,7 +137,7 @@ export const saveOAuthProvider = createServerFn({ method: 'POST' })
     const server = await import('./oauth-admin.server');
     if (!server.managementTokenConfigured()) {
       throw new Error(
-        'Configure o secret SUPABASE_MANAGEMENT_TOKEN para aplicar alterações automaticamente no Supabase.',
+        'Configure o secret SB_MANAGEMENT_TOKEN para aplicar alterações automaticamente no Supabase.',
       );
     }
 
