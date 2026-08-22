@@ -41,6 +41,18 @@ function LoginPage() {
       localStorage.setItem('affiliate_referrer_code', ref);
     }
 
+    // Erro/cancelamento retornado por provedores OAuth (query ou hash)
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const oauthError = urlParams.get("error") || hashParams.get("error");
+    if (oauthError) {
+      const desc = urlParams.get("error_description") || hashParams.get("error_description") || "";
+      if (/access_denied|cancel/i.test(oauthError + desc)) {
+        toast.info("Login cancelado", { description: "Você cancelou a autenticação com o provedor." });
+      } else {
+        toast.error("Falha na autenticação social", { description: desc || oauthError });
+      }
+    }
+
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
         // Se houver redirectTo, usa ele, senão vai para /inicio
@@ -48,7 +60,16 @@ function LoginPage() {
         navigate({ to: target, replace: true });
       }
     });
+
+    // Após o retorno do OAuth (Facebook), a sessão pode chegar de forma assíncrona
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        navigate({ to: redirectTo || "/inicio", replace: true });
+      }
+    });
+    return () => sub.subscription.unsubscribe();
   }, [navigate]);
+
 
 
   const handleGoogle = async () => {
