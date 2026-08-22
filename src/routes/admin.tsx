@@ -81,11 +81,7 @@ function AdminRootLayout() {
     { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
     { to: "/admin/relatorios", label: "Relatórios", icon: FileText },
     { to: "/admin/materiais", label: "Materiais", icon: Library },
-    { to: "/admin/ranking", label: "Ranking", icon: Star, subItems: [
-      { to: "/admin/ranking", label: "Configuração", exact: true },
-      { to: "/admin/ranking/campanhas", label: "Campanhas", exact: true },
-      { to: "/admin/ranking/campanhas", label: "Premiações", exact: true },
-    ]},
+    { to: "/admin/ranking", label: "Ranking", icon: Star },
     { to: "/admin/chatbot", label: "Inteligência Brasa", icon: BrainCircuit },
     { to: "/admin/logs", label: "Logs do Sistema", icon: Terminal },
   ];
