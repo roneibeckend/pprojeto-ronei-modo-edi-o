@@ -307,9 +307,9 @@ function AdminEbooksPage() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left overflow-y-auto outline-none py-6 sm:py-4" tabIndex={-1}>
-          <div className="w-full max-w-[95vw] lg:max-w-7xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-4 min-h-[90vh] flex flex-col relative z-50 shadow-2xl">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 sticky top-0 z-30 bg-[#0e0e0e] pb-4 border-b border-white/5 pt-2">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left outline-none py-6 sm:py-4" tabIndex={-1}>
+          <div className="w-full max-w-[95vw] lg:max-w-7xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 h-[92vh] max-h-[92vh] flex flex-col relative z-50 shadow-2xl overflow-hidden">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 z-30 bg-[#0e0e0e] pb-4 border-b border-white/5 pt-2 shrink-0">
               <h3 className="text-xl font-bold pr-4">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo E-book"}</h3>
               <button 
                 onClick={() => {
@@ -324,10 +324,9 @@ function AdminEbooksPage() {
 
             <Tabs value={activeTab} onValueChange={(val) => {
               setActiveTab(val);
-              const modalOverlay = document.querySelector('.fixed.inset-0.z-50');
-              if (modalOverlay) modalOverlay.scrollTo({ top: 0, behavior: 'smooth' });
-            }} className="flex-1 flex flex-col">
-              <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start sticky top-[68px] z-20 backdrop-blur-md shrink-0">
+            }} className="flex-1 flex flex-col min-h-0">
+              <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start z-20 backdrop-blur-md shrink-0">
+
                 <TabsTrigger value="info" className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Info className="h-4 w-4" /> Informações
                 </TabsTrigger>
