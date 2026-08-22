@@ -75,6 +75,53 @@ function LoginPage() {
     }
   };
 
+  // Apple usa o mesmo broker do Google (fluxo seguro em iframe/PWA)
+  const handleApple = async () => {
+    setLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("apple", {
+        redirect_uri: `${window.location.origin}/inicio`,
+      });
+      if (result.error) {
+        toast.error("Não foi possível entrar com Apple", { description: String(result.error?.message ?? result.error) });
+        setLoading(false);
+        return;
+      }
+      if (result.redirected) return;
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectTo = urlParams.get('redirectTo');
+      navigate({ to: redirectTo || "/inicio" });
+    } catch (err) {
+      toast.error("Erro ao conectar com Apple");
+      console.error(err);
+      setLoading(false);
+    }
+  };
+
+  // Facebook: OAuth nativo do Supabase, preservando redirectTo
+  const handleFacebook = async () => {
+    setLoading(true);
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectTo = urlParams.get('redirectTo');
+      const callback = `${window.location.origin}/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "facebook",
+        options: { redirectTo: callback },
+      });
+      if (error) {
+        toast.error("Não foi possível entrar com Facebook", { description: error.message });
+        setLoading(false);
+      }
+    } catch (err) {
+      toast.error("Erro ao conectar com Facebook");
+      console.error(err);
+      setLoading(false);
+    }
+  };
+
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
