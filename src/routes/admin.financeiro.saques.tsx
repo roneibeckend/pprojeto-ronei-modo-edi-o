@@ -187,9 +187,9 @@ function AdminAsaasTransfersPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Sacado (Geral)", value: `R$ ${stats.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, icon: TrendingDown, color: "text-fire" },
+          { label: "Saídas no período", value: `R$ ${stats.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, icon: TrendingDown, color: "text-fire" },
           { label: "Pendentes (Asaas)", value: stats.pending, icon: Clock, color: "text-yellow-500" },
-          { label: "Qtd. Total", value: stats.count, icon: Wallet, color: "text-blue-500" },
+          { label: "Movimentações", value: stats.count, icon: Wallet, color: "text-blue-500" },
           { label: "Saques Afiliados", value: payouts?.length || 0, icon: LayoutDashboard, color: "text-emerald-500" },
         ].map((s, i) => (
           <div key={i} className="border border-white/5 bg-white/[0.02] p-6 rounded-2xl">
@@ -201,52 +201,113 @@ function AdminAsaasTransfersPage() {
 
       <Tabs defaultValue="transfers" className="w-full">
         <TabsList className="bg-white/5 border border-white/5">
-          <TabsTrigger value="transfers">Movimentações de Saída</TabsTrigger>
+          <TabsTrigger value="transfers">Extrato de Saídas</TabsTrigger>
           <TabsTrigger value="payouts">Solicitações de Saque</TabsTrigger>
           <TabsTrigger value="manual">Manual</TabsTrigger>
         </TabsList>
 
         <TabsContent value="transfers" className="space-y-4 pt-4">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="text-xs text-white/40">
-              Todo saque pago (afiliado ou sócio), transferência do Asaas e retirada manual fica registrado aqui.
+          {/* Barra de filtros do extrato */}
+          <div className="border border-white/5 bg-white/[0.02] rounded-2xl p-4 space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              {([
+                ["today", "Hoje"],
+                ["7d", "7 dias"],
+                ["month", "Este mês"],
+                ["year", "Este ano"],
+                ["all", "Tudo"],
+                ["custom", "Personalizado"],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setPeriod(key)}
+                  className={`text-[11px] font-bold uppercase tracking-wider px-3 py-2 rounded-full border transition ${
+                    period === key ? "bg-fire text-white border-fire" : "border-white/10 text-white/60 hover:bg-white/5"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+              <div className="ml-auto flex items-center gap-2">
+                <Button onClick={() => syncMutation.mutate()} disabled={syncMutation.isPending} variant="outline" className="border-white/10">
+                  {syncMutation.isPending ? <Loader2 className="animate-spin" /> : <RefreshCw />} Sincronizar Asaas
+                </Button>
+              </div>
             </div>
-            <Button onClick={() => syncMutation.mutate()} disabled={syncMutation.isPending} variant="outline" className="border-white/10">
-              {syncMutation.isPending ? <Loader2 className="animate-spin" /> : <RefreshCw />} Sincronizar
-            </Button>
+
+            {period === "custom" && (
+              <div className="flex flex-wrap items-center gap-2">
+                <Input type="date" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} className="w-auto bg-white/5 border-white/10 text-white" />
+                <span className="text-white/30 text-xs">até</span>
+                <Input type="date" value={customTo} onChange={(e) => setCustomTo(e.target.value)} className="w-auto bg-white/5 border-white/10 text-white" />
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center gap-2">
+              {([
+                ["all", "Todas origens"],
+                ["transfer", "Asaas"],
+                ["payout", "Saques"],
+                ["manual", "Manual"],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setTypeFilter(key)}
+                  className={`text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border transition ${
+                    typeFilter === key ? "bg-white/10 text-white border-white/20" : "border-white/5 text-white/40 hover:bg-white/5"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+              <div className="relative ml-auto min-w-[200px] flex-1 max-w-xs">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                <Input
+                  placeholder="Buscar descrição..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9 bg-white/5 border-white/10 text-white"
+                />
+              </div>
+            </div>
           </div>
-          <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
-            <table className="w-full text-sm min-w-[720px]">
-              <thead className="text-[10px] uppercase font-bold text-white/40 bg-white/[0.02]">
-                <tr>
-                  <th className="px-6 py-4 text-left">Data</th>
-                  <th className="px-6 py-4 text-left">Origem</th>
-                  <th className="px-6 py-4 text-left">Descrição</th>
-                  <th className="px-6 py-4 text-left">Valor</th>
-                  <th className="px-6 py-4 text-left">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {transfers?.map((t) => (
-                  <tr key={t.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">{new Date(t.transfer_date).toLocaleDateString('pt-BR')}</td>
-                    <td className="px-6 py-4">
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-white/5 text-white/60">
-                        {typeMap[t.transaction_type || 'transfer'] || t.transaction_type}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">{t.description}</td>
-                    <td className="px-6 py-4 font-black text-fire whitespace-nowrap">- R$ {Number(t.amount).toFixed(2)}</td>
-                    <td className="px-6 py-4">{statusMap[t.status]?.label || t.status}</td>
-                  </tr>
-                ))}
-                {!isLoading && !transfers?.length && (
-                  <tr><td colSpan={5} className="px-6 py-10 text-center text-white/40">Nenhuma saída registrada ainda.</td></tr>
-                )}
-              </tbody>
-            </table>
+
+          {/* Extrato estilo conta corrente, agrupado por dia */}
+          <div className="border border-white/5 rounded-2xl bg-[#111] overflow-hidden">
+            {isLoading ? (
+              <div className="p-10 text-center text-white/40"><Loader2 className="w-5 h-5 animate-spin inline" /></div>
+            ) : groupedByDay.length === 0 ? (
+              <div className="p-10 text-center text-white/40">Nenhuma saída registrada neste período.</div>
+            ) : (
+              groupedByDay.map(([day, items]) => {
+                const dayTotal = items.reduce((acc, t) => acc + Number(t.amount), 0);
+                return (
+                  <div key={day}>
+                    <div className="flex items-center justify-between px-5 py-3 bg-white/[0.03] border-y border-white/5">
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-white/50">{day}</span>
+                      <span className="text-[11px] font-black text-fire">- R$ {dayTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="divide-y divide-white/5">
+                      {items.map((t) => (
+                        <div key={t.id} className="flex flex-wrap items-center gap-3 px-5 py-4">
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-white/5 text-white/60 shrink-0">
+                            {typeMap[t.transaction_type || 'transfer'] || t.transaction_type}
+                          </span>
+                          <span className="text-sm text-white/80 flex-1 min-w-[140px] break-words">{t.description}</span>
+                          <span className="text-[11px] text-white/40 shrink-0">{statusMap[t.status]?.label || t.status}</span>
+                          <span className="text-sm font-black text-fire shrink-0 whitespace-nowrap">
+                            - R$ {Number(t.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </TabsContent>
+
 
         
         <TabsContent value="payouts" className="space-y-4 pt-4">
