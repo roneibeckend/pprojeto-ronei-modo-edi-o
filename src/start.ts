@@ -11,6 +11,12 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
       throw error;
     }
     console.error(error);
+    try {
+      const { logSystemError } = await import("./lib/system-log.server");
+      await logSystemError("server", "Erro não tratado no servidor", error);
+    } catch {
+      /* logging nunca quebra a resposta */
+    }
     return new Response(renderErrorPage(), {
       status: 500,
       headers: { "content-type": "text/html; charset=utf-8" },
