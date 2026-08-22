@@ -69,25 +69,24 @@ function AdminLogsPage() {
         .from('system_logs')
         .select('*, profiles(name, email)')
         .order('created_at', { ascending: false })
-        .limit(100);
+        .limit(200);
 
       if (levelFilter !== "all") {
-        query = query.eq('level', levelFilter);
+        // Aceita registros gravados em maiúsculas ou minúsculas
+        query = query.ilike('level', levelFilter);
       }
 
       const { data, error } = await query;
       if (error) throw error;
       return data;
     },
-    enabled: isAdmin
+    enabled: isAdmin,
+    refetchInterval: 30_000,
   });
 
   const clearLogsMutation = useMutation({
     mutationFn: async () => {
-      // Nota: Normalmente logs não são deletados, mas podemos expor a função para admins.
-      // Aqui apenas simulo, ou deleto se tivermos permissão de delete no RLS.
-      const { error } = await supabase.from('system_logs').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      if (error) throw error;
+      await clearSystemLogs({});
     },
     onSuccess: () => {
       toast.success("Logs limpos com sucesso.");
