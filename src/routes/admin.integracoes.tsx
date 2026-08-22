@@ -322,7 +322,7 @@ function IntegrationsPage() {
       {activeCategory === 'oauth' && <OAuthProvidersPanel />}
 
 
-      <div className="grid gap-8 grid-cols-1 lg:grid-cols-12">
+      <div className={`grid gap-8 grid-cols-1 lg:grid-cols-12 ${activeCategory === 'oauth' ? 'hidden' : ''}`}>
         {/* Sidebar List */}
         <div className="lg:col-span-4 space-y-4">
           {activeCategory === 'email' ? (
