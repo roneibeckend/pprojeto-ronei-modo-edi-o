@@ -271,12 +271,21 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             console.error('[Webhook Asaas] Falha ao completar evento (dono inválido ou expirado):', completeError);
           }
 
+          await logSystemEvent({
+            level: 'info',
+            source: 'webhook_asaas',
+            message: `Evento ${eventId} processado com sucesso.`,
+            details: { eventId },
+          });
+
           return new Response(JSON.stringify({ received: true, processed: true }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
           });
         } catch (error: any) {
           console.error('[Webhook Asaas] Erro crítico:', error);
+          await logSystemError('webhook_asaas', 'Erro crítico no webhook', error, { eventId });
+          
           
           if (eventId && claimToken) {
             await supabaseAdmin
