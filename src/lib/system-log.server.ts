@@ -18,7 +18,7 @@ export async function logSystemEvent(input: SystemLogInput): Promise<string | nu
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const { error } = await supabaseAdmin.from("system_logs").insert({
-      level: input.level,
+      level: input.level.toUpperCase(),
       source: input.source.slice(0, 80),
       message: String(input.message ?? "").slice(0, 2000),
       details: (input.details ?? {}) as never,

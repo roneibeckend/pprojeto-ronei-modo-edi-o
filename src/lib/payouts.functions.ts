@@ -208,7 +208,7 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
     
     // Log de auditoria
     await supabaseAdmin.rpc('log_system_event', {
-      _level: 'info',
+      _level: 'INFO',
       _source: 'payout_service',
       _message: `Saque ${data.payoutId} atualizado para ${data.status}. ${asaasResult?.id ? 'Asaas ID: ' + asaasResult.id : ''}`,
       _details: { payoutId: data.payoutId, status: data.status, asaasId: asaasResult?.id }

@@ -12,7 +12,7 @@ const clientLogSchema = z.object({
 
 /** Registra eventos/erros do navegador na tabela de logs. */
 export const recordClientLog = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => clientLogSchema.parse(data))
+  .validator((data: unknown) => clientLogSchema.parse(data))
   .handler(async ({ data }) => {
     const { getRequest } = await import("@tanstack/react-start/server");
     const { logSystemEvent } = await import("./system-log.server");
@@ -30,8 +30,7 @@ export const recordClientLog = createServerFn({ method: "POST" })
       /* noop */
     }
 
-    console.log("[recordClientLog] recebido", data.source, data.message);
-    const dbg = await logSystemEvent({
+    await logSystemEvent({
       level: data.level,
       source: data.source,
       message: data.message,
@@ -40,7 +39,7 @@ export const recordClientLog = createServerFn({ method: "POST" })
       ipAddress: ip,
     });
 
-    return { success: true, dbg };
+    return { success: true };
   });
 
 /** Limpa o histórico de logs (somente admin). */
