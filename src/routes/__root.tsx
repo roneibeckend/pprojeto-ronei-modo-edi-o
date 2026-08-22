@@ -249,7 +249,16 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <Outlet />
       
-      <Toaster position="top-center" theme="dark" richColors closeButton />
+      <Toaster
+        position="top-center"
+        theme="dark"
+        richColors
+        closeButton
+        duration={4000}
+        offset="calc(env(safe-area-inset-top, 0px) + 16px)"
+        mobileOffset="calc(env(safe-area-inset-top, 0px) + 16px)"
+        toastOptions={{ closeButton: true }}
+      />
       <PwaUpdateManager />
     </QueryClientProvider>
   );
