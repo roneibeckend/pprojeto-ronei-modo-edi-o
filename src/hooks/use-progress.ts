@@ -100,15 +100,46 @@ export function useProgress() {
   const totalItems = totalLessons + totalChapters;
   const totalProgress = totalItems > 0 ? Math.min(100, Math.round((totalCompleted / totalItems) * 100)) : 0;
 
-  const startedCount = globalProgressTracking?.tracking.filter((t: any) => 
-    (t.item_type === 'course' || t.item_type === 'ebook') && !!t.started_at && !t.completed_at
-  ).length || 0;
+  const trackedItems = (globalProgressTracking?.tracking || []).filter(
+    (t: any) => t.item_type === 'course' || t.item_type === 'ebook'
+  );
 
-  const finishedCount = globalProgressTracking?.tracking.filter((t: any) => 
-    (t.item_type === 'course' || t.item_type === 'ebook') && !!t.completed_at
-  ).length || 0;
+  // Deduplica por tipo+id (evita contagem dupla de registros repetidos)
+  const uniqueItems = Array.from(
+    new Map(trackedItems.map((t: any) => [`${t.item_type}:${t.item_id}`, t])).values()
+  ) as any[];
+
+  // "Iniciados" = todo conteúdo que o aluno começou (inclui os já finalizados)
+  const startedCount = uniqueItems.filter((t) => !!t.started_at).length;
+  const finishedCount = uniqueItems.filter((t) => !!t.completed_at).length;
+
+  // Sequência (dias consecutivos com atividade de estudo)
+  const activityDates = new Set<string>();
+  const pushDate = (value?: string | null) => {
+    if (!value) return;
+    const d = new Date(value);
+    if (!Number.isNaN(d.getTime())) activityDates.add(d.toISOString().slice(0, 10));
+  };
+  (lessonProgress || []).forEach((p: any) => pushDate(p.updated_at));
+  (ebookProgress || []).forEach((p: any) => pushDate(p.last_read_at || p.completed_at));
+  (globalProgressTracking?.tracking || []).forEach((t: any) => {
+    pushDate(t.started_at);
+    pushDate(t.completed_at);
+  });
+
+  let streak = 0;
+  if (activityDates.size > 0) {
+    const cursor = new Date();
+    const todayKey = cursor.toISOString().slice(0, 10);
+    if (!activityDates.has(todayKey)) cursor.setUTCDate(cursor.getUTCDate() - 1);
+    while (activityDates.has(cursor.toISOString().slice(0, 10))) {
+      streak += 1;
+      cursor.setUTCDate(cursor.getUTCDate() - 1);
+    }
+  }
 
   return {
+    streak,
     lessonProgress: lessonProgress || [],
     isLessonCompleted: (id: string) => lessonProgress?.some(p => p.lesson_id === id && p.is_completed) || false,
     toggleLessonProgress: toggleLessonMutation.mutateAsync,
