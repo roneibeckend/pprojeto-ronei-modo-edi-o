@@ -785,28 +785,12 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
       {/* Sidebar - Tree View */}
       <div className="space-y-4 border-r border-white/5 pr-6 flex flex-col min-h-0 max-h-[70vh] lg:max-h-none lg:overflow-hidden">
 
-        <div className="flex items-center justify-between">
-          <h4 className="text-[10px] font-bold uppercase tracking-widest text-white/40">Estrutura de Conteúdo</h4>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <input
-                type="file"
-                accept=".pdf,.docx"
-                onChange={handleImportFile}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                disabled={isImporting}
-              />
-              <button className="p-1 hover:bg-white/5 rounded text-white/40 transition-colors" title="Importar PDF ou Word (.docx)">
-                {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
-              </button>
-            </div>
-            <button onClick={handleAddModule} className="p-1 hover:bg-white/5 rounded text-[#ff6a00] transition-colors" title="Adicionar Módulo">
-              <Plus className="h-4 w-4" />
-            </button>
-          </div>
+        <div className="flex items-center justify-between shrink-0">
+...
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 flex-1 min-h-0 overflow-y-auto pr-1">
+
           {modules.map((module) => (
             <div key={module.id} className="space-y-1">
               <div className="flex items-center justify-between group px-2 py-1.5 rounded-lg bg-white/5 border border-white/5">
