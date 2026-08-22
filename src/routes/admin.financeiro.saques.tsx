@@ -110,14 +110,58 @@ function AdminAsaasTransfersPage() {
     onError: (error: any) => toast.error("Erro ao registrar: " + error.message),
   });
 
+  // ---- Extrato: filtros de período / tipo / busca ----
+  const [period, setPeriod] = useState<"today" | "7d" | "month" | "year" | "all" | "custom">("month");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+  const [typeFilter, setTypeFilter] = useState<"all" | "transfer" | "payout" | "manual">("all");
+
+  const range = useMemo(() => {
+    const now = new Date();
+    const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    switch (period) {
+      case "today": return { from: startOfDay(now), to: null as Date | null };
+      case "7d": return { from: new Date(now.getTime() - 6 * 864e5), to: null };
+      case "month": return { from: new Date(now.getFullYear(), now.getMonth(), 1), to: null };
+      case "year": return { from: new Date(now.getFullYear(), 0, 1), to: null };
+      case "custom": return {
+        from: customFrom ? new Date(`${customFrom}T00:00:00`) : null,
+        to: customTo ? new Date(`${customTo}T23:59:59`) : null,
+      };
+      default: return { from: null, to: null };
+    }
+  }, [period, customFrom, customTo]);
+
+  const filteredTransfers = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    return (transfers || []).filter((t) => {
+      const d = new Date(t.transfer_date);
+      if (range.from && d < range.from) return false;
+      if (range.to && d > range.to) return false;
+      if (typeFilter !== "all" && (t.transaction_type || "transfer") !== typeFilter) return false;
+      if (term && !(t.description || "").toLowerCase().includes(term)) return false;
+      return true;
+    });
+  }, [transfers, range, typeFilter, search]);
+
+  const groupedByDay = useMemo(() => {
+    const map = new Map<string, typeof filteredTransfers>();
+    for (const t of filteredTransfers) {
+      const key = new Date(t.transfer_date).toLocaleDateString("pt-BR");
+      map.set(key, [...(map.get(key) || []), t]);
+    }
+    return Array.from(map.entries());
+  }, [filteredTransfers]);
+
   const stats = useMemo(() => {
-    if (!transfers) return { total: 0, count: 0, pending: 0 };
+    const list = filteredTransfers;
     return {
-      total: transfers.reduce((acc, t) => acc + Number(t.amount), 0),
-      count: transfers.length,
-      pending: transfers.filter(t => t.status === 'PENDING').length
+      total: list.reduce((acc, t) => acc + Number(t.amount), 0),
+      count: list.length,
+      pending: list.filter((t) => t.status === "PENDING").length,
     };
-  }, [transfers]);
+  }, [filteredTransfers]);
+
 
   const typeMap: Record<string, string> = {
     payout: "Saque",
