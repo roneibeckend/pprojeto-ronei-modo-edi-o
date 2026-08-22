@@ -16,8 +16,8 @@ export const Route = createFileRoute("/politica-de-privacidade")({
 
 function PrivacyPage() {
   const lastUpdate = "14/08/2026";
-  const companyName = "RONNEI";
-  const dpoName = "Ronnei";
+  const companyName = "Ronnei Da Silva";
+  const dpoName = "Ronnei Da Silva";
   
 
   return (
