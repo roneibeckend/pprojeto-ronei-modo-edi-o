@@ -54,6 +54,7 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { OAuthProvidersPanel } from "@/components/admin/OAuthProvidersPanel";
 
 export const Route = createFileRoute('/admin/integracoes')({
   head: () => ({ meta: [{ title: "Centro de Integrações · Admin" }] }),
@@ -131,7 +132,7 @@ function IntegrationsPage() {
   const navigate = useNavigate();
   const { role, isLoading: isLoadingAuth } = useAuth();
   const queryClient = useQueryClient();
-  const [activeCategory, setActiveCategory] = useState<'ia' | 'payment' | 'email' | 'webhooks' | 'offers' | 'feature'>('ia');
+  const [activeCategory, setActiveCategory] = useState<'ia' | 'payment' | 'email' | 'webhooks' | 'offers' | 'feature' | 'oauth'>('ia');
   const [selectedItem, setSelectedItem] = useState<Integration | null>(null);
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<any>(null);
@@ -309,10 +310,20 @@ function IntegrationsPage() {
           >
             <Sparkles className="h-3.5 w-3.5" /> Recursos
           </Button>
+          <Button 
+            variant="ghost"
+            onClick={() => { setActiveCategory('oauth'); setSelectedItem(null); }}
+            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'oauth' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+          >
+            <ShieldCheck className="h-3.5 w-3.5" /> Login Social
+          </Button>
         </div>
       </div>
 
-      <div className="grid gap-8 grid-cols-1 lg:grid-cols-12">
+      {activeCategory === 'oauth' && <OAuthProvidersPanel />}
+
+
+      <div className={`grid gap-8 grid-cols-1 lg:grid-cols-12 ${activeCategory === 'oauth' ? 'hidden' : ''}`}>
         {/* Sidebar List */}
         <div className="lg:col-span-4 space-y-4">
           {activeCategory === 'email' ? (
