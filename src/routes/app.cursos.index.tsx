@@ -267,7 +267,7 @@ function CoursesPage() {
         totalProgress={totalProgress}
         startedCount={startedCount}
         finishedCount={finishedCount}
-        streak={0}
+        streak={streak}
       />
 
       {/* Seção de Treinamentos (Cursos e E-books Adquiridos) */}
