@@ -812,6 +812,15 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
 
         <div className="custom-scrollbar min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pr-1">
 
+          {modules.length === 0 && (
+            <button
+              onClick={handleAddModule}
+              className="w-full rounded-xl border border-dashed border-white/10 p-4 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:border-[#ff6a00] hover:text-[#ff6a00] transition-all"
+            >
+              Nenhum módulo ainda — criar o primeiro
+            </button>
+          )}
+
           {modules.map((module) => (
             <div key={module.id} className="space-y-1">
               <div className="flex items-center justify-between group px-2 py-1.5 rounded-lg bg-white/5 border border-white/5">
