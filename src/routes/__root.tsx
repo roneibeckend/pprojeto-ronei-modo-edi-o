@@ -236,6 +236,7 @@ function RootComponent() {
     });
 
     initPixel();
+    installClientLogger();
 
     return () => {
       unsubBefore();
