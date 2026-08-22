@@ -110,13 +110,38 @@ export function useProgress() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["ebook-progress", user?.id] }),
   });
 
-  const totalLessons = globalProgressTracking?.lessonCount || 0;
-  const totalChapters = globalProgressTracking?.chapterCount || 0;
-  const completedLessons = lessonProgress?.filter(p => p.is_completed).length || 0;
-  const completedChapters = ebookProgress?.filter(p => !!p.completed_at).length || 0;
-  const totalCompleted = completedLessons + completedChapters;
-  const totalItems = totalLessons + totalChapters;
-  const totalProgress = totalItems > 0 ? Math.min(100, Math.round((totalCompleted / totalItems) * 100)) : 0;
+  // Progresso total = média por treinamento (curso/e-book) disponível ao aluno
+  const completedLessonIds = new Set((lessonProgress || []).filter((p: any) => p.is_completed).map((p: any) => p.lesson_id));
+  const completedChapterIds = new Set((ebookProgress || []).filter((p: any) => !!p.completed_at).map((p: any) => p.chapter_id));
+
+  const courseLessonMap = globalProgressTracking?.courseLessonMap || {};
+  const ebookChapterMap = globalProgressTracking?.ebookChapterMap || {};
+  const trackingList = (globalProgressTracking?.tracking || []) as any[];
+
+  const isTrackedComplete = (type: string, id: string) =>
+    trackingList.some((t) => t.item_type === type && t.item_id === id && !!t.completed_at);
+
+  const trainings: { key: string; ratio: number; done: boolean }[] = [];
+
+  (globalProgressTracking?.courseIds || []).forEach((id: string) => {
+    const lessons = courseLessonMap[id] || [];
+    const done = lessons.length > 0 ? lessons.filter((l) => completedLessonIds.has(l)).length : 0;
+    const ratio = lessons.length > 0 ? done / lessons.length : (isTrackedComplete('course', id) ? 1 : 0);
+    trainings.push({ key: `course:${id}`, ratio, done: ratio >= 1 || isTrackedComplete('course', id) });
+  });
+
+  (globalProgressTracking?.ebookIds || []).forEach((id: string) => {
+    const chapters = ebookChapterMap[id] || [];
+    const done = chapters.length > 0 ? chapters.filter((c) => completedChapterIds.has(c)).length : 0;
+    const ratio = chapters.length > 0 ? done / chapters.length : (isTrackedComplete('ebook', id) ? 1 : 0);
+    trainings.push({ key: `ebook:${id}`, ratio, done: ratio >= 1 || isTrackedComplete('ebook', id) });
+  });
+
+  const totalProgress = trainings.length > 0
+    ? Math.min(100, Math.round((trainings.reduce((sum, t) => sum + (t.done ? 1 : t.ratio), 0) / trainings.length) * 100))
+    : 0;
+  const completedTrainings = trainings.filter((t) => t.done).length;
+
 
   const trackedItems = (globalProgressTracking?.tracking || []).filter(
     (t: any) => t.item_type === 'course' || t.item_type === 'ebook'
