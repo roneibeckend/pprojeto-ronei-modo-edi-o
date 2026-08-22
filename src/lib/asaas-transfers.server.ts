@@ -19,20 +19,33 @@ export interface AsaasTransfer {
 
 export async function fetchAsaasTransfers() {
   const { apiKey, baseUrl } = await getAsaasConfig();
-  
-  // O Asaas usa GET /transfers para listar transferências
-  const res = await fetch(`${baseUrl}/transfers?limit=50`, {
-    headers: asaasHeaders(apiKey),
-  });
 
-  if (!res.ok) {
-    const errorBody = await res.text().catch(() => "Unknown error");
-    throw new Error(`Asaas API error (${res.status}): ${errorBody}`);
+  const all: AsaasTransfer[] = [];
+  let offset = 0;
+  const limit = 100;
+
+  // Paginação completa: garante o extrato inteiro, não só as últimas 50 saídas
+  while (offset < 2000) {
+    const res = await fetch(`${baseUrl}/transfers?limit=${limit}&offset=${offset}`, {
+      headers: asaasHeaders(apiKey),
+    });
+
+    if (!res.ok) {
+      const errorBody = await res.text().catch(() => "Unknown error");
+      throw new Error(`Asaas API error (${res.status}): ${errorBody}`);
+    }
+
+    const json = await res.json();
+    const page = (json?.data || []) as AsaasTransfer[];
+    all.push(...page);
+
+    if (json?.hasMore !== true || page.length === 0) break;
+    offset += limit;
   }
 
-  const json = await res.json();
-  return (json?.data || []) as AsaasTransfer[];
+  return all;
 }
+
 
 export async function syncTransfersWithDb() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
