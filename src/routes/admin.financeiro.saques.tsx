@@ -150,40 +150,53 @@ function AdminAsaasTransfersPage() {
 
       <Tabs defaultValue="transfers" className="w-full">
         <TabsList className="bg-white/5 border border-white/5">
-          <TabsTrigger value="transfers">Transferências Asaas</TabsTrigger>
+          <TabsTrigger value="transfers">Movimentações de Saída</TabsTrigger>
           <TabsTrigger value="payouts">Solicitações de Saque</TabsTrigger>
           <TabsTrigger value="manual">Manual</TabsTrigger>
         </TabsList>
 
         <TabsContent value="transfers" className="space-y-4 pt-4">
-          <div className="flex justify-end gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="text-xs text-white/40">
+              Todo saque pago (afiliado ou sócio), transferência do Asaas e retirada manual fica registrado aqui.
+            </div>
             <Button onClick={() => syncMutation.mutate()} disabled={syncMutation.isPending} variant="outline" className="border-white/10">
               {syncMutation.isPending ? <Loader2 className="animate-spin" /> : <RefreshCw />} Sincronizar
             </Button>
           </div>
           <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
-            <table className="w-full text-sm min-w-[640px]">
+            <table className="w-full text-sm min-w-[720px]">
               <thead className="text-[10px] uppercase font-bold text-white/40 bg-white/[0.02]">
                 <tr>
-                  <th className="px-6 py-4">Data</th>
-                  <th className="px-6 py-4">Descrição</th>
-                  <th className="px-6 py-4">Valor</th>
-                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-left">Data</th>
+                  <th className="px-6 py-4 text-left">Origem</th>
+                  <th className="px-6 py-4 text-left">Descrição</th>
+                  <th className="px-6 py-4 text-left">Valor</th>
+                  <th className="px-6 py-4 text-left">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {transfers?.map((t) => (
                   <tr key={t.id}>
-                    <td className="px-6 py-4">{new Date(t.transfer_date).toLocaleDateString('pt-BR')}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{new Date(t.transfer_date).toLocaleDateString('pt-BR')}</td>
+                    <td className="px-6 py-4">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-white/5 text-white/60">
+                        {typeMap[t.transaction_type || 'transfer'] || t.transaction_type}
+                      </span>
+                    </td>
                     <td className="px-6 py-4">{t.description}</td>
-                    <td className="px-6 py-4 font-black text-fire">R$ {Number(t.amount).toFixed(2)}</td>
+                    <td className="px-6 py-4 font-black text-fire whitespace-nowrap">- R$ {Number(t.amount).toFixed(2)}</td>
                     <td className="px-6 py-4">{statusMap[t.status]?.label || t.status}</td>
                   </tr>
                 ))}
+                {!isLoading && !transfers?.length && (
+                  <tr><td colSpan={5} className="px-6 py-10 text-center text-white/40">Nenhuma saída registrada ainda.</td></tr>
+                )}
               </tbody>
             </table>
           </div>
         </TabsContent>
+
         
         <TabsContent value="payouts" className="space-y-4 pt-4">
           <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
