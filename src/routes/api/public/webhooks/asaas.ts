@@ -9,6 +9,7 @@ import {
   resolveUserFromPayment,
   fetchPaymentFromAsaas,
 } from "@/lib/asaas.server";
+import { logSystemError, logSystemEvent } from "@/lib/system-log.server";
 
 export const Route = createFileRoute('/api/public/webhooks/asaas')({
   server: {
