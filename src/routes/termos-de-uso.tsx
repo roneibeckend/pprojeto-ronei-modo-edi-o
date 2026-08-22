@@ -16,7 +16,7 @@ export const Route = createFileRoute("/termos-de-uso")({
 
 function TermsPage() {
   const lastUpdate = "14/08/2026";
-  const companyName = "RONNEI";
+  const companyName = "Ronnei Da Silva";
   const cnpj = "45.680.415/0001-91";
   
 
