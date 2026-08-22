@@ -190,26 +190,67 @@ function ProfilePage() {
         }
 
 
-        // Load user specific orders
-        const { data: ordersData } = await supabase
-          .from("course_enrollments")
-          .select(`
-            id,
-            created_at,
-            course:courses(title, price)
-          `)
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false });
+        // Load user specific orders (payments + enrollments)
+        const [paymentsRes, courseRes, ebookRes] = await Promise.all([
+          supabase
+            .from("payments")
+            .select("id, amount, status, billing_type, created_at, confirmed_at, metadata")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false }),
+          supabase
+            .from("course_enrollments")
+            .select("id, created_at, course:courses(title, price)")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false }),
+          supabase
+            .from("ebook_enrollments")
+            .select("id, created_at, ebook:ebooks(title, price)")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false }),
+        ]);
 
-        if (ordersData) {
-          setUserOrders((ordersData as any[]).map(o => ({
-            id: `#ORD-${o.id.slice(0, 4).toUpperCase()}`,
+        const brl = (v: any) =>
+          typeof v === "number" && !Number.isNaN(v)
+            ? `R$ ${Number(v).toFixed(2).replace(".", ",")}`
+            : "Liberado";
+
+        const statusLabel = (s?: string) => {
+          const v = (s || "").toUpperCase();
+          if (["CONFIRMED", "RECEIVED", "PAID"].includes(v)) return "Pago";
+          if (["PENDING", "AWAITING_PAYMENT"].includes(v)) return "Pendente";
+          if (["REFUNDED", "CANCELLED", "CANCELED"].includes(v)) return "Cancelado";
+          return v ? v.charAt(0) + v.slice(1).toLowerCase() : "Pago";
+        };
+
+        const payments = (paymentsRes.data as any[] | null) || [];
+        const orders = [
+          ...payments.map((p) => ({
+            id: `#ORD-${String(p.id).slice(0, 4).toUpperCase()}`,
+            rawDate: p.confirmed_at || p.created_at,
+            date: p.confirmed_at || p.created_at ? format(new Date(p.confirmed_at || p.created_at), "dd/MM/yyyy") : "—",
+            product: p?.metadata?.product_title || p?.metadata?.title || (p.billing_type ? `Pagamento ${p.billing_type}` : "Pagamento"),
+            status: statusLabel(p.status),
+            value: brl(Number(p.amount)),
+          })),
+          ...(((courseRes.data as any[] | null) || []).map((o) => ({
+            id: `#ORD-${String(o.id).slice(0, 4).toUpperCase()}`,
+            rawDate: o.created_at,
             date: o.created_at ? format(new Date(o.created_at), "dd/MM/yyyy") : "—",
-            product: o.course?.title || "Conteúdo",
+            product: o.course?.title || "Curso",
             status: "Pago",
-            value: o.course?.price ? `R$ ${o.course.price.toFixed(2).replace('.', ',')}` : "Liberado"
-          })));
-        }
+            value: brl(o.course?.price != null ? Number(o.course.price) : undefined),
+          }))),
+          ...(((ebookRes.data as any[] | null) || []).map((o) => ({
+            id: `#ORD-${String(o.id).slice(0, 4).toUpperCase()}`,
+            rawDate: o.created_at,
+            date: o.created_at ? format(new Date(o.created_at), "dd/MM/yyyy") : "—",
+            product: o.ebook?.title || "E-book",
+            status: "Pago",
+            value: brl(o.ebook?.price != null ? Number(o.ebook.price) : undefined),
+          }))),
+        ].sort((a, b) => new Date(b.rawDate || 0).getTime() - new Date(a.rawDate || 0).getTime());
+
+        setUserOrders(orders);
       } catch (error) {
         console.error("Error loading profile:", error);
       } finally {
