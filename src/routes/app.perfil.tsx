@@ -465,7 +465,13 @@ function ProfilePage() {
                         <td className="px-6 py-4 text-white/60 whitespace-nowrap">{order.date}</td>
                         <td className="px-6 py-4 font-medium truncate max-w-[200px]">{order.product}</td>
                         <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-500">
+                          <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${
+                            order.status === "Pago"
+                              ? "bg-emerald-500/10 text-emerald-500"
+                              : order.status === "Pendente"
+                                ? "bg-amber-500/10 text-amber-500"
+                                : "bg-white/10 text-white/60"
+                          }`}>
                             <CheckCircle2 className="h-3 w-3" />
                             {order.status}
                           </span>
