@@ -119,7 +119,14 @@ function AdminAsaasTransfersPage() {
     };
   }, [transfers]);
 
+  const typeMap: Record<string, string> = {
+    payout: "Saque",
+    transfer: "Asaas",
+    manual: "Manual",
+  };
+
   const statusMap: Record<string, { label: string, color: string, icon: any }> = {
+
     PENDING: { label: "Pendente", color: "bg-yellow-500/10 text-yellow-500", icon: Clock },
     DONE: { label: "Concluído", color: "bg-emerald-500/10 text-emerald-500", icon: CheckCircle2 },
     paid: { label: "Pago", color: "bg-emerald-500/10 text-emerald-500", icon: CheckCircle2 },
