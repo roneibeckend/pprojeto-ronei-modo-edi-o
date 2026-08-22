@@ -69,7 +69,7 @@ export const deleteStudent = createServerFn({ method: "POST" })
       }
 
       await logSystemEvent({
-        level: "INFO",
+        level: "info",
         source: "alunos",
         message: `Aluno removido: ${target?.email ?? data.studentId}`,
         details: { studentId: data.studentId, name: target?.name ?? null },
