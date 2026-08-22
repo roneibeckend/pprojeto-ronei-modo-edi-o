@@ -25,7 +25,7 @@ export const Route = createFileRoute("/app/cursos/")({
 
 function CoursesPage() {
   const { courseEnrollments, ebookEnrollments, isLoading: isLoadingEnrollments } = useEnrollments();
-  const { startedCount, finishedCount, totalProgress, isLoading: isLoadingProgress } = useProgress();
+  const { startedCount, finishedCount, totalProgress, streak, isLoading: isLoadingProgress } = useProgress();
   const navigate = useNavigate();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [offerContext, setOfferContext] = useState<{ item: any; type: 'course' | 'ebook' } | null>(null);
@@ -267,7 +267,7 @@ function CoursesPage() {
         totalProgress={totalProgress}
         startedCount={startedCount}
         finishedCount={finishedCount}
-        streak={0}
+        streak={streak}
       />
 
       {/* Seção de Treinamentos (Cursos e E-books Adquiridos) */}
