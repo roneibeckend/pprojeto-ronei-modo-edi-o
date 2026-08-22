@@ -96,28 +96,28 @@ function LoginPage() {
     }
   };
 
-  // Apple usa o mesmo broker do Google (fluxo seguro em iframe/PWA)
+  // Apple: OAuth nativo do Supabase (broker não suporta Apple neste projeto)
   const handleApple = async () => {
     setLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("apple", {
-        redirect_uri: `${window.location.origin}/inicio`,
-      });
-      if (result.error) {
-        toast.error("Não foi possível entrar com Apple", { description: String(result.error?.message ?? result.error) });
-        setLoading(false);
-        return;
-      }
-      if (result.redirected) return;
       const urlParams = new URLSearchParams(window.location.search);
       const redirectTo = urlParams.get('redirectTo');
-      navigate({ to: redirectTo || "/inicio" });
+      const callback = `${window.location.origin}/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "apple",
+        options: { redirectTo: callback },
+      });
+      if (error) {
+        toast.error("Não foi possível entrar com Apple", { description: error.message });
+        setLoading(false);
+      }
     } catch (err) {
       toast.error("Erro ao conectar com Apple");
       console.error(err);
       setLoading(false);
     }
   };
+
 
   // Facebook: OAuth nativo do Supabase, preservando redirectTo
   const handleFacebook = async () => {
