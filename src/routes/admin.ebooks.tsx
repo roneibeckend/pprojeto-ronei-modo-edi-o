@@ -785,11 +785,41 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
       {/* Sidebar - Tree View */}
       <div className="flex min-h-0 min-w-0 flex-col gap-4 overflow-hidden border-b border-white/5 pb-4 md:border-b-0 md:border-r md:pb-0 md:pr-4 lg:pr-6">
 
-        <div className="flex items-center justify-between shrink-0">
-...
+        <div className="flex items-center justify-between gap-2 shrink-0">
+          <h4 className="font-bold uppercase text-[10px] tracking-widest text-white/40">Estrutura</h4>
+          <div className="flex items-center gap-2">
+            <label className="cursor-pointer px-2 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-white/5 text-white/60 hover:bg-white/10 transition-all flex items-center gap-1">
+              {isImporting ? <Loader2 className="h-3 w-3 animate-spin" /> : <FileUp className="h-3 w-3" />}
+              Importar
+              <input
+                type="file"
+                accept=".pdf,.docx,.txt,.md,.html"
+                className="hidden"
+                disabled={isImporting}
+                onChange={handleImportFile}
+              />
+            </label>
+            <button
+              onClick={handleAddModule}
+              className="px-2 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-[#ff6a00] text-black hover:bg-[#ff8c33] transition-all flex items-center gap-1"
+            >
+              <Plus className="h-3 w-3" />
+              Módulo
+            </button>
+          </div>
         </div>
 
+
         <div className="custom-scrollbar min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pr-1">
+
+          {modules.length === 0 && (
+            <button
+              onClick={handleAddModule}
+              className="w-full rounded-xl border border-dashed border-white/10 p-4 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:border-[#ff6a00] hover:text-[#ff6a00] transition-all"
+            >
+              Nenhum módulo ainda — criar o primeiro
+            </button>
+          )}
 
           {modules.map((module) => (
             <div key={module.id} className="space-y-1">
