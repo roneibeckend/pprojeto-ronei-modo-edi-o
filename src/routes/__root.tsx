@@ -16,6 +16,7 @@ import { useAffiliateTracking } from "../hooks/use-affiliate-tracking";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { initPixel, trackEvent } from "../lib/pixel";
+import { installClientLogger, logClient } from "../lib/client-logger";
 
 function NotFoundComponent() {
   return (
@@ -42,6 +43,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    logClient("error", "app", error.message, { stack: error.stack?.slice(0, 2000) });
     
     // Auto-recovery for chunk errors or failed style loading
     const isChunkError = error.message.toLowerCase().includes('chunk') || 
@@ -236,6 +238,7 @@ function RootComponent() {
     });
 
     initPixel();
+    installClientLogger();
 
     return () => {
       unsubBefore();

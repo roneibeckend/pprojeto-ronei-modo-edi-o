@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useAuth } from "@/hooks/use-auth";
+import { clearSystemLogs } from "@/lib/system-log.functions";
 import { 
   Card, 
   CardContent, 
@@ -69,25 +70,24 @@ function AdminLogsPage() {
         .from('system_logs')
         .select('*, profiles(name, email)')
         .order('created_at', { ascending: false })
-        .limit(100);
+        .limit(200);
 
       if (levelFilter !== "all") {
-        query = query.eq('level', levelFilter);
+        // Aceita registros gravados em maiúsculas ou minúsculas
+        query = query.ilike('level', levelFilter);
       }
 
       const { data, error } = await query;
       if (error) throw error;
       return data;
     },
-    enabled: isAdmin
+    enabled: isAdmin,
+    refetchInterval: 30_000,
   });
 
   const clearLogsMutation = useMutation({
     mutationFn: async () => {
-      // Nota: Normalmente logs não são deletados, mas podemos expor a função para admins.
-      // Aqui apenas simulo, ou deleto se tivermos permissão de delete no RLS.
-      const { error } = await supabase.from('system_logs').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      if (error) throw error;
+      await clearSystemLogs({});
     },
     onSuccess: () => {
       toast.success("Logs limpos com sucesso.");
@@ -108,9 +108,10 @@ function AdminLogsPage() {
   }, [logs, searchTerm]);
 
   const getLevelBadge = (level: string) => {
-    switch (level) {
+    switch ((level || "").toUpperCase()) {
       case 'ERROR':
         return <Badge variant="destructive" className="bg-red-500/10 text-red-500 border-red-500/20"><Bug className="w-3 h-3 mr-1" /> ERROR</Badge>;
+      case 'WARN':
       case 'WARNING':
         return <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20"><AlertTriangle className="w-3 h-3 mr-1" /> WARNING</Badge>;
       case 'INFO':
@@ -235,7 +236,7 @@ function AdminLogsPage() {
                       key={log.id} 
                       className={cn(
                         "group transition-colors hover:bg-white/[0.02] cursor-pointer",
-                        log.level === 'ERROR' && "bg-red-500/[0.02]"
+                        (log.level || '').toUpperCase() === 'ERROR' && "bg-red-500/[0.02]"
                       )}
                       onClick={() => setSelectedLog(log)}
                     >
