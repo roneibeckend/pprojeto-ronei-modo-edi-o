@@ -789,7 +789,7 @@ function EbookContentEditor({ ebookId }: { ebookId: string }) {
           <h4 className="font-bold uppercase text-[10px] tracking-widest text-white/40">Estrutura</h4>
           <div className="flex items-center gap-2">
             <label className="cursor-pointer px-2 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-white/5 text-white/60 hover:bg-white/10 transition-all flex items-center gap-1">
-              {isImporting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
+              {isImporting ? <Loader2 className="h-3 w-3 animate-spin" /> : <FileUp className="h-3 w-3" />}
               Importar
               <input
                 type="file"
