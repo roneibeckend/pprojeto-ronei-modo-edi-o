@@ -1,9 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { sendResendEmail } from "./resend.server";
+import { triggerEmailEvent } from "./resend.server";
+
 
 /**
  * Camada de abstração para envio de e-mail através da Edge Function do Supabase.
@@ -25,36 +25,21 @@ export const sendEmail = createServerFn({ method: "POST" })
   }).parse(data))
   .handler(async ({ data: { to, template, data, idempotencyKey } }) => {
     try {
-      // 1. Decidir se usa Resend direto ou via Edge Function
-      // Por padrão, vamos usar a nova implementação direta com Resend API
-      const result = await sendResendEmail({
+      // Usa o template cadastrado (email_templates) quando existir; senão faz fallback genérico.
+      const result = await triggerEmailEvent({
+        event: template,
         to,
-        subject: data?.subject || `Notificação: ${template.replace(/_/g, ' ')}`,
-        html: data?.html || `<h1>Notificação</h1><p>Template: ${template}</p><pre>${JSON.stringify(data, null, 2)}</pre>`,
-        text: data?.text,
-        tags: idempotencyKey ? [{ name: 'idempotency_key', value: idempotencyKey }] : undefined
+        data: data ?? {},
+        idempotencyKey
       });
-
-      return result;
+      return { success: true, id: (result as any)?.id ?? null };
     } catch (error: any) {
       console.error(`[Resend] Falha na abstração sendEmail:`, error);
-      
-      // Fallback para Edge Function se configurado ou se falhar o direto
-      try {
-        console.log(`[Resend] Tentando fallback para Edge Function...`);
-        const { data: fallbackResult, error: fallbackError } = await supabase.functions.invoke('send-email', {
-          body: { to, template, data, idempotency_key: idempotencyKey }
-        });
-        if (!fallbackError) return fallbackResult;
-      } catch (e) {
-        console.error(`[Resend] Fallback também falhou:`, e);
-      }
-      
-      // Nunca propagar como exceção (quebra a UI). Retorna o erro tratado.
+      // Retorna erro estruturado (a UI deve verificar success)
       return { success: false, error: error?.message ?? 'Falha ao enviar e-mail' };
-
     }
   });
+
 
 export const getEmailLogs = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
