@@ -142,7 +142,7 @@ export const generateCertificateManually = createServerFn({ method: "POST" })
         content_type: data.content_type,
         certificate_code: certificateCode,
         custom_data: data.custom_data || {},
-        city_of_issue: data.city_of_issue || 'Goiânia - Goiás',
+        city_of_issue: data.city_of_issue || 'Senador Canedo - Goiás',
       } as any)
       .select()
       .single();
