@@ -1521,7 +1521,7 @@ function EmailTemplatesTab() {
   const deleteTemplateFn = useServerFn(deleteEmailTemplate);
   const sendEmailFn = useServerFn(sendEmail);
 
-  const { data: templates, isLoading } = useQuery({
+  const { data: templates, isLoading, error } = useQuery({
     queryKey: ['email_templates'],
     queryFn: async () => await getTemplatesFn()
   });
@@ -1649,9 +1649,14 @@ function EmailTemplatesTab() {
               <p className="text-[10px] text-white/40 truncate">{temp.subject}</p>
             </button>
           ))}
-          {filteredTemplates?.length === 0 && searchQuery && (
+          {!isLoading && error && (
+            <div className="py-6 px-4 text-center text-[10px] text-red-400 uppercase font-bold tracking-widest border border-red-500/20 bg-red-500/5 rounded-lg">
+              Erro ao carregar templates: {(error as any)?.message}
+            </div>
+          )}
+          {!isLoading && !error && filteredTemplates?.length === 0 && (
             <div className="py-8 text-center text-[10px] text-white/20 uppercase font-bold tracking-widest">
-              Nenhum template encontrado
+              {searchQuery ? "Nenhum template encontrado" : "Nenhum template cadastrado"}
             </div>
           )}
         </div>
