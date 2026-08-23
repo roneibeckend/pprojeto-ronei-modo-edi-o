@@ -4,7 +4,10 @@ import { TicketPercent, X, Loader2, CheckCircle2, AlertCircle } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { validateCouponCheckout, validateCouponPublic } from "@/lib/coupons.functions";
-import { formatPrice } from "@/lib/format";
+
+function formatPrice(value: number) {
+  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
 
 export interface AppliedCoupon {
   code: string;
