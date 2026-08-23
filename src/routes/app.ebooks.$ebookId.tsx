@@ -632,6 +632,10 @@ function EbookReaderPage() {
                     aspect="portrait"
                     className="w-full h-full"
                     autoStart
+                    onEnded={() => {
+                      if (showOpeningVideo) markVideoAsSeen();
+                      setShowIntroVideo(false);
+                    }}
                   />
                 )}
               </div>
