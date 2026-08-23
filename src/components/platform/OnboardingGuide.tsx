@@ -159,20 +159,20 @@ export function OnboardingGuide() {
             <X className="h-5 w-5" />
           </button>
 
-          <div className="p-8 pt-12 text-center">
+          <div className="p-5 pt-12 pb-6 text-center sm:p-8 sm:pt-12">
             <div className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl ${step.bgColor} ${step.color}`}>
-              <Icon className="h-10 w-10" />
+              <Icon className="h-8 w-8 sm:h-10 sm:w-10" />
             </div>
 
-            <h2 className="mb-4 font-display text-2xl font-black text-white">
+            <h2 className="mb-3 font-display text-xl sm:text-2xl font-black text-white">
               {step.title}
             </h2>
             
-            <p className="mb-8 text-base text-white/60 leading-relaxed">
+            <p className="mb-6 text-sm sm:mb-8 sm:text-base text-white/60 leading-relaxed">
               {step.description}
             </p>
 
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <button 
                 onClick={prevStep}
                 disabled={currentStep === 0}
@@ -184,7 +184,7 @@ export function OnboardingGuide() {
                 Anterior
               </button>
 
-              <div className="flex gap-2">
+              <div className="ml-auto flex items-center gap-2">
                 <button 
                   onClick={handleClose}
                   className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors"
