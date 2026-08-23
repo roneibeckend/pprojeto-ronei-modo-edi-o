@@ -215,7 +215,8 @@ export const getPayoutHistory = createServerFn({ method: "GET" })
 
 /**
  * Atualização de status pelo admin.
- * 'paid' executa a transferência PIX no Asaas antes de confirmar.
+ * O PIX é enviado manualmente pelo administrador fora do painel; marcar como
+ * 'paid' apenas registra a baixa (nenhuma transferência automática é disparada).
  * Recusa/cancelamento estorna o saldo automaticamente (via função no banco).
  */
 export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
