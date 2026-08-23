@@ -126,7 +126,17 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
                 throw new Error("E-mail não configurado para este destinatário.");
               }
 
-              const sendStatus = await sendReportEmail(recipient.email, rendered.subject, html, message);
+              // Cada teste recebe assunto exclusivo para o Gmail não agrupar várias
+              // execuções na mesma conversa e ocultar os blocos repetidos como citação.
+              const subject = test
+                ? `[TESTE ${new Intl.DateTimeFormat("pt-BR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    timeZone: "America/Sao_Paulo",
+                  }).format(new Date())}] ${rendered.subject}`
+                : rendered.subject;
+              const sendStatus = await sendReportEmail(recipient.email, subject, html, message);
               
               await supabase.from("report_logs").insert({
                 recipient_id: recipient.id,
