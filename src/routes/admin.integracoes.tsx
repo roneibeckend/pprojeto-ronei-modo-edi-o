@@ -1463,7 +1463,7 @@ function OffersIntegrationPanel() {
             </div>
           </div>
 
-          <div className="pt-8 border-t border-white/5 grid gap-4 sm:grid-cols-3">
+          <div className="pt-6 sm:pt-8 border-t border-white/5 grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
              <div className="p-4 bg-black/40 border border-white/5 rounded-xl space-y-1">
                 <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest">Tipo de Oferta</p>
                 <p className="text-xs font-bold text-white uppercase">Pós-venda (Upsell)</p>
