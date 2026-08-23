@@ -506,7 +506,7 @@ function FullCertificate({ cert }: { cert: any }) {
                 <div className="font-display text-lg font-bold text-black">{cert.completedAt}</div>
                 <div className="mx-auto mt-1 h-px w-48 bg-black/50" />
                 <div className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-black/60">Data de emissão</div>
-                <div className="text-[10px] text-black/40">{cert.city_of_issue || 'Goiânia · Goiás'}</div>
+                <div className="text-[10px] text-black/40">{cert.city_of_issue || 'Senador Canedo · Goiás'}</div>
               </div>
             </div>
 

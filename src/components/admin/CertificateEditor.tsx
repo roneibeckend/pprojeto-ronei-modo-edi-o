@@ -86,7 +86,7 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
           is_enabled: !!config?.is_enabled,
           custom_text: config?.custom_text || null,
           min_progress_percentage: config?.min_progress_percentage ?? 100,
-          city_of_issue: config?.city_of_issue || 'Goiânia - Goiás'
+          city_of_issue: config?.city_of_issue || 'Senador Canedo - Goiás'
         }
       });
       toast.success("Configurações salvas com sucesso!");
@@ -281,12 +281,12 @@ export function CertificateEditor({ contentId, contentType }: CertificateEditorP
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Cidade de Emissão</label>
             <select 
-              value={config?.city_of_issue || 'Goiânia - Goiás'}
+              value={config?.city_of_issue || 'Senador Canedo - Goiás'}
               onChange={e => setConfig({ ...config, city_of_issue: e.target.value })}
               className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] appearance-none"
             >
-              <option value="Goiânia - Goiás">Goiânia - Goiás</option>
               <option value="Senador Canedo - Goiás">Senador Canedo - Goiás</option>
+              <option value="Goiânia - Goiás">Goiânia - Goiás</option>
             </select>
           </div>
 

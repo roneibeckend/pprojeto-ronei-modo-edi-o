@@ -62,7 +62,7 @@ export const generateCertificate = createServerFn({ method: "POST" })
           hours: estimatedHours,
           text: (config as any)?.custom_text
         },
-        city_of_issue: (config as any)?.city_of_issue || 'Goiânia - Goiás'
+        city_of_issue: (config as any)?.city_of_issue || 'Senador Canedo - Goiás'
       } as any)
       .select()
       .single();

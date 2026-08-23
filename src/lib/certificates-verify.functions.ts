@@ -42,7 +42,7 @@ export const verifyCertificate = createServerFn({ method: "GET" })
       isValid: true as const,
       code: cert.certificate_code,
       contentType: cert.content_type,
-      cityOfIssue: cert.city_of_issue || 'Goiânia · Goiás',
+      cityOfIssue: cert.city_of_issue || 'Senador Canedo · Goiás',
       templateBackground: cert.template?.background_url || null,
       studentName: (profile as any)?.name || 'Aluno',
       contentTitle: (contentRes.data as any)?.title || 'Conteúdo Removido',
