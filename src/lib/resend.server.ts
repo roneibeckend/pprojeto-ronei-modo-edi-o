@@ -92,6 +92,15 @@ export async function validateResendSender(apiKey: string, email: string) {
   }
 }
 
+function sanitizeTag(value: string) {
+  const clean = (value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9_-]/g, '_')
+    .slice(0, 250);
+  return clean || 'na';
+}
+
 export async function sendResendEmail(params: {
   to: string | string[];
   subject: string;
