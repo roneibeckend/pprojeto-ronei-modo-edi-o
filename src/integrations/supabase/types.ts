@@ -2188,6 +2188,7 @@ export type Database = {
       }
       report_settings: {
         Row: {
+          cron_token: string | null
           delivery_method: string | null
           enabled: boolean
           id: string
@@ -2198,6 +2199,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          cron_token?: string | null
           delivery_method?: string | null
           enabled?: boolean
           id?: string
@@ -2208,6 +2210,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          cron_token?: string | null
           delivery_method?: string | null
           enabled?: boolean
           id?: string
@@ -2669,6 +2672,7 @@ export type Database = {
         Args: { p_content: string; p_ticket_id: string }
         Returns: undefined
       }
+      trigger_daily_report: { Args: never; Returns: undefined }
       update_expired_live_classes: { Args: never; Returns: undefined }
       validate_coupon: {
         Args: {
