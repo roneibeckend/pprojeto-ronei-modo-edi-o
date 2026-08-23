@@ -363,7 +363,7 @@ function AdminCursosPage() {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="info" className="flex-1 mt-0">
+              <TabsContent value="info" className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1 mt-0">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
@@ -525,7 +525,7 @@ function AdminCursosPage() {
                 </form>
               </TabsContent>
 
-              <TabsContent value="checkpoints" className="flex-1 mt-0">
+              <TabsContent value="checkpoints" className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1 mt-0">
                 {editingItem?.id && (
                   <div className="space-y-6">
                     <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
@@ -580,14 +580,14 @@ function AdminCursosPage() {
                 {editingItem?.id && <CourseTreeEditor courseId={editingItem.id} />}
               </TabsContent>
 
-              <TabsContent value="students" className="flex-1 mt-0">
+              <TabsContent value="students" className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1 mt-0">
                 <div className="flex flex-col items-center justify-center py-20 text-white/20">
                   <Users className="h-12 w-12 mb-4" />
                   <p className="text-sm">Funcionalidade de listagem de alunos em desenvolvimento.</p>
                 </div>
               </TabsContent>
 
-              <TabsContent value="certificates" className="flex-1 mt-0">
+              <TabsContent value="certificates" className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1 mt-0">
                 {editingItem?.id && (
                   <CertificateEditor 
                     contentId={editingItem.id} 
