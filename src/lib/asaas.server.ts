@@ -125,8 +125,7 @@ export async function asaasRequest(
   }
 
   if (!res.ok) {
-    const message = json?.errors?.[0]?.description || json?.message || text || `HTTP ${res.status}`;
-    throw new Error(`Asaas API error (${res.status}): ${message}`);
+    throw new Error(asaasErrorMessage({ status: res.status, json, text }));
   }
 
   return json;
@@ -274,16 +273,15 @@ export async function resolveUserFromPayment(payment: any, baseUrl: string, apiK
 
 export async function fetchPaymentFromAsaas(paymentId: string) {
   const { apiKey, baseUrl } = await getAsaasConfig();
-  const res = await fetch(`${baseUrl}/payments/${paymentId}`, {
+  const res = await asaasFetchJson(`${baseUrl}/payments/${paymentId}`, {
     headers: asaasHeaders(apiKey),
   });
 
-  if (!res.ok) {
-    const errorBody = await res.text().catch(() => "Unknown error");
-    throw new Error(`Asaas API error (${res.status}): ${errorBody}`);
+  if (!res.ok || !res.json) {
+    throw new Error(asaasErrorMessage(res));
   }
 
-  return await res.json();
+  return res.json;
 }
 
 
@@ -300,12 +298,11 @@ export async function findConfirmedPayment(params: {
   const email = params.userEmail?.toLowerCase() || null;
 
   for (const status of ["RECEIVED", "CONFIRMED", "RECEIVED_IN_CASH"]) {
-    const res = await fetch(`${baseUrl}/payments?status=${status}&limit=100`, {
+    const res = await asaasFetchJson(`${baseUrl}/payments?status=${status}&limit=100`, {
       headers: asaasHeaders(apiKey),
     });
-    if (!res.ok) continue;
-    const json = await res.json();
-    const payments: any[] = json?.data || [];
+    if (!res.ok || !res.json) continue;
+    const payments: any[] = res.json?.data || [];
 
     const strict = payments.find(
       (p) => typeof p.externalReference === "string" && p.externalReference.startsWith(strictPrefix),
