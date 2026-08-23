@@ -32,13 +32,13 @@ import { student } from "@/lib/platform-data";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import {
-import brandFlame from "@/assets/brand-flame.png.asset.json";
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import brandFlame from "@/assets/brand-flame.png.asset.json";
 
 type NavItem = {
   to: string;
