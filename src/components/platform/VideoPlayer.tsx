@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Play, Loader2, AlertCircle, VolumeX } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 interface VideoPlayerProps {
   src: string;
+  /** Lighter variant used on small screens / mobile data. Falls back to `src`. */
+  srcMobile?: string;
   poster?: string;
   title?: string;
   videoId: string; // Used for saving progress
@@ -36,8 +38,22 @@ function getDriveStream(url: string) {
   return id ? `/api/public/drive-video?id=${encodeURIComponent(id)}` : url;
 }
 
+/** Small screens (and data-saver connections) get the lighter encode when provided. */
+function prefersLightVariant() {
+  if (typeof window === 'undefined') return false;
+  const smallScreen = window.matchMedia('(max-width: 820px)').matches;
+  const connection = (navigator as any).connection;
+  const saveData = Boolean(connection?.saveData);
+  const slowLink = ['slow-2g', '2g', '3g'].includes(connection?.effectiveType ?? '');
+  return smallScreen || saveData || slowLink;
+}
+
+const PROGRESS_SAVE_INTERVAL_MS = 5000;
+const MAX_RECOVERY_ATTEMPTS = 3;
+
 export function VideoPlayer({
   src,
+  srcMobile,
   poster,
   title,
   videoId,
@@ -50,17 +66,26 @@ export function VideoPlayer({
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [needsUnmute, setNeedsUnmute] = useState(false);
+  const [useLight, setUseLight] = useState(false);
+
+  const recoveryAttempts = useRef(0);
+  const lastSaveRef = useRef(0);
 
   const isYouTube = isYouTubeUrl(src);
   const isDrive = isDriveUrl(src);
   // Only YouTube keeps an iframe. Google Drive files are streamed through our
   // proxy so the browser's own (single, clean) control bar is used and audio works.
   const isEmbed = isYouTube;
-  const playableSrc = isDrive ? getDriveStream(src) : src;
+  const baseSrc = useLight && srcMobile ? srcMobile : src;
+  const playableSrc = isDrive ? getDriveStream(baseSrc) : baseSrc;
   const driveId = isDrive ? getDriveId(src) : '';
   const cleanPoster = poster || (driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w1200` : undefined);
   const frameClass = aspect === 'portrait' ? 'aspect-[9/16]' : 'aspect-video';
 
+  // Decide the encode after hydration so SSR markup stays stable.
+  useEffect(() => {
+    if (srcMobile) setUseLight(prefersLightVariant());
+  }, [srcMobile]);
 
   // Reset when the media changes
   useEffect(() => {
@@ -68,9 +93,10 @@ export function VideoPlayer({
     setIsLoading(false);
     setHasError(false);
     setNeedsUnmute(false);
+    recoveryAttempts.current = 0;
   }, [src]);
 
-  // Progress persistence (native <video> only)
+  // Progress persistence (native <video> only), throttled to avoid layout thrash
   const onProgressRef = useRef(onProgress);
   useEffect(() => {
     onProgressRef.current = onProgress;
@@ -82,6 +108,9 @@ export function VideoPlayer({
     if (!video) return;
 
     const handleTimeUpdate = () => {
+      const now = Date.now();
+      if (now - lastSaveRef.current < PROGRESS_SAVE_INTERVAL_MS) return;
+      lastSaveRef.current = now;
       try {
         localStorage.setItem(`video_progress_${videoId}`, String(video.currentTime));
       } catch {
@@ -93,6 +122,58 @@ export function VideoPlayer({
     video.addEventListener('timeupdate', handleTimeUpdate);
     return () => video.removeEventListener('timeupdate', handleTimeUpdate);
   }, [src, videoId, isEmbed]);
+
+  // Free decoder/network resources when the player leaves the screen (modal close,
+  // chapter switch, route change). Without this iOS keeps the buffer in memory.
+  useEffect(() => {
+    return () => {
+      const video = videoRef.current;
+      if (!video) return;
+      try {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      } catch {
+        /* nothing else to clean */
+      }
+    };
+  }, []);
+
+  // Auto-recovery: a dropped connection leaves the element stalled forever.
+  const recover = useCallback(() => {
+    const video = videoRef.current;
+    if (!video || recoveryAttempts.current >= MAX_RECOVERY_ATTEMPTS) {
+      setHasError(true);
+      setIsLoading(false);
+      return;
+    }
+    recoveryAttempts.current += 1;
+    const resumeAt = video.currentTime;
+    setIsLoading(true);
+    try {
+      video.load();
+      const onReady = () => {
+        video.removeEventListener('loadedmetadata', onReady);
+        if (resumeAt > 0 && resumeAt < (video.duration || Infinity)) video.currentTime = resumeAt;
+        void video.play().catch(() => undefined);
+      };
+      video.addEventListener('loadedmetadata', onReady);
+    } catch {
+      setHasError(true);
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Come back online → resume where playback stopped.
+  useEffect(() => {
+    if (isEmbed || !started) return;
+    const handleOnline = () => {
+      const video = videoRef.current;
+      if (video && video.paused && !hasError) recover();
+    };
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, [isEmbed, started, hasError, recover]);
 
   // ---- YouTube: render the iframe only after the user taps play
   if (isEmbed) {
@@ -109,6 +190,7 @@ export function VideoPlayer({
             className="absolute inset-0 w-full h-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
             allowFullScreen
+            loading="lazy"
             title={title || 'Vídeo'}
           />
         ) : (
@@ -120,7 +202,7 @@ export function VideoPlayer({
             className="absolute inset-0 h-full w-full rounded-none p-0 hover:bg-transparent"
           >
             {thumb && (
-              <img src={thumb} alt={title || 'Capa do vídeo'} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+              <img src={thumb} alt={title || 'Capa do vídeo'} className="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" />
             )}
             <span className="absolute inset-0 bg-black/30" />
             <span className="relative w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transition-transform hover:scale-110 active:scale-95">
@@ -138,6 +220,7 @@ export function VideoPlayer({
     setHasError(false);
     setIsLoading(true);
     setStarted(true);
+    recoveryAttempts.current = 0;
     // Always start with sound: a user tap satisfies mobile autoplay policies.
     video.muted = false;
     video.removeAttribute('muted');
@@ -182,7 +265,7 @@ export function VideoPlayer({
   return (
     <div className={cn('relative mx-auto bg-black rounded-xl overflow-hidden shadow-2xl', frameClass, className)}>
       <video
-        key={src}
+        key={playableSrc}
         ref={videoRef}
         src={playableSrc}
         poster={cleanPoster}
@@ -193,14 +276,20 @@ export function VideoPlayer({
         preload="none"
         controls={started}
         controlsList="nodownload noplaybackrate"
-        disablePictureInPicture
 
         onWaiting={() => setIsLoading(true)}
-        onPlaying={() => setIsLoading(false)}
+        onPlaying={() => {
+          setIsLoading(false);
+          recoveryAttempts.current = 0;
+        }}
         onCanPlay={() => setIsLoading(false)}
+        onStalled={() => {
+          if (started) recover();
+        }}
         onError={() => {
           setIsLoading(false);
-          setHasError(true);
+          if (started) recover();
+          else setHasError(true);
         }}
       />
 
@@ -248,6 +337,7 @@ export function VideoPlayer({
             onClick={() => {
               setHasError(false);
               setStarted(false);
+              recoveryAttempts.current = 0;
               videoRef.current?.load();
             }}
             className="btn-fire px-6 py-2 text-sm"
