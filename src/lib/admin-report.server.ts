@@ -11,6 +11,10 @@ export interface AdminReportExtras {
   topEbook: { title: string; downloads: number } | null;
   totalViews: number;
   affiliatesActive: number;
+  /** Acumulado histórico de vendas pagas (não depende do dia de referência). */
+  lifetimeSales: { count: number; value: number; lastAt: string | null; lastValue: number };
+  /** Vendas pagas nos últimos 30 dias. */
+  last30Sales: { count: number; value: number };
   environment: string;
 }
 
@@ -44,7 +48,7 @@ async function collectExtras(dateStr: string): Promise<AdminReportExtras> {
   const end = `${dateStr}T23:59:59.999Z`;
   const paid = ["CONFIRMED", "RECEIVED", "RECEIVED_IN_CASH"];
 
-  const [invoicesRes, confirmedRes, refundsRes, activeRes, canceledRes, progressRes, ebookEnrRes, affiliatesRes] =
+  const [invoicesRes, confirmedRes, refundsRes, activeRes, canceledRes, progressRes, ebookEnrRes, affiliatesRes, allPaidRes] =
     await Promise.all([
       supabase.from("payments").select("amount").gte("created_at", start).lte("created_at", end).limit(1000),
       supabase.from("payments").select("net_amount, amount").in("status", paid).gte("created_at", start).lte("created_at", end).limit(1000),
@@ -54,6 +58,12 @@ async function collectExtras(dateStr: string): Promise<AdminReportExtras> {
       supabase.from("progress_tracking").select("item_type, item_id").gte("started_at", start).lte("started_at", end).limit(2000),
       supabase.from("ebook_enrollments").select("ebook_id").gte("created_at", start).lte("created_at", end).limit(1000),
       supabase.from("affiliates").select("id", { count: "exact", head: true }).eq("status", "active"),
+      supabase
+        .from("payments")
+        .select("amount, net_amount, confirmed_at, created_at")
+        .in("status", paid)
+        .order("created_at", { ascending: false })
+        .limit(5000),
     ]);
 
   const invoices = (invoicesRes.data || []) as any[];
@@ -87,7 +97,26 @@ async function collectExtras(dateStr: string): Promise<AdminReportExtras> {
     topEbook = { title: data?.title || ebookRank[0][0], downloads: ebookRank[0][1] };
   }
 
+  const allPaid = (allPaidRes.data || []) as any[];
+  const valueOf = (p: any) => Number(p.net_amount ?? p.amount ?? 0);
+  const dateOf = (p: any) => String(p.confirmed_at || p.created_at || "");
+  const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const last30 = allPaid.filter((p) => dateOf(p) >= cutoff);
+  const lastSale = allPaid
+    .slice()
+    .sort((a, b) => (dateOf(a) < dateOf(b) ? 1 : -1))[0];
+
   return {
+    lifetimeSales: {
+      count: allPaid.length,
+      value: allPaid.reduce((s, p) => s + valueOf(p), 0),
+      lastAt: lastSale ? dateOf(lastSale) : null,
+      lastValue: lastSale ? valueOf(lastSale) : 0,
+    },
+    last30Sales: {
+      count: last30.length,
+      value: last30.reduce((s, p) => s + valueOf(p), 0),
+    },
     invoicesCreated: {
       count: invoices.length,
       value: invoices.reduce((s, p) => s + Number(p.amount || 0), 0),
