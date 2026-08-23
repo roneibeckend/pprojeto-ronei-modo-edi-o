@@ -124,7 +124,20 @@ function EbookReaderPage() {
   const [showIntroVideo, setShowIntroVideo] = useState(false);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const [downloadOwner, setDownloadOwner] = useState<{ id: string; name: string; email: string } | null>(null);
+  const [authUserId, setAuthUserId] = useState<string | null>(null);
+  const [preparingDownload, setPreparingDownload] = useState(false);
 
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (active) setAuthUserId(data.user?.id ?? null);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const registerDownload = useServerFn(registerEbookDownload);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const getSignedUrl = useServerFn(getSignedVideoUrl);
   const { openPayment } = usePaymentModal();
