@@ -22,7 +22,7 @@ import {
   Menu,
   Star,
   Terminal,
-  Activity
+  Activity,
   Download,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
