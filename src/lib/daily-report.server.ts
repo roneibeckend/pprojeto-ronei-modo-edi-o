@@ -29,6 +29,60 @@ export interface DailyReportData {
 const brl = (v: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
 
+type NormalizedPayment = {
+  key: string;
+  amount: number;
+  net: number;
+  fee: number;
+  billing_type: string;
+};
+
+/**
+ * Busca no Asaas as cobranças efetivamente recebidas na data.
+ * Necessário porque vendas confirmadas direto no gateway (sem webhook processado)
+ * não existem na tabela local `payments` e ficavam fora do relatório.
+ */
+async function fetchAsaasDayPayments(dateStr: string): Promise<NormalizedPayment[]> {
+  try {
+    const { getAsaasConfig, asaasRequest } = await import("@/lib/asaas.server");
+    const config = await getAsaasConfig();
+    const out: NormalizedPayment[] = [];
+    const seen = new Set<string>();
+
+    // paymentDate cobre PIX/cartão liquidados; confirmedDate cobre confirmações do dia.
+    for (const field of ["paymentDate", "confirmedDate"]) {
+      let offset = 0;
+      for (let page = 0; page < 10; page++) {
+        const qs = `?${field}%5Bge%5D=${dateStr}&${field}%5Ble%5D=${dateStr}&limit=100&offset=${offset}`;
+        const json: any = await asaasRequest(config, `/payments${qs}`);
+        const rows: any[] = json?.data || [];
+        for (const p of rows) {
+          const status = String(p?.status || "");
+          if (!["CONFIRMED", "RECEIVED", "RECEIVED_IN_CASH"].includes(status)) continue;
+          const key = String(p?.id || "");
+          if (!key || seen.has(key)) continue;
+          seen.add(key);
+          const amount = Number(p?.value || 0);
+          const net = Number(p?.netValue ?? amount);
+          out.push({
+            key,
+            amount,
+            net,
+            fee: Math.max(0, amount - net),
+            billing_type: String(p?.billingType || "OUTRO"),
+          });
+        }
+        if (!json?.hasMore) break;
+        offset += 100;
+      }
+    }
+    return out;
+  } catch (e: any) {
+    console.warn("[daily-report] Asaas indisponível para conciliação:", e?.message || e);
+    return [];
+  }
+}
+
 export async function collectDailyReport(date?: string): Promise<DailyReportData> {
   const supabase = supabaseAdmin;
 
@@ -56,7 +110,13 @@ export async function collectDailyReport(date?: string): Promise<DailyReportData
     logsRes,
     emailLogsRes,
   ] = await Promise.all([
-    supabase.from("payments").select("amount, net_amount, fee, billing_type, status").in("status", paid).gte("created_at", start).lte("created_at", end),
+    supabase
+      .from("payments")
+      .select("external_id, amount, net_amount, fee, billing_type, status")
+      .in("status", paid)
+      .or(
+        `and(created_at.gte.${start},created_at.lte.${end}),and(confirmed_at.gte.${start},confirmed_at.lte.${end})`,
+      ),
     supabase.from("payments").select("amount").eq("status", "PENDING").gte("created_at", start).lte("created_at", end),
     supabase.from("financial_costs").select("value"),
     supabase.from("profiles").select("id", { count: "exact", head: true }).gte("created_at", start).lte("created_at", end),
@@ -72,23 +132,38 @@ export async function collectDailyReport(date?: string): Promise<DailyReportData
     supabase.from("email_logs").select("status").gte("created_at", start).lte("created_at", end).limit(1000),
   ]);
 
-  const payments = paymentsRes.data || [];
-  const grossRevenue = payments.reduce((s, p: any) => s + Number(p.amount || 0), 0);
-  const totalFees = payments.reduce((s, p: any) => s + Number(p.fee || 0), 0);
-  const totalRevenue = payments.reduce(
-    (s, p: any) => s + Number(p.net_amount ?? p.amount ?? 0),
-    0,
-  );
+  // Base local + conciliação com o gateway (evita relatório zerado quando o webhook falha).
+  const localPayments: NormalizedPayment[] = ((paymentsRes.data || []) as any[]).map((p, i) => {
+    const amount = Number(p.amount || 0);
+    const net = Number(p.net_amount ?? amount);
+    return {
+      key: String(p.external_id || `local-${i}`),
+      amount,
+      net,
+      fee: Number(p.fee ?? Math.max(0, amount - net)),
+      billing_type: String(p.billing_type || "OUTRO"),
+    };
+  });
+
+  const asaasPayments = await fetchAsaasDayPayments(dateStr);
+  const localKeys = new Set(localPayments.map((p) => p.key));
+  const payments: NormalizedPayment[] = [
+    ...localPayments,
+    ...asaasPayments.filter((p) => !localKeys.has(p.key)),
+  ];
+
+  const grossRevenue = payments.reduce((s, p) => s + p.amount, 0);
+  const totalFees = payments.reduce((s, p) => s + p.fee, 0);
+  const totalRevenue = payments.reduce((s, p) => s + p.net, 0);
   const salesCount = payments.length;
   const avgTicket = salesCount > 0 ? totalRevenue / salesCount : 0;
 
   const byMap = new Map<string, { count: number; value: number }>();
-  for (const p of payments as any[]) {
-    const key = p.billing_type || "OUTRO";
-    const cur = byMap.get(key) || { count: 0, value: 0 };
+  for (const p of payments) {
+    const cur = byMap.get(p.billing_type) || { count: 0, value: 0 };
     cur.count += 1;
-    cur.value += Number(p.net_amount ?? p.amount ?? 0);
-    byMap.set(key, cur);
+    cur.value += p.net;
+    byMap.set(p.billing_type, cur);
   }
 
   const dailyCosts = (costsRes.data || []).reduce((s, c: any) => s + Number(c.value || 0) / 30, 0);

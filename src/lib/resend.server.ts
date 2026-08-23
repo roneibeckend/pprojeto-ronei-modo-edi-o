@@ -106,10 +106,9 @@ function sanitizeTag(value: string) {
 /** URL pública absoluta da logo circular usada nos e-mails. */
 export const EMAIL_LOGO_URL =
   (
-    process.env['EMAIL_ASSET_BASE_URL'] ||
-    process.env['SITE_URL'] ||
-    process.env['PUBLIC_SITE_URL'] ||
-    'https://skewer-success-engine.lovable.app'
+    // Somente um domínio explicitamente informado sobrepõe o host estável de assets:
+    // SITE_URL pode apontar para um domínio ainda sem DNS, o que quebra as imagens.
+    process.env['EMAIL_ASSET_BASE_URL'] || 'https://skewer-success-engine.lovable.app'
   ).replace(/\/$/, '') + '/email-logo.png';
 
 /**
