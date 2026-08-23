@@ -603,16 +603,19 @@ function EbookReaderPage() {
             key="intro-modal"
           >
             <div className="relative w-full max-w-4xl">
-              <button 
+              <button
                 onClick={() => {
                   if (showOpeningVideo) markVideoAsSeen();
                   setShowIntroVideo(false);
                 }}
-                className="absolute -top-12 right-0 flex items-center gap-2 text-white/60 hover:text-white transition-colors"
+                aria-label={showOpeningVideo ? "Pular vídeo" : "Fechar vídeo"}
+                className="fixed right-3 z-[130] inline-flex h-12 min-w-12 items-center justify-center gap-2 rounded-full border border-white/25 bg-black/70 px-3 text-white shadow-lg backdrop-blur-md transition hover:bg-black/90 active:scale-95"
+                style={{ top: "calc(env(safe-area-inset-top, 0px) + 0.75rem)" }}
               >
-                <span>{showOpeningVideo ? "Pular Vídeo" : "Fechar"}</span>
+                <span className="hidden text-sm font-semibold sm:inline">{showOpeningVideo ? "Pular Vídeo" : "Fechar"}</span>
                 <X className="h-6 w-6" />
               </button>
+
               
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-black text-white mb-2">{ebook.title}</h2>
