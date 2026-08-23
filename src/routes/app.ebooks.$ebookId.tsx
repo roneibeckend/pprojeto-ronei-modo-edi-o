@@ -583,9 +583,9 @@ function EbookReaderPage() {
           {ebook.opening_video_url && (
             <button 
               onClick={() => setShowIntroVideo(true)}
-              className="btn-fire flex items-center justify-center gap-2 px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold"
+              className="btn-fire flex items-center justify-center gap-2 px-4 sm:px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold whitespace-nowrap text-xs sm:text-sm"
             >
-              <Play className="h-4 w-4 fill-current" />
+              <Play className="h-4 w-4 fill-current flex-shrink-0" />
               Ver Vídeo de Abertura
             </button>
           )}
