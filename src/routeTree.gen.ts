@@ -62,6 +62,7 @@ import { Route as AppAfiliadosConfigRouteImport } from './routes/app.afiliados.c
 import { Route as ApiPublicDriveVideoRouteImport } from './routes/api/public/drive-video'
 import { Route as ApiPublicDownloadStorageTempRouteImport } from './routes/api/public/download-storage-temp'
 import { Route as ApiPublicDownloadMigracaoTempRouteImport } from './routes/api/public/download-migracao-temp'
+import { Route as ApiPublicDailyUpdatesReportRouteImport } from './routes/api/public/daily-updates-report'
 import { Route as ApiPublicDailyFinancialReportRouteImport } from './routes/api/public/daily-financial-report'
 import { Route as AdminRankingCampanhasRouteImport } from './routes/admin.ranking.campanhas'
 import { Route as AdminAlunosStudentIdRouteImport } from './routes/admin.alunos.$studentId'
@@ -335,6 +336,12 @@ const ApiPublicDownloadMigracaoTempRoute =
     path: '/api/public/download-migracao-temp',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicDailyUpdatesReportRoute =
+  ApiPublicDailyUpdatesReportRouteImport.update({
+    id: '/api/public/daily-updates-report',
+    path: '/api/public/daily-updates-report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicDailyFinancialReportRoute =
   ApiPublicDailyFinancialReportRouteImport.update({
     id: '/api/public/daily-financial-report',
@@ -407,6 +414,7 @@ export interface FileRoutesByFullPath {
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
   '/admin/ranking/campanhas': typeof AdminRankingCampanhasRoute
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
+  '/api/public/daily-updates-report': typeof ApiPublicDailyUpdatesReportRoute
   '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
   '/api/public/download-storage-temp': typeof ApiPublicDownloadStorageTempRoute
   '/api/public/drive-video': typeof ApiPublicDriveVideoRoute
@@ -463,6 +471,7 @@ export interface FileRoutesByTo {
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
   '/admin/ranking/campanhas': typeof AdminRankingCampanhasRoute
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
+  '/api/public/daily-updates-report': typeof ApiPublicDailyUpdatesReportRoute
   '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
   '/api/public/download-storage-temp': typeof ApiPublicDownloadStorageTempRoute
   '/api/public/drive-video': typeof ApiPublicDriveVideoRoute
@@ -524,6 +533,7 @@ export interface FileRoutesById {
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
   '/admin/ranking/campanhas': typeof AdminRankingCampanhasRoute
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
+  '/api/public/daily-updates-report': typeof ApiPublicDailyUpdatesReportRoute
   '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
   '/api/public/download-storage-temp': typeof ApiPublicDownloadStorageTempRoute
   '/api/public/drive-video': typeof ApiPublicDriveVideoRoute
@@ -586,6 +596,7 @@ export interface FileRouteTypes {
     | '/admin/alunos/$studentId'
     | '/admin/ranking/campanhas'
     | '/api/public/daily-financial-report'
+    | '/api/public/daily-updates-report'
     | '/api/public/download-migracao-temp'
     | '/api/public/download-storage-temp'
     | '/api/public/drive-video'
@@ -642,6 +653,7 @@ export interface FileRouteTypes {
     | '/admin/alunos/$studentId'
     | '/admin/ranking/campanhas'
     | '/api/public/daily-financial-report'
+    | '/api/public/daily-updates-report'
     | '/api/public/download-migracao-temp'
     | '/api/public/download-storage-temp'
     | '/api/public/drive-video'
@@ -702,6 +714,7 @@ export interface FileRouteTypes {
     | '/admin/alunos/$studentId'
     | '/admin/ranking/campanhas'
     | '/api/public/daily-financial-report'
+    | '/api/public/daily-updates-report'
     | '/api/public/download-migracao-temp'
     | '/api/public/download-storage-temp'
     | '/api/public/drive-video'
@@ -730,6 +743,7 @@ export interface RootRouteChildren {
   TermosDeUsoRoute: typeof TermosDeUsoRoute
   VerificarCertificadoRoute: typeof VerificarCertificadoRoute
   ApiPublicDailyFinancialReportRoute: typeof ApiPublicDailyFinancialReportRoute
+  ApiPublicDailyUpdatesReportRoute: typeof ApiPublicDailyUpdatesReportRoute
   ApiPublicDownloadMigracaoTempRoute: typeof ApiPublicDownloadMigracaoTempRoute
   ApiPublicDownloadStorageTempRoute: typeof ApiPublicDownloadStorageTempRoute
   ApiPublicDriveVideoRoute: typeof ApiPublicDriveVideoRoute
@@ -1110,6 +1124,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDownloadMigracaoTempRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/daily-updates-report': {
+      id: '/api/public/daily-updates-report'
+      path: '/api/public/daily-updates-report'
+      fullPath: '/api/public/daily-updates-report'
+      preLoaderRoute: typeof ApiPublicDailyUpdatesReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/daily-financial-report': {
       id: '/api/public/daily-financial-report'
       path: '/api/public/daily-financial-report'
@@ -1301,6 +1322,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermosDeUsoRoute: TermosDeUsoRoute,
   VerificarCertificadoRoute: VerificarCertificadoRoute,
   ApiPublicDailyFinancialReportRoute: ApiPublicDailyFinancialReportRoute,
+  ApiPublicDailyUpdatesReportRoute: ApiPublicDailyUpdatesReportRoute,
   ApiPublicDownloadMigracaoTempRoute: ApiPublicDownloadMigracaoTempRoute,
   ApiPublicDownloadStorageTempRoute: ApiPublicDownloadStorageTempRoute,
   ApiPublicDriveVideoRoute: ApiPublicDriveVideoRoute,
