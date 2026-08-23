@@ -6,6 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEnrollments } from '@/hooks/use-enrollments';
 import { toast } from 'sonner';
 import { IMG } from '@/lib/platform-data';
+import { optimizedImage } from '@/lib/image-url';
+
 
 interface OfferItem {
   id: string;
