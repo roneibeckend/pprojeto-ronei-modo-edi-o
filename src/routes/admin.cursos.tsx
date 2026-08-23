@@ -576,7 +576,7 @@ function AdminCursosPage() {
                 )}
               </TabsContent>
 
-              <TabsContent value="content" className="flex-1 mt-0">
+              <TabsContent value="content" className="flex-1 min-h-0 overflow-hidden mt-0 data-[state=active]:flex data-[state=active]:flex-col">
                 {editingItem?.id && <CourseTreeEditor courseId={editingItem.id} />}
               </TabsContent>
 
