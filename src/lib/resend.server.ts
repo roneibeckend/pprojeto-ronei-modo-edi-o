@@ -341,3 +341,48 @@ export async function triggerEmailEvent(params: {
   }
 }
 
+
+/**
+ * Dispara um evento de e-mail no máximo uma vez por chave de idempotência.
+ * A chave é registrada em `email_logs.idempotency_key`, então reenvios
+ * (webhooks repetidos, cliques duplicados) não geram e-mails duplicados.
+ */
+export async function triggerEmailOnce(params: {
+  event: string;
+  to: string;
+  data: Record<string, any>;
+  idempotencyKey: string;
+}) {
+  try {
+    const { data: existing } = await supabaseAdmin
+      .from('email_logs')
+      .select('id')
+      .eq('idempotency_key', params.idempotencyKey)
+      .eq('status', 'sent')
+      .maybeSingle();
+
+    if (existing) {
+      console.log(`[Email] Evento ${params.event} ignorado (já enviado): ${params.idempotencyKey}`);
+      return { success: true, skipped: true as const };
+    }
+  } catch (checkError) {
+    console.warn('[Email] Falha ao checar idempotência:', checkError);
+  }
+
+  const result = await triggerEmailEvent(params);
+
+  try {
+    await supabaseAdmin.from('email_logs').insert({
+      recipient_email: params.to,
+      template_name: params.event,
+      status: 'sent',
+      idempotency_key: params.idempotencyKey,
+      provider_message_id: (result as any)?.id || null,
+      payload: { event: params.event } as any,
+    });
+  } catch (logError) {
+    console.warn('[Email] Falha ao registrar idempotência:', logError);
+  }
+
+  return { success: true, skipped: false as const, ...(result as any) };
+}
