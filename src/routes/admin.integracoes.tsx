@@ -267,53 +267,53 @@ function IntegrationsPage() {
           </p>
         </div>
         
-        <div className="flex items-center gap-1 rounded-sm border border-white/5 bg-black/40 p-1 self-start sm:self-auto">
+        <div className="scrollbar-hidden -mx-3 flex items-center gap-1 overflow-x-auto rounded-sm border border-white/5 bg-black/40 p-1 px-3 self-stretch sm:mx-0 sm:self-auto [-webkit-overflow-scrolling:touch]">
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('ia'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'ia' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'ia' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <BrainCircuit className="h-3.5 w-3.5" /> IA
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('payment'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'payment' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'payment' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <Wallet className="h-3.5 w-3.5" /> Pagamentos
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('email'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'email' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'email' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <Mail className="h-3.5 w-3.5" /> E-mail
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('webhooks'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'webhooks' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'webhooks' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <Zap className="h-3.5 w-3.5" /> Webhooks
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('offers'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'offers' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'offers' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <Percent className="h-3.5 w-3.5" /> Ofertas
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('feature'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'feature' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'feature' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <Sparkles className="h-3.5 w-3.5" /> Recursos
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('oauth'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'oauth' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'oauth' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <ShieldCheck className="h-3.5 w-3.5" /> Login Social
           </Button>
@@ -324,8 +324,8 @@ function IntegrationsPage() {
 
 
       <div className={`grid gap-8 grid-cols-1 lg:grid-cols-12 ${activeCategory === 'oauth' ? 'hidden' : ''}`}>
-        {/* Sidebar List */}
-        <div className="lg:col-span-4 space-y-4">
+        {/* Sidebar List — no mobile, esconde quando um item está aberto */}
+        <div className={`lg:col-span-4 space-y-4 ${selectedItem && (activeCategory === 'ia' || activeCategory === 'payment') ? 'hidden lg:block' : ''}`}>
           {activeCategory === 'email' ? (
             <Card className="bg-[#111] border-white/5">
               <CardHeader>
@@ -420,15 +420,23 @@ function IntegrationsPage() {
         <div className="lg:col-span-8">
           {activeCategory === 'email' ? <EmailIntegrationPanel integrations={integrations} /> : activeCategory === 'offers' ? <OffersIntegrationPanel /> : (activeCategory === 'feature') ? <FeatureTogglePanel integrations={integrations} /> : (selectedItem && selectedItem.category !== 'resend') ? (
             <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => { setSelectedItem(null); setTestResult(null); }}
+                className="lg:hidden text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 -ml-2"
+              >
+                <ChevronRight className="h-3.5 w-3.5 mr-1 rotate-180" /> Voltar à lista
+              </Button>
               <Tabs defaultValue="config" className="w-full">
-                <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
-                  <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+                <TabsList className="scrollbar-hidden w-full overflow-x-auto bg-black/40 border border-white/5 p-1 mb-6 [-webkit-overflow-scrolling:touch]">
+                  <TabsTrigger value="config" className="flex-1 shrink-0 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
                     Configuração
                   </TabsTrigger>
-                  <TabsTrigger value="guide" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+                  <TabsTrigger value="guide" className="flex-1 shrink-0 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
                     Como Configurar
                   </TabsTrigger>
-                  <TabsTrigger value="history" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+                  <TabsTrigger value="history" className="flex-1 shrink-0 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
                     Histórico & Logs
                   </TabsTrigger>
                 </TabsList>
