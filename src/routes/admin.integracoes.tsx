@@ -1530,6 +1530,40 @@ function EmailTemplatesTab() {
   const saveTemplateFn = useServerFn(saveEmailTemplate);
   const deleteTemplateFn = useServerFn(deleteEmailTemplate);
   const sendRawTestFn = useServerFn(sendRawTestEmail);
+  const previewRawFn = useServerFn(previewRawTemplate);
+  const [rawPreview, setRawPreview] = useState<{ subject: string; html: string } | null>(null);
+  const [rawViewMode, setRawViewMode] = useState<'visual' | 'html'>('visual');
+  const [isRendering, setIsRendering] = useState(false);
+
+  const handleShowFinalHtml = async () => {
+    const subject = (document.getElementById('temp_subject') as HTMLInputElement)?.value ?? '';
+    const html = (document.getElementById('temp_html') as HTMLTextAreaElement)?.value ?? '';
+    if (!subject.trim() || html.trim().length < 10) {
+      toast.error('Preencha o assunto e o conteúdo HTML antes de visualizar.');
+      return;
+    }
+    setIsRendering(true);
+    try {
+      const result = await previewRawFn({
+        data: {
+          subject,
+          html,
+          data: {
+            name: 'Churrasqueiro',
+            product_name: 'Curso Mestre do Churrasco',
+            access_link: 'https://ronneinaveia.com.br/app',
+            amount: 'R$ 197,00',
+            payment_id: 'pay_000123456',
+          },
+        },
+      });
+      setRawPreview(result);
+    } catch (err: any) {
+      toast.error('Erro ao renderizar: ' + (err?.message ?? 'desconhecido'));
+    } finally {
+      setIsRendering(false);
+    }
+  };
 
   const { data: templates, isLoading, error } = useQuery({
     queryKey: ['email_templates'],
