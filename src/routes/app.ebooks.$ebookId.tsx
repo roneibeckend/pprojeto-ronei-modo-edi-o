@@ -616,13 +616,13 @@ function EbookReaderPage() {
                 <X className="h-6 w-6" />
               </button>
 
-              
-              <div className="text-center mb-6">
+              <div className="mb-3 hidden text-center sm:mb-6 sm:block">
                 <h2 className="text-2xl font-black text-white mb-2">{ebook.title}</h2>
                 <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Abertura</p>
               </div>
  
-              <div className="relative aspect-[9/16] h-[70vh] w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black group/intro">
+              <div className="relative aspect-[9/16] max-h-[68dvh] w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black group/intro">
+
                 {introNeedsSigning && !signedIntroUrl ? (
                   <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>
                 ) : (
