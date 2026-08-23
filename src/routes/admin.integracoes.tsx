@@ -1263,20 +1263,21 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
         </div>
 
         <div className="pt-4 flex flex-col gap-4">
-          <div className="flex items-center justify-between p-4 bg-black/40 border border-white/5 rounded-xl">
-            <div className="space-y-1">
+          <div className="flex flex-col gap-3 p-4 bg-black/40 border border-white/5 rounded-xl sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1 min-w-0">
               <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Teste de Conexão</p>
               <p className="text-xs text-white">Valide se a chave inserida é válida na Resend.</p>
             </div>
             <Button 
               onClick={handleTest} 
               disabled={isTesting}
-              className="bg-white/5 border border-white/10 hover:bg-white/10 text-[10px] font-bold uppercase tracking-widest h-10 px-6"
+              className="w-full sm:w-auto shrink-0 bg-white/5 border border-white/10 hover:bg-white/10 text-[10px] font-bold uppercase tracking-widest h-11 px-6"
             >
               {isTesting ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" /> : <Zap className="h-3.5 w-3.5 mr-2 text-[#ff6a00]" />}
               Testar
             </Button>
           </div>
+
 
           {testResult && (
             <div className={`p-4 rounded-xl border ${testResult.success ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-red-500/5 border-red-500/20'}`}>
