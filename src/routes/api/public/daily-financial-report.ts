@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { collectDailyReport, renderDailyReportHtml, renderDailyReportText } from "@/lib/daily-report.server";
+import { collectDailyReport, renderDailyReportText } from "@/lib/daily-report.server";
+import { collectAdminReport } from "@/lib/admin-report.server";
+import { renderAdminReportEmail } from "@/lib/admin-report-email.server";
 
 export const Route = createFileRoute("/api/public/daily-financial-report")({
   server: {
@@ -74,8 +76,9 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
           }
 
           // 2/3. Coletar todas as métricas do dia (financeiro, alunos, afiliados, suporte, sistema)
-          const report = await collectDailyReport(date);
+          const report = await collectAdminReport(date);
           const { dateStr, formattedDate } = report;
+          const rendered = await renderAdminReportEmail(report);
 
           // Pré-visualização: nunca envia e-mail
           if (preview) {
@@ -84,8 +87,8 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
               preview: true,
               data: {
                 ...report,
-                message: renderDailyReportText(report),
-                html: renderDailyReportHtml(report)
+                message: rendered.text,
+                html: rendered.html
               }
             });
           }
@@ -116,15 +119,15 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
               }
             }
 
-            const message = renderDailyReportText(report);
-            const html = renderDailyReportHtml(report);
+            const message = rendered.text;
+            const html = rendered.html;
 
             try {
               if (!recipient.email) {
                 throw new Error("E-mail não configurado para este destinatário.");
               }
 
-              const sendStatus = await sendReportEmail(recipient.email, `Relatório Diário - ${formattedDate}`, html, message);
+              const sendStatus = await sendReportEmail(recipient.email, rendered.subject, html, message);
               
               await supabase.from("report_logs").insert({
                 recipient_id: recipient.id,
