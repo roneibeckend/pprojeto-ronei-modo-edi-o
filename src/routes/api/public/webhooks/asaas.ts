@@ -87,6 +87,25 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
             'PAYMENT_APPROVED_BY_RISK_ANALYSIS',
           ];
 
+          // 3a. Eventos de cobrança (fatura gerada / vencendo / atrasada)
+          const invoiceEvents: Record<string, string> = {
+            PAYMENT_CREATED: 'invoice_created',
+            PAYMENT_DUEDATE_WARNING: 'invoice_due',
+            PAYMENT_OVERDUE: 'invoice_overdue',
+          };
+
+          if (invoiceEvents[eventType]) {
+            try {
+              await sendInvoiceEmail(invoiceEvents[eventType]!, eventId as string, body.payment);
+            } catch (invoiceError) {
+              console.error('[Webhook Asaas] Falha no e-mail de fatura:', invoiceError);
+            }
+            return new Response(JSON.stringify({ received: true, event: eventType }), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            });
+          }
+
           if (!confirmEvents.includes(eventType)) {
              return new Response(JSON.stringify({ received: true, event: eventType }), {
                status: 200,
@@ -210,6 +229,69 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
                 },
                 idempotencyKey: `access_${paymentId}`
               });
+
+              // Confirmação do pagamento (resumo da transação)
+              const { triggerEmailOnce } = await import('@/lib/resend.server');
+              const brl = (value: number) =>
+                new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
+
+              await triggerEmailOnce({
+                event: 'payment_approved',
+                to: customerEmail,
+                data: {
+                  name: userName,
+                  product_name: product?.title || (productType === 'course' ? 'Treinamento' : 'E-book'),
+                  amount: brl(amount),
+                  method: verifiedPayment.billingType === 'PIX'
+                    ? 'PIX'
+                    : verifiedPayment.billingType === 'BOLETO'
+                      ? 'Boleto'
+                      : 'Cartão de crédito',
+                  date: new Date(verifiedPayment.confirmedDate || Date.now()).toLocaleDateString('pt-BR'),
+                  link: 'https://ronneinaveia.com.br/app/perfil',
+                },
+                idempotencyKey: `payment_approved_${paymentId}`,
+              });
+
+              // Comissão do afiliado responsável pela venda
+              if (affiliateCode) {
+                try {
+                  const { data: affiliate } = await supabaseAdmin
+                    .from('affiliates')
+                    .select('id, user_id, commission_rate')
+                    .eq('affiliate_code', affiliateCode)
+                    .maybeSingle();
+
+                  if (affiliate?.user_id) {
+                    const { data: affProfile } = await supabaseAdmin
+                      .from('profiles')
+                      .select('name, email, email_notifications_opt_in')
+                      .eq('id', (affiliate as any).user_id)
+                      .maybeSingle();
+
+                    const rate = Number((affiliate as any).commission_rate ?? 30);
+                    const commission = amount * (rate > 1 ? rate / 100 : rate);
+
+                    if (affProfile?.email && (affProfile as any).email_notifications_opt_in !== false) {
+                      await triggerEmailOnce({
+                        event: 'affiliate_commission',
+                        to: affProfile.email,
+                        data: {
+                          name: (affProfile as any).name || 'Parceiro',
+                          commission: brl(commission),
+                          amount: brl(amount),
+                          product_name: product?.title || 'Produto',
+                          date: new Date().toLocaleDateString('pt-BR'),
+                          link: 'https://ronneinaveia.com.br/app/afiliados',
+                        },
+                        idempotencyKey: `commission_${paymentId}`,
+                      });
+                    }
+                  }
+                } catch (commissionError) {
+                  console.error('[Webhook Asaas] Falha no e-mail de comissão:', commissionError);
+                }
+              }
             }
           } catch (secondaryError) {
             console.error('[Webhook Asaas] Erro em efeitos secundários (matrícula OK):', secondaryError);
@@ -308,3 +390,49 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
     },
   },
 });
+
+/**
+ * Envia e-mails de cobrança (fatura gerada, vencendo ou atrasada) para o aluno
+ * dono do pagamento, com idempotência por evento do Asaas.
+ */
+async function sendInvoiceEmail(event: string, eventId: string, payment: any) {
+  const email = payment?.customerEmail;
+  const dueDate = payment?.dueDate;
+  const invoiceUrl = payment?.invoiceUrl || payment?.bankSlipUrl || payment?.transactionReceiptUrl;
+  if (!email || !dueDate || !invoiceUrl) {
+    console.warn('[Webhook Asaas] Dados insuficientes para e-mail de fatura.');
+    return;
+  }
+
+  const { triggerEmailOnce } = await import('@/lib/resend.server');
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('name, email_notifications_opt_in')
+    .eq('email', email)
+    .maybeSingle();
+
+  if ((profile as any)?.email_notifications_opt_in === false) return;
+
+  const amount = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
+    .format(Number(payment?.value || 0));
+  const due = new Date(`${String(dueDate).slice(0, 10)}T12:00:00`).toLocaleDateString('pt-BR');
+
+  const daysLate = Math.max(
+    1,
+    Math.floor((Date.now() - new Date(`${String(dueDate).slice(0, 10)}T12:00:00`).getTime()) / 86400000)
+  );
+
+  await triggerEmailOnce({
+    event,
+    to: email,
+    data: {
+      name: (profile as any)?.name || 'Aluno',
+      amount,
+      due_date: due,
+      days_late: String(daysLate),
+      invoice_url: invoiceUrl,
+      status: payment?.status || 'Aguardando pagamento',
+    },
+    idempotencyKey: `${event}_${eventId}`,
+  });
+}
