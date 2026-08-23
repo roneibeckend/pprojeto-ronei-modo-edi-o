@@ -2793,6 +2793,10 @@ export type Database = {
         Args: { p_confidence: number; p_context: Json; p_message: string }
         Returns: undefined
       }
+      prune_system_logs: {
+        Args: { p_max_age?: string; p_max_rows?: number }
+        Returns: number
+      }
       redeem_coupon: {
         Args: {
           p_amount: number
