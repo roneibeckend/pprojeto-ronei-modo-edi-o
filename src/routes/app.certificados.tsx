@@ -346,10 +346,13 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose:
   const handleDownload = async () => {
     if (!certRef.current || downloading) return;
     setDownloading(true);
+    const toastId = toast.loading("Gerando o PDF do seu certificado...");
     try {
       await downloadCertificatePDF(certRef.current, cert);
+      toast.success("Certificado baixado em PDF!", { id: toastId });
     } catch (err) {
       console.error("PDF generation failed", err);
+      toast.error("Não foi possível gerar o PDF. Tente novamente ou use a opção Imprimir.", { id: toastId });
     } finally {
       setDownloading(false);
     }
