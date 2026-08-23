@@ -136,28 +136,25 @@ function AdminRelatoriosPage() {
   async function handleTestSend(recipientId: string, isResend: boolean = false) {
     try {
       toast.loading(isResend ? "Reenviando relatório..." : "Enviando relatório de teste...");
-      // Nota: Aqui chamaremos a Edge Function no futuro. 
-      // Por enquanto, simulamos para a UI.
-      
-      const { data, error } = await supabase.functions.invoke('daily-financial-report', {
-        body: { recipient_id: recipientId, test: true }
+
+      const session = await supabase.auth.getSession();
+      const response = await fetch('/api/public/daily-financial-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.data.session?.access_token}`
+        },
+        body: JSON.stringify({ recipient_id: recipientId, test: true })
       });
 
-      // Se der erro 404 na Edge Function (não implantada), tentamos o Server Route
-      if (error || !data) {
-        const session = await supabase.auth.getSession();
-        const response = await fetch('/api/public/daily-financial-report', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.data.session?.access_token}`
-          },
-          body: JSON.stringify({ recipient_id: recipientId, test: true })
-        });
-        
-        if (!response.ok) throw new Error(await response.text());
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(payload?.error || `Falha no envio (${response.status})`);
+
+      const failed = (payload?.results || []).filter((r: any) => r.status === 'failed');
+      if (failed.length > 0) {
+        throw new Error(failed[0].error || 'O provedor de e-mail recusou o envio.');
       }
-      
+
       toast.dismiss();
       toast.success(isResend ? "Relatório reenviado!" : "Teste enviado com sucesso!");
       fetchData(); // Atualiza logs
