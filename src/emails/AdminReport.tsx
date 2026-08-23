@@ -103,7 +103,7 @@ function KpiCard({ kpi }: { kpi: AdminReportKpi }) {
         <tr>
           <td
             style={{
-              background: C.surface,
+              backgroundColor: C.surface,
               border: `1px solid ${C.border}`,
               borderLeft: `4px solid ${C.orange}`,
               borderRadius: "12px",
@@ -113,7 +113,7 @@ function KpiCard({ kpi }: { kpi: AdminReportKpi }) {
             <Text style={{ margin: 0, fontSize: "11px", letterSpacing: "1px", color: C.muted, textTransform: "uppercase", fontFamily: FONT }}>
               {kpi.icon} {kpi.label}
             </Text>
-            <Text style={{ margin: "8px 0 0", fontSize: "26px", lineHeight: "30px", fontWeight: 800, color: C.white, fontFamily: FONT }}>
+            <Text style={{ margin: "8px 0 0", fontSize: "26px", lineHeight: "30px", fontWeight: 800, color: C.text, fontFamily: FONT }}>
               {kpi.value}
             </Text>
             <DeltaBadge delta={kpi.delta} />
@@ -138,7 +138,8 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
         width="100%"
         cellPadding={0}
         cellSpacing={0}
-        style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: "12px", padding: "6px 16px" }}
+        bgcolor={C.surface}
+        style={{ backgroundColor: C.surface, border: `1px solid ${C.border}`, borderRadius: "12px", padding: "6px 16px" }}
       >
         <tbody>
           {rows.map((r, i) => (
@@ -147,7 +148,7 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
                 style={{
                   padding: "11px 0",
                   borderBottom: i === rows.length - 1 ? "none" : `1px solid ${C.border}`,
-                  color: "#D4D4D8",
+                  color: C.muted,
                   fontSize: "14px",
                   fontFamily: FONT,
                 }}
@@ -159,7 +160,7 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
                 style={{
                   padding: "11px 0",
                   borderBottom: i === rows.length - 1 ? "none" : `1px solid ${C.border}`,
-                  color: C.white,
+                  color: C.text,
                   fontSize: "14px",
                   fontWeight: 700,
                   fontFamily: FONT,
@@ -182,10 +183,10 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
     <Html lang="pt-BR">
       <Head />
       <Preview>{props.previewText}</Preview>
-      <Body style={{ margin: 0, padding: 0, background: "#08080A", fontFamily: FONT }}>
+      <Body style={{ margin: 0, padding: 0, backgroundColor: C.page, fontFamily: FONT }}>
         <Container style={{ width: "100%", maxWidth: "660px", margin: "0 auto", padding: "0 0 28px" }}>
           {/* Header */}
-          <Section style={{ background: C.black, borderBottom: `3px solid ${C.orange}`, padding: "22px 24px" }}>
+          <Section style={{ backgroundColor: C.black, borderBottom: `3px solid ${C.orange}`, padding: "22px 24px" }}>
             <Row>
               <Column style={{ width: "56px", verticalAlign: "middle" }}>
                 <Img src={EMAIL_ASSETS.logo} width="48" height="48" alt={BRAND.name} style={{ borderRadius: "50%", display: "block" }} />
@@ -194,18 +195,18 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                 <Text style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: C.white, fontFamily: FONT }}>
                   {BRAND.name}
                 </Text>
-                <Text style={{ margin: "2px 0 0", fontSize: "12px", color: C.orange, fontWeight: 700, letterSpacing: "0.6px", fontFamily: FONT }}>
+                <Text style={{ margin: "2px 0 0", fontSize: "12px", color: "#FF8A3D", fontWeight: 700, letterSpacing: "0.6px", fontFamily: FONT }}>
                   {props.reportType.toUpperCase()}
                 </Text>
-                <Text style={{ margin: "2px 0 0", fontSize: "12px", color: C.muted, fontFamily: FONT }}>
+                <Text style={{ margin: "2px 0 0", fontSize: "12px", color: "#D4D4D8", fontFamily: FONT }}>
                   Referência: {props.reportDate}
                 </Text>
               </Column>
             </Row>
           </Section>
 
-          <Section style={{ padding: "22px 20px 0" }}>
-            <Heading as="h1" style={{ margin: "0 0 4px", fontSize: "20px", color: C.white, fontFamily: FONT }}>
+          <Section bgcolor={C.white} style={{ backgroundColor: C.white, padding: "22px 20px 26px" }}>
+            <Heading as="h1" style={{ margin: "0 0 4px", fontSize: "20px", color: C.text, fontFamily: FONT }}>
               Resumo executivo
             </Heading>
             <Text style={{ margin: "0 0 18px", fontSize: "13px", color: C.muted, fontFamily: FONT }}>
@@ -244,7 +245,7 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                       <tr>
                         <td
                           style={{
-                            background: C.surface,
+                            backgroundColor: C.surface,
                             border: `1px solid ${color}`,
                             borderLeft: `5px solid ${color}`,
                             borderRadius: "10px",
@@ -255,7 +256,7 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                             {a.level === "critical" ? "CRÍTICO" : a.level === "warning" ? "ATENÇÃO" : "NORMAL"} · {a.title}
                           </Text>
                           {a.detail ? (
-                            <Text style={{ margin: "5px 0 0", fontSize: "13px", color: "#D4D4D8", fontFamily: FONT }}>
+                            <Text style={{ margin: "5px 0 0", fontSize: "13px", color: C.muted, fontFamily: FONT }}>
                               {a.detail}
                             </Text>
                           ) : null}
@@ -278,7 +279,8 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                 <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} key={b.label} style={{ marginBottom: "10px" }}>
                   <tbody>
                     <tr>
-                      <td align="center" style={{ background: b.primary ? C.orange : "transparent", border: `1px solid ${b.primary ? C.orange : C.border}`, borderRadius: "10px" }}>
+                      <td align="center" bgcolor={b.primary ? C.orange : C.white}
+                        style={{ backgroundColor: b.primary ? C.orange : C.white, border: `1px solid ${b.primary ? C.orange : C.border}`, borderRadius: "10px" }}>
                         <Link
                           href={b.href}
                           style={{
@@ -286,7 +288,7 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                             padding: "13px 18px",
                             fontSize: "14px",
                             fontWeight: 700,
-                            color: b.primary ? C.black : C.white,
+                            color: b.primary ? C.white : C.text,
                             textDecoration: "none",
                             fontFamily: FONT,
                           }}
