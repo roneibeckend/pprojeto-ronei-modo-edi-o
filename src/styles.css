@@ -458,29 +458,39 @@
 .animate-aurora,
 .animate-aurora-2 { animation: none !important; }
 
-/* ---- Reveal (subtle, fast fade-up — same for every variant) ---- */
+/* ---- Reveal (subtle, fast fade-up — same for every variant) ----
+   IMPORTANTE: o estado oculto só é aplicado depois que o JS marca
+   `html[data-reveal-js]`. Assim o HTML servido pelo servidor já pinta o
+   conteúdo imediatamente (sem tela vazia) e as animações continuam
+   funcionando para os blocos abaixo da dobra. */
 [data-reveal] {
-  opacity: 0;
-  transform: translate3d(0, 8px, 0); /* Reduced from 16px to minimize layout jump */
   transition:
     opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html[data-reveal-js] [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
   will-change: opacity, transform;
-  contain: content;
 }
 
 /* No mobile, simplificamos ainda mais para garantir performance e visibilidade imediata */
 @media (max-width: 768px) {
   [data-reveal] {
     transition-duration: 0.15s; /* Even faster on mobile */
+  }
+  html[data-reveal-js] [data-reveal] {
     transform: translate3d(0, 4px, 0);
   }
 }
 
-[data-reveal][data-visible="true"] {
+html[data-reveal-js] [data-reveal][data-visible="true"] {
   opacity: 1;
   transform: translate3d(0, 0, 0);
+  will-change: auto;
 }
+
 [data-reveal-delay="1"] { transition-delay: 0.04s; }
 [data-reveal-delay="2"] { transition-delay: 0.08s; }
 [data-reveal-delay="3"] { transition-delay: 0.12s; }
