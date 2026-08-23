@@ -20,7 +20,6 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AppVerificarCertificadoRouteImport } from './routes/app.verificar-certificado'
 import { Route as AppSuporteRouteImport } from './routes/app.suporte'
 import { Route as AppReceitasRouteImport } from './routes/app.receitas'
 import { Route as AppProgressoRouteImport } from './routes/app.progresso'
@@ -123,11 +122,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
-} as any)
-const AppVerificarCertificadoRoute = AppVerificarCertificadoRouteImport.update({
-  id: '/verificar-certificado',
-  path: '/verificar-certificado',
-  getParentRoute: () => AppRoute,
 } as any)
 const AppSuporteRoute = AppSuporteRouteImport.update({
   id: '/suporte',
@@ -408,7 +402,6 @@ export interface FileRoutesByFullPath {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
-  '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -465,7 +458,6 @@ export interface FileRoutesByTo {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
-  '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -527,7 +519,6 @@ export interface FileRoutesById {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
-  '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -590,7 +581,6 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
-    | '/app/verificar-certificado'
     | '/admin/'
     | '/app/'
     | '/admin/alunos/$studentId'
@@ -647,7 +637,6 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
-    | '/app/verificar-certificado'
     | '/admin'
     | '/app'
     | '/admin/alunos/$studentId'
@@ -708,7 +697,6 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
-    | '/app/verificar-certificado'
     | '/admin/'
     | '/app/'
     | '/admin/alunos/$studentId'
@@ -826,13 +814,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
-    }
-    '/app/verificar-certificado': {
-      id: '/app/verificar-certificado'
-      path: '/verificar-certificado'
-      fullPath: '/app/verificar-certificado'
-      preLoaderRoute: typeof AppVerificarCertificadoRouteImport
-      parentRoute: typeof AppRoute
     }
     '/app/suporte': {
       id: '/app/suporte'
@@ -1298,7 +1279,6 @@ interface AppRouteChildren {
   AppProgressoRoute: typeof AppProgressoRoute
   AppReceitasRoute: typeof AppReceitasRoute
   AppSuporteRoute: typeof AppSuporteRoute
-  AppVerificarCertificadoRoute: typeof AppVerificarCertificadoRoute
   AppIndexRoute: typeof AppIndexRoute
   AppEbooksEbookIdRoute: typeof AppEbooksEbookIdRoute
 }
@@ -1315,7 +1295,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppProgressoRoute: AppProgressoRoute,
   AppReceitasRoute: AppReceitasRoute,
   AppSuporteRoute: AppSuporteRoute,
-  AppVerificarCertificadoRoute: AppVerificarCertificadoRoute,
   AppIndexRoute: AppIndexRoute,
   AppEbooksEbookIdRoute: AppEbooksEbookIdRoute,
 }

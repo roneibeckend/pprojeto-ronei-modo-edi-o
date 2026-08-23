@@ -68,7 +68,7 @@ async function downloadCertificatePDF(node: HTMLElement, cert: { id: string; cou
 
 
 async function handleShareCertificate(cert: any) {
-  const verifyUrl = `https://verifica.ronneinaveia.com/${cert.code || cert.id}`;
+  const verifyUrl = certificateVerifyUrl(cert.code || cert.id);
   const shareData = {
     title: `Certificado: ${cert.course}`,
     text: `Acabei de concluir o curso "${cert.course}" na Ronnei na Veia! Confira meu certificado:`,
