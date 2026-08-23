@@ -405,17 +405,17 @@ function FinancePage() {
                   className="group relative border border-white/10 bg-black/40 p-4 transition hover:border-[color:var(--orange)]"
                   style={{ ["--orange" as any]: ORANGE }}
                 >
-                  <div className="flex items-center justify-between gap-4 mb-3">
+                  <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                     <input
                       value={p.name}
                       onChange={(e) => updatePartner(p.id, { name: e.target.value })}
-                      className="flex-1 bg-transparent text-sm font-bold text-white outline-none"
+                      className="min-w-0 flex-1 bg-transparent text-base font-bold text-white outline-none sm:text-sm"
                       placeholder="Nome do Sócio"
                     />
                     <select
                       value={p.user_id || ""}
                       onChange={(e) => updatePartner(p.id, { user_id: e.target.value || null })}
-                      className="max-w-[150px] bg-black border border-white/10 rounded-sm px-2 py-1 text-[10px] text-white outline-none focus:border-orange-500"
+                      className="w-full min-h-[40px] min-w-0 rounded-sm border border-white/10 bg-black px-2 py-1 text-[11px] text-white outline-none focus:border-orange-500 sm:w-auto sm:max-w-[150px]"
                     >
                       <option value="">Vincular Usuário</option>
                       {users?.map((u) => (
@@ -426,31 +426,33 @@ function FinancePage() {
                     </select>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-20">
+                  <div className="flex flex-wrap items-end justify-between gap-3">
+                    <div className="flex min-w-0 items-end gap-4">
+                      <div className="relative w-20 shrink-0">
                         <input
                           type="number"
                           value={p.percent}
                           onChange={(e) => updatePartner(p.id, { percent: parseFloat(e.target.value) || 0 })}
-                          className="w-full rounded-sm bg-black/60 px-2 py-1 text-center font-display font-extrabold text-white outline-none focus:bg-black text-[16px]"
+                          className="w-full rounded-sm bg-black/60 px-2 py-1.5 text-center font-display font-extrabold text-white outline-none focus:bg-black text-[16px]"
                         />
                         <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-[10px] text-white/40">%</span>
                       </div>
-                      <div className="flex flex-col items-start ml-4">
-                        <span className="text-[10px] uppercase font-black text-white/20 mb-1">Lucro Individual</span>
-                        <div className="px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-display font-black text-sm">
+                      <div className="flex min-w-0 flex-col items-start">
+                        <span className="mb-1 text-[10px] font-black uppercase text-white/20">Lucro Individual</span>
+                        <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 font-display text-sm font-black text-emerald-400">
                           {brl(share)}
                         </div>
                       </div>
                     </div>
                     <button
                       onClick={() => removePartner(p.id)}
-                      className="p-1 text-white/20 transition hover:text-red-400"
+                      className="grid h-10 w-10 shrink-0 place-items-center text-white/30 transition hover:text-red-400"
+                      aria-label="Remover sócio"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
+
                 </div>
               );
             })}
