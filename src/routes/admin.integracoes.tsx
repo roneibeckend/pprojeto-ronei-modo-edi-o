@@ -48,7 +48,7 @@ import { getEmailLogs, getEmailSettings, updateEmailSettings, sendEmail, validat
 import { getEmailTemplates, saveEmailTemplate, deleteEmailTemplate } from "@/lib/email-templates.functions";
 import { EmailSystemTemplatesPanel } from "@/components/admin/EmailSystemTemplatesPanel";
 import { EMAIL_CATALOG, sampleDataFor } from "@/emails/catalog";
-import { sendRawTestEmail, sendTemplateTestEmail } from "@/lib/email-preview.functions";
+import { previewRawTemplate, sendRawTestEmail, sendTemplateTestEmail } from "@/lib/email-preview.functions";
 
 import { useServerFn } from "@tanstack/react-start";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
