@@ -82,26 +82,112 @@ export const saveIntegration = createServerFn({ method: "POST" })
 
 export const testIntegrationConnection = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((data: unknown) => z.object({
-    data: z.object({
-      id: z.string().optional().nullable(),
-      category: z.string(),
-      credentials: z.record(z.any()),
-      settings: z.record(z.any()),
-      environment: z.string().optional()
-    })
+  .inputValidator((data: unknown) => z.object({
+    id: z.string().optional().nullable(),
+    category: z.string(),
+    credentials: z.record(z.any()),
+    settings: z.record(z.any()),
+    environment: z.string().optional()
   }).parse(data))
-  .handler(async ({ data: { data }, context }) => {
+  .handler(async ({ data, context }) => {
     const { data: isAdmin } = await context.supabase.rpc('has_role', { 
       _user_id: context.userId, 
       _role: 'admin' 
     });
     if (!isAdmin) throw new Error("Proibido");
 
+    const start = Date.now();
+
+    if (data.category === 'resend') {
+      const apiKey = data.credentials?.apiKey || process.env['RESEND_API_KEY'];
+      if (!apiKey || typeof apiKey !== 'string' || !apiKey.startsWith('re_')) {
+        return {
+          success: false,
+          message: "API Key do Resend não encontrada ou inválida. Insira uma chave começando com 're_'.",
+          latency: `${Date.now() - start}ms`,
+          httpCode: 400,
+          environment: data.environment || 'production',
+          timestamp: new Date().toISOString(),
+          endpoint: 'https://api.resend.com/emails',
+          responseBody: null
+        };
+      }
+
+      try {
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            from: 'onboarding@resend.dev',
+            to: 'test@resend.dev',
+            subject: 'Validation',
+            html: 'Validation',
+            dry_run: true
+          })
+        });
+
+        const latency = `${Date.now() - start}ms`;
+        const responseBody = await response.json().catch(() => ({}));
+
+        if (response.status === 401) {
+          return {
+            success: false,
+            message: responseBody.name === 'restricted_api_key'
+              ? 'Chave de API restrita: válida apenas para envio, não para testes de domínio.'
+              : 'API Key do Resend inválida (401).',
+            latency,
+            httpCode: 401,
+            environment: data.environment || 'production',
+            timestamp: new Date().toISOString(),
+            endpoint: 'https://api.resend.com/emails',
+            responseBody
+          };
+        }
+
+        if (!response.ok) {
+          return {
+            success: false,
+            message: responseBody.message || `Erro na API Resend: ${response.status}`,
+            latency,
+            httpCode: response.status,
+            environment: data.environment || 'production',
+            timestamp: new Date().toISOString(),
+            endpoint: 'https://api.resend.com/emails',
+            responseBody
+          };
+        }
+
+        return {
+          success: true,
+          message: "Conexão com Resend validada com sucesso!",
+          latency,
+          httpCode: response.status,
+          environment: data.environment || 'production',
+          timestamp: new Date().toISOString(),
+          endpoint: 'https://api.resend.com/emails',
+          responseBody
+        };
+      } catch (error: any) {
+        return {
+          success: false,
+          message: error.message || "Erro inesperado ao testar conexão com Resend.",
+          latency: `${Date.now() - start}ms`,
+          httpCode: 500,
+          environment: data.environment || 'production',
+          timestamp: new Date().toISOString(),
+          endpoint: 'https://api.resend.com/emails',
+          responseBody: null
+        };
+      }
+    }
+
     return {
       success: true,
       message: "Conexão testada com sucesso!",
-      latency: "142ms",
+      latency: `${Date.now() - start}ms`,
       httpCode: 200,
       environment: data.environment || 'production',
       timestamp: new Date().toISOString(),
