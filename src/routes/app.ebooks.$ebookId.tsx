@@ -36,7 +36,7 @@ export const Route = createFileRoute("/app/ebooks/$ebookId")({
     const ebookQuery = supabase
       .from("ebooks")
       .select(`
-        id, title, subtitle, description, price, opening_video_url, payment_type, due_days, status,
+        id, title, subtitle, description, price, cover_url, opening_video_url, payment_type, due_days, status,
         modules:ebook_modules (
           id, title, order_index
         )
@@ -627,7 +627,9 @@ function EbookReaderPage() {
                     key={signedIntroUrl || ebook.opening_video_url}
                     videoId={`intro-${ebook.id}`}
                     src={signedIntroUrl || ebook.opening_video_url}
+                    poster={ebook.cover_url || undefined}
                     isIntro={false}
+                    aspect="portrait"
                     className="w-full h-full"
                   />
                 )}
@@ -670,24 +672,14 @@ function EbookReaderPage() {
                 <div className="w-full bg-black/40 border-b border-white/5">
                   <div className="max-w-4xl mx-auto py-4 sm:py-8 px-0 sm:px-4">
                     <div className="relative aspect-[9/16] max-h-[70vh] max-w-[400px] mx-auto rounded-none sm:rounded-2xl overflow-hidden shadow-2xl border-y sm:border border-white/10 bg-black/60 group">
-                      {activeChapter.video_url.includes('youtube.com') || activeChapter.video_url.includes('youtu.be') || activeChapter.video_url.includes('drive.google.com') ? (
-                        <iframe
-                          key={activeChapter.video_url}
-                          src={activeChapter.video_url.includes('youtube.com') || activeChapter.video_url.includes('youtu.be')
-                            ? (activeChapter.video_url.includes('watch?v=') ? `${activeChapter.video_url.replace('watch?v=', 'embed/').split('&')[0]}?autoplay=1&mute=1&playsinline=1` : `https://www.youtube.com/embed/${activeChapter.video_url.split('youtu.be/')[1].split('?')[0]}?autoplay=1&mute=1&playsinline=1`)
-                            : activeChapter.video_url.includes('drive.google.com')
-                            ? (activeChapter.video_url.includes('/preview') ? `${activeChapter.video_url}${activeChapter.video_url.includes('?') ? '&' : '?'}autoplay=1&mute=1&playsinline=1` : `https://drive.google.com/file/d/${(activeChapter.video_url.match(/\/file\/d\/([^\/]+)/) || activeChapter.video_url.match(/id=([^&]+)/))?.[1]}/preview?autoplay=1&mute=1&playsinline=1`)
-                            : activeChapter.video_url}
-                          className="h-[100.5%] w-[100.5%] -left-[0.25%] -top-[0.25%] scale-[1.12]"
-                          allowFullScreen
-                          {...(activeChapter.video_url.includes('drive.google.com') ? { "webkit-playsinline": "true", "playsinline": "true" } : {})}
-                        />
-                      ) : (isLoadingSignedChapter || !signedChapterUrl) ? (
+                      {!activeChapter.video_url.includes('youtube') && !activeChapter.video_url.includes('drive') && (isLoadingSignedChapter || !signedChapterUrl) ? (
                         <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>
                       ) : (
                         <VideoPlayer
                           videoId={`chapter-${activeChapter.id}`}
-                          src={signedChapterUrl}
+                          src={signedChapterUrl || activeChapter.video_url}
+                          poster={ebook.cover_url || undefined}
+                          aspect="portrait"
                           className="w-full h-full"
                         />
                       )}

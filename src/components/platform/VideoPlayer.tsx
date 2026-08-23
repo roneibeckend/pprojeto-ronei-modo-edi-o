@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, Loader2, AlertCircle } from 'lucide-react';
+import { Play, Pause, Loader2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface VideoPlayerProps {
   src: string;
@@ -9,6 +10,7 @@ interface VideoPlayerProps {
   videoId: string; // Used for saving progress
   onProgress?: (progress: number) => void;
   className?: string;
+  aspect?: 'video' | 'portrait';
   /** Kept for API compatibility. Intro videos never autoplay: the user always taps play. */
   isIntro?: boolean;
 }
@@ -29,6 +31,16 @@ function getDriveEmbed(url: string) {
   return match?.[1] ? `https://drive.google.com/file/d/${match[1]}/preview` : url;
 }
 
+function getDriveId(url: string) {
+  const match = url.match(/\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+  return match?.[1] ?? '';
+}
+
+function getDriveStream(url: string) {
+  const id = getDriveId(url);
+  return id ? `https://drive.google.com/uc?export=download&id=${id}` : url;
+}
+
 export function VideoPlayer({
   src,
   poster,
@@ -36,17 +48,26 @@ export function VideoPlayer({
   videoId,
   onProgress,
   className,
+  aspect = 'video',
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
-  const isEmbed = isYouTubeUrl(src) || isDriveUrl(src);
+  const isYouTube = isYouTubeUrl(src);
+  const isDrive = isDriveUrl(src);
+  const isEmbed = isYouTube;
+  const playableSrc = isDrive ? getDriveStream(src) : src;
+  const driveId = isDrive ? getDriveId(src) : '';
+  const cleanPoster = poster || (driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w1200` : undefined);
+  const frameClass = aspect === 'portrait' ? 'aspect-[9/16]' : 'aspect-video';
 
   // Reset when the media changes
   useEffect(() => {
     setStarted(false);
+    setIsPlaying(false);
     setIsLoading(false);
     setHasError(false);
   }, [src]);
@@ -84,7 +105,7 @@ export function VideoPlayer({
     const thumb = poster || (ytId ? `https://i.ytimg.com/vi/${ytId}/hq720.jpg` : undefined);
 
     return (
-      <div className={cn('relative aspect-video w-full mx-auto bg-black rounded-xl overflow-hidden shadow-2xl', className)}>
+      <div className={cn('relative w-full mx-auto bg-black rounded-xl overflow-hidden shadow-2xl', frameClass, className)}>
         {started ? (
           <iframe
             src={embedUrl}
@@ -94,11 +115,12 @@ export function VideoPlayer({
             title={title || 'Vídeo'}
           />
         ) : (
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => setStarted(true)}
             aria-label="Reproduzir vídeo"
-            className="absolute inset-0 w-full h-full flex items-center justify-center"
+            className="absolute inset-0 h-full w-full rounded-none p-0 hover:bg-transparent"
           >
             {thumb && (
               <img src={thumb} alt={title || 'Capa do vídeo'} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
@@ -107,7 +129,7 @@ export function VideoPlayer({
             <span className="relative w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transition-transform hover:scale-110 active:scale-95">
               <Play className="w-8 h-8 text-white ml-1 fill-current" />
             </span>
-          </button>
+          </Button>
         )}
       </div>
     );
@@ -120,6 +142,14 @@ export function VideoPlayer({
     setIsLoading(true);
     setStarted(true);
     try {
+      if (video.currentTime === 0) {
+        try {
+          const saved = Number(localStorage.getItem(`video_progress_${videoId}`));
+          if (Number.isFinite(saved) && saved > 0 && saved < video.duration) video.currentTime = saved;
+        } catch {
+          /* storage may be unavailable */
+        }
+      }
       await video.play();
     } catch {
       // Autoplay policies: fall back to native controls; the user can press play again.
@@ -128,21 +158,26 @@ export function VideoPlayer({
   };
 
   return (
-    <div className={cn('relative aspect-video mx-auto bg-black rounded-xl overflow-hidden shadow-2xl', className)}>
+    <div className={cn('relative mx-auto bg-black rounded-xl overflow-hidden shadow-2xl', frameClass, className)}>
       <video
         key={src}
         ref={videoRef}
-        src={src}
-        poster={poster}
+        src={playableSrc}
+        poster={cleanPoster}
         title={title}
-        className="w-full h-full object-contain bg-black"
+        className="h-full w-full object-cover bg-black"
         playsInline
         webkit-playsinline="true"
-        preload="metadata"
-        controls={started}
-        controlsList="nodownload noremoteplayback"
+        preload="none"
+        controls={false}
+        disablePictureInPicture
         onWaiting={() => setIsLoading(true)}
-        onPlaying={() => setIsLoading(false)}
+        onPlaying={() => {
+          setIsLoading(false);
+          setIsPlaying(true);
+        }}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
         onCanPlay={() => setIsLoading(false)}
         onError={() => {
           setIsLoading(false);
@@ -152,16 +187,34 @@ export function VideoPlayer({
 
       {/* Clean cover with a single play button until playback starts */}
       {!started && !hasError && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={handlePlay}
           aria-label="Reproduzir vídeo"
-          className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/20"
+          className="absolute inset-0 h-full w-full rounded-none bg-black/20 p-0 hover:bg-black/20"
         >
           <span className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transition-transform hover:scale-110 active:scale-95">
             <Play className="w-8 h-8 text-white ml-1 fill-current" />
           </span>
-        </button>
+        </Button>
+      )}
+
+      {started && !hasError && (
+        <Button
+          type="button"
+          size="icon"
+          aria-label={isPlaying ? 'Pausar vídeo' : 'Reproduzir vídeo'}
+          onClick={() => {
+            const video = videoRef.current;
+            if (!video) return;
+            if (video.paused) void video.play();
+            else video.pause();
+          }}
+          className="absolute bottom-4 left-4 z-20 h-12 w-12 rounded-full bg-background/80 text-foreground shadow-lg backdrop-blur hover:bg-background"
+        >
+          {isPlaying ? <Pause className="h-5 w-5 fill-current" /> : <Play className="h-5 w-5 fill-current" />}
+        </Button>
       )}
 
       {isLoading && started && !hasError && (
@@ -175,7 +228,7 @@ export function VideoPlayer({
           <AlertCircle className="w-10 h-10 text-fire mb-3" />
           <h3 className="text-white font-bold mb-1">O vídeo não carregou</h3>
           <p className="text-white/60 text-sm mb-5">Verifique sua conexão e tente novamente.</p>
-          <button
+          <Button
             type="button"
             onClick={() => {
               setHasError(false);
@@ -185,7 +238,7 @@ export function VideoPlayer({
             className="btn-fire px-6 py-2 text-sm"
           >
             Tentar novamente
-          </button>
+          </Button>
         </div>
       )}
     </div>
