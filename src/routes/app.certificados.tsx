@@ -3,8 +3,8 @@ import { Award, Download, Eye, Lock, Share2, ShieldCheck, Flame, Sparkles, X, Cl
 import { PageHeader } from "@/components/platform/Shell";
 import { courses as baseCourses, student as fallbackStudent } from "@/lib/platform-data";
 import { useEffect, useRef, useState } from "react";
-import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import rubricaAsset from "@/assets/rubrica-ronnei.png.asset.json";
 import { useServerFn } from "@tanstack/react-start";
 import { getStudentCertificates } from "@/lib/certificates-student.functions";
 import { useQuery } from "@tanstack/react-query";
