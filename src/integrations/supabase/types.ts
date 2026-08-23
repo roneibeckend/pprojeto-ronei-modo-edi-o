@@ -510,6 +510,39 @@ export type Database = {
           },
         ]
       }
+      content_notifications: {
+        Row: {
+          content_id: string
+          content_type: string
+          created_at: string
+          created_by: string | null
+          id: string
+          recipients_count: number
+          sent_count: number
+          title: string
+        }
+        Insert: {
+          content_id: string
+          content_type: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          recipients_count?: number
+          sent_count?: number
+          title: string
+        }
+        Update: {
+          content_id?: string
+          content_type?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          recipients_count?: number
+          sent_count?: number
+          title?: string
+        }
+        Relationships: []
+      }
       coupon_products: {
         Row: {
           coupon_id: string
