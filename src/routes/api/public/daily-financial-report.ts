@@ -208,38 +208,15 @@ async function sendReportEmail(to: string, subject: string, content: string) {
     }
   }
 
-  // 2. Chamar a Edge Function de envio de e-mail (Resend)
-  try {
-    const { data: result, error: invokeError } = await supabase.functions.invoke('send-email', {
-      body: { 
-        to, 
-        template: 'relatorio_financeiro',
-        data: { 
-          subject,
-          content
-        }
-      }
-    });
-
-    if (invokeError) throw invokeError;
-    return { id: result?.id || `email_msg_${Date.now()}` };
-  } catch (err: any) {
-    console.warn("[Resend] Falha ao invocar edge function 'send-email', tentando via server function interna...");
-    
-    // Tenta via lib interna se disponível (fallback para ambientes onde edge functions falham)
-    try {
-      const { triggerEmailEvent } = await import("@/lib/resend.server");
-      const res = await triggerEmailEvent({
-        event: 'relatorio_financeiro',
-        to,
-        data: { subject, content },
-        idempotencyKey: `report_${to}_${new Date().toISOString().split('T')[0]}`
-      });
-      return { id: res?.id || `email_msg_${Date.now()}` };
-    } catch (innerErr: any) {
-      throw new Error(`Erro ao enviar e-mail: ${err.message}. Fallback também falhou: ${innerErr.message}`);
-    }
-  }
+  // 2. Enviar via Resend (server function interna)
+  const { triggerEmailEvent } = await import("@/lib/resend.server");
+  const res = await triggerEmailEvent({
+    event: 'relatorio_financeiro',
+    to,
+    data: { subject, content },
+    idempotencyKey: `report_${new Date().toISOString().split('T')[0]}`
+  });
+  return { id: res?.id || `email_msg_${Date.now()}` };
 }
 
 // Removendo função sendWhatsApp obsoleta
