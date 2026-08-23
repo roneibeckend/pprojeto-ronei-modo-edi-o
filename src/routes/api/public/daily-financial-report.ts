@@ -60,17 +60,20 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
 
           // 2/3. Coletar todas as métricas do dia (financeiro, alunos, afiliados, suporte, sistema)
           const report = await collectDailyReport(date);
-          const {
-            dateStr,
-            formattedDate,
-            totalRevenue,
-            totalCosts,
-            netProfit,
-            margin,
-            salesCount,
-            avgTicket,
-          } = report;
-          const targetDate = new Date(`${dateStr}T12:00:00.000Z`);
+          const { dateStr, formattedDate } = report;
+
+          // Pré-visualização: nunca envia e-mail
+          if (preview) {
+            return Response.json({
+              success: true,
+              preview: true,
+              data: {
+                ...report,
+                message: renderDailyReportText(report),
+                html: renderDailyReportHtml(report)
+              }
+            });
+          }
 
           // 4. Get Recipients
           let query = supabase.from("report_recipients").select("*").eq("active", true);
@@ -78,6 +81,7 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
           
           const { data: recipients, error: recipientsError } = await query;
           if (recipientsError) throw recipientsError;
+
 
           // 5. Send Email
           const results = [];
