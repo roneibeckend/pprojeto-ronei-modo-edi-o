@@ -361,7 +361,7 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose:
   // Auto-trigger when opened via card download button
   useEffect(() => {
     if (autoDownload) {
-      const t = setTimeout(() => { handleDownload(); }, 400);
+      const t = setTimeout(() => { handleDownload(); }, 900);
       return () => clearTimeout(t);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
