@@ -182,10 +182,11 @@ export function FinanceOutflowStatement() {
       </div>
 
       <Tabs defaultValue="statement" className="w-full">
-        <TabsList className="bg-white/5 border border-white/5 flex-wrap h-auto">
-          <TabsTrigger value="statement">Extrato de Saídas</TabsTrigger>
-          <TabsTrigger value="payouts">Solicitações de Saque</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 gap-1 border border-white/5 bg-white/5 sm:inline-flex sm:w-auto">
+          <TabsTrigger value="statement" className="text-[11px] sm:text-sm">Extrato de Saídas</TabsTrigger>
+          <TabsTrigger value="payouts" className="text-[11px] sm:text-sm">Solicitações de Saque</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="statement" className="space-y-4 pt-4">
           <div className="border border-white/5 bg-white/[0.02] rounded-xl p-4 space-y-3">
