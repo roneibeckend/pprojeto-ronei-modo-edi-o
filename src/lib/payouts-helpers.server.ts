@@ -31,11 +31,11 @@ export async function notifyUser(
   userId: string,
   title: string,
   message: string,
-  metadata: Record<string, unknown> = {},
+  metadata: Record<string, any> = {},
 ) {
   const { data: notification, error } = await supabaseAdmin
     .from("notifications")
-    .insert({ title, message, type: "payout", target_type: "segmented", metadata })
+    .insert({ title, message, type: "payout", target_type: "segmented", metadata: metadata as any })
     .select("id")
     .single();
 
@@ -50,14 +50,14 @@ export async function notifyUser(
 export async function notifyAdmins(
   title: string,
   message: string,
-  metadata: Record<string, unknown> = {},
+  metadata: Record<string, any> = {},
 ) {
   const admins = await getAdminRecipients();
   if (admins.length === 0) return;
 
   const { data: notification, error } = await supabaseAdmin
     .from("notifications")
-    .insert({ title, message, type: "payout", target_type: "segmented", metadata })
+    .insert({ title, message, type: "payout", target_type: "segmented", metadata: metadata as any })
     .select("id")
     .single();
 
@@ -76,7 +76,7 @@ export async function sendPayoutEmail(
 ) {
   if (!email) return;
   try {
-    await triggerEmailEvent(template, email, variables);
+    await triggerEmailEvent({ event: template, to: email, data: variables });
   } catch (err) {
     console.error(`[payouts] Falha ao enviar e-mail ${template} para ${email}:`, err);
   }

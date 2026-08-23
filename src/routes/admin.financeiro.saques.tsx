@@ -38,6 +38,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AdminPayoutsPanel } from "@/components/admin/AdminPayoutsPanel";
+
 
 export const Route = createFileRoute("/admin/financeiro/saques")({
   head: () => ({ meta: [{ title: "Gestão de Saídas e Saques — Painel Admin" }] }),
@@ -323,29 +325,9 @@ function AdminAsaasTransfersPage() {
 
         
         <TabsContent value="payouts" className="space-y-4 pt-4">
-          <div className="border border-white/5 rounded-2xl overflow-x-auto bg-[#111]">
-            <table className="w-full text-sm min-w-[640px]">
-              <thead className="text-[10px] uppercase font-bold text-white/40 bg-white/[0.02]">
-                <tr>
-                  <th className="px-6 py-4">Usuário</th>
-                  <th className="px-6 py-4">Data</th>
-                  <th className="px-6 py-4">Valor</th>
-                  <th className="px-6 py-4">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {payouts?.map((p) => (
-                  <tr key={p.id}>
-                    <td className="px-6 py-4">{(p.profile as any)?.name || "N/A"}</td>
-                    <td className="px-6 py-4">{new Date(p.created_at || Date.now()).toLocaleDateString('pt-BR')}</td>
-                    <td className="px-6 py-4 font-black text-emerald-400">R$ {Number(p.amount || 0).toFixed(2)}</td>
-                    <td className="px-6 py-4">{statusMap[p.status]?.label || p.status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AdminPayoutsPanel />
         </TabsContent>
+
 
         <TabsContent value="manual" className="space-y-6 pt-4">
           <div className="flex justify-end">

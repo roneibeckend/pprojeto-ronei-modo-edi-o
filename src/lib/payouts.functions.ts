@@ -64,15 +64,15 @@ export const requestPayout = createServerFn({ method: "POST" })
     const ip =
       getRequestHeader("cf-connecting-ip") ||
       getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim() ||
-      null;
-    const userAgent = getRequestHeader("user-agent") || null;
+      undefined;
+    const userAgent = getRequestHeader("user-agent") || undefined;
 
     const { data: payoutId, error } = await context.supabase.rpc("request_payout_atomic", {
       p_amount: data.amount,
       p_method: data.method,
       p_pix_key: data.pix_key,
       p_user_type: data.user_type,
-      p_document_url: data.document_path || null,
+      p_document_url: data.document_path || undefined,
       p_ip: ip,
       p_user_agent: userAgent,
     });
@@ -249,8 +249,8 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
       {
         p_payout_id: data.payoutId,
         p_status: data.status,
-        p_notes: data.notes || null,
-        p_rejection_reason: data.rejectionReason || null,
+        p_notes: data.notes || undefined,
+        p_rejection_reason: data.rejectionReason || undefined,
       },
     );
 
@@ -322,7 +322,7 @@ export const adminRequestPayoutDocument = createServerFn({ method: "POST" })
 
     const { error } = await context.supabase.rpc("admin_request_payout_document", {
       p_payout_id: data.payoutId,
-      p_notes: data.notes || null,
+      p_notes: data.notes || undefined,
     });
     if (error) throw new Error(error.message);
 
