@@ -17,6 +17,21 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
           if (internalSecret && authHeader === `Bearer ${internalSecret}`) {
             isAuthorized = true;
           }
+
+          // 1b. Token do agendador armazenado no banco (usado pelo pg_cron)
+          if (!isAuthorized && authHeader?.startsWith("Bearer ")) {
+            const token = authHeader.slice(7);
+            const { data: tokenRow } = await supabaseAdmin
+              .from("report_settings")
+              .select("cron_token")
+              .limit(1)
+              .maybeSingle();
+            if (tokenRow?.cron_token && token === tokenRow.cron_token) {
+              isAuthorized = true;
+            }
+          }
+          
+
           
           // 2. Check for authenticated session (from UI preview/test)
           if (!isAuthorized && authHeader) {
