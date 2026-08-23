@@ -167,13 +167,14 @@ function AdminReceitasPage() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto py-6 sm:py-4">
-          <div className="w-full max-w-2xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-8">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
-              <h3 className="text-xl font-bold">{editingItem?.id ? "Editar Receita" : "Nova Receita"}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-3 sm:p-4">
+          <div className="flex w-full max-w-2xl max-h-[calc(100dvh-1.5rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0e0e0e]">
+            <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4 sm:px-6">
+              <h3 className="text-lg sm:text-xl font-bold">{editingItem?.id ? "Editar Receita" : "Nova Receita"}</h3>
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition"><X className="h-5 w-5" /></button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-6 text-left">
+            <form onSubmit={handleSubmit} className="flex-1 min-h-0 overflow-y-auto space-y-6 p-5 sm:p-6 text-left">
+
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome da Receita</label>
