@@ -324,9 +324,10 @@ function IntegrationsPage() {
       {activeCategory === 'oauth' && <OAuthProvidersPanel />}
 
 
-      <div className={`grid gap-8 grid-cols-1 lg:grid-cols-12 ${activeCategory === 'oauth' ? 'hidden' : ''}`}>
+      <div className={`grid gap-6 lg:gap-8 grid-cols-1 lg:grid-cols-12 ${activeCategory === 'oauth' ? 'hidden' : ''}`}>
         {/* Sidebar List — no mobile, esconde quando um item está aberto */}
-        <div className={`lg:col-span-4 space-y-4 ${selectedItem && (activeCategory === 'ia' || activeCategory === 'payment') ? 'hidden lg:block' : ''}`}>
+        <div className={`lg:col-span-4 space-y-4 ${activeCategory === 'email' ? 'hidden lg:block' : ''} ${selectedItem && (activeCategory === 'ia' || activeCategory === 'payment') ? 'hidden lg:block' : ''}`}>
+
           {activeCategory === 'email' ? (
             <Card className="bg-[#111] border-white/5">
               <CardHeader>
@@ -845,36 +846,37 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
-          <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+        <TabsList className="scrollbar-hidden mb-6 w-full justify-start gap-1 overflow-x-auto bg-black/40 border border-white/5 p-1 [-webkit-overflow-scrolling:touch]">
+          <TabsTrigger value="config" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             Identidade
           </TabsTrigger>
-          <TabsTrigger value="guide" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+          <TabsTrigger value="guide" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             Manual
           </TabsTrigger>
-          <TabsTrigger value="templates" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+          <TabsTrigger value="templates" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             Templates
           </TabsTrigger>
-          <TabsTrigger value="resend" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+          <TabsTrigger value="resend" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             API Key (Resend)
           </TabsTrigger>
-          <TabsTrigger value="test" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+          <TabsTrigger value="test" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             Teste de Envio
           </TabsTrigger>
-          <TabsTrigger value="logs" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+          <TabsTrigger value="logs" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             Logs de Auditoria
           </TabsTrigger>
         </TabsList>
 
+
         <TabsContent value="config" className="space-y-6 m-0">
           <Card className="bg-[#111] border-white/5">
             <CardHeader className="border-b border-white/5 bg-white/[0.02]">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-lg font-bold uppercase">Identidade do Remetente</CardTitle>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <CardTitle className="text-base sm:text-lg font-bold uppercase">Identidade do Remetente</CardTitle>
                   <CardDescription className="text-xs text-white/40">Configure como os e-mails aparecerão para os alunos.</CardDescription>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {settings?.validation_status && (
                     <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${
                       settings.validation_status === 'verified' ? 'text-emerald-400 bg-emerald-400/10' : 
@@ -890,8 +892,9 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-6 space-y-6">
-              <div className="grid gap-6 md:grid-cols-2">
+
+            <CardContent className="p-4 sm:p-6 space-y-6">
+              <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome do Remetente</Label>
                   <Input 
@@ -904,6 +907,9 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail do Remetente</Label>
                   <Input 
                     value={formData.from_email}
+                    inputMode="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
                     onChange={(e) => setFormData(prev => ({ ...prev, from_email: e.target.value }))}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
@@ -912,17 +918,20 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail de Resposta (Reply-To)</Label>
                   <Input 
                     value={formData.reply_to}
+                    inputMode="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
                     onChange={(e) => setFormData(prev => ({ ...prev, reply_to: e.target.value }))}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-4 border-t border-white/5">
+              <div className="flex flex-col gap-2 pt-4 border-t border-white/5 sm:flex-row sm:items-center">
                 <Button 
                   onClick={handleManualSave}
                   disabled={updateSettingsMutation.isPending}
-                  className="bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-10 px-8"
+                  className="w-full sm:w-auto bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-11 px-8"
                 >
                   {updateSettingsMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                   Salvar Configurações
@@ -932,7 +941,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   disabled={updateSettingsMutation.isPending}
                   onClick={handleToggleActivation}
                   className={cn(
-                    "font-bold uppercase tracking-widest text-[10px] h-10 px-6 transition-all",
+                    "w-full sm:w-auto font-bold uppercase tracking-widest text-[10px] h-11 px-6 transition-all",
                     settings?.is_enabled 
                       ? "bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20" 
                       : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20"
@@ -941,6 +950,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   {updateSettingsMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : (settings?.is_enabled ? 'Desativar Envio' : 'Ativar Envio')}
                 </Button>
               </div>
+
             </CardContent>
           </Card>
 
@@ -951,7 +961,8 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
               </CardTitle>
               <CardDescription className="text-xs text-white/40">Instruções para configurar o envio transacional.</CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
+
               <div className="space-y-4">
                 {GUIDES.resend.map((step, idx) => (
                   <div key={idx} className="flex gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-xl">
@@ -1048,7 +1059,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
 
         <TabsContent value="logs" className="m-0">
           <Card className="bg-[#111] border-white/5">
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-row items-start justify-between gap-3">
               <div>
                 <CardTitle className="text-lg font-bold uppercase">Auditoria de Disparos</CardTitle>
                 <CardDescription className="text-xs text-white/40">Últimos 20 e-mails processados pelo sistema.</CardDescription>
@@ -1215,10 +1226,10 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
   return (
     <Card className="bg-[#111] border-white/5">
       <CardHeader className="border-b border-white/5 bg-white/[0.02]">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-lg font-bold uppercase flex items-center gap-2">
-              <Mail className="h-5 w-5 text-[#ff6a00]" /> Credenciais API (Resend)
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
+              <Mail className="h-5 w-5 shrink-0 text-[#ff6a00]" /> <span className="min-w-0">Credenciais API (Resend)</span>
             </CardTitle>
             <CardDescription className="text-xs text-white/40">Insira sua API Key para habilitar os envios transacionais.</CardDescription>
           </div>
@@ -1227,14 +1238,15 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
               variant="outline" 
               size="sm"
               onClick={() => setIntegration({ ...integration, status: !integration.status })}
-              className={`h-7 rounded-full px-4 border-none transition-all ${integration.status ? 'bg-[#ff6a00] text-black' : 'bg-white/10 text-white/40'}`}
+              className={`h-8 shrink-0 rounded-full px-4 border-none text-[10px] font-bold uppercase tracking-widest transition-all ${integration.status ? 'bg-[#ff6a00] text-black' : 'bg-white/10 text-white/40'}`}
             >
               {integration.status ? 'ATIVO' : 'INATIVO'}
             </Button>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-6 space-y-6">
+      <CardContent className="p-4 sm:p-6 space-y-6">
+
         <div className="space-y-2">
           <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
             <Key className="h-3 w-3 text-[#ff6a00]" /> API Key
@@ -1252,30 +1264,32 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
         </div>
 
         <div className="pt-4 flex flex-col gap-4">
-          <div className="flex items-center justify-between p-4 bg-black/40 border border-white/5 rounded-xl">
-            <div className="space-y-1">
+          <div className="flex flex-col gap-3 p-4 bg-black/40 border border-white/5 rounded-xl sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1 min-w-0">
               <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Teste de Conexão</p>
               <p className="text-xs text-white">Valide se a chave inserida é válida na Resend.</p>
             </div>
             <Button 
               onClick={handleTest} 
               disabled={isTesting}
-              className="bg-white/5 border border-white/10 hover:bg-white/10 text-[10px] font-bold uppercase tracking-widest h-10 px-6"
+              className="w-full sm:w-auto shrink-0 bg-white/5 border border-white/10 hover:bg-white/10 text-[10px] font-bold uppercase tracking-widest h-11 px-6"
             >
               {isTesting ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" /> : <Zap className="h-3.5 w-3.5 mr-2 text-[#ff6a00]" />}
               Testar
             </Button>
           </div>
 
+
           {testResult && (
-            <div className={`p-4 rounded-xl border ${testResult.success ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-red-500/5 border-red-500/20'}`}>
+            <div className={`p-4 rounded-xl border break-words ${testResult.success ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-red-500/5 border-red-500/20'}`}>
               <p className="text-[10px] font-bold uppercase text-white/60">{testResult.success ? 'Conexão OK' : 'Falha na Conexão'}</p>
               <p className="text-xs text-white/40 mt-1">{testResult.message}</p>
             </div>
           )}
         </div>
       </CardContent>
-      <CardFooter className="bg-white/[0.01] border-t border-white/5 p-4 flex justify-between">
+      <CardFooter className="bg-white/[0.01] border-t border-white/5 p-4 flex flex-wrap items-center justify-between gap-2">
+
         <Button 
           variant="ghost" 
           size="sm" 
@@ -1357,23 +1371,23 @@ function OffersIntegrationPanel() {
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
       <Card className="bg-[#111] border-white/5 overflow-hidden">
         <CardHeader className="border-b border-white/5 bg-white/[0.02]">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-lg font-bold uppercase flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-[#ff6a00]" /> Gestão de Ofertas (Upsell)
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
+                <Sparkles className="h-5 w-5 shrink-0 text-[#ff6a00]" /> <span className="min-w-0">Gestão de Ofertas (Upsell)</span>
               </CardTitle>
               <CardDescription className="text-xs text-white/40">
                 Configure o comportamento do popup de oferta pós-venda.
               </CardDescription>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={() => {
                   toast.info("Manual: Defina o percentual de desconto que será aplicado a todos os produtos sugeridos no popup de upsell que aparece após uma compra bem-sucedida.");
                 }}
-                className="h-7 text-[9px] uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10"
+                className="h-9 text-[9px] uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10"
               >
                 <BookOpen className="h-3 w-3 mr-1.5" /> Manual
               </Button>
@@ -1385,7 +1399,7 @@ function OffersIntegrationPanel() {
                   variant="ghost" 
                   size="sm"
                   onClick={() => saveOfferSettings({ status: !isEnabled })}
-                  className={`h-7 w-12 rounded-full p-0 transition-all relative ${isEnabled ? 'bg-emerald-500/20' : 'bg-white/5'}`}
+                  className={`h-7 w-12 shrink-0 rounded-full p-0 transition-all relative ${isEnabled ? 'bg-emerald-500/20' : 'bg-white/5'}`}
                 >
                   <div className={`absolute top-1 h-5 w-5 rounded-full transition-all duration-300 shadow-lg ${isEnabled ? 'right-1 bg-emerald-400 shadow-emerald-500/50' : 'left-1 bg-white/20'}`} />
                 </Button>
@@ -1393,17 +1407,19 @@ function OffersIntegrationPanel() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-8 space-y-8">
-          <div className="grid gap-8 md:grid-cols-2">
+        <CardContent className="p-4 sm:p-8 space-y-6 sm:space-y-8">
+          <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
+
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 flex items-center gap-2">
-                  <Percent className="h-4 w-4 text-[#ff6a00]" /> Percentual de Desconto
+                  <Percent className="h-4 w-4 shrink-0 text-[#ff6a00]" /> Percentual de Desconto
                 </Label>
                 <Badge variant="outline" className="bg-[#ff6a00]/10 text-[#ff6a00] border-none font-black">
                   Mínimo 15%
                 </Badge>
               </div>
+
               <div className="relative group">
                 <Input 
                   type="number"
@@ -1420,16 +1436,17 @@ function OffersIntegrationPanel() {
               </p>
             </div>
 
-            <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 flex flex-col justify-center">
+            <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 sm:p-6 flex flex-col justify-center">
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
+                <div className="h-10 w-10 shrink-0 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
                   <Zap className="h-5 w-5 text-[#ff6a00]" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h4 className="text-xs font-bold text-white uppercase tracking-widest">Ação Imediata</h4>
                   <p className="text-[10px] text-white/40">As mudanças refletem instantaneamente no checkout.</p>
                 </div>
               </div>
+
               <Button 
                 onClick={() => {
                   const input = document.getElementById('discount_input') as HTMLInputElement;
@@ -1447,7 +1464,7 @@ function OffersIntegrationPanel() {
             </div>
           </div>
 
-          <div className="pt-8 border-t border-white/5 grid gap-4 sm:grid-cols-3">
+          <div className="pt-6 sm:pt-8 border-t border-white/5 grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
              <div className="p-4 bg-black/40 border border-white/5 rounded-xl space-y-1">
                 <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest">Tipo de Oferta</p>
                 <p className="text-xs font-bold text-white uppercase">Pós-venda (Upsell)</p>
@@ -1815,26 +1832,26 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
           
           return (
             <Card key={feature.id} className="bg-[#111] border-white/5 overflow-hidden">
-              <CardHeader className="border-b border-white/5 bg-white/[0.02] p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-xl ${isActive ? 'bg-[#ff6a00] text-black shadow-[0_0_20px_rgba(255,106,0,0.2)]' : 'bg-white/5 text-white/40'}`}>
+              <CardHeader className="border-b border-white/5 bg-white/[0.02] p-4 sm:p-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
+                    <div className={`shrink-0 p-3 rounded-xl ${isActive ? 'bg-[#ff6a00] text-black shadow-[0_0_20px_rgba(255,106,0,0.2)]' : 'bg-white/5 text-white/40'}`}>
                       <feature.icon className="h-6 w-6" />
                     </div>
-                    <div>
-                      <CardTitle className="text-lg font-bold uppercase tracking-tight">{feature.name}</CardTitle>
+                    <div className="min-w-0">
+                      <CardTitle className="text-base sm:text-lg font-bold uppercase tracking-tight">{feature.name}</CardTitle>
                       <CardDescription className="text-xs text-white/40 mt-1 max-w-md">
                         {feature.description}
                       </CardDescription>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                     <Badge variant="outline" className={`text-[9px] uppercase tracking-widest border-none ${isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-white/5 text-white/20'}`}>
                       {isActive ? 'Ativado' : 'Desativado'}
                     </Badge>
                     <Button 
                       onClick={() => handleToggle(feature, isActive)}
-                      className={`h-10 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${isActive ? 'bg-white/5 text-white hover:bg-white/10' : 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]/90'}`}
+                      className={`h-11 flex-1 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all sm:flex-none ${isActive ? 'bg-white/5 text-white hover:bg-white/10' : 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]/90'}`}
                     >
                       {isActive ? 'Desativar' : 'Ativar'}
                     </Button>
@@ -1843,8 +1860,9 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
               </CardHeader>
               
               {isActive && feature.settingsFields && (
-                <CardContent className="p-6 bg-white/[0.01]">
-                  <div className="grid gap-6 md:grid-cols-2">
+                <CardContent className="p-4 sm:p-6 bg-white/[0.01]">
+                  <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+
                     {feature.settingsFields.map((field: any) => (
                       <div key={field.key} className="space-y-2">
                         <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">{field.label}</Label>
