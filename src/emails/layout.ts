@@ -10,13 +10,20 @@
 const FALLBACK_SITE = "https://skewer-success-engine.lovable.app";
 
 function resolveSite(): string {
-  const raw =
-    process.env["EMAIL_ASSET_BASE_URL"] ||
-    process.env["SITE_URL"] ||
-    process.env["PUBLIC_SITE_URL"] ||
-    FALLBACK_SITE;
+  const raw = process.env["SITE_URL"] || process.env["PUBLIC_SITE_URL"] || FALLBACK_SITE;
   return String(raw).replace(/\/$/, "");
 }
+
+/**
+ * Host das imagens dos e-mails. Fica separado dos links porque o domínio do site
+ * pode ainda não estar publicado/propagado — e isso quebraria a logo e o banner.
+ */
+function resolveAssetBase(): string {
+  const raw = process.env["EMAIL_ASSET_BASE_URL"] || FALLBACK_SITE;
+  return String(raw).replace(/\/$/, "");
+}
+
+export const ASSET_BASE = resolveAssetBase();
 
 export const BRAND = {
   name: "Ronnei na Veia",
