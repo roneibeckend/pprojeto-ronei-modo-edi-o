@@ -256,17 +256,25 @@ export const Route = createFileRoute('/api/public/webhooks/asaas')({
               // Comissão do afiliado responsável pela venda
               if (affiliateCode) {
                 try {
-                  const { data: affiliate } = await supabaseAdmin
-                    .from('affiliates')
-                    .select('id, user_id, commission_rate')
-                    .eq('affiliate_code', affiliateCode)
+                  const { data: link } = await supabaseAdmin
+                    .from('affiliate_links')
+                    .select('affiliate_id')
+                    .eq('code', affiliateCode)
                     .maybeSingle();
 
-                  if (affiliate?.user_id) {
+                  const affiliateId = (link as any)?.affiliate_id || affiliateCode;
+
+                  const { data: affiliate } = await supabaseAdmin
+                    .from('affiliates')
+                    .select('id, commission_rate')
+                    .eq('id', affiliateId)
+                    .maybeSingle();
+
+                  if (affiliate?.id) {
                     const { data: affProfile } = await supabaseAdmin
                       .from('profiles')
                       .select('name, email, email_notifications_opt_in')
-                      .eq('id', (affiliate as any).user_id)
+                      .eq('id', (affiliate as any).id)
                       .maybeSingle();
 
                     const rate = Number((affiliate as any).commission_rate ?? 30);
