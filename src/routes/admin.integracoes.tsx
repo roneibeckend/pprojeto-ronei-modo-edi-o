@@ -763,8 +763,11 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
 
   const updateSettingsMutation = useMutation({
     mutationFn: updateEmailSettings,
-    onSuccess: () => {
+    onSuccess: (result: any) => {
       toast.success("Configurações de e-mail atualizadas!");
+      if (result?.warning) {
+        toast.warning(result.warning, { duration: 8000 });
+      }
       queryClient.invalidateQueries({ queryKey: ['email_settings'] });
     },
     onError: (err: any) => toast.error("Erro ao salvar: " + err.message)
@@ -805,24 +808,20 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
   };
 
   const handleToggleActivation = () => {
-    if (!settings && (!formData.from_name || !formData.from_email)) {
-      toast.error("Configure o remetente primeiro.");
-      return;
-    }
-    
-    const apiKey = resendIntegration?.credentials?.apiKey;
-    if (!apiKey && !settings?.is_enabled) {
-      toast.error("Configure a API Key do Resend antes de ativar.");
-      setActiveTab('resend');
+    const fromName = formData.from_name || settings?.from_name || '';
+    const fromEmail = formData.from_email || settings?.from_email || '';
+
+    if (!fromName || fromName.length < 2 || !fromEmail || !fromEmail.includes('@')) {
+      toast.error("Preencha e salve a identidade do remetente antes de ativar o envio.");
       return;
     }
 
-    updateSettingsMutation.mutate({ 
+    updateSettingsMutation.mutate({
       data: {
-        from_name: formData.from_name || settings?.from_name || '',
-        from_email: formData.from_email || settings?.from_email || '',
+        from_name: fromName,
+        from_email: fromEmail,
         reply_to: formData.reply_to || settings?.reply_to || null,
-        is_enabled: !settings?.is_enabled 
+        is_enabled: !settings?.is_enabled
       }
     });
   };
