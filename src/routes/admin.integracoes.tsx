@@ -1370,23 +1370,23 @@ function OffersIntegrationPanel() {
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
       <Card className="bg-[#111] border-white/5 overflow-hidden">
         <CardHeader className="border-b border-white/5 bg-white/[0.02]">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-lg font-bold uppercase flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-[#ff6a00]" /> Gestão de Ofertas (Upsell)
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
+                <Sparkles className="h-5 w-5 shrink-0 text-[#ff6a00]" /> <span className="min-w-0">Gestão de Ofertas (Upsell)</span>
               </CardTitle>
               <CardDescription className="text-xs text-white/40">
                 Configure o comportamento do popup de oferta pós-venda.
               </CardDescription>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={() => {
                   toast.info("Manual: Defina o percentual de desconto que será aplicado a todos os produtos sugeridos no popup de upsell que aparece após uma compra bem-sucedida.");
                 }}
-                className="h-7 text-[9px] uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10"
+                className="h-9 text-[9px] uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10"
               >
                 <BookOpen className="h-3 w-3 mr-1.5" /> Manual
               </Button>
@@ -1398,7 +1398,7 @@ function OffersIntegrationPanel() {
                   variant="ghost" 
                   size="sm"
                   onClick={() => saveOfferSettings({ status: !isEnabled })}
-                  className={`h-7 w-12 rounded-full p-0 transition-all relative ${isEnabled ? 'bg-emerald-500/20' : 'bg-white/5'}`}
+                  className={`h-7 w-12 shrink-0 rounded-full p-0 transition-all relative ${isEnabled ? 'bg-emerald-500/20' : 'bg-white/5'}`}
                 >
                   <div className={`absolute top-1 h-5 w-5 rounded-full transition-all duration-300 shadow-lg ${isEnabled ? 'right-1 bg-emerald-400 shadow-emerald-500/50' : 'left-1 bg-white/20'}`} />
                 </Button>
@@ -1406,8 +1406,9 @@ function OffersIntegrationPanel() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-8 space-y-8">
-          <div className="grid gap-8 md:grid-cols-2">
+        <CardContent className="p-4 sm:p-8 space-y-6 sm:space-y-8">
+          <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
+
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 flex items-center gap-2">
