@@ -231,32 +231,33 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
 
         <Container style={{ width: "100%", maxWidth: "660px", margin: "0 auto", padding: "0 0 28px" }}>
           {/* Header */}
-          <Section style={{ backgroundColor: C.black, borderBottom: `3px solid ${C.orange}`, padding: "22px 24px" }}>
+          <Section className="rnv-dark" {...({ bgcolor: C.black } as any)} style={{ backgroundColor: C.black, borderBottom: `3px solid ${C.orange}`, padding: "22px 24px" }}>
             <Row>
               <Column style={{ width: "56px", verticalAlign: "middle" }}>
                 <Img src={EMAIL_ASSETS.logo} width="48" height="48" alt={BRAND.name} style={{ borderRadius: "50%", display: "block" }} />
               </Column>
               <Column style={{ verticalAlign: "middle", paddingLeft: "12px" }}>
-                <Text style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: C.white, fontFamily: FONT }}>
+                <Text className="rnv-inv" style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: C.white, fontFamily: FONT }}>
                   {BRAND.name}
                 </Text>
                 <Text style={{ margin: "2px 0 0", fontSize: "12px", color: "#FF8A3D", fontWeight: 700, letterSpacing: "0.6px", fontFamily: FONT }}>
                   {props.reportType.toUpperCase()}
                 </Text>
-                <Text style={{ margin: "2px 0 0", fontSize: "12px", color: "#D4D4D8", fontFamily: FONT }}>
+                <Text className="rnv-inv" style={{ margin: "2px 0 0", fontSize: "12px", color: "#D4D4D8", fontFamily: FONT }}>
                   Referência: {props.reportDate}
                 </Text>
               </Column>
             </Row>
           </Section>
 
-          <Section bgcolor={C.white} style={{ backgroundColor: C.white, padding: "22px 20px 26px" }}>
-            <Heading as="h1" style={{ margin: "0 0 4px", fontSize: "20px", color: C.text, fontFamily: FONT }}>
+          <Section className="rnv-white" bgcolor={C.white} style={{ backgroundColor: C.white, padding: "22px 20px 26px" }}>
+            <Heading as="h1" className="rnv-txt" style={{ margin: "0 0 4px", fontSize: "20px", color: C.text, fontFamily: FONT }}>
               Resumo executivo
             </Heading>
-            <Text style={{ margin: "0 0 18px", fontSize: "13px", color: C.muted, fontFamily: FONT }}>
+            <Text className="rnv-mut" style={{ margin: "0 0 18px", fontSize: "13px", color: C.muted, fontFamily: FONT }}>
               Visão consolidada de vendas, usuários, conteúdo e saúde operacional da plataforma.
             </Text>
+
 
             {/* KPIs */}
             {kpis.map((k) => (
