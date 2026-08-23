@@ -10,6 +10,8 @@ import { useProgress } from "@/hooks/use-progress";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
+import { EmailVerificationCard } from "@/components/platform/EmailVerificationCard";
+
 
 export const Route = createFileRoute("/app/perfil")({
   head: () => ({ meta: [{ title: "Meu perfil — Ronnei na Veia" }] }),
