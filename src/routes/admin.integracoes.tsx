@@ -1287,7 +1287,8 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
           )}
         </div>
       </CardContent>
-      <CardFooter className="bg-white/[0.01] border-t border-white/5 p-4 flex justify-between">
+      <CardFooter className="bg-white/[0.01] border-t border-white/5 p-4 flex flex-wrap items-center justify-between gap-2">
+
         <Button 
           variant="ghost" 
           size="sm" 
