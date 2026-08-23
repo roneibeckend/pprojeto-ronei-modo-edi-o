@@ -4,7 +4,7 @@ import { X, ShieldAlert, Loader2, Download } from "lucide-react";
 interface EbookDownloadDialogProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: () => Promise<void> | void;
+  onConfirm: (accepted: boolean) => Promise<void> | void;
   ebookTitle: string;
   owner: { name: string; email: string } | null;
 }
@@ -25,9 +25,12 @@ export default function EbookDownloadDialog({
     if (!accepted) return;
     try {
       setLoading(true);
-      await onConfirm();
+      await onConfirm(accepted);
       setAccepted(false);
       onClose();
+    } catch {
+      // Erros (não logado, aceite ausente, limite de downloads) já são
+      // notificados pelo chamador; mantemos o modal aberto.
     } finally {
       setLoading(false);
     }
