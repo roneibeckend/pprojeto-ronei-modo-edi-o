@@ -38,6 +38,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AdminPayoutsPanel } from "@/components/admin/AdminPayoutsPanel";
+
 
 export const Route = createFileRoute("/admin/financeiro/saques")({
   head: () => ({ meta: [{ title: "Gestão de Saídas e Saques — Painel Admin" }] }),
