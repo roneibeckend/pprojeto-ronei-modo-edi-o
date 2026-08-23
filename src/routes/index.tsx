@@ -72,9 +72,24 @@ import printWhats3 from "@/assets/opt/print-whats-3.webp";
 import printPix from "@/assets/opt/print-pix.webp";
 
 
-const VideoPlayer = lazy(() =>
-  import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer })),
-);
+const importVideoPlayer = () =>
+  import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer }));
+
+const VideoPlayer = lazy(importVideoPlayer);
+
+/** Baixa o chunk do player e aquece o início do arquivo de vídeo no cache. */
+let videoWarmed = false;
+function warmUpVideo(url: string) {
+  if (videoWarmed) return;
+  videoWarmed = true;
+  void importVideoPlayer().catch(() => undefined);
+  try {
+    void fetch(url, { headers: { Range: "bytes=0-800000" } }).catch(() => undefined);
+  } catch {
+    /* cache warming is best-effort */
+  }
+}
+
 
 // Widget da assistente: chunk separado, carregado só quando a seção aparece.
 const BrasaChat = lazy(() => import("@/components/landing/BrasaChat"));
