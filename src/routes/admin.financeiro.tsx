@@ -15,7 +15,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { distributeProfits } from "@/lib/payouts.functions";
+
 import { getFinancialSummary } from "@/lib/finance.functions";
 import { toast } from "sonner";
 
