@@ -58,7 +58,9 @@ export function VideoPlayer({
 
   const isYouTube = isYouTubeUrl(src);
   const isDrive = isDriveUrl(src);
-  const isEmbed = isYouTube;
+  // Google Drive files cannot be played by a native <video> tag (the download
+  // endpoint answers with an HTML confirmation page), so they use the iframe embed.
+  const isEmbed = isYouTube || isDrive;
   const playableSrc = isDrive ? getDriveStream(src) : src;
   const driveId = isDrive ? getDriveId(src) : '';
   const cleanPoster = poster || (driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w1200` : undefined);
