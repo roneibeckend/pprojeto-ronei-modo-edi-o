@@ -418,7 +418,20 @@ function IntegrationsPage() {
 
         {/* Detail Panel */}
         <div className="lg:col-span-8">
-          {activeCategory === 'email' ? <EmailIntegrationPanel integrations={integrations} /> : activeCategory === 'offers' ? <OffersIntegrationPanel /> : (activeCategory === 'feature') ? <FeatureTogglePanel integrations={integrations} /> : (selectedItem && selectedItem.category !== 'resend') ? (
+          {activeCategory === 'email' ? <EmailIntegrationPanel integrations={integrations} /> : activeCategory === 'offers' ? <OffersIntegrationPanel /> : (activeCategory === 'feature') ? (
+            <Tabs defaultValue="coupons" className="w-full">
+              <TabsList className="scrollbar-hidden w-full overflow-x-auto bg-black/40 border border-white/5 p-1 mb-6 [-webkit-overflow-scrolling:touch]">
+                <TabsTrigger value="coupons" className="flex-1 shrink-0 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
+                  Cupons de Desconto
+                </TabsTrigger>
+                <TabsTrigger value="beta" className="flex-1 shrink-0 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
+                  Recursos Beta
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="coupons"><CouponsPanel /></TabsContent>
+              <TabsContent value="beta"><FeatureTogglePanel integrations={integrations} /></TabsContent>
+            </Tabs>
+          ) : (selectedItem && selectedItem.category !== 'resend') ? (
             <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
               <Button
                 variant="ghost"
