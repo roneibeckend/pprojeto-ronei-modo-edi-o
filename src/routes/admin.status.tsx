@@ -96,29 +96,30 @@ function AdminStatusPage() {
   const Overall = healthMeta[overall];
 
   return (
-    <div className="space-y-6 p-4 sm:p-6">
+    <div className="space-y-6">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h1 className="flex items-center gap-2 text-xl font-bold text-white sm:text-2xl">
-            <Activity className="h-6 w-6" style={{ color: ORANGE }} />
-            Status Operacional
+          <h1 className="flex items-center gap-2 text-lg font-bold text-white sm:text-2xl">
+            <Activity className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" style={{ color: ORANGE }} />
+            <span className="min-w-0 truncate">Status Operacional</span>
           </h1>
-          <p className="mt-1 text-sm text-white/50">
+          <p className="mt-1 text-xs text-white/50 sm:text-sm">
             Saúde das integrações e últimos eventos do sistema
             {data ? ` · atualizado ${format(new Date(data.generatedAt), "HH:mm:ss", { locale: ptBR })}` : ""}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <span className={`flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium ${Overall.color}`}>
-            <Overall.Icon className="h-4 w-4" />
-            {Overall.label}
+        <div className="grid grid-cols-2 items-center gap-2 sm:flex sm:shrink-0">
+          <span className={`flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium sm:text-sm ${Overall.color}`}>
+            <Overall.Icon className="h-4 w-4 shrink-0" />
+            <span className="truncate">{Overall.label}</span>
           </span>
-          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching} className="min-h-[44px] w-full sm:w-auto">
             <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
         </div>
       </header>
+
 
       {error && (
         <Card className="border-red-500/30 bg-red-500/5">
