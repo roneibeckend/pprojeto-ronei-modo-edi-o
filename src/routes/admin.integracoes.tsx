@@ -324,9 +324,10 @@ function IntegrationsPage() {
       {activeCategory === 'oauth' && <OAuthProvidersPanel />}
 
 
-      <div className={`grid gap-8 grid-cols-1 lg:grid-cols-12 ${activeCategory === 'oauth' ? 'hidden' : ''}`}>
+      <div className={`grid gap-6 lg:gap-8 grid-cols-1 lg:grid-cols-12 ${activeCategory === 'oauth' ? 'hidden' : ''}`}>
         {/* Sidebar List — no mobile, esconde quando um item está aberto */}
-        <div className={`lg:col-span-4 space-y-4 ${selectedItem && (activeCategory === 'ia' || activeCategory === 'payment') ? 'hidden lg:block' : ''}`}>
+        <div className={`lg:col-span-4 space-y-4 ${activeCategory === 'email' ? 'hidden lg:block' : ''} ${selectedItem && (activeCategory === 'ia' || activeCategory === 'payment') ? 'hidden lg:block' : ''}`}>
+
           {activeCategory === 'email' ? (
             <Card className="bg-[#111] border-white/5">
               <CardHeader>
