@@ -179,8 +179,32 @@ export const sendEmailVerificationCode = createServerFn({ method: "POST" })
       throw new Error("Não foi possível enviar o e-mail agora. Tente novamente em instantes.");
     }
 
+    const isResend = ((rows as any[]) ?? []).length > 0;
+    const attempt = RESEND_MAX_PER_WINDOW - state.remainingInWindow + 1;
+
+    {
+      const { logSystemEvent } = await import("@/lib/system-log.server");
+      await logSystemEvent({
+        level: "info",
+        source: "email-verification",
+        message: isResend
+          ? `Código de confirmação reenviado para ${email} (tentativa ${attempt}/${RESEND_MAX_PER_WINDOW})`
+          : `Código de confirmação enviado para ${email}`,
+        details: {
+          action: isResend ? "code_resent" : "code_sent",
+          email,
+          attempt,
+          max_per_window: RESEND_MAX_PER_WINDOW,
+          expires_at: expiresAt,
+        },
+        userId: context.userId,
+      });
+    }
+
     return {
       alreadyVerified: false as const,
+      isResend,
+      attempt,
       email,
       expiresAt,
       resend: {
@@ -191,6 +215,7 @@ export const sendEmailVerificationCode = createServerFn({ method: "POST" })
         pendingExpiresAt: expiresAt,
       },
     };
+
   });
 
 /** Valida o código informado e marca o e-mail como confirmado. */
