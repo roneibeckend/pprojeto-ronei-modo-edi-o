@@ -111,3 +111,34 @@ export const sendRawTestEmail = createServerFn({ method: "POST" })
     }
     return { success: true, id: result.id };
   });
+
+/**
+ * Renderiza o HTML final (dentro do layout premium da marca) de um modelo salvo/editado,
+ * exatamente como o destinatário receberá.
+ */
+export const previewRawTemplate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        subject: z.string().min(1),
+        html: z.string().min(1),
+        data: z.record(z.any()).default({}),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data: { subject, html, data }, context }) => {
+    await assertAdmin(context);
+
+    const { renderTemplate } = await import("./resend.server");
+    const { wrapCustomHtml } = await import("@/emails/layout");
+
+    const vars = { name: "Churrasqueiro", ...data };
+    const renderedSubject = renderTemplate(subject, vars);
+    const renderedHtml = renderTemplate(html, vars);
+
+    return {
+      subject: renderedSubject,
+      html: wrapCustomHtml({ heading: renderedSubject, bodyHtml: renderedHtml }),
+    };
+  });
