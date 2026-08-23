@@ -168,29 +168,32 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
     }
     
     // Auto-validate after successful save
+    let warning: string | null = null;
     try {
-      const { getResendConfig, validateResendSender } = await import("./resend.server");
+      const { validateResendSender } = await import("./resend.server");
       // Use the API key from integrations if available
       const { data: integration } = await supabaseAdmin
         .from("integrations")
         .select("credentials")
         .eq("category", "resend")
         .maybeSingle();
-        
+
       const apiKey = (integration?.credentials as any)?.apiKey || process.env['RESEND_API_KEY'];
-      
+
       if (apiKey) {
         const result = await validateResendSender(apiKey, data.from_email);
-        
+
         await supabaseAdmin.from('email_settings').update({
           validation_status: result.status,
           last_validation_at: new Date().toISOString(),
           validation_error: result.error
         }).eq('from_email', data.from_email);
+      } else if (data.is_enabled) {
+        warning = "Envio ativado, mas a API Key do Resend não está configurada. Cadastre-a na aba 'API Key (Resend)' para que os e-mails sejam entregues.";
       }
     } catch (e) {
       console.warn("Could not auto-validate sender:", e);
     }
 
-    return { success: true };
+    return { success: true, warning };
   });
