@@ -2003,8 +2003,10 @@ function LandingPage() {
     return () => {
       io.disconnect();
       window.removeEventListener("scroll", onScroll);
+      document.documentElement.removeAttribute("data-reveal-js");
     };
   }, []);
+
   return (
     <div className="min-h-dvh pb-24 md:pb-0">
       <ScrollProgress />
