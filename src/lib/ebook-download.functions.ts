@@ -26,8 +26,8 @@ export const registerEbookDownload = createServerFn({ method: "POST" })
     const { data: result, error } = await context.supabase.rpc("register_ebook_download", {
       p_ebook_id: data.ebook_id,
       p_accepted: true,
-      p_ip: null,
-      p_user_agent: data.user_agent || null,
+      p_ip: undefined,
+      p_user_agent: data.user_agent || undefined,
     });
 
     if (error) throw new Error(error.message);
