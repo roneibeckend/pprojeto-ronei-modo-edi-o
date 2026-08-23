@@ -13,7 +13,7 @@ import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { verifyAsaasPayment } from "@/lib/asaas.functions";
+import { verifyAsaasPayment, checkAsaasCheckoutHealth } from "@/lib/asaas.functions";
 import { completePendingCheckout } from "@/lib/checkout.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
