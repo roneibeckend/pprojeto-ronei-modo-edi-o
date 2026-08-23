@@ -60,7 +60,9 @@ import skewersFlat from "@/assets/skewers-flat.asset.json";
 import ribeye from "@/assets/ribeye.asset.json";
 import chefWorking from "@/assets/chef-working.asset.json";
 import chefPortrait from "@/assets/chef-portrait.asset.json";
-import heroVideo from "@/assets/ronnei-historia.mp4.asset.json";
+import heroVideoDesktop from "@/assets/ronnei-historia-desktop.mp4.asset.json";
+import heroVideoMobile from "@/assets/ronnei-historia-mobile.mp4.asset.json";
+import heroVideoPoster from "@/assets/ronnei-historia-poster.jpg.asset.json";
 import author from "@/assets/author.asset.json";
 import printWhats1 from "@/assets/print-whats-1.jpg";
 import printWhats2 from "@/assets/print-whats-2.jpg";
@@ -675,8 +677,9 @@ function Hero() {
               <div className="relative aspect-[9/16] max-h-[85vh] w-full overflow-hidden rounded-xl bg-black shadow-2xl">
                 <Suspense fallback={<div className="flex h-full items-center justify-center text-white"><Loader2 className="animate-spin" /></div>}>
                   <VideoPlayer 
-                    src={heroVideo.url}
-                    poster={author.url}
+                    src={heroVideoDesktop.url}
+                    srcMobile={heroVideoMobile.url}
+                    poster={heroVideoPoster.url}
                     videoId="ronnei-history"
                     isIntro={true}
                     aspect="portrait"
