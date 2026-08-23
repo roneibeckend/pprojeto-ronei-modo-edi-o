@@ -1297,6 +1297,36 @@ export type Database = {
         }
         Relationships: []
       }
+      email_verifications: {
+        Row: {
+          code: string
+          consumed_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          consumed_at?: string | null
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          consumed_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       financial_costs: {
         Row: {
           created_at: string
@@ -1914,6 +1944,7 @@ export type Database = {
           created_at: string
           email: string | null
           email_notifications_opt_in: boolean | null
+          email_verified_at: string | null
           id: string
           name: string | null
           phone: string | null
@@ -1925,6 +1956,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           email_notifications_opt_in?: boolean | null
+          email_verified_at?: string | null
           id: string
           name?: string | null
           phone?: string | null
@@ -1936,6 +1968,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           email_notifications_opt_in?: boolean | null
+          email_verified_at?: string | null
           id?: string
           name?: string | null
           phone?: string | null

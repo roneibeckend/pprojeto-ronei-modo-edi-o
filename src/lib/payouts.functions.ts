@@ -61,11 +61,28 @@ export const requestPayout = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => requestPayoutSchema.parse(data))
   .handler(async ({ data, context }) => {
+    // Afiliados só podem sacar com e-mail confirmado (exigência de compliance).
+    if (data.user_type === "affiliate") {
+      const { data: profile } = await context.supabase
+        .from("profiles")
+        .select("email_verified_at")
+        .eq("id", context.userId)
+        .maybeSingle();
+
+      if (!profile?.email_verified_at) {
+        throw new Error(
+          "Confirme seu e-mail no perfil antes de solicitar o primeiro saque como afiliado.",
+        );
+      }
+    }
+
     const ip =
       getRequestHeader("cf-connecting-ip") ||
       getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim() ||
       undefined;
     const userAgent = getRequestHeader("user-agent") || undefined;
+
+
 
     const { data: payoutId, error } = await context.supabase.rpc("request_payout_atomic", {
       p_amount: data.amount,
