@@ -135,26 +135,26 @@ function AdminStatusPage() {
         </div>
       ) : (
         <>
-          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
             {(data?.checks ?? []).map((check) => {
               const meta = healthMeta[check.health];
               return (
                 <Card key={check.key} className="border-white/10 bg-white/[0.03]">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center justify-between gap-2 text-base text-white">
+                  <CardHeader className="p-4 pb-3 sm:p-6 sm:pb-3">
+                    <CardTitle className="flex flex-wrap items-center justify-between gap-2 text-sm text-white sm:text-base">
                       <span className="min-w-0 truncate">{check.label}</span>
                       <span className={`flex shrink-0 items-center gap-1.5 text-xs font-medium ${meta.color}`}>
                         <meta.Icon className="h-4 w-4" />
                         {meta.label}
                       </span>
                     </CardTitle>
-                    <CardDescription className="text-white/50">{check.summary}</CardDescription>
+                    <CardDescription className="break-words text-xs text-white/50 sm:text-sm">{check.summary}</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-1.5">
+                  <CardContent className="space-y-1.5 p-4 pt-0 sm:p-6 sm:pt-0">
                     {check.details.map((d) => (
-                      <div key={d.label} className="flex items-center justify-between gap-3 text-xs">
-                        <span className="text-white/40">{d.label}</span>
-                        <span className="truncate font-medium text-white/80">{d.value}</span>
+                      <div key={d.label} className="flex items-start justify-between gap-3 text-xs">
+                        <span className="shrink-0 text-white/40">{d.label}</span>
+                        <span className="min-w-0 break-words text-right font-medium text-white/80">{d.value}</span>
                       </div>
                     ))}
                   </CardContent>
@@ -162,6 +162,7 @@ function AdminStatusPage() {
               );
             })}
           </section>
+
 
           <Card className="border-white/10 bg-white/[0.03]">
             <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
