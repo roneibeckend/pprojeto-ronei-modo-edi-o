@@ -1280,7 +1280,7 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
 
 
           {testResult && (
-            <div className={`p-4 rounded-xl border ${testResult.success ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-red-500/5 border-red-500/20'}`}>
+            <div className={`p-4 rounded-xl border break-words ${testResult.success ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-red-500/5 border-red-500/20'}`}>
               <p className="text-[10px] font-bold uppercase text-white/60">{testResult.success ? 'Conexão OK' : 'Falha na Conexão'}</p>
               <p className="text-xs text-white/40 mt-1">{testResult.message}</p>
             </div>
