@@ -137,7 +137,6 @@ export function VideoPlayer({
         title={title}
         className="w-full h-full object-contain bg-black"
         playsInline
-        // @ts-expect-error legacy iOS attribute
         webkit-playsinline="true"
         preload="metadata"
         controls={started}
