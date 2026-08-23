@@ -471,6 +471,19 @@ function FinancePage() {
           </div>
         </section>
       </div>
+
+      <section className="border border-white/5 bg-black/40 p-4 sm:p-6 text-left">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" style={{ color: ORANGE }} /> Gerenciamento Financeiro — Extrato de Saídas
+          </div>
+          <span className="lowercase tracking-normal font-normal text-white/30">
+            movimentações de saída da conta Asaas registradas automaticamente
+          </span>
+        </div>
+        <FinanceOutflowStatement />
+      </section>
+
     </div>
   );
 }
