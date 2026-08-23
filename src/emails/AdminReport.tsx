@@ -102,6 +102,8 @@ function KpiCard({ kpi }: { kpi: AdminReportKpi }) {
       <tbody>
         <tr>
           <td
+            className="rnv-card"
+            {...({ bgcolor: C.surface } as any)}
             style={{
               backgroundColor: C.surface,
               border: `1px solid ${C.border}`,
@@ -110,12 +112,13 @@ function KpiCard({ kpi }: { kpi: AdminReportKpi }) {
               padding: "16px 18px",
             }}
           >
-            <Text style={{ margin: 0, fontSize: "11px", letterSpacing: "1px", color: C.muted, textTransform: "uppercase", fontFamily: FONT }}>
+            <Text className="rnv-mut" style={{ margin: 0, fontSize: "11px", letterSpacing: "1px", color: C.muted, textTransform: "uppercase", fontFamily: FONT }}>
               {kpi.icon} {kpi.label}
             </Text>
-            <Text style={{ margin: "8px 0 0", fontSize: "26px", lineHeight: "30px", fontWeight: 800, color: C.text, fontFamily: FONT }}>
+            <Text className="rnv-txt" style={{ margin: "8px 0 0", fontSize: "26px", lineHeight: "30px", fontWeight: 800, color: C.text, fontFamily: FONT }}>
               {kpi.value}
             </Text>
+
             <DeltaBadge delta={kpi.delta} />
           </td>
         </tr>
@@ -138,6 +141,7 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
         width="100%"
         cellPadding={0}
         cellSpacing={0}
+        className="rnv-card"
         {...({ bgcolor: C.surface } as any)}
         style={{ backgroundColor: C.surface, border: `1px solid ${C.border}`, borderRadius: "12px", padding: "6px 16px" }}
       >
@@ -145,6 +149,7 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
           {rows.map((r, i) => (
             <tr key={r.label}>
               <td
+                className="rnv-mut"
                 style={{
                   padding: "11px 0",
                   borderBottom: i === rows.length - 1 ? "none" : `1px solid ${C.border}`,
@@ -157,6 +162,7 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
               </td>
               <td
                 align="right"
+                className="rnv-txt"
                 style={{
                   padding: "11px 0",
                   borderBottom: i === rows.length - 1 ? "none" : `1px solid ${C.border}`,
@@ -166,6 +172,7 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
                   fontFamily: FONT,
                 }}
               >
+
                 {r.value}
               </td>
             </tr>
@@ -181,37 +188,76 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
 
   return (
     <Html lang="pt-BR">
-      <Head />
+      <Head>
+        {/* Impede que Gmail/Outlook apliquem inversão automática de cores
+            (causa clássica de "blocos brancos" com texto invisível). */}
+        <meta name="color-scheme" content="light only" />
+        <meta name="supported-color-schemes" content="light only" />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+:root { color-scheme: light only; supported-color-schemes: light only; }
+.rnv-page { background-color:${C.page} !important; }
+.rnv-card { background-color:${C.surface} !important; }
+.rnv-white { background-color:${C.white} !important; }
+.rnv-dark { background-color:${C.black} !important; }
+.rnv-txt, .rnv-txt * { color:${C.text} !important; }
+.rnv-mut, .rnv-mut * { color:${C.muted} !important; }
+.rnv-inv, .rnv-inv * { color:${C.white} !important; }
+@media (prefers-color-scheme: dark) {
+  .rnv-page { background-color:${C.page} !important; }
+  .rnv-card { background-color:${C.surface} !important; }
+  .rnv-white { background-color:${C.white} !important; }
+  .rnv-dark { background-color:${C.black} !important; }
+  .rnv-txt, .rnv-txt * { color:${C.text} !important; }
+  .rnv-mut, .rnv-mut * { color:${C.muted} !important; }
+  .rnv-inv, .rnv-inv * { color:${C.white} !important; }
+}
+[data-ogsc] .rnv-card, [data-ogsb] .rnv-card { background-color:${C.surface} !important; }
+[data-ogsc] .rnv-white, [data-ogsb] .rnv-white { background-color:${C.white} !important; }
+[data-ogsc] .rnv-txt, [data-ogsc] .rnv-txt * { color:${C.text} !important; }
+[data-ogsc] .rnv-mut, [data-ogsc] .rnv-mut * { color:${C.muted} !important; }
+[data-ogsc] .rnv-inv, [data-ogsc] .rnv-inv * { color:${C.white} !important; }
+`,
+          }}
+        />
+      </Head>
       <Preview>{props.previewText}</Preview>
-      <Body style={{ margin: 0, padding: 0, backgroundColor: C.page, fontFamily: FONT }}>
+      <Body
+        className="rnv-page"
+        {...({ bgcolor: C.page } as any)}
+        style={{ margin: 0, padding: 0, backgroundColor: C.page, fontFamily: FONT }}
+      >
+
         <Container style={{ width: "100%", maxWidth: "660px", margin: "0 auto", padding: "0 0 28px" }}>
           {/* Header */}
-          <Section style={{ backgroundColor: C.black, borderBottom: `3px solid ${C.orange}`, padding: "22px 24px" }}>
+          <Section className="rnv-dark" {...({ bgcolor: C.black } as any)} style={{ backgroundColor: C.black, borderBottom: `3px solid ${C.orange}`, padding: "22px 24px" }}>
             <Row>
               <Column style={{ width: "56px", verticalAlign: "middle" }}>
                 <Img src={EMAIL_ASSETS.logo} width="48" height="48" alt={BRAND.name} style={{ borderRadius: "50%", display: "block" }} />
               </Column>
               <Column style={{ verticalAlign: "middle", paddingLeft: "12px" }}>
-                <Text style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: C.white, fontFamily: FONT }}>
+                <Text className="rnv-inv" style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: C.white, fontFamily: FONT }}>
                   {BRAND.name}
                 </Text>
                 <Text style={{ margin: "2px 0 0", fontSize: "12px", color: "#FF8A3D", fontWeight: 700, letterSpacing: "0.6px", fontFamily: FONT }}>
                   {props.reportType.toUpperCase()}
                 </Text>
-                <Text style={{ margin: "2px 0 0", fontSize: "12px", color: "#D4D4D8", fontFamily: FONT }}>
+                <Text className="rnv-inv" style={{ margin: "2px 0 0", fontSize: "12px", color: "#D4D4D8", fontFamily: FONT }}>
                   Referência: {props.reportDate}
                 </Text>
               </Column>
             </Row>
           </Section>
 
-          <Section bgcolor={C.white} style={{ backgroundColor: C.white, padding: "22px 20px 26px" }}>
-            <Heading as="h1" style={{ margin: "0 0 4px", fontSize: "20px", color: C.text, fontFamily: FONT }}>
+          <Section className="rnv-white" bgcolor={C.white} style={{ backgroundColor: C.white, padding: "22px 20px 26px" }}>
+            <Heading as="h1" className="rnv-txt" style={{ margin: "0 0 4px", fontSize: "20px", color: C.text, fontFamily: FONT }}>
               Resumo executivo
             </Heading>
-            <Text style={{ margin: "0 0 18px", fontSize: "13px", color: C.muted, fontFamily: FONT }}>
+            <Text className="rnv-mut" style={{ margin: "0 0 18px", fontSize: "13px", color: C.muted, fontFamily: FONT }}>
               Visão consolidada de vendas, usuários, conteúdo e saúde operacional da plataforma.
             </Text>
+
 
             {/* KPIs */}
             {kpis.map((k) => (
@@ -244,6 +290,8 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                     <tbody>
                       <tr>
                         <td
+                          className="rnv-card"
+                          {...({ bgcolor: C.surface } as any)}
                           style={{
                             backgroundColor: C.surface,
                             border: `1px solid ${color}`,
@@ -256,10 +304,11 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                             {a.level === "critical" ? "CRÍTICO" : a.level === "warning" ? "ATENÇÃO" : "NORMAL"} · {a.title}
                           </Text>
                           {a.detail ? (
-                            <Text style={{ margin: "5px 0 0", fontSize: "13px", color: C.muted, fontFamily: FONT }}>
+                            <Text className="rnv-mut" style={{ margin: "5px 0 0", fontSize: "13px", color: C.muted, fontFamily: FONT }}>
                               {a.detail}
                             </Text>
                           ) : null}
+
                         </td>
                       </tr>
                     </tbody>
@@ -279,10 +328,11 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                 <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} key={b.label} style={{ marginBottom: "10px" }}>
                   <tbody>
                     <tr>
-                      <td align="center" {...({ bgcolor: b.primary ? C.orange : C.white } as any)}
+                      <td align="center" className={b.primary ? undefined : "rnv-white"} {...({ bgcolor: b.primary ? C.orange : C.white } as any)}
                         style={{ backgroundColor: b.primary ? C.orange : C.white, border: `1px solid ${b.primary ? C.orange : C.border}`, borderRadius: "10px" }}>
                         <Link
                           href={b.href}
+                          className={b.primary ? "rnv-inv" : "rnv-txt"}
                           style={{
                             display: "block",
                             padding: "13px 18px",
@@ -305,7 +355,8 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
             <Hr style={{ borderColor: C.border, margin: "26px 0 14px" }} />
 
             {/* Rodapé */}
-            <Text style={{ margin: 0, fontSize: "11px", lineHeight: "18px", color: C.muted, textAlign: "center", fontFamily: FONT }}>
+            <Text className="rnv-mut" style={{ margin: 0, fontSize: "11px", lineHeight: "18px", color: C.muted, textAlign: "center", fontFamily: FONT }}>
+
               Relatório gerado automaticamente pela plataforma {BRAND.name}.
               <br />
               Data/Hora: {props.generatedAt} (Brasília) · Ambiente: {props.environment}
