@@ -148,7 +148,8 @@ export async function sendResendEmail(params: {
         from,
         to: Array.isArray(params.to) ? params.to : [params.to],
         subject: params.subject,
-        html: params.html,
+        html: withBrandHeader(params.html, config.fromName),
+
         text: params.text,
         reply_to: params.reply_to,
         // Resend só aceita letras ASCII, números, "_" e "-" em nome/valor de tag
