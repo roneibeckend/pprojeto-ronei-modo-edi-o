@@ -1090,7 +1090,7 @@ function Modules() {
     { icon: Utensils, title: "Produto e Produção", desc: "Os espetinhos que mais vendem e cortes ideais." },
     { icon: DollarSign, title: "Vendas e Faturamento", desc: "Estratégias para vender e lucrar todos os dias." },
     { icon: TrendingUp, title: "Crescimento e Escala", desc: "Como escalar seu negócio para os 10k por mês." },
-    { icon: Award, title: "Próximos Passos Finais", desc: "Como transformar o negócio em uma marca sólida." },
+    { icon: Award, title: "Passos Finais", desc: "Como transformar o negócio em uma marca sólida." },
   ];
   const [open, setOpen] = useState(false);
   return (
