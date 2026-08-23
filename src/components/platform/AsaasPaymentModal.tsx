@@ -24,13 +24,26 @@ export function AsaasPaymentModal() {
   const { isEnrolledInCourse, isEnrolledInEbook, refetchEnrollments } = useEnrollments();
   const [opened, setOpened] = React.useState(false);
   const [checking, setChecking] = React.useState(false);
+  const [checkoutDown, setCheckoutDown] = React.useState(false);
   const navigate = useNavigate();
   const completeCheckout = useServerFn(completePendingCheckout);
+  const probeCheckout = useServerFn(checkAsaasCheckoutHealth);
 
 
   React.useEffect(() => {
     if (isOpen) setOpened(false);
   }, [isOpen, paymentUrl]);
+
+  // Sonda a página do Asaas: se estiver fora do ar (503), avisamos antes de redirecionar.
+  React.useEffect(() => {
+    if (!isOpen || !paymentUrl) { setCheckoutDown(false); return; }
+    let active = true;
+    setCheckoutDown(false);
+    probeCheckout({ data: { url: paymentUrl } })
+      .then((r) => { if (active) setCheckoutDown(!r.available); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [isOpen, paymentUrl, probeCheckout]);
 
   // Polling: revalida as matrículas e confirma automaticamente após o webhook
   React.useEffect(() => {
