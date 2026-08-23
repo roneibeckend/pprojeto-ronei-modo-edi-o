@@ -132,6 +132,15 @@ function buildHtml(data: AdminReportData) {
     { label: "Ticket médio", value: brl(data.avgTicket) },
     { label: "Lucro estimado", value: `${brl(data.netProfit)} (${data.margin.toFixed(0)}%)` },
   ];
+  const fmtDate = (iso: string | null) =>
+    iso
+      ? new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeZone: "America/Sao_Paulo" }).format(new Date(iso))
+      : "Nenhuma venda registrada";
+  const accumulated = [
+    { label: "Vendas nos últimos 30 dias", value: `${data.last30Sales.count} - ${brl(data.last30Sales.value)}` },
+    { label: "Vendas acumuladas (histórico)", value: `${data.lifetimeSales.count} - ${brl(data.lifetimeSales.value)}` },
+    { label: "Última venda registrada", value: `${fmtDate(data.lifetimeSales.lastAt)} - ${brl(data.lifetimeSales.lastValue)}` },
+  ];
   const users = [
     { label: "Novos usuários", value: num(data.newStudents) },
     { label: "Usuários ativos", value: num(data.usersActive) },
@@ -185,6 +194,7 @@ function buildHtml(data: AdminReportData) {
                 ${metricCard("Vendas de afiliados", num(data.affiliateSales.count), data.delta.affiliateSales)}
                 ${metricCard("Comissões", brl(data.affiliateSales.commission), data.delta.commission)}
                 ${dataSection("Financeiro", financial)}
+                ${dataSection("Acumulado", accumulated)}
                 ${dataSection("Usuários", users)}
                 ${dataSection("Conteúdo", content)}
                 ${alertSection(data)}
@@ -216,6 +226,8 @@ function buildText(data: AdminReportData) {
     "",
     `Receita total: ${brl(data.totalRevenue)}`,
     `Novas vendas: ${num(data.salesCount)}`,
+    `Vendas 30 dias: ${num(data.last30Sales.count)} - ${brl(data.last30Sales.value)}`,
+    `Acumulado histórico: ${num(data.lifetimeSales.count)} - ${brl(data.lifetimeSales.value)}`,
     `Novos usuários: ${num(data.newStudents)}`,
     `Vendas de afiliados: ${num(data.affiliateSales.count)}`,
     `Comissões: ${brl(data.affiliateSales.commission)}`,
