@@ -892,8 +892,8 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
               </div>
             </CardHeader>
 
-            <CardContent className="p-6 space-y-6">
-              <div className="grid gap-6 md:grid-cols-2">
+            <CardContent className="p-4 sm:p-6 space-y-6">
+              <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome do Remetente</Label>
                   <Input 
@@ -906,6 +906,9 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail do Remetente</Label>
                   <Input 
                     value={formData.from_email}
+                    inputMode="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
                     onChange={(e) => setFormData(prev => ({ ...prev, from_email: e.target.value }))}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
@@ -914,17 +917,20 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">E-mail de Resposta (Reply-To)</Label>
                   <Input 
                     value={formData.reply_to}
+                    inputMode="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
                     onChange={(e) => setFormData(prev => ({ ...prev, reply_to: e.target.value }))}
                     className="bg-black/40 border-white/10 focus:border-[#ff6a00] h-11 text-sm"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-4 border-t border-white/5">
+              <div className="flex flex-col gap-2 pt-4 border-t border-white/5 sm:flex-row sm:items-center">
                 <Button 
                   onClick={handleManualSave}
                   disabled={updateSettingsMutation.isPending}
-                  className="bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-10 px-8"
+                  className="w-full sm:w-auto bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-11 px-8"
                 >
                   {updateSettingsMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                   Salvar Configurações
@@ -934,7 +940,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   disabled={updateSettingsMutation.isPending}
                   onClick={handleToggleActivation}
                   className={cn(
-                    "font-bold uppercase tracking-widest text-[10px] h-10 px-6 transition-all",
+                    "w-full sm:w-auto font-bold uppercase tracking-widest text-[10px] h-11 px-6 transition-all",
                     settings?.is_enabled 
                       ? "bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20" 
                       : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20"
@@ -943,6 +949,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   {updateSettingsMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : (settings?.is_enabled ? 'Desativar Envio' : 'Ativar Envio')}
                 </Button>
               </div>
+
             </CardContent>
           </Card>
 
