@@ -55,6 +55,7 @@ import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { OAuthProvidersPanel } from "@/components/admin/OAuthProvidersPanel";
+import { CouponsPanel } from "@/components/admin/CouponsPanel";
 
 export const Route = createFileRoute('/admin/integracoes')({
   head: () => ({ meta: [{ title: "Centro de Integrações · Admin" }] }),
