@@ -57,12 +57,19 @@ export const sendEmail = createServerFn({ method: "POST" })
   });
 
 export const getEmailLogs = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     limit: z.number().default(50),
     offset: z.number().default(0)
   }).parse(data))
-  .handler(async ({ data: { limit, offset } }) => {
-    const { data, error } = await supabase
+  .handler(async ({ data: { limit, offset }, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc('has_role', {
+      _user_id: context.userId,
+      _role: 'admin'
+    });
+    if (!isAdmin) throw new Error("Forbidden: Admin access required");
+
+    const { data, error } = await supabaseAdmin
       .from('email_logs')
       .select('*')
       .order('created_at', { ascending: false })
@@ -73,10 +80,19 @@ export const getEmailLogs = createServerFn({ method: "GET" })
   });
 
 export const getEmailSettings = createServerFn({ method: "GET" })
-  .handler(async () => {
-    const { data, error } = await supabase
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: isAdmin } = await context.supabase.rpc('has_role', {
+      _user_id: context.userId,
+      _role: 'admin'
+    });
+    if (!isAdmin) throw new Error("Forbidden: Admin access required");
+
+    const { data, error } = await supabaseAdmin
       .from('email_settings')
       .select('*')
+      .order('created_at', { ascending: true })
+      .limit(1)
       .maybeSingle();
 
     if (error) throw new Error(error.message);
@@ -152,29 +168,32 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
     }
     
     // Auto-validate after successful save
+    let warning: string | null = null;
     try {
-      const { getResendConfig, validateResendSender } = await import("./resend.server");
+      const { validateResendSender } = await import("./resend.server");
       // Use the API key from integrations if available
       const { data: integration } = await supabaseAdmin
         .from("integrations")
         .select("credentials")
         .eq("category", "resend")
         .maybeSingle();
-        
+
       const apiKey = (integration?.credentials as any)?.apiKey || process.env['RESEND_API_KEY'];
-      
+
       if (apiKey) {
         const result = await validateResendSender(apiKey, data.from_email);
-        
+
         await supabaseAdmin.from('email_settings').update({
           validation_status: result.status,
           last_validation_at: new Date().toISOString(),
           validation_error: result.error
         }).eq('from_email', data.from_email);
+      } else if (data.is_enabled) {
+        warning = "Envio ativado, mas a API Key do Resend não está configurada. Cadastre-a na aba 'API Key (Resend)' para que os e-mails sejam entregues.";
       }
     } catch (e) {
       console.warn("Could not auto-validate sender:", e);
     }
 
-    return { success: true };
+    return { success: true, warning };
   });
