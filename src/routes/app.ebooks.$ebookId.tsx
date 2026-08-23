@@ -651,10 +651,16 @@ function EbookReaderPage() {
           )}
           <button
             onClick={handleOpenDownload}
-            className="btn-ghost-fire flex items-center justify-center gap-2 px-4 sm:px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold whitespace-nowrap text-xs sm:text-sm"
+            disabled={!authUserId || preparingDownload}
+            title={!authUserId ? "Faça login para baixar o e-book" : undefined}
+            className="btn-ghost-fire flex items-center justify-center gap-2 px-4 sm:px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold whitespace-nowrap text-xs sm:text-sm disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <Download className="h-4 w-4 flex-shrink-0" />
-            Baixar E-book
+            {preparingDownload ? (
+              <Loader2 className="h-4 w-4 flex-shrink-0 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4 flex-shrink-0" />
+            )}
+            {!authUserId ? "Faça login para baixar" : "Baixar E-book"}
           </button>
           <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4 flex items-center justify-center">← Meus Conteúdos</Link>
         </div>
