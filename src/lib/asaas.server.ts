@@ -113,6 +113,14 @@ export async function grantAccess(
       
     if (checkoutError) console.error("[Asaas] Erro ao concluir checkout pendente:", checkoutError);
 
+    // Confirma resgate de cupom pendente para este produto (se houver)
+    const { error: couponError } = await (supabaseAdmin as any).rpc("complete_coupon_redemption", {
+      p_user_id: userId,
+      p_product_id: productId,
+      p_product_type: "course",
+    });
+    if (couponError) console.error("[Coupons] Erro ao confirmar resgate:", couponError);
+
     return true;
   }
   if (productType === "ebook") {
@@ -134,7 +142,15 @@ export async function grantAccess(
       .eq('status', 'pending');
 
     if (checkoutError) console.error("[Asaas] Erro ao concluir checkout pendente:", checkoutError);
-    
+
+    // Confirma resgate de cupom pendente para este produto (se houver)
+    const { error: couponError } = await (supabaseAdmin as any).rpc("complete_coupon_redemption", {
+      p_user_id: userId,
+      p_product_id: productId,
+      p_product_type: "ebook",
+    });
+    if (couponError) console.error("[Coupons] Erro ao confirmar resgate:", couponError);
+
     return true;
   }
 
