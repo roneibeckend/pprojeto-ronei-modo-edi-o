@@ -125,10 +125,10 @@ export function Shell({ children }: { children: ReactNode }) {
             src={brandFlame.url}
             alt=""
             aria-hidden
-            width={28}
-            height={28}
+            width={36}
+            height={36}
             decoding="async"
-            className="h-7 w-7 object-contain"
+            className="h-9 w-9 object-contain"
           />
         </div>
         <div className="min-w-0">
