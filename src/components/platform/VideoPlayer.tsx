@@ -171,8 +171,10 @@ export function VideoPlayer({
         playsInline
         webkit-playsinline="true"
         preload="none"
-        controls={false}
+        controls={started}
+        controlsList="nodownload noplaybackrate"
         disablePictureInPicture
+
         onWaiting={() => setIsLoading(true)}
         onPlaying={() => {
           setIsLoading(false);
@@ -202,22 +204,8 @@ export function VideoPlayer({
         </Button>
       )}
 
-      {started && !hasError && (
-        <Button
-          type="button"
-          size="icon"
-          aria-label={isPlaying ? 'Pausar vídeo' : 'Reproduzir vídeo'}
-          onClick={() => {
-            const video = videoRef.current;
-            if (!video) return;
-            if (video.paused) void video.play();
-            else video.pause();
-          }}
-          className="absolute bottom-4 left-4 z-20 h-12 w-12 rounded-full bg-background/80 text-foreground shadow-lg backdrop-blur hover:bg-background"
-        >
-          {isPlaying ? <Pause className="h-5 w-5 fill-current" /> : <Play className="h-5 w-5 fill-current" />}
-        </Button>
-      )}
+
+
 
       {isLoading && started && !hasError && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-10 pointer-events-none">
