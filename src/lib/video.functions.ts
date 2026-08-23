@@ -14,6 +14,8 @@ export const getSignedVideoUrl = createServerFn({ method: "GET" })
   }).parse(data))
   .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { resolveStoredVideoLocation } = await import("./video.server");
+
     const userId = context.userId;
 
     let rawVideoUrl: string | null = null;
