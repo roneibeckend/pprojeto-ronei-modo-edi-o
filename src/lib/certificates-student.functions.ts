@@ -68,6 +68,41 @@ export const generateCertificate = createServerFn({ method: "POST" })
       .single();
 
     if (error) throw new Error(error.message);
+
+    // E-mail de certificado emitido (uma vez por certificado)
+    try {
+      const { triggerEmailOnce } = await import("@/lib/resend.server");
+      const { LINKS } = await import("@/emails/layout");
+      const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('name, email, email_notifications_opt_in')
+        .eq('id', context.userId)
+        .maybeSingle();
+
+      const { data: content } = await supabaseAdmin
+        .from(data.content_type === 'ebook' ? 'ebooks' : 'courses')
+        .select('title')
+        .eq('id', data.content_id)
+        .maybeSingle();
+
+      if (profile?.email && (profile as any).email_notifications_opt_in !== false) {
+        await triggerEmailOnce({
+          event: 'certificate_issued',
+          to: profile.email,
+          data: {
+            name: (profile as any).name || 'Aluno',
+            title: (content as any)?.title || 'Treinamento',
+            hours: `${estimatedHours} horas`,
+            date: new Date().toLocaleDateString('pt-BR'),
+            link: `${LINKS.dashboard}/certificados`,
+          },
+          idempotencyKey: `certificate_${(result as any).id}`,
+        });
+      }
+    } catch (mailError) {
+      console.error('[Certificados] Falha ao enviar e-mail de certificado:', mailError);
+    }
+
     return { success: true, certificate_id: (result as any).id };
   });
 
