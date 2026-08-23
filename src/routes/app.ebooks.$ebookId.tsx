@@ -22,6 +22,9 @@ import { FeedbackModal } from "@/components/platform/FeedbackModal";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 import { getSignedVideoUrl } from "@/lib/video.functions";
 import { generateCertificate } from "@/lib/certificates-student.functions";
+import EbookDownloadDialog from "@/components/platform/EbookDownloadDialog";
+import { Download } from "lucide-react";
+
 
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
