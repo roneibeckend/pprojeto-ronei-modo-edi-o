@@ -6,22 +6,26 @@
  * Não usa CSS externo nem dependências de runtime.
  */
 
-/** URL pública onde os assets dos e-mails estão hospedados (precisa responder 200). */
-const FALLBACK_SITE = "https://skewer-success-engine.lovable.app";
+/** Domínio oficial da marca — usado em TODOS os links dos e-mails (mesmo antes do DNS ativar). */
+const BRAND_SITE = "https://ronneinaveia.com.br";
+
+/** Host publicado e ativo — usado apenas para as IMAGENS dos e-mails (precisa responder 200). */
+const ACTIVE_ASSET_HOST = "https://skewer-success-engine.lovable.app";
 
 function resolveSite(): string {
-  const raw = process.env["SITE_URL"] || process.env["PUBLIC_SITE_URL"] || FALLBACK_SITE;
+  const raw = process.env["SITE_URL"] || process.env["PUBLIC_SITE_URL"] || BRAND_SITE;
   return String(raw).replace(/\/$/, "");
 }
 
 /**
- * Host das imagens dos e-mails. Fica separado dos links porque o domínio do site
+ * Host das imagens dos e-mails. Fica separado dos links porque o domínio da marca
  * pode ainda não estar publicado/propagado — e isso quebraria a logo e o banner.
  */
 function resolveAssetBase(): string {
-  const raw = process.env["EMAIL_ASSET_BASE_URL"] || FALLBACK_SITE;
+  const raw = process.env["EMAIL_ASSET_BASE_URL"] || ACTIVE_ASSET_HOST;
   return String(raw).replace(/\/$/, "");
 }
+
 
 export const ASSET_BASE = resolveAssetBase();
 

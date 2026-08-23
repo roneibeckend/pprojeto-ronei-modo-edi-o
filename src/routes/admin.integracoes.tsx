@@ -1648,8 +1648,8 @@ function EmailTemplatesTab() {
           data: {
             name: 'Churrasqueiro',
             product_name: 'Curso Mestre do Churrasco',
-            link: 'https://skewer-success-engine.lovable.app/app',
-            dashboard_url: 'https://skewer-success-engine.lovable.app/app',
+            link: 'https://ronneinaveia.com.br/app',
+            dashboard_url: 'https://ronneinaveia.com.br/app',
           }
         }
       });

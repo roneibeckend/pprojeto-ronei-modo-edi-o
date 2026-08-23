@@ -28,7 +28,7 @@ export interface EmailCatalogEntry {
   fields: EmailField[];
 }
 
-const DASHBOARD = "https://skewer-success-engine.lovable.app/app";
+const DASHBOARD = "https://ronneinaveia.com.br/app";
 const today = () => new Date().toLocaleDateString("pt-BR");
 
 const f = (
@@ -66,7 +66,7 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
     description: "Link seguro para criar nova senha.",
     fields: [
       NAME(),
-      f("reset_url", "URL de redefinição", "url", "https://skewer-success-engine.lovable.app/auth?type=recovery", true, ["link", "url"]),
+      f("reset_url", "URL de redefinição", "url", "https://ronneinaveia.com.br/auth?type=recovery", true, ["link", "url"]),
     ],
   },
   {
