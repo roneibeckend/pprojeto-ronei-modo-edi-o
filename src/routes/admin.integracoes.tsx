@@ -1058,7 +1058,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
 
         <TabsContent value="logs" className="m-0">
           <Card className="bg-[#111] border-white/5">
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-row items-start justify-between gap-3">
               <div>
                 <CardTitle className="text-lg font-bold uppercase">Auditoria de Disparos</CardTitle>
                 <CardDescription className="text-xs text-white/40">Últimos 20 e-mails processados pelo sistema.</CardDescription>
