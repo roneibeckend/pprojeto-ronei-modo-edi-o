@@ -141,6 +141,7 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
         width="100%"
         cellPadding={0}
         cellSpacing={0}
+        className="rnv-card"
         {...({ bgcolor: C.surface } as any)}
         style={{ backgroundColor: C.surface, border: `1px solid ${C.border}`, borderRadius: "12px", padding: "6px 16px" }}
       >
@@ -148,6 +149,7 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
           {rows.map((r, i) => (
             <tr key={r.label}>
               <td
+                className="rnv-mut"
                 style={{
                   padding: "11px 0",
                   borderBottom: i === rows.length - 1 ? "none" : `1px solid ${C.border}`,
@@ -160,6 +162,7 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
               </td>
               <td
                 align="right"
+                className="rnv-txt"
                 style={{
                   padding: "11px 0",
                   borderBottom: i === rows.length - 1 ? "none" : `1px solid ${C.border}`,
@@ -169,6 +172,7 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
                   fontFamily: FONT,
                 }}
               >
+
                 {r.value}
               </td>
             </tr>
