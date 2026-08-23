@@ -1791,7 +1791,9 @@ function EmailTemplatesTab() {
         )}
       </div>
     </div>
+    </div>
   );
+
 }
 
 function FeatureTogglePanel({ integrations }: { integrations: Integration[] | undefined }) {
