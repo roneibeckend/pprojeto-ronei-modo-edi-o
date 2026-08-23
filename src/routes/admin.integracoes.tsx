@@ -870,12 +870,12 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
         <TabsContent value="config" className="space-y-6 m-0">
           <Card className="bg-[#111] border-white/5">
             <CardHeader className="border-b border-white/5 bg-white/[0.02]">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-lg font-bold uppercase">Identidade do Remetente</CardTitle>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <CardTitle className="text-base sm:text-lg font-bold uppercase">Identidade do Remetente</CardTitle>
                   <CardDescription className="text-xs text-white/40">Configure como os e-mails aparecerão para os alunos.</CardDescription>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {settings?.validation_status && (
                     <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest ${
                       settings.validation_status === 'verified' ? 'text-emerald-400 bg-emerald-400/10' : 
@@ -891,6 +891,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                 </div>
               </div>
             </CardHeader>
+
             <CardContent className="p-6 space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
