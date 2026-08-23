@@ -110,7 +110,13 @@ export async function collectDailyReport(date?: string): Promise<DailyReportData
     logsRes,
     emailLogsRes,
   ] = await Promise.all([
-    supabase.from("payments").select("amount, net_amount, fee, billing_type, status").in("status", paid).gte("created_at", start).lte("created_at", end),
+    supabase
+      .from("payments")
+      .select("external_id, amount, net_amount, fee, billing_type, status")
+      .in("status", paid)
+      .or(
+        `and(created_at.gte.${start},created_at.lte.${end}),and(confirmed_at.gte.${start},confirmed_at.lte.${end})`,
+      ),
     supabase.from("payments").select("amount").eq("status", "PENDING").gte("created_at", start).lte("created_at", end),
     supabase.from("financial_costs").select("value"),
     supabase.from("profiles").select("id", { count: "exact", head: true }).gte("created_at", start).lte("created_at", end),
