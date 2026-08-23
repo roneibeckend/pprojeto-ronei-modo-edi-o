@@ -143,11 +143,13 @@ function buildHtml(data: AdminReportData) {
   ];
   const users = [
     { label: "Novos usuários", value: num(data.newStudents) },
-    { label: "Usuários ativos", value: num(data.usersActive) },
+    { label: "Usuários ativos (30 dias)", value: num(data.usersActive) },
     { label: "Cancelamentos ou inativos", value: num(data.usersCanceled) },
     { label: "Leads capturados", value: num(data.leads) },
     { label: "Matrículas em cursos", value: num(data.courseEnrollments) },
     { label: "Afiliados ativos", value: num(data.affiliatesActive) },
+    { label: "Saques de afiliados pendentes", value: `${data.payoutsPending.count} - ${brl(data.payoutsPending.value)}` },
+    { label: "Saques pagos no período", value: `${data.payoutsPaid.count} - ${brl(data.payoutsPaid.value)}` },
   ];
   const content = [
     { label: "Curso mais acessado", value: data.topCourse ? `${data.topCourse.title} (${data.topCourse.views})` : "Sem atividade" },
@@ -229,6 +231,7 @@ function buildText(data: AdminReportData) {
     `Vendas 30 dias: ${num(data.last30Sales.count)} - ${brl(data.last30Sales.value)}`,
     `Acumulado histórico: ${num(data.lifetimeSales.count)} - ${brl(data.lifetimeSales.value)}`,
     `Novos usuários: ${num(data.newStudents)}`,
+    `Saques de afiliados pendentes: ${num(data.payoutsPending.count)} - ${brl(data.payoutsPending.value)}`,
     `Vendas de afiliados: ${num(data.affiliateSales.count)}`,
     `Comissões: ${brl(data.affiliateSales.commission)}`,
     "",

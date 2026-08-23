@@ -171,7 +171,7 @@ export async function collectDailyReport(date?: string): Promise<DailyReportData
 
   const payouts = (payoutsRes.data || []) as any[];
   const payoutsPendingList = payouts.filter((p) =>
-    ["pending", "pendente", "em_analise", "approved", "aprovado"].includes(String(p.status)),
+    ["pending", "pendente", "analyzing", "em_analise", "approved", "aprovado"].includes(String(p.status)),
   );
   const payoutsPaidList = payouts.filter(
     (p) => ["paid", "pago"].includes(String(p.status)) && String(p.updated_at || "").startsWith(dateStr),
