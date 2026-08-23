@@ -347,3 +347,25 @@ export async function findConfirmedPayment(params: {
   return null;
 }
 
+
+/**
+ * Verifica se a página hospedada de checkout do Asaas está respondendo.
+ * O Asaas ocasionalmente devolve 503 (HTML do balanceador) em www.asaas.com,
+ * o que deixaria o cliente numa tela de erro crua ao clicar em pagar.
+ */
+export async function probeAsaasCheckout(url: string): Promise<{ available: boolean; status: number }> {
+  let host = "";
+  try { host = new URL(url).hostname; } catch { return { available: false, status: 0 }; }
+  if (!/(^|\.)asaas\.com$/.test(host)) return { available: false, status: 0 };
+
+  try {
+    const res = await fetch(url, {
+      method: "GET",
+      redirect: "follow",
+      headers: { "User-Agent": ASAAS_USER_AGENT, accept: "text/html" },
+    });
+    return { available: res.status < 500, status: res.status };
+  } catch {
+    return { available: false, status: 0 };
+  }
+}

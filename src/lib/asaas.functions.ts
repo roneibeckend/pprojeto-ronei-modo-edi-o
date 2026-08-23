@@ -190,3 +190,12 @@ export const verifyAsaasPayment = createServerFn({ method: "POST" })
       return { confirmed: false, message: error.message || "Falha ao verificar o pagamento." };
     }
   });
+
+/** Sonda a página de checkout do Asaas antes de mandar o cliente para lá. */
+export const checkAsaasCheckoutHealth = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: unknown) => z.object({ url: z.string().url() }).parse(data))
+  .handler(async ({ data }) => {
+    const { probeAsaasCheckout } = await import("./asaas.server");
+    return probeAsaasCheckout(data.url);
+  });
