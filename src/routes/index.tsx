@@ -15,7 +15,6 @@ import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
 import { trackEvent, trackInitiateCheckout } from "@/lib/pixel";
 import { supabase } from "@/integrations/supabase/client";
-import { CouponInput, type AppliedCoupon } from "@/components/platform/CouponInput";
 
 import {
   Flame,

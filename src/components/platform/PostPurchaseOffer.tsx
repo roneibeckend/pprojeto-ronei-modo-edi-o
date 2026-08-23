@@ -7,6 +7,7 @@ import { useEnrollments } from '@/hooks/use-enrollments';
 import { toast } from 'sonner';
 import { IMG } from '@/lib/platform-data';
 import { optimizedImage } from '@/lib/image-url';
+import { CouponInput, type AppliedCoupon } from '@/components/platform/CouponInput';
 
 
 interface OfferItem {
@@ -24,6 +25,10 @@ interface PostPurchaseOfferProps {
   onProceedWithOffers: (selectedOffers: OfferItem[]) => void;
   onProceedWithoutOffers: () => void;
   originalProductId: string;
+  /** Tipo do produto principal (para validação do cupom). */
+  productType?: 'course' | 'ebook';
+  /** Valor do produto principal (para calcular o desconto exibido). */
+  amount?: number;
 }
 
 export function PostPurchaseOffer({
@@ -31,13 +36,26 @@ export function PostPurchaseOffer({
   onClose,
   onProceedWithOffers,
   onProceedWithoutOffers,
-  originalProductId
+  originalProductId,
+  productType,
+  amount
 }: PostPurchaseOfferProps) {
   const [offers, setOffers] = useState<OfferItem[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [discountPercentage, setDiscountPercentage] = useState(15);
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
   const { isEnrolledInCourse, isEnrolledInEbook } = useEnrollments();
+
+  const handleCouponApplied = (coupon: AppliedCoupon | null) => {
+    setAppliedCoupon(coupon);
+    if (typeof window === 'undefined') return;
+    if (coupon) {
+      localStorage.setItem('pending_coupon_code', coupon.code);
+    } else {
+      localStorage.removeItem('pending_coupon_code');
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -215,6 +233,20 @@ export function PostPurchaseOffer({
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {!isLoading && (
+            <div className="mt-5 shrink-0 rounded-2xl border border-white/10 bg-white/[0.03] p-3 sm:p-4">
+              <CouponInput
+                productId={originalProductId}
+                productType={productType}
+                amount={amount}
+                context="main"
+                authenticated
+                applied={appliedCoupon}
+                onApplied={handleCouponApplied}
+              />
             </div>
           )}
 
