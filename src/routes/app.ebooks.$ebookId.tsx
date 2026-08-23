@@ -806,11 +806,10 @@ function EbookReaderPage() {
               </button>
             )}
           </div>
-          <FeedbackList ebookId={ebook.id} />
         </div>
 
         {/* Sidebar Index */}
-        <aside className="space-y-6 px-4 sm:px-0">
+        <aside className="space-y-6 px-4 sm:px-0 order-2 lg:order-none">
           <div className="glass rounded-3xl p-6">
             <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
               Conteúdo do E-book
@@ -864,6 +863,11 @@ function EbookReaderPage() {
           </div>
 
         </aside>
+
+        {/* Feedback - mobile: below sidebar; desktop: under reader in left column */}
+        <div className="order-3 px-4 sm:px-0 lg:order-none lg:col-start-1 lg:row-start-2">
+          <FeedbackList ebookId={ebook.id} />
+        </div>
       </div>
       <FeedbackModal
         ebookId={ebook.id}
