@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerificarCertificadoRouteImport } from './routes/verificar-certificado'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
@@ -19,7 +20,6 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AppVerificarCertificadoRouteImport } from './routes/app.verificar-certificado'
 import { Route as AppSuporteRouteImport } from './routes/app.suporte'
 import { Route as AppReceitasRouteImport } from './routes/app.receitas'
 import { Route as AppProgressoRouteImport } from './routes/app.progresso'
@@ -68,6 +68,11 @@ import { Route as AdminAlunosStudentIdRouteImport } from './routes/admin.alunos.
 import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
 import { Route as ApiPublicManifestWebmanifestRouteImport } from './routes/api/public/manifest.webmanifest'
 
+const VerificarCertificadoRoute = VerificarCertificadoRouteImport.update({
+  id: '/verificar-certificado',
+  path: '/verificar-certificado',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   id: '/termos-de-uso',
   path: '/termos-de-uso',
@@ -117,11 +122,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
-} as any)
-const AppVerificarCertificadoRoute = AppVerificarCertificadoRouteImport.update({
-  id: '/verificar-certificado',
-  path: '/verificar-certificado',
-  getParentRoute: () => AppRoute,
 } as any)
 const AppSuporteRoute = AppSuporteRouteImport.update({
   id: '/suporte',
@@ -372,6 +372,7 @@ export interface FileRoutesByFullPath {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/verificar-certificado': typeof VerificarCertificadoRoute
   '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
@@ -401,7 +402,6 @@ export interface FileRoutesByFullPath {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
-  '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -430,6 +430,7 @@ export interface FileRoutesByTo {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/verificar-certificado': typeof VerificarCertificadoRoute
   '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
@@ -457,7 +458,6 @@ export interface FileRoutesByTo {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
-  '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -489,6 +489,7 @@ export interface FileRoutesById {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/verificar-certificado': typeof VerificarCertificadoRoute
   '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
@@ -518,7 +519,6 @@ export interface FileRoutesById {
   '/app/progresso': typeof AppProgressoRoute
   '/app/receitas': typeof AppReceitasRoute
   '/app/suporte': typeof AppSuporteRoute
-  '/app/verificar-certificado': typeof AppVerificarCertificadoRoute
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/admin/alunos/$studentId': typeof AdminAlunosStudentIdRoute
@@ -551,6 +551,7 @@ export interface FileRouteTypes {
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/verificar-certificado'
     | '/admin/afiliados'
     | '/admin/alunos'
     | '/admin/ao-vivo'
@@ -580,7 +581,6 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
-    | '/app/verificar-certificado'
     | '/admin/'
     | '/app/'
     | '/admin/alunos/$studentId'
@@ -609,6 +609,7 @@ export interface FileRouteTypes {
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/verificar-certificado'
     | '/admin/afiliados'
     | '/admin/alunos'
     | '/admin/ao-vivo'
@@ -636,7 +637,6 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
-    | '/app/verificar-certificado'
     | '/admin'
     | '/app'
     | '/admin/alunos/$studentId'
@@ -667,6 +667,7 @@ export interface FileRouteTypes {
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/verificar-certificado'
     | '/admin/afiliados'
     | '/admin/alunos'
     | '/admin/ao-vivo'
@@ -696,7 +697,6 @@ export interface FileRouteTypes {
     | '/app/progresso'
     | '/app/receitas'
     | '/app/suporte'
-    | '/app/verificar-certificado'
     | '/admin/'
     | '/app/'
     | '/admin/alunos/$studentId'
@@ -728,6 +728,7 @@ export interface RootRouteChildren {
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
+  VerificarCertificadoRoute: typeof VerificarCertificadoRoute
   ApiPublicDailyFinancialReportRoute: typeof ApiPublicDailyFinancialReportRoute
   ApiPublicDownloadMigracaoTempRoute: typeof ApiPublicDownloadMigracaoTempRoute
   ApiPublicDownloadStorageTempRoute: typeof ApiPublicDownloadStorageTempRoute
@@ -737,6 +738,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verificar-certificado': {
+      id: '/verificar-certificado'
+      path: '/verificar-certificado'
+      fullPath: '/verificar-certificado'
+      preLoaderRoute: typeof VerificarCertificadoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/termos-de-uso': {
       id: '/termos-de-uso'
       path: '/termos-de-uso'
@@ -806,13 +814,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
-    }
-    '/app/verificar-certificado': {
-      id: '/app/verificar-certificado'
-      path: '/verificar-certificado'
-      fullPath: '/app/verificar-certificado'
-      preLoaderRoute: typeof AppVerificarCertificadoRouteImport
-      parentRoute: typeof AppRoute
     }
     '/app/suporte': {
       id: '/app/suporte'
@@ -1278,7 +1279,6 @@ interface AppRouteChildren {
   AppProgressoRoute: typeof AppProgressoRoute
   AppReceitasRoute: typeof AppReceitasRoute
   AppSuporteRoute: typeof AppSuporteRoute
-  AppVerificarCertificadoRoute: typeof AppVerificarCertificadoRoute
   AppIndexRoute: typeof AppIndexRoute
   AppEbooksEbookIdRoute: typeof AppEbooksEbookIdRoute
 }
@@ -1295,7 +1295,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppProgressoRoute: AppProgressoRoute,
   AppReceitasRoute: AppReceitasRoute,
   AppSuporteRoute: AppSuporteRoute,
-  AppVerificarCertificadoRoute: AppVerificarCertificadoRoute,
   AppIndexRoute: AppIndexRoute,
   AppEbooksEbookIdRoute: AppEbooksEbookIdRoute,
 }
@@ -1311,6 +1310,7 @@ const rootRouteChildren: RootRouteChildren = {
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
+  VerificarCertificadoRoute: VerificarCertificadoRoute,
   ApiPublicDailyFinancialReportRoute: ApiPublicDailyFinancialReportRoute,
   ApiPublicDownloadMigracaoTempRoute: ApiPublicDownloadMigracaoTempRoute,
   ApiPublicDownloadStorageTempRoute: ApiPublicDownloadStorageTempRoute,

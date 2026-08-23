@@ -45,7 +45,10 @@ export const generateCertificate = createServerFn({ method: "POST" })
     }
 
     const certificateCode = `CERT-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-    
+
+    const { estimateContentHours } = await import("@/lib/certificate-hours.server");
+    const estimatedHours = await estimateContentHours(data.content_id, data.content_type);
+
     const { data: result, error } = await supabaseAdmin
       .from('certificates' as any)
       .insert({
@@ -56,7 +59,7 @@ export const generateCertificate = createServerFn({ method: "POST" })
         issue_date: new Date().toISOString(),
         template_id: (config as any)?.template_id,
         custom_data: {
-          hours: (config as any)?.min_progress_percentage === 100 ? 40 : 10,
+          hours: estimatedHours,
           text: (config as any)?.custom_text
         },
         city_of_issue: (config as any)?.city_of_issue || 'Goiânia - Goiás'
@@ -110,19 +113,23 @@ export const getStudentCertificates = createServerFn({ method: "GET" })
     const courseList = (courseRes.data || []) as any[];
     const ebookList = (ebookRes.data || []) as any[];
 
-    return certs.map(cert => {
+    const { estimateContentHours } = await import("@/lib/certificate-hours.server");
+
+    return await Promise.all(certs.map(async (cert) => {
       const content = cert.content_type === 'course' 
         ? courseList.find(c => c.id === cert.content_id)
         : ebookList.find(e => e.id === cert.content_id);
+
+      const hours = await estimateContentHours(cert.content_id, cert.content_type);
 
       return {
         ...cert,
         student_name: (profile as any)?.name || 'Aluno',
         course: content?.title || 'Conteúdo Removido',
         completedAt: new Date(cert.issue_date).toLocaleDateString('pt-BR'),
-        hours: cert.custom_data?.hours || 10,
+        hours,
         code: cert.certificate_code,
         unlocked: true
       };
-    });
+    }));
   });

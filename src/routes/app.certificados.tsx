@@ -9,6 +9,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getStudentCertificates } from "@/lib/certificates-student.functions";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { CertificateQrCode, CERT_VERIFY_DOMAIN, certificateVerifyUrl } from "@/components/platform/CertificateQrCode";
 
 
 // Estilos específicos para impressão
@@ -68,7 +69,7 @@ async function downloadCertificatePDF(node: HTMLElement, cert: { id: string; cou
 
 
 async function handleShareCertificate(cert: any) {
-  const verifyUrl = `https://verifica.ronneinaveia.com/${cert.code || cert.id}`;
+  const verifyUrl = certificateVerifyUrl(cert.code || cert.id);
   const shareData = {
     title: `Certificado: ${cert.course}`,
     text: `Acabei de concluir o curso "${cert.course}" na Ronnei na Veia! Confira meu certificado:`,
@@ -165,8 +166,8 @@ function CertificatesPage() {
         <div className="flex-1">
           <div className="text-sm font-bold text-white">Verificação pública</div>
           <div className="text-xs text-white/50">
-            Cada certificado tem código único (ex.: EVNA-2026-XXXX) e pode ser validado em
-            <span className="ml-1 font-mono text-white/70">verifica.ronneinaveia.com</span>
+            Cada certificado tem código único (ex.: CERT-A1B2C3D4) e pode ser validado em
+            <span className="ml-1 font-mono text-white/70">{CERT_VERIFY_DOMAIN}/verificar-certificado</span>
           </div>
         </div>
       </div>
@@ -404,7 +405,7 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose:
 }
 
 function FullCertificate({ cert }: { cert: any }) {
-  const verifyUrl = `verifica.ronneinaveia.com/${cert.code ?? "—"}`;
+  const verifyUrl = `${CERT_VERIFY_DOMAIN}/verificar-certificado?codigo=${cert.code ?? ""}`;
   return (
     <div className="relative overflow-hidden bg-[#f5efe4] text-[#1a1207] shadow-2xl">
       {/* Guilloché background */}
@@ -481,9 +482,6 @@ function FullCertificate({ cert }: { cert: any }) {
                   <Flame className="h-6 w-6" strokeWidth={2.75} />
                   <span className="mt-0.5 font-display text-[8px] font-black uppercase tracking-widest">Oficial</span>
                 </div>
-                <span className="absolute -bottom-2 -right-1 rounded-full bg-black px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-widest text-[#ff6a00]">
-                  #{cert.id.toUpperCase()}
-                </span>
               </div>
 
               <div className="text-center">
@@ -496,14 +494,8 @@ function FullCertificate({ cert }: { cert: any }) {
 
             {/* Footer bar */}
             <div className="mt-10 grid grid-cols-[auto_1fr_auto] items-center gap-4 border-t border-black/10 pt-5">
-              {/* QR */}
-              <div className="grid h-16 w-16 grid-cols-8 gap-[1px] rounded-sm bg-black p-1">
-                {Array.from({ length: 64 }).map((_, i) => {
-                  const seed = (cert.code ?? cert.id).charCodeAt(i % (cert.code ?? cert.id).length);
-                  const on = (seed * (i + 3)) % 3 !== 0;
-                  return <span key={i} className={on ? "bg-[#f5efe4]" : "bg-black"} />;
-                })}
-              </div>
+              {/* QR real de validação */}
+              <CertificateQrCode code={cert.code ?? cert.id} size={68} />
               <div className="min-w-0">
                 <div className="text-[9px] font-bold uppercase tracking-[0.28em] text-black/50">Código de validação</div>
                 <div className="truncate font-mono text-sm font-bold text-black">{cert.code ?? "—"}</div>
