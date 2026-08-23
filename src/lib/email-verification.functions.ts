@@ -179,8 +179,32 @@ export const sendEmailVerificationCode = createServerFn({ method: "POST" })
       throw new Error("Não foi possível enviar o e-mail agora. Tente novamente em instantes.");
     }
 
+    const isResend = ((rows as any[]) ?? []).length > 0;
+    const attempt = RESEND_MAX_PER_WINDOW - state.remainingInWindow + 1;
+
+    {
+      const { logSystemEvent } = await import("@/lib/system-log.server");
+      await logSystemEvent({
+        level: "info",
+        source: "email-verification",
+        message: isResend
+          ? `Código de confirmação reenviado para ${email} (tentativa ${attempt}/${RESEND_MAX_PER_WINDOW})`
+          : `Código de confirmação enviado para ${email}`,
+        details: {
+          action: isResend ? "code_resent" : "code_sent",
+          email,
+          attempt,
+          max_per_window: RESEND_MAX_PER_WINDOW,
+          expires_at: expiresAt,
+        },
+        userId: context.userId,
+      });
+    }
+
     return {
       alreadyVerified: false as const,
+      isResend,
+      attempt,
       email,
       expiresAt,
       resend: {
@@ -191,6 +215,7 @@ export const sendEmailVerificationCode = createServerFn({ method: "POST" })
         pendingExpiresAt: expiresAt,
       },
     };
+
   });
 
 /** Valida o código informado e marca o e-mail como confirmado. */
@@ -209,11 +234,22 @@ export const confirmEmailWithCode = createServerFn({ method: "POST" })
       .limit(1)
       .maybeSingle();
 
+    const { logSystemEvent } = await import("@/lib/system-log.server");
+
     if (!record) throw new Error("Nenhum código pendente. Solicite um novo código.");
     if (new Date(record.expires_at).getTime() < Date.now()) {
       throw new Error("Este código expirou. Solicite um novo código.");
     }
-    if (record.code !== data.code) throw new Error("Código inválido. Confira o e-mail recebido.");
+    if (record.code !== data.code) {
+      await logSystemEvent({
+        level: "warning",
+        source: "email-verification",
+        message: "Tentativa de confirmação de e-mail com código inválido",
+        details: { action: "code_invalid", verification_id: record.id },
+        userId: context.userId,
+      });
+      throw new Error("Código inválido. Confira o e-mail recebido.");
+    }
 
     const now = new Date().toISOString();
 
@@ -228,11 +264,27 @@ export const confirmEmailWithCode = createServerFn({ method: "POST" })
       .eq("id", context.userId);
     if (error) throw new Error(error.message);
 
+    const destination = await resolveDestination(supabaseAdmin, context.userId);
+
+    await logSystemEvent({
+      level: "info",
+      source: "email-verification",
+      message: `E-mail confirmado com sucesso${(context.claims as any)?.email ? `: ${(context.claims as any).email}` : ""}`,
+      details: {
+        action: "email_confirmed",
+        verification_id: record.id,
+        confirmed_at: now,
+        destination: destination.to,
+      },
+      userId: context.userId,
+    });
+
     return {
       verified: true as const,
       verifiedAt: now,
-      destination: await resolveDestination(supabaseAdmin, context.userId),
+      destination,
     };
+
   });
 
 /** Visão administrativa: usuários confirmados/pendentes + últimos eventos de verificação. */

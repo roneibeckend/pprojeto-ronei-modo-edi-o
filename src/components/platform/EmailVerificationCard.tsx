@@ -78,8 +78,10 @@ export function EmailVerificationCard() {
       setSent(true);
       setCooldown(res?.resend?.cooldownSeconds ?? 60);
       setRemaining(res?.resend?.remainingInWindow ?? null);
-      toast.success("Código enviado", {
-        description: `Enviamos um código de 6 dígitos para ${res?.email}. Ele vale por 30 minutos.`,
+      toast.success(res?.isResend ? "Código reenviado" : "Código enviado", {
+        description: res?.isResend
+          ? `Reenviamos um novo código para ${res?.email} (tentativa ${res?.attempt}/5). Registrado na auditoria.`
+          : `Enviamos um código de 6 dígitos para ${res?.email}. Ele vale por 30 minutos.`,
       });
     },
     onError: (err: any) => toast.error(err?.message || "Erro ao enviar o código."),
@@ -88,7 +90,9 @@ export function EmailVerificationCard() {
   const confirmMutation = useMutation({
     mutationFn: async () => confirmFn({ data: { code: code.trim() } }),
     onSuccess: (res: any) => {
-      toast.success("E-mail confirmado com sucesso!");
+      toast.success("E-mail confirmado com sucesso!", {
+        description: "Confirmação registrada na auditoria do sistema.",
+      });
       setCode("");
       setSent(false);
       const dest = res?.destination ?? { to: "/app", label: "Área do aluno" };
