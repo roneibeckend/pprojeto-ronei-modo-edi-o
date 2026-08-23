@@ -123,6 +123,9 @@ function EbookReaderPage() {
   }, [syncWithDatabase]);
   const [showOpeningVideo, setShowOpeningVideo] = useState(false);
   const [showIntroVideo, setShowIntroVideo] = useState(false);
+  const [showDownloadDialog, setShowDownloadDialog] = useState(false);
+  const [downloadOwner, setDownloadOwner] = useState<{ id: string; name: string; email: string } | null>(null);
+
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const getSignedUrl = useServerFn(getSignedVideoUrl);
   const { openPayment } = usePaymentModal();
