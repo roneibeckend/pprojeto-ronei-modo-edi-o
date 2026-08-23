@@ -23,6 +23,7 @@ import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 import { getSignedVideoUrl } from "@/lib/video.functions";
 import { generateCertificate } from "@/lib/certificates-student.functions";
 import EbookDownloadDialog from "@/components/platform/EbookDownloadDialog";
+import { registerEbookDownload } from "@/lib/ebook-download.functions";
 
 
 
@@ -124,7 +125,20 @@ function EbookReaderPage() {
   const [showIntroVideo, setShowIntroVideo] = useState(false);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const [downloadOwner, setDownloadOwner] = useState<{ id: string; name: string; email: string } | null>(null);
+  const [authUserId, setAuthUserId] = useState<string | null>(null);
+  const [preparingDownload, setPreparingDownload] = useState(false);
 
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (active) setAuthUserId(data.user?.id ?? null);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const registerDownload = useServerFn(registerEbookDownload);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const getSignedUrl = useServerFn(getSignedVideoUrl);
   const { openPayment } = usePaymentModal();
@@ -505,11 +519,14 @@ function EbookReaderPage() {
 
   async function handleOpenDownload() {
     try {
+      setPreparingDownload(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error("Sessão expirada. Faça login novamente.");
+        setAuthUserId(null);
+        toast.error("Faça login para baixar o e-book.");
         return;
       }
+      setAuthUserId(user.id);
       const { data: profile } = await supabase
         .from("profiles")
         .select("name, email")
@@ -524,11 +541,42 @@ function EbookReaderPage() {
       setShowDownloadDialog(true);
     } catch (error: any) {
       toast.error("Não foi possível preparar o download: " + error.message);
+    } finally {
+      setPreparingDownload(false);
     }
   }
 
-  async function handleConfirmDownload() {
-    if (!downloadOwner) return;
+  async function handleConfirmDownload(accepted: boolean) {
+    if (!downloadOwner) {
+      toast.error("Faça login para baixar o e-book.");
+      throw new Error("unauthenticated");
+    }
+    if (!accepted) {
+      toast.error("É necessário aceitar os termos de direitos autorais.");
+      throw new Error("terms_not_accepted");
+    }
+
+    // O aceite e o limite anti-abuso são validados e registrados no servidor
+    // antes de qualquer geração de arquivo.
+    let result: any;
+    try {
+      result = await registerDownload({
+        data: {
+          ebook_id: ebook.id,
+          accepted: true,
+          user_agent: typeof navigator !== "undefined" ? navigator.userAgent : "",
+        },
+      });
+    } catch (error: any) {
+      toast.error("Não foi possível validar o download: " + (error?.message || "erro desconhecido"));
+      throw error;
+    }
+
+    if (!result?.allowed) {
+      toast.error(result?.message || "Download não permitido.");
+      throw new Error(result?.reason || "denied");
+    }
+
     try {
       const { generateEbookPdf } = await import("@/lib/ebook-pdf");
       generateEbookPdf({
@@ -538,22 +586,12 @@ function EbookReaderPage() {
         owner: downloadOwner,
       });
 
-      // Registro de auditoria do download (rastreabilidade da cópia)
-      void supabase.rpc("log_system_event", {
-        _level: "info",
-        _source: "ebook_download",
-        _message: `Download do e-book "${ebook.title}" por ${downloadOwner.email}`,
-        _details: {
-          ebook_id: ebook.id,
-          user_id: downloadOwner.id,
-          email: downloadOwner.email,
-          accepted_copyright_terms: true,
-        },
-      });
-
-      toast.success("PDF gerado com sua identificação em todas as páginas.");
+      toast.success(
+        `PDF gerado com sua identificação. ${result.email_sent ? "Enviamos o link do e-book no seu e-mail. " : ""}Restam ${result.remaining_for_ebook} download(s) hoje para este e-book.`,
+      );
     } catch (error: any) {
       toast.error("Erro ao gerar o PDF: " + error.message);
+      throw error;
     }
   }
 
@@ -651,10 +689,16 @@ function EbookReaderPage() {
           )}
           <button
             onClick={handleOpenDownload}
-            className="btn-ghost-fire flex items-center justify-center gap-2 px-4 sm:px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold whitespace-nowrap text-xs sm:text-sm"
+            disabled={!authUserId || preparingDownload}
+            title={!authUserId ? "Faça login para baixar o e-book" : undefined}
+            className="btn-ghost-fire flex items-center justify-center gap-2 px-4 sm:px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold whitespace-nowrap text-xs sm:text-sm disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <Download className="h-4 w-4 flex-shrink-0" />
-            Baixar E-book
+            {preparingDownload ? (
+              <Loader2 className="h-4 w-4 flex-shrink-0 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4 flex-shrink-0" />
+            )}
+            {!authUserId ? "Faça login para baixar" : "Baixar E-book"}
           </button>
           <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4 flex items-center justify-center">← Meus Conteúdos</Link>
         </div>

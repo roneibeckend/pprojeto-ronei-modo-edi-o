@@ -22,7 +22,8 @@ import {
   Menu,
   Star,
   Terminal,
-  Activity
+  Activity,
+  Download,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -83,6 +84,7 @@ function AdminRootLayout() {
     { to: "/admin/materiais", label: "Materiais", icon: Library },
     { to: "/admin/ranking", label: "Ranking", icon: Star },
     { to: "/admin/chatbot", label: "Inteligência Brasa", icon: BrainCircuit },
+    { to: "/admin/downloads", label: "Downloads de E-books", icon: Download },
     { to: "/admin/status", label: "Status Operacional", icon: Activity },
     { to: "/admin/logs", label: "Logs do Sistema", icon: Terminal },
   ];

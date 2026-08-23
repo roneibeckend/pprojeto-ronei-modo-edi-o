@@ -1010,6 +1010,42 @@ export type Database = {
           },
         ]
       }
+      ebook_download_logs: {
+        Row: {
+          accepted_at: string
+          accepted_terms: boolean
+          created_at: string
+          ebook_id: string
+          ebook_title: string | null
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          accepted_terms?: boolean
+          created_at?: string
+          ebook_id: string
+          ebook_title?: string | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string
+          accepted_terms?: boolean
+          created_at?: string
+          ebook_id?: string
+          ebook_title?: string | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       ebook_enrollments: {
         Row: {
           created_at: string
@@ -2766,6 +2802,15 @@ export type Database = {
           p_product_id: string
           p_product_type: string
           p_user_id: string
+        }
+        Returns: Json
+      }
+      register_ebook_download: {
+        Args: {
+          p_accepted: boolean
+          p_ebook_id: string
+          p_ip?: string
+          p_user_agent?: string
         }
         Returns: Json
       }

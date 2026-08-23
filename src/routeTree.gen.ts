@@ -44,6 +44,7 @@ import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes
 import { Route as AdminFinanceiroRouteImport } from './routes/admin.financeiro'
 import { Route as AdminFeedbacksRouteImport } from './routes/admin.feedbacks'
 import { Route as AdminEbooksRouteImport } from './routes/admin.ebooks'
+import { Route as AdminDownloadsRouteImport } from './routes/admin.downloads'
 import { Route as AdminCursosRouteImport } from './routes/admin.cursos'
 import { Route as AdminChatbotRouteImport } from './routes/admin.chatbot'
 import { Route as AdminAoVivoRouteImport } from './routes/admin.ao-vivo'
@@ -244,6 +245,11 @@ const AdminEbooksRoute = AdminEbooksRouteImport.update({
   path: '/ebooks',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminDownloadsRoute = AdminDownloadsRouteImport.update({
+  id: '/downloads',
+  path: '/downloads',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCursosRoute = AdminCursosRouteImport.update({
   id: '/cursos',
   path: '/cursos',
@@ -385,6 +391,7 @@ export interface FileRoutesByFullPath {
   '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/chatbot': typeof AdminChatbotRoute
   '/admin/cursos': typeof AdminCursosRoute
+  '/admin/downloads': typeof AdminDownloadsRoute
   '/admin/ebooks': typeof AdminEbooksRoute
   '/admin/feedbacks': typeof AdminFeedbacksRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
@@ -444,6 +451,7 @@ export interface FileRoutesByTo {
   '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/chatbot': typeof AdminChatbotRoute
   '/admin/cursos': typeof AdminCursosRoute
+  '/admin/downloads': typeof AdminDownloadsRoute
   '/admin/ebooks': typeof AdminEbooksRoute
   '/admin/feedbacks': typeof AdminFeedbacksRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
@@ -504,6 +512,7 @@ export interface FileRoutesById {
   '/admin/ao-vivo': typeof AdminAoVivoRoute
   '/admin/chatbot': typeof AdminChatbotRoute
   '/admin/cursos': typeof AdminCursosRoute
+  '/admin/downloads': typeof AdminDownloadsRoute
   '/admin/ebooks': typeof AdminEbooksRoute
   '/admin/feedbacks': typeof AdminFeedbacksRoute
   '/admin/financeiro': typeof AdminFinanceiroRoute
@@ -567,6 +576,7 @@ export interface FileRouteTypes {
     | '/admin/ao-vivo'
     | '/admin/chatbot'
     | '/admin/cursos'
+    | '/admin/downloads'
     | '/admin/ebooks'
     | '/admin/feedbacks'
     | '/admin/financeiro'
@@ -626,6 +636,7 @@ export interface FileRouteTypes {
     | '/admin/ao-vivo'
     | '/admin/chatbot'
     | '/admin/cursos'
+    | '/admin/downloads'
     | '/admin/ebooks'
     | '/admin/feedbacks'
     | '/admin/financeiro'
@@ -685,6 +696,7 @@ export interface FileRouteTypes {
     | '/admin/ao-vivo'
     | '/admin/chatbot'
     | '/admin/cursos'
+    | '/admin/downloads'
     | '/admin/ebooks'
     | '/admin/feedbacks'
     | '/admin/financeiro'
@@ -998,6 +1010,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEbooksRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/downloads': {
+      id: '/admin/downloads'
+      path: '/downloads'
+      fullPath: '/admin/downloads'
+      preLoaderRoute: typeof AdminDownloadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/cursos': {
       id: '/admin/cursos'
       path: '/cursos'
@@ -1199,6 +1218,7 @@ interface AdminRouteChildren {
   AdminAoVivoRoute: typeof AdminAoVivoRoute
   AdminChatbotRoute: typeof AdminChatbotRoute
   AdminCursosRoute: typeof AdminCursosRoute
+  AdminDownloadsRoute: typeof AdminDownloadsRoute
   AdminEbooksRoute: typeof AdminEbooksRoute
   AdminFeedbacksRoute: typeof AdminFeedbacksRoute
   AdminFinanceiroRoute: typeof AdminFinanceiroRoute
@@ -1221,6 +1241,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAoVivoRoute: AdminAoVivoRoute,
   AdminChatbotRoute: AdminChatbotRoute,
   AdminCursosRoute: AdminCursosRoute,
+  AdminDownloadsRoute: AdminDownloadsRoute,
   AdminEbooksRoute: AdminEbooksRoute,
   AdminFeedbacksRoute: AdminFeedbacksRoute,
   AdminFinanceiroRoute: AdminFinanceiroRoute,
