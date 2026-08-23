@@ -50,10 +50,12 @@ function prefersLightVariant() {
   const connection = (navigator as any).connection;
   const saveData = Boolean(connection?.saveData);
   const slowLink = ['slow-2g', '2g', '3g'].includes(connection?.effectiveType ?? '');
-  const tinyScreen =
-    window.matchMedia('(max-width: 480px)').matches && (window.devicePixelRatio || 1) < 2;
-  return saveData || slowLink || tinyScreen;
+  // Em telas de celular a versão leve (540x960, ~1 Mbps) já é nítida e baixa
+  // metade dos bytes, evitando travadas no início da reprodução.
+  const phoneScreen = window.matchMedia('(max-width: 768px)').matches;
+  return saveData || slowLink || phoneScreen;
 }
+
 
 const PROGRESS_SAVE_INTERVAL_MS = 5000;
 const MAX_RECOVERY_ATTEMPTS = 3;
