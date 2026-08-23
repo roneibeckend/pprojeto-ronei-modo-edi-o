@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2, ExternalLink, CheckCircle2, ShoppingBag, ArrowRight, ShieldCheck, RefreshCw } from "lucide-react";
+import { Loader2, ExternalLink, CheckCircle2, ShoppingBag, ArrowRight, ShieldCheck, RefreshCw, AlertTriangle } from "lucide-react";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { useNavigate } from "@tanstack/react-router";
