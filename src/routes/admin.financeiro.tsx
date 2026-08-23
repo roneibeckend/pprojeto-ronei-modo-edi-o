@@ -349,7 +349,7 @@ function FinancePage() {
                     placeholder="Descrição do custo"
                   />
                 </div>
-                <div className="relative w-28 group">
+                <div className="relative w-24 shrink-0 sm:w-28 group">
                   <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-white/20">R$</span>
                   <input
                     type="number"
