@@ -19,6 +19,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
+import { EmailVerificationsPanel } from "@/components/admin/EmailVerificationsPanel";
 
 export const Route = createFileRoute("/admin/usuarios")({
   head: () => ({ meta: [{ title: "Gestão de Usuários · Admin" }] }),
@@ -284,7 +285,10 @@ function AdminUsuariosPage() {
         </div>
       )}
 
+      {role === "admin" && <EmailVerificationsPanel />}
+
       {isModalOpen && (
+
         <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto py-6 sm:py-4">
           <div className="w-full max-w-xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
