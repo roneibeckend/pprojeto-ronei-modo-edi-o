@@ -136,6 +136,12 @@ export function VideoPlayer({
     setHasError(false);
     setIsLoading(true);
     setStarted(true);
+    // Always start with sound: a user tap satisfies mobile autoplay policies.
+    video.muted = false;
+    video.removeAttribute('muted');
+    video.defaultMuted = false;
+    video.volume = 1;
+    setNeedsUnmute(false);
     try {
       if (video.currentTime === 0) {
         try {
@@ -147,10 +153,29 @@ export function VideoPlayer({
       }
       await video.play();
     } catch {
-      // Autoplay policies: fall back to native controls; the user can press play again.
+      // Some mobile browsers still refuse audible playback: start muted and
+      // offer an explicit "tap for sound" action instead of failing silently.
+      try {
+        video.muted = true;
+        await video.play();
+        setNeedsUnmute(true);
+      } catch {
+        /* user can press the native play button */
+      }
       setIsLoading(false);
     }
   };
+
+  const enableSound = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = false;
+    video.removeAttribute('muted');
+    video.volume = 1;
+    setNeedsUnmute(false);
+    void video.play().catch(() => undefined);
+  };
+
 
   return (
     <div className={cn('relative mx-auto bg-black rounded-xl overflow-hidden shadow-2xl', frameClass, className)}>
