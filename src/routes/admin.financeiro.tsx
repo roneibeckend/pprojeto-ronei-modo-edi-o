@@ -162,40 +162,6 @@ function FinancePage() {
     }
   });
 
-  const distributeProfitsFn = useServerFn(distributeProfits);
-
-  const handleDistribute = async () => {
-    try {
-      if (profit <= 0) {
-        toast.error("Não há lucro disponível para distribuição.");
-        return;
-      }
-
-      if (totalPercent !== 100) {
-        toast.error("A soma das porcentagens dos sócios deve ser 100%.");
-        return;
-      }
-
-      toast.loading("Distribuindo lucros...", { id: "distribute-loading" });
-
-      for (const partner of partners) {
-        if (partner.percent > 0) {
-          const amount = (profit * partner.percent) / 100;
-          
-          if (partner.user_id) {
-            await distributeProfitsFn({ data: { amount, partnerId: partner.user_id } });
-          } else {
-            console.warn(`Sócio ${partner.name} não possui usuário vinculado. Pulando distribuição.`);
-          }
-        }
-      }
-
-      toast.success("Distribuição de lucros processada!", { id: "distribute-loading" });
-    } catch (error: any) {
-      toast.error("Erro na distribuição: " + error.message, { id: "distribute-loading" });
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
