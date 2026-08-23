@@ -543,6 +543,7 @@ function CoursePage() {
                       isIntro={false}
                       aspect="portrait"
                       className="w-full h-full"
+                      autoStart
                     />
                   </Suspense>
                 )}

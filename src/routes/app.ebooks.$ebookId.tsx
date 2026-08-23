@@ -631,6 +631,7 @@ function EbookReaderPage() {
                     isIntro={false}
                     aspect="portrait"
                     className="w-full h-full"
+                    autoStart
                   />
                 )}
               </div>
