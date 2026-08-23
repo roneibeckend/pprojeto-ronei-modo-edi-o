@@ -2,6 +2,34 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+// DTO serializável retornado pelas validações de cupom.
+export interface CouponValidationResult {
+  valid: boolean;
+  reason?: string;
+  message?: string;
+  code?: string;
+  discountType?: "percentage" | "fixed";
+  discountValue?: number;
+  discountAmount?: number;
+  finalAmount?: number;
+}
+
+function toValidationResult(raw: any): CouponValidationResult {
+  if (!raw || typeof raw !== "object") {
+    return { valid: false, reason: "error", message: "Resposta inesperada ao validar o cupom." };
+  }
+  return {
+    valid: Boolean(raw.valid),
+    reason: raw.reason != null ? String(raw.reason) : undefined,
+    message: raw.message != null ? String(raw.message) : undefined,
+    code: raw.code != null ? String(raw.code) : undefined,
+    discountType: raw.discount_type === "percentage" || raw.discount_type === "fixed" ? raw.discount_type : undefined,
+    discountValue: raw.discount_value != null ? Number(raw.discount_value) : undefined,
+    discountAmount: raw.discount_amount != null ? Number(raw.discount_amount) : undefined,
+    finalAmount: raw.final_amount != null ? Number(raw.final_amount) : undefined,
+  };
+}
+
 // ============================================================================
 // Validação pública (landing page, antes do login) — sem limite por usuário.
 // O desconto real é sempre recalculado no servidor na criação do checkout.
