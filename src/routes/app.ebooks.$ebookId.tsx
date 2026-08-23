@@ -650,9 +650,25 @@ function EbookReaderPage() {
               Ver Vídeo de Abertura
             </button>
           )}
+          <button
+            onClick={handleOpenDownload}
+            className="btn-ghost-fire flex items-center justify-center gap-2 px-4 sm:px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold whitespace-nowrap text-xs sm:text-sm"
+          >
+            <Download className="h-4 w-4 flex-shrink-0" />
+            Baixar E-book
+          </button>
           <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4 flex items-center justify-center">← Meus Conteúdos</Link>
         </div>
       </div>
+
+      <EbookDownloadDialog
+        open={showDownloadDialog}
+        onClose={() => setShowDownloadDialog(false)}
+        onConfirm={handleConfirmDownload}
+        ebookTitle={ebook.title}
+        owner={downloadOwner}
+      />
+
 
       <AnimatePresence mode="wait">
         {(showOpeningVideo || showIntroVideo) && ebook.opening_video_url && (
