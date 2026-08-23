@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
-import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X, Play, ArrowDown, Award } from "lucide-react";
+import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X, Play, ArrowDown, Award, Download } from "lucide-react";
 import { VideoPlayer } from "@/components/platform/VideoPlayer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/platform/Shell";
@@ -22,6 +22,8 @@ import { FeedbackModal } from "@/components/platform/FeedbackModal";
 import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 import { getSignedVideoUrl } from "@/lib/video.functions";
 import { generateCertificate } from "@/lib/certificates-student.functions";
+import EbookDownloadDialog from "@/components/platform/EbookDownloadDialog";
+
 
 
 export const Route = createFileRoute("/app/ebooks/$ebookId")({
@@ -120,6 +122,9 @@ function EbookReaderPage() {
   }, [syncWithDatabase]);
   const [showOpeningVideo, setShowOpeningVideo] = useState(false);
   const [showIntroVideo, setShowIntroVideo] = useState(false);
+  const [showDownloadDialog, setShowDownloadDialog] = useState(false);
+  const [downloadOwner, setDownloadOwner] = useState<{ id: string; name: string; email: string } | null>(null);
+
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const getSignedUrl = useServerFn(getSignedVideoUrl);
   const { openPayment } = usePaymentModal();
@@ -498,7 +503,62 @@ function EbookReaderPage() {
     );
   }
 
+  async function handleOpenDownload() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Sessão expirada. Faça login novamente.");
+        return;
+      }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("name, email")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      setDownloadOwner({
+        id: user.id,
+        name: profile?.name || user.email?.split("@")[0] || "Aluno",
+        email: profile?.email || user.email || "",
+      });
+      setShowDownloadDialog(true);
+    } catch (error: any) {
+      toast.error("Não foi possível preparar o download: " + error.message);
+    }
+  }
+
+  async function handleConfirmDownload() {
+    if (!downloadOwner) return;
+    try {
+      const { generateEbookPdf } = await import("@/lib/ebook-pdf");
+      generateEbookPdf({
+        title: ebook.title,
+        subtitle: ebook.subtitle,
+        chapters: chapters.map((c: any) => ({ title: c.title, content: c.content })),
+        owner: downloadOwner,
+      });
+
+      // Registro de auditoria do download (rastreabilidade da cópia)
+      void supabase.rpc("log_system_event", {
+        _level: "info",
+        _source: "ebook_download",
+        _message: `Download do e-book "${ebook.title}" por ${downloadOwner.email}`,
+        _details: {
+          ebook_id: ebook.id,
+          user_id: downloadOwner.id,
+          email: downloadOwner.email,
+          accepted_copyright_terms: true,
+        },
+      });
+
+      toast.success("PDF gerado com sua identificação em todas as páginas.");
+    } catch (error: any) {
+      toast.error("Erro ao gerar o PDF: " + error.message);
+    }
+  }
+
   if (!hasAccess) {
+
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <PostPurchaseOffer
@@ -589,9 +649,25 @@ function EbookReaderPage() {
               Ver Vídeo de Abertura
             </button>
           )}
+          <button
+            onClick={handleOpenDownload}
+            className="btn-ghost-fire flex items-center justify-center gap-2 px-4 sm:px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold whitespace-nowrap text-xs sm:text-sm"
+          >
+            <Download className="h-4 w-4 flex-shrink-0" />
+            Baixar E-book
+          </button>
           <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4 flex items-center justify-center">← Meus Conteúdos</Link>
         </div>
       </div>
+
+      <EbookDownloadDialog
+        open={showDownloadDialog}
+        onClose={() => setShowDownloadDialog(false)}
+        onConfirm={handleConfirmDownload}
+        ebookTitle={ebook.title}
+        owner={downloadOwner}
+      />
+
 
       <AnimatePresence mode="wait">
         {(showOpeningVideo || showIntroVideo) && ebook.opening_video_url && (
