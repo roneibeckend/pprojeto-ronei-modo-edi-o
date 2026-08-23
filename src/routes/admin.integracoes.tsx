@@ -751,6 +751,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
   const getEmailLogsFn = useServerFn(getEmailLogs);
   const updateEmailSettingsFn = useServerFn(updateEmailSettings);
   const sendEmailFn = useServerFn(sendEmail);
+  const sendCatalogTestFn = useServerFn(sendTemplateTestEmail);
   
   // Local state for form inputs to ensure persistence and React-controlled behavior
   const [formData, setFormData] = useState({
@@ -1603,14 +1604,17 @@ function EmailTemplatesTab() {
       setIsSendingTest(true);
       const subject = (document.getElementById('temp_subject') as HTMLInputElement).value;
       const html = (document.getElementById('temp_html') as HTMLTextAreaElement).value;
-      
-      await sendEmailFn({
+
+      await sendRawTestFn({
         data: {
           to: email,
-          template: 'novo_conteudo' as any, // Abstração genérica
+          subject,
+          html,
           data: {
-            subject: `[TESTE] ${subject}`,
-            html: html.replace(/\{\{(.+?)\}\}/g, 'VALOR_TESTE')
+            name: 'Churrasqueiro',
+            product_name: 'Curso Mestre do Churrasco',
+            link: 'https://skewer-success-engine.lovable.app/app',
+            dashboard_url: 'https://skewer-success-engine.lovable.app/app',
           }
         }
       });
