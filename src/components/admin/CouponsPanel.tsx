@@ -293,7 +293,7 @@ export function CouponsPanel() {
           </h2>
           <p className="text-[11px] text-white/40 mt-1">Crie e gerencie campanhas promocionais com controle total de validade, limites e produtos.</p>
         </div>
-        <Button onClick={openCreate} className="bg-[#ff6a00] hover:bg-[#ff6a00]/90 text-black font-bold uppercase text-[10px] tracking-widest h-9">
+        <Button onClick={openCreate} className="w-full sm:w-auto bg-[#ff6a00] hover:bg-[#ff6a00]/90 text-black font-bold uppercase text-[10px] tracking-widest h-10">
           <Plus className="h-4 w-4 mr-1" /> Novo Cupom
         </Button>
       </div>
