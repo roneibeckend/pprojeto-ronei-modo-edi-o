@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, Loader2, AlertCircle } from 'lucide-react';
+import { Play, Loader2, AlertCircle, VolumeX } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -49,6 +49,7 @@ export function VideoPlayer({
   const [started, setStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [needsUnmute, setNeedsUnmute] = useState(false);
 
   const isYouTube = isYouTubeUrl(src);
   const isDrive = isDriveUrl(src);
@@ -66,6 +67,7 @@ export function VideoPlayer({
     setStarted(false);
     setIsLoading(false);
     setHasError(false);
+    setNeedsUnmute(false);
   }, [src]);
 
   // Progress persistence (native <video> only)
@@ -219,6 +221,16 @@ export function VideoPlayer({
 
 
 
+
+      {needsUnmute && started && !hasError && (
+        <Button
+          type="button"
+          onClick={enableSound}
+          className="btn-fire absolute left-1/2 top-4 z-20 flex -translate-x-1/2 items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-widest"
+        >
+          <VolumeX className="h-4 w-4" /> Toque para ativar o som
+        </Button>
+      )}
 
       {isLoading && started && !hasError && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-10 pointer-events-none">
