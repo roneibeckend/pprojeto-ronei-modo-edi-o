@@ -294,6 +294,8 @@ function CoursePage() {
           onProceedWithOffers={(selected) => executeCheckout(selected)}
           onProceedWithoutOffers={() => executeCheckout([])}
           originalProductId={course.id}
+          productType="course"
+          amount={course.price || 0}
         />
         <div className="mb-6 rounded-full bg-white/5 p-8 text-gold">
           <Lock className="h-16 w-16" />
