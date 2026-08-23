@@ -129,7 +129,15 @@ function withBrandHeader(html: string, brandName: string) {
     </td>
   </tr>
 </table>`;
-  return `<div style="background:#0f0f10;">${header}</div>${html}`;
+  const block = `<div style="background:#0f0f10;">${header}</div>`;
+  // Nunca injetar conteúdo antes de <!DOCTYPE>/<html> — clientes como o Gmail
+  // descartam a estrutura do documento e o e-mail chega quebrado.
+  const bodyMatch = html.match(/<body[^>]*>/i);
+  if (bodyMatch) {
+    const at = html.indexOf(bodyMatch[0]) + bodyMatch[0].length;
+    return html.slice(0, at) + block + html.slice(at);
+  }
+  return `${block}${html}`;
 }
 
 
