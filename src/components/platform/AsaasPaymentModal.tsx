@@ -167,6 +167,19 @@ export function AsaasPaymentModal() {
                 </p>
               </div>
 
+              {checkoutDown && (
+                <div className="flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4">
+                  <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+                  <div className="text-sm">
+                    <p className="font-bold text-amber-400">Asaas temporariamente indisponível</p>
+                    <p className="text-muted-foreground">
+                      A página de pagamento do Asaas está fora do ar neste momento (erro 503 no provedor). Seu pedido
+                      ficou salvo: tente novamente em alguns minutos usando o mesmo link. Nenhuma cobrança foi feita.
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <button
                 onClick={handleOpenCheckout}
                 disabled={!paymentUrl}
