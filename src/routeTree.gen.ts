@@ -59,6 +59,7 @@ import { Route as AppAfiliadosMateriaisRouteImport } from './routes/app.afiliado
 import { Route as AppAfiliadosLinksRouteImport } from './routes/app.afiliados.links'
 import { Route as AppAfiliadosFinanceiroRouteImport } from './routes/app.afiliados.financeiro'
 import { Route as AppAfiliadosConfigRouteImport } from './routes/app.afiliados.config'
+import { Route as ApiPublicDriveVideoRouteImport } from './routes/api/public/drive-video'
 import { Route as ApiPublicDownloadStorageTempRouteImport } from './routes/api/public/download-storage-temp'
 import { Route as ApiPublicDownloadMigracaoTempRouteImport } from './routes/api/public/download-migracao-temp'
 import { Route as ApiPublicDailyFinancialReportRouteImport } from './routes/api/public/daily-financial-report'
@@ -317,6 +318,11 @@ const AppAfiliadosConfigRoute = AppAfiliadosConfigRouteImport.update({
   path: '/config',
   getParentRoute: () => AppAfiliadosRoute,
 } as any)
+const ApiPublicDriveVideoRoute = ApiPublicDriveVideoRouteImport.update({
+  id: '/api/public/drive-video',
+  path: '/api/public/drive-video',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicDownloadStorageTempRoute =
   ApiPublicDownloadStorageTempRouteImport.update({
     id: '/api/public/download-storage-temp',
@@ -403,6 +409,7 @@ export interface FileRoutesByFullPath {
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
   '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
   '/api/public/download-storage-temp': typeof ApiPublicDownloadStorageTempRoute
+  '/api/public/drive-video': typeof ApiPublicDriveVideoRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
@@ -458,6 +465,7 @@ export interface FileRoutesByTo {
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
   '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
   '/api/public/download-storage-temp': typeof ApiPublicDownloadStorageTempRoute
+  '/api/public/drive-video': typeof ApiPublicDriveVideoRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
@@ -518,6 +526,7 @@ export interface FileRoutesById {
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
   '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
   '/api/public/download-storage-temp': typeof ApiPublicDownloadStorageTempRoute
+  '/api/public/drive-video': typeof ApiPublicDriveVideoRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
   '/app/afiliados/links': typeof AppAfiliadosLinksRoute
@@ -579,6 +588,7 @@ export interface FileRouteTypes {
     | '/api/public/daily-financial-report'
     | '/api/public/download-migracao-temp'
     | '/api/public/download-storage-temp'
+    | '/api/public/drive-video'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
@@ -634,6 +644,7 @@ export interface FileRouteTypes {
     | '/api/public/daily-financial-report'
     | '/api/public/download-migracao-temp'
     | '/api/public/download-storage-temp'
+    | '/api/public/drive-video'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
@@ -693,6 +704,7 @@ export interface FileRouteTypes {
     | '/api/public/daily-financial-report'
     | '/api/public/download-migracao-temp'
     | '/api/public/download-storage-temp'
+    | '/api/public/drive-video'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
     | '/app/afiliados/links'
@@ -720,6 +732,7 @@ export interface RootRouteChildren {
   ApiPublicDailyFinancialReportRoute: typeof ApiPublicDailyFinancialReportRoute
   ApiPublicDownloadMigracaoTempRoute: typeof ApiPublicDownloadMigracaoTempRoute
   ApiPublicDownloadStorageTempRoute: typeof ApiPublicDownloadStorageTempRoute
+  ApiPublicDriveVideoRoute: typeof ApiPublicDriveVideoRoute
   ApiPublicManifestWebmanifestRoute: typeof ApiPublicManifestWebmanifestRoute
   ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
 }
@@ -1076,6 +1089,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAfiliadosConfigRouteImport
       parentRoute: typeof AppAfiliadosRoute
     }
+    '/api/public/drive-video': {
+      id: '/api/public/drive-video'
+      path: '/api/public/drive-video'
+      fullPath: '/api/public/drive-video'
+      preLoaderRoute: typeof ApiPublicDriveVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/download-storage-temp': {
       id: '/api/public/download-storage-temp'
       path: '/api/public/download-storage-temp'
@@ -1283,6 +1303,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicDailyFinancialReportRoute: ApiPublicDailyFinancialReportRoute,
   ApiPublicDownloadMigracaoTempRoute: ApiPublicDownloadMigracaoTempRoute,
   ApiPublicDownloadStorageTempRoute: ApiPublicDownloadStorageTempRoute,
+  ApiPublicDriveVideoRoute: ApiPublicDriveVideoRoute,
   ApiPublicManifestWebmanifestRoute: ApiPublicManifestWebmanifestRoute,
   ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
 }
