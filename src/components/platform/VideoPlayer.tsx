@@ -264,42 +264,8 @@ export function VideoPlayer({
     );
   }
 
-  const handlePlay = async () => {
-    const video = videoRef.current;
-    if (!video) return;
-    setHasError(false);
-    setIsLoading(true);
-    setStarted(true);
-    recoveryAttempts.current = 0;
-    // Always start with sound: a user tap satisfies mobile autoplay policies.
-    video.muted = false;
-    video.removeAttribute('muted');
-    video.defaultMuted = false;
-    video.volume = 1;
-    setNeedsUnmute(false);
-    try {
-      if (video.currentTime === 0) {
-        try {
-          const saved = Number(localStorage.getItem(`video_progress_${videoId}`));
-          if (Number.isFinite(saved) && saved > 0 && saved < video.duration) video.currentTime = saved;
-        } catch {
-          /* storage may be unavailable */
-        }
-      }
-      await video.play();
-    } catch {
-      // Some mobile browsers still refuse audible playback: start muted and
-      // offer an explicit "tap for sound" action instead of failing silently.
-      try {
-        video.muted = true;
-        await video.play();
-        setNeedsUnmute(true);
-      } catch {
-        /* user can press the native play button */
-      }
-      setIsLoading(false);
-    }
-  };
+  const handlePlay = startPlayback;
+
 
   const enableSound = () => {
     const video = videoRef.current;
