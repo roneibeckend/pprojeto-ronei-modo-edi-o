@@ -92,13 +92,12 @@ export function VideoPlayer({
     return () => video.removeEventListener('timeupdate', handleTimeUpdate);
   }, [src, videoId, isEmbed]);
 
-  // ---- Embedded providers (YouTube / Google Drive): render only after the user taps play
+  // ---- YouTube: render the iframe only after the user taps play
   if (isEmbed) {
-    const ytId = isYouTubeUrl(src) ? getYouTubeId(src) : '';
-    const embedUrl = ytId
-      ? `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=1`
-      : `${getDriveEmbed(src)}?autoplay=1`;
+    const ytId = getYouTubeId(src);
+    const embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=1`;
     const thumb = poster || (ytId ? `https://i.ytimg.com/vi/${ytId}/hq720.jpg` : undefined);
+
 
     return (
       <div className={cn('relative w-full mx-auto bg-black rounded-xl overflow-hidden shadow-2xl', frameClass, className)}>
