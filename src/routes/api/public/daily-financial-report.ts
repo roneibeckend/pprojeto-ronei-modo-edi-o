@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { collectDailyReport, renderDailyReportHtml, renderDailyReportText } from "@/lib/daily-report.server";
 
 export const Route = createFileRoute("/api/public/daily-financial-report")({
   server: {
@@ -57,39 +58,19 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
             console.log("Configurações de relatório não encontradas. Usando padrões.");
           }
 
-          // 2. Determine date range
-          const targetDate = date ? new Date(date) : new Date();
-          if (!date) targetDate.setDate(targetDate.getDate() - 1);
-          
-          const dateStr = targetDate.toISOString().split('T')[0];
-          const startOfDay = `${dateStr}T00:00:00.000Z`;
-          const endOfDay = `${dateStr}T23:59:59.999Z`;
-
-          // 3. Fetch Data from payments (more accurate than enrollments for finance)
-          const { data: payments, error: paymentsError } = await supabase
-            .from("payments")
-            .select("*")
-            .in("status", ["CONFIRMED", "RECEIVED", "RECEIVED_IN_CASH"])
-            .gte("created_at", startOfDay)
-            .lte("created_at", endOfDay);
-
-          if (paymentsError) throw paymentsError;
-
-          // Calculate metrics
-          const totalRevenue = (payments || []).reduce((sum, p: any) => sum + Number(p.net_amount || 0), 0);
-          const salesCount = (payments || []).length;
-          const avgTicket = salesCount > 0 ? totalRevenue / salesCount : 0;
-          
-          // Cost calculation: Asaas fees are already deducted from net_amount usually, 
-          // but we might have other costs in financial_costs
-          const { data: costsData } = await supabase
-            .from("financial_costs")
-            .select("value");
-          
-          const dailyCosts = (costsData || []).reduce((sum, c: any) => sum + (Number(c.value) / 30), 0); // Pro-rated monthly costs
-          const totalCosts = dailyCosts; 
-          const netProfit = totalRevenue - totalCosts;
-          const margin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
+          // 2/3. Coletar todas as métricas do dia (financeiro, alunos, afiliados, suporte, sistema)
+          const report = await collectDailyReport(date);
+          const {
+            dateStr,
+            formattedDate,
+            totalRevenue,
+            totalCosts,
+            netProfit,
+            margin,
+            salesCount,
+            avgTicket,
+          } = report;
+          const targetDate = new Date(`${dateStr}T12:00:00.000Z`);
 
           // 4. Get Recipients
           let query = supabase.from("report_recipients").select("*").eq("active", true);
@@ -116,21 +97,15 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
               }
             }
 
-            const formattedDate = new Intl.DateTimeFormat('pt-BR').format(targetDate);
-            const brl = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
-
-            const message = `📊 Relatório do dia — ${formattedDate}\n\n` +
-              `💰 Faturamento: ${brl(totalRevenue)}\n` +
-              `💸 Custos: ${brl(totalCosts)}\n` +
-              `✅ Lucro: ${brl(netProfit)} (margem ${margin.toFixed(0)}%)\n` +
-              `🧾 Vendas: ${salesCount} · Ticket médio: ${brl(avgTicket)}`;
+            const message = renderDailyReportText(report);
+            const html = renderDailyReportHtml(report);
 
             try {
               if (!recipient.email) {
                 throw new Error("E-mail não configurado para este destinatário.");
               }
 
-              const sendStatus = await sendReportEmail(recipient.email, `Relatório Financeiro Diário - ${formattedDate}`, message);
+              const sendStatus = await sendReportEmail(recipient.email, `Relatório Diário - ${formattedDate}`, html, message);
               
               await supabase.from("report_logs").insert({
                 recipient_id: recipient.id,
@@ -152,27 +127,13 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
           }
 
           if (preview) {
-            const brl = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
-            const formattedDate = new Intl.DateTimeFormat('pt-BR').format(targetDate);
-            
-            const message = `📊 *PRÉ-VISUALIZAÇÃO — ${formattedDate}*\n` +
-              `💰 Faturamento: ${brl(totalRevenue)}\n` +
-              `💸 Custos: ${brl(totalCosts)}\n` +
-              `✅ Lucro: ${brl(netProfit)} (margem ${margin.toFixed(0)}%)\n` +
-              `🧾 Vendas: ${salesCount} · Ticket médio: ${brl(avgTicket)}\n\n` +
-              `_Este é um rascunho. O envio real ocorrerá no horário configurado._`;
-            
-            return Response.json({ 
-              success: true, 
+            return Response.json({
+              success: true,
               preview: true,
               data: {
-                totalRevenue,
-                totalCosts,
-                netProfit,
-                margin,
-                salesCount,
-                avgTicket,
-                message
+                ...report,
+                message: renderDailyReportText(report),
+                html: renderDailyReportHtml(report)
               }
             });
           }
@@ -189,7 +150,7 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
   },
 });
 
-async function sendReportEmail(to: string, subject: string, content: string) {
+async function sendReportEmail(to: string, subject: string, html: string, text: string) {
   const supabase = supabaseAdmin;
 
   // 1. Get Email Settings
@@ -201,7 +162,7 @@ async function sendReportEmail(to: string, subject: string, content: string) {
   if (settingsError || !emailSettings || !emailSettings.is_enabled) {
     console.log(`[Email Fallback] Email desativado ou não configurado. Simulação para: ${to}`);
     console.log(`Assunto: ${subject}`);
-    console.log(`Conteúdo: ${content}`);
+    console.log(`Conteúdo: ${text}`);
     
     if (!emailSettings?.is_enabled) {
       throw new Error("Serviço de e-mail desativado. Vá em Integrações > E-mail.");
@@ -209,12 +170,13 @@ async function sendReportEmail(to: string, subject: string, content: string) {
   }
 
   // 2. Enviar via Resend (server function interna)
-  const { triggerEmailEvent } = await import("@/lib/resend.server");
-  const res = await triggerEmailEvent({
-    event: 'relatorio_financeiro',
+  const { sendResendEmail } = await import("@/lib/resend.server");
+  const res = await sendResendEmail({
     to,
-    data: { subject, content },
-    idempotencyKey: `report_${new Date().toISOString().split('T')[0]}`
+    subject,
+    html,
+    text,
+    tags: [{ name: 'event', value: 'relatorio_diario' }]
   });
   return { id: res?.id || `email_msg_${Date.now()}` };
 }
