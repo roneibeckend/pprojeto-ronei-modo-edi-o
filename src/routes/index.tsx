@@ -504,7 +504,6 @@ function Nav() {
             height={40}
             fetchPriority="high"
             decoding="async"
-            fetchPriority="high"
             className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_12px_oklch(0.72_0.20_50/0.55)]"
           />
           <span className="truncate font-display text-base tracking-wide sm:text-xl">
@@ -594,7 +593,6 @@ function Hero() {
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
-                    fetchPriority="high"
                     width={1280}
                     height={720}
                     className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
@@ -793,7 +791,6 @@ function AuthorSolution() {
                   src={s.src}
                   alt={s.alt}
                   loading={i === 0 ? "eager" : "lazy"}
-                  decoding="async"
                   decoding="async"
                   width={s.width}
                   height={s.height}
@@ -1629,7 +1626,6 @@ function FinalCTA() {
             alt=""
             aria-hidden
             loading="lazy"
-            decoding="async"
             decoding="async"
             width={1280}
             height={800}
