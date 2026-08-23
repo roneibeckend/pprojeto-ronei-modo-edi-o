@@ -130,17 +130,8 @@ export const Route = createFileRoute("/api/public/daily-financial-report")({
             }
           }
 
-          if (preview) {
-            return Response.json({
-              success: true,
-              preview: true,
-              data: {
-                ...report,
-                message: renderDailyReportText(report),
-                html: renderDailyReportHtml(report)
-              }
-            });
-          }
+
+
 
           return Response.json({ success: true, results });
         } catch (error: any) {
