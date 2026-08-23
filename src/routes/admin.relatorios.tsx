@@ -450,7 +450,10 @@ function AdminRelatoriosPage() {
               )}
             </div>
           </section>
+
+          <SystemUpdatesPanel />
         </div>
+
       </div>
 
       {/* Modal Recipient */}
