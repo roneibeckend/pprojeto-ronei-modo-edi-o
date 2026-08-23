@@ -466,6 +466,16 @@ export const EMAIL_TEMPLATES: Record<string, Builder> = {
   saque_recusado: payoutRejected,
   saque_admin_novo: payoutAdminNew,
   nova_aula_ao_vivo: liveClass,
+  acesso_liberado_produto: accessGranted,
+  conclusao_curso: courseCompleted,
+  course_completed: courseCompleted,
+  certificado_emitido: certificateIssued,
+  certificate_issued: certificateIssued,
+  novo_conteudo: newContent,
+  new_content: newContent,
+  suporte_recebido: supportReceived,
+  support_received: supportReceived,
+  contato_suporte: supportReply,
 };
 
 export function hasEmailTemplate(event: string) {
