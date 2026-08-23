@@ -1,4 +1,6 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { renderEmailTemplate } from "@/emails/templates";
+
 
 export async function getResendConfig() {
   const { data: settings } = await supabaseAdmin
