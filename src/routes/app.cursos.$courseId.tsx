@@ -2,10 +2,11 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useEffect, useState, Suspense, lazy, useRef, useLayoutEffect } from "react";
 import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart, CheckCircle2, ArrowDown, X, Award } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { createAsaasPaymentLink } from "@/lib/asaas.functions";
+import { CouponInput, type AppliedCoupon } from "@/components/platform/CouponInput";
 import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -93,6 +94,8 @@ function CoursePage() {
   const [isLoadingSignedUrl, setIsLoadingSignedUrl] = useState(false);
   const generateCertFn = useServerFn(generateCertificate);
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+  const queryClient = useQueryClient();
 
 
   const handlePurchase = async () => {
