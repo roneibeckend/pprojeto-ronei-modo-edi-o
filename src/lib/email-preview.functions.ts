@@ -72,3 +72,42 @@ export const sendTemplateTestEmail = createServerFn({ method: "POST" })
     }
     return { success: true, id: result.id };
   });
+
+/**
+ * Envia um teste real usando o HTML de um modelo salvo no banco (editor de modelos),
+ * embrulhado no layout premium da marca — nunca envia texto genérico.
+ */
+export const sendRawTestEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        to: z.string().email("Informe um e-mail válido."),
+        subject: z.string().min(2),
+        html: z.string().min(10),
+        data: z.record(z.any()).default({}),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data: { to, subject, html, data }, context }) => {
+    await assertAdmin(context);
+
+    const { sendResendEmail, renderTemplate } = await import("./resend.server");
+    const { wrapCustomHtml } = await import("@/emails/layout");
+
+    const vars = { name: "Churrasqueiro", ...data };
+    const renderedSubject = renderTemplate(subject, vars);
+    const renderedHtml = renderTemplate(html, vars);
+
+    const result = await sendResendEmail({
+      to,
+      subject: `[TESTE] ${renderedSubject}`,
+      html: wrapCustomHtml({ heading: renderedSubject, bodyHtml: renderedHtml }),
+      tags: [{ name: "event", value: "modelo_customizado" }],
+    });
+
+    if (!result?.success || !result.id) {
+      throw new Error("O provedor não confirmou o envio do e-mail de teste.");
+    }
+    return { success: true, id: result.id };
+  });
