@@ -68,7 +68,6 @@ export function VideoPlayer({
   // Reset when the media changes
   useEffect(() => {
     setStarted(false);
-    setIsPlaying(false);
     setIsLoading(false);
     setHasError(false);
   }, [src]);
