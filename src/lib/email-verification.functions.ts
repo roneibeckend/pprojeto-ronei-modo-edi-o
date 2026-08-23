@@ -9,20 +9,102 @@ const confirmSchema = z.object({
     .regex(/^\d{6}$/, "Informe o código de 6 dígitos enviado por e-mail."),
 });
 
-/** Situação da confirmação de e-mail do usuário logado. */
+/** Janela e limites de reenvio de código. */
+const RESEND_COOLDOWN_MS = 60_000; // 1 minuto entre códigos
+const RESEND_WINDOW_MS = 60 * 60_000; // janela de 1 hora
+const RESEND_MAX_PER_WINDOW = 5; // no máximo 5 códigos por hora
+const CODE_TTL_MS = 30 * 60_000; // código válido por 30 minutos
+
+type ResendState = {
+  cooldownSeconds: number;
+  remainingInWindow: number;
+  maxPerWindow: number;
+  windowResetSeconds: number;
+  hasPendingCode: boolean;
+  pendingExpiresAt: string | null;
+};
+
+function buildResendState(rows: Array<{ created_at: string; expires_at: string; consumed_at: string | null }>): ResendState {
+  const now = Date.now();
+  const inWindow = rows.filter((r) => now - new Date(r.created_at).getTime() < RESEND_WINDOW_MS);
+  const last = rows[0];
+  const oldestInWindow = inWindow[inWindow.length - 1];
+
+  const cooldownMs = last ? RESEND_COOLDOWN_MS - (now - new Date(last.created_at).getTime()) : 0;
+  const windowResetMs = oldestInWindow
+    ? RESEND_WINDOW_MS - (now - new Date(oldestInWindow.created_at).getTime())
+    : 0;
+
+  const pending = rows.find(
+    (r) => !r.consumed_at && new Date(r.expires_at).getTime() > now,
+  );
+
+  return {
+    cooldownSeconds: Math.max(0, Math.ceil(cooldownMs / 1000)),
+    remainingInWindow: Math.max(0, RESEND_MAX_PER_WINDOW - inWindow.length),
+    maxPerWindow: RESEND_MAX_PER_WINDOW,
+    windowResetSeconds: Math.max(0, Math.ceil(windowResetMs / 1000)),
+    hasPendingCode: !!pending,
+    pendingExpiresAt: pending?.expires_at ?? null,
+  };
+}
+
+/** Área correta do usuário depois de confirmar o e-mail. */
+async function resolveDestination(
+  supabaseAdmin: any,
+  userId: string,
+): Promise<{ to: string; label: string }> {
+  const { data: roleRow } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  const role = roleRow?.role as string | undefined;
+  if (role && role !== "student") {
+    return { to: "/admin", label: "Painel administrativo" };
+  }
+
+  const { data: affiliate } = await supabaseAdmin
+    .from("affiliates")
+    .select("id, status")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (affiliate?.status === "active") {
+    return { to: "/app/afiliados", label: "Área de afiliados" };
+  }
+
+  return { to: "/app", label: "Área do aluno" };
+}
+
+/** Situação da confirmação de e-mail do usuário logado, incluindo limites de reenvio. */
 export const getEmailVerificationStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
     const { data } = await context.supabase
       .from("profiles")
       .select("email, email_verified_at")
       .eq("id", context.userId)
       .maybeSingle();
 
+    const { data: rows } = await supabaseAdmin
+      .from("email_verifications")
+      .select("created_at, expires_at, consumed_at")
+      .eq("user_id", context.userId)
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    const verified = !!data?.email_verified_at;
+
     return {
       email: (data?.email as string | null) ?? null,
-      verified: !!data?.email_verified_at,
+      verified,
       verifiedAt: (data?.email_verified_at as string | null) ?? null,
+      destination: verified ? await resolveDestination(supabaseAdmin, context.userId) : null,
+      resend: buildResendState((rows as any[]) ?? []),
     };
   });
 
@@ -40,23 +122,37 @@ export const sendEmailVerificationCode = createServerFn({ method: "POST" })
 
     const email = (profile?.email as string | null) || (context.claims as any)?.email || null;
     if (!email) throw new Error("Nenhum e-mail encontrado no seu cadastro.");
-    if (profile?.email_verified_at) return { alreadyVerified: true, email };
+    if (profile?.email_verified_at) {
+      return {
+        alreadyVerified: true as const,
+        email,
+        resend: buildResendState([]),
+      };
+    }
 
-    // Limite simples: no máximo 1 código por minuto.
-    const { data: recent } = await supabaseAdmin
+    const { data: rows } = await supabaseAdmin
       .from("email_verifications")
-      .select("created_at")
+      .select("created_at, expires_at, consumed_at")
       .eq("user_id", context.userId)
       .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .limit(20);
 
-    if (recent?.created_at && Date.now() - new Date(recent.created_at).getTime() < 60_000) {
-      throw new Error("Aguarde 1 minuto antes de solicitar um novo código.");
+    const state = buildResendState((rows as any[]) ?? []);
+
+    if (state.cooldownSeconds > 0) {
+      throw new Error(
+        `Aguarde ${state.cooldownSeconds}s antes de solicitar um novo código.`,
+      );
+    }
+    if (state.remainingInWindow <= 0) {
+      const minutes = Math.max(1, Math.ceil(state.windowResetSeconds / 60));
+      throw new Error(
+        `Limite de ${RESEND_MAX_PER_WINDOW} códigos por hora atingido. Tente novamente em ${minutes} min.`,
+      );
     }
 
     const code = String(Math.floor(100000 + Math.random() * 900000));
-    const expiresAt = new Date(Date.now() + 30 * 60_000).toISOString();
+    const expiresAt = new Date(Date.now() + CODE_TTL_MS).toISOString();
 
     const { error } = await supabaseAdmin.from("email_verifications").insert({
       user_id: context.userId,
@@ -83,7 +179,18 @@ export const sendEmailVerificationCode = createServerFn({ method: "POST" })
       throw new Error("Não foi possível enviar o e-mail agora. Tente novamente em instantes.");
     }
 
-    return { alreadyVerified: false, email };
+    return {
+      alreadyVerified: false as const,
+      email,
+      expiresAt,
+      resend: {
+        ...state,
+        cooldownSeconds: Math.ceil(RESEND_COOLDOWN_MS / 1000),
+        remainingInWindow: state.remainingInWindow - 1,
+        hasPendingCode: true,
+        pendingExpiresAt: expiresAt,
+      },
+    };
   });
 
 /** Valida o código informado e marca o e-mail como confirmado. */
@@ -121,5 +228,94 @@ export const confirmEmailWithCode = createServerFn({ method: "POST" })
       .eq("id", context.userId);
     if (error) throw new Error(error.message);
 
-    return { verified: true };
+    return {
+      verified: true as const,
+      verifiedAt: now,
+      destination: await resolveDestination(supabaseAdmin, context.userId),
+    };
+  });
+
+/** Visão administrativa: usuários confirmados/pendentes + últimos eventos de verificação. */
+export const getEmailVerificationOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        search: z.string().trim().max(120).optional(),
+        status: z.enum(["all", "verified", "pending"]).optional(),
+        limit: z.number().int().min(10).max(200).optional(),
+      })
+      .optional()
+      .parse(data ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Acesso restrito a administradores.");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const search = data?.search?.trim();
+    const status = data?.status ?? "all";
+    const limit = data?.limit ?? 50;
+
+    let query = supabaseAdmin
+      .from("profiles")
+      .select("id, name, email, email_verified_at, created_at", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (search) query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
+    if (status === "verified") query = query.not("email_verified_at", "is", null);
+    if (status === "pending") query = query.is("email_verified_at", null);
+
+    const { data: users, error } = await query;
+    if (error) throw new Error(error.message);
+
+    const [{ count: verifiedCount }, { count: pendingCount }] = await Promise.all([
+      supabaseAdmin
+        .from("profiles")
+        .select("id", { count: "exact", head: true })
+        .not("email_verified_at", "is", null),
+      supabaseAdmin
+        .from("profiles")
+        .select("id", { count: "exact", head: true })
+        .is("email_verified_at", null),
+    ]);
+
+    const { data: events } = await supabaseAdmin
+      .from("email_verifications")
+      .select("id, user_id, email, created_at, expires_at, consumed_at")
+      .order("created_at", { ascending: false })
+      .limit(30);
+
+    const now = Date.now();
+
+    return {
+      totals: {
+        verified: verifiedCount ?? 0,
+        pending: pendingCount ?? 0,
+      },
+      users: ((users as any[]) ?? []).map((u) => ({
+        id: u.id as string,
+        name: (u.name as string | null) ?? null,
+        email: (u.email as string | null) ?? null,
+        verifiedAt: (u.email_verified_at as string | null) ?? null,
+        createdAt: u.created_at as string,
+      })),
+      events: ((events as any[]) ?? []).map((e) => ({
+        id: e.id as string,
+        userId: e.user_id as string,
+        email: e.email as string,
+        createdAt: e.created_at as string,
+        state: e.consumed_at
+          ? ("confirmed" as const)
+          : new Date(e.expires_at).getTime() < now
+            ? ("expired" as const)
+            : ("pending" as const),
+        consumedAt: (e.consumed_at as string | null) ?? null,
+      })),
+    };
   });
