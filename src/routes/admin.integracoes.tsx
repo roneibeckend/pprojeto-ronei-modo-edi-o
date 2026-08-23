@@ -1410,14 +1410,15 @@ function OffersIntegrationPanel() {
           <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 flex items-center gap-2">
-                  <Percent className="h-4 w-4 text-[#ff6a00]" /> Percentual de Desconto
+                  <Percent className="h-4 w-4 shrink-0 text-[#ff6a00]" /> Percentual de Desconto
                 </Label>
                 <Badge variant="outline" className="bg-[#ff6a00]/10 text-[#ff6a00] border-none font-black">
                   Mínimo 15%
                 </Badge>
               </div>
+
               <div className="relative group">
                 <Input 
                   type="number"
