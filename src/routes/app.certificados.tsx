@@ -494,14 +494,8 @@ function FullCertificate({ cert }: { cert: any }) {
 
             {/* Footer bar */}
             <div className="mt-10 grid grid-cols-[auto_1fr_auto] items-center gap-4 border-t border-black/10 pt-5">
-              {/* QR */}
-              <div className="grid h-16 w-16 grid-cols-8 gap-[1px] rounded-sm bg-black p-1">
-                {Array.from({ length: 64 }).map((_, i) => {
-                  const seed = (cert.code ?? cert.id).charCodeAt(i % (cert.code ?? cert.id).length);
-                  const on = (seed * (i + 3)) % 3 !== 0;
-                  return <span key={i} className={on ? "bg-[#f5efe4]" : "bg-black"} />;
-                })}
-              </div>
+              {/* QR real de validação */}
+              <CertificateQrCode code={cert.code ?? cert.id} size={68} />
               <div className="min-w-0">
                 <div className="text-[9px] font-bold uppercase tracking-[0.28em] text-black/50">Código de validação</div>
                 <div className="truncate font-mono text-sm font-bold text-black">{cert.code ?? "—"}</div>
