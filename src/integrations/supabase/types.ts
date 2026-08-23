@@ -510,6 +510,160 @@ export type Database = {
           },
         ]
       }
+      coupon_products: {
+        Row: {
+          coupon_id: string
+          created_at: string
+          id: string
+          product_id: string
+          product_type: string
+        }
+        Insert: {
+          coupon_id: string
+          created_at?: string
+          id?: string
+          product_id: string
+          product_type?: string
+        }
+        Update: {
+          coupon_id?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          product_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_products_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupon_redemptions: {
+        Row: {
+          completed_at: string | null
+          context: string
+          coupon_id: string
+          created_at: string
+          discount_amount: number
+          final_amount: number
+          id: string
+          metadata: Json
+          original_amount: number
+          product_id: string | null
+          product_type: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          context?: string
+          coupon_id: string
+          created_at?: string
+          discount_amount?: number
+          final_amount?: number
+          id?: string
+          metadata?: Json
+          original_amount?: number
+          product_id?: string | null
+          product_type?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          context?: string
+          coupon_id?: string
+          created_at?: string
+          discount_amount?: number
+          final_amount?: number
+          id?: string
+          metadata?: Json
+          original_amount?: number
+          product_id?: string | null
+          product_type?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_redemptions_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          allowed_contexts: string[]
+          applies_to_all: boolean
+          auto_apply: boolean
+          code: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          discount_type: string
+          discount_value: number
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          max_uses: number | null
+          max_uses_per_user: number | null
+          min_purchase_amount: number | null
+          name: string
+          starts_at: string | null
+          times_used: number
+          updated_at: string
+        }
+        Insert: {
+          allowed_contexts?: string[]
+          applies_to_all?: boolean
+          auto_apply?: boolean
+          code: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          max_uses_per_user?: number | null
+          min_purchase_amount?: number | null
+          name: string
+          starts_at?: string | null
+          times_used?: number
+          updated_at?: string
+        }
+        Update: {
+          allowed_contexts?: string[]
+          applies_to_all?: boolean
+          auto_apply?: boolean
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          max_uses_per_user?: number | null
+          min_purchase_amount?: number | null
+          name?: string
+          starts_at?: string | null
+          times_used?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       course_enrollments: {
         Row: {
           course_id: string
@@ -2304,6 +2458,14 @@ export type Database = {
         Args: { p_points: number; p_user_id: string }
         Returns: undefined
       }
+      complete_coupon_redemption: {
+        Args: {
+          p_product_id: string
+          p_product_type: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       complete_linked_course: {
         Args: { _ebook_id: string; _user_id: string }
         Returns: undefined
@@ -2370,11 +2532,34 @@ export type Database = {
         Args: { p_confidence: number; p_context: Json; p_message: string }
         Returns: undefined
       }
+      redeem_coupon: {
+        Args: {
+          p_amount: number
+          p_code: string
+          p_context?: string
+          p_metadata?: Json
+          p_product_id: string
+          p_product_type: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
       save_assistant_response: {
         Args: { p_content: string; p_ticket_id: string }
         Returns: undefined
       }
       update_expired_live_classes: { Args: never; Returns: undefined }
+      validate_coupon: {
+        Args: {
+          p_amount?: number
+          p_code: string
+          p_context?: string
+          p_product_id?: string
+          p_product_type?: string
+          p_user_id?: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       affiliate_sale_status: "pending" | "paid" | "cancelled"

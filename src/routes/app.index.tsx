@@ -9,7 +9,7 @@ import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { IMG } from "@/lib/platform-data";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { CourseCardSkeleton } from "@/components/ui/skeleton";
@@ -283,6 +283,8 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
   const [discountPercentage, setDiscountPercentage] = useState(15);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   
   const handlePurchase = async (e: React.MouseEvent) => {
@@ -333,15 +335,27 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
         }))
       ];
 
+      const pendingCoupon = localStorage.getItem('pending_coupon_code') || undefined;
+
       const result = await createPaymentLink({
         data: {
           products,
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: item.payment_type || 'unique',
           dueDays: item.due_days || 3,
+          couponCode: pendingCoupon,
         }
       });
-      
+
+      if ((result as any).free) {
+        localStorage.removeItem('pending_coupon_code');
+        toast.success("Cupom aplicado! Acesso liberado gratuitamente. 🎉");
+        await queryClient.invalidateQueries({ queryKey: ["course-enrollments"] });
+        await queryClient.invalidateQueries({ queryKey: ["ebook-enrollments"] });
+        navigate({ to: item.type === 'course' ? `/app/cursos/${item.id}` : `/app/ebooks/${item.id}` });
+        return;
+      }
+
       if (result.url) {
         openPayment(result.url, item.title, item.id, item.type);
       }

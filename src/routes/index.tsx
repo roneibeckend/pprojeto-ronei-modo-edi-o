@@ -15,6 +15,7 @@ import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
 import { trackEvent, trackInitiateCheckout } from "@/lib/pixel";
 import { supabase } from "@/integrations/supabase/client";
+import { CouponInput, type AppliedCoupon } from "@/components/platform/CouponInput";
 
 import {
   Flame,
@@ -411,6 +412,42 @@ function CheckoutButton({ className = "", label = "Quero garantir meu acesso" }:
         </>
       )}
     </button>
+  );
+}
+
+// Campo de cupom da landing: valida publicamente e persiste o código para o checkout logado.
+function LandingCouponField() {
+  const [applied, setApplied] = useState<AppliedCoupon | null>(null);
+  const { data: mainEbook } = useQuery({
+    queryKey: ["landing-main-ebook"],
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const { data } = await supabase.from("ebooks").select("id, price").eq("id", MAIN_EBOOK_ID).maybeSingle();
+      return data;
+    },
+  });
+
+  const handleApplied = (coupon: AppliedCoupon | null) => {
+    setApplied(coupon);
+    if (coupon) {
+      localStorage.setItem("pending_coupon_code", coupon.code);
+    } else {
+      localStorage.removeItem("pending_coupon_code");
+    }
+  };
+
+  return (
+    <div className="mx-auto w-full max-w-md">
+      <CouponInput
+        productId={MAIN_EBOOK_ID}
+        productType="ebook"
+        amount={mainEbook?.price ?? 47.9}
+        authenticated={false}
+        applied={applied}
+        onApplied={handleApplied}
+        initialCode={typeof window !== "undefined" ? localStorage.getItem("pending_coupon_code") ?? undefined : undefined}
+      />
+    </div>
   );
 }
 
@@ -1463,7 +1500,8 @@ function Offer() {
               <Countdown hours={72} />
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 space-y-4">
+              <LandingCouponField />
               <CheckoutButton label="Começar Agora" />
             </div>
 

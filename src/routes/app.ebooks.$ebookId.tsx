@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { useProgress } from "@/hooks/use-progress";
 import { createAsaasPaymentLink } from "@/lib/asaas.functions";
+import { CouponInput, type AppliedCoupon } from "@/components/platform/CouponInput";
 import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -94,6 +95,7 @@ function EbookReaderPage() {
   const { isChapterCompleted, completeChapter, ebookProgress } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
@@ -450,9 +452,17 @@ function EbookReaderPage() {
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: ebook.payment_type || 'unique',
           dueDays: ebook.due_days || 3,
+          couponCode: appliedCoupon?.code,
         }
       });
-      
+
+      if ((result as any).free) {
+        toast.success("Cupom aplicado! Acesso liberado gratuitamente. 🎉");
+        await queryClient.invalidateQueries({ queryKey: ["course-enrollments"] });
+        await queryClient.invalidateQueries({ queryKey: ["ebook-enrollments"] });
+        return;
+      }
+
       if (result.url) {
         openPayment(result.url, ebook.title, ebook.id, 'ebook');
       }
@@ -505,22 +515,42 @@ function EbookReaderPage() {
         <p className="mt-4 max-w-md text-muted-foreground">
           Este e-book é exclusivo para alunos. Adquira agora para liberar o acesso imediato ao conteúdo completo.
         </p>
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-          <Link to="/app/cursos" className="btn-ghost-fire px-8 py-3 font-bold active:scale-[0.98] touch-action-manipulation">
-            Voltar
-          </Link>
-          <button 
-            onClick={handlePurchase}
-            disabled={isProcessing}
-            className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] touch-action-manipulation"
-          >
-            {isProcessing ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <ShoppingCart className="h-5 w-5" />
-            )}
-            {isProcessing ? "Processando..." : `Comprar por R$ ${ebook.price?.toString().replace(".", ",")}`}
-          </button>
+        <div className="mt-8 w-full max-w-md space-y-4">
+          <CouponInput
+            productId={ebook.id}
+            productType="ebook"
+            amount={ebook.price || 0}
+            authenticated
+            applied={appliedCoupon}
+            onApplied={setAppliedCoupon}
+            initialCode={typeof window !== 'undefined' ? localStorage.getItem('pending_coupon_code') ?? undefined : undefined}
+          />
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <Link to="/app/cursos" className="btn-ghost-fire px-8 py-3 font-bold active:scale-[0.98] touch-action-manipulation">
+              Voltar
+            </Link>
+            <button
+              onClick={handlePurchase}
+              disabled={isProcessing}
+              className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] touch-action-manipulation"
+            >
+              {isProcessing ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <ShoppingCart className="h-5 w-5" />
+              )}
+              {isProcessing
+                ? "Processando..."
+                : appliedCoupon && appliedCoupon.finalAmount <= 0
+                  ? "Resgatar Grátis"
+                  : `Comprar por R$ ${(appliedCoupon ? appliedCoupon.finalAmount : ebook.price)?.toString().replace(".", ",")}`}
+            </button>
+          </div>
+          {appliedCoupon && appliedCoupon.discountAmount > 0 && (
+            <p className="text-xs text-emerald-400 font-semibold text-center sm:text-left">
+              De <span className="line-through">R$ {ebook.price?.toString().replace(".", ",")}</span> por R$ {appliedCoupon.finalAmount.toFixed(2).replace(".", ",")} com o cupom {appliedCoupon.code}
+            </p>
+          )}
         </div>
       </div>
     );

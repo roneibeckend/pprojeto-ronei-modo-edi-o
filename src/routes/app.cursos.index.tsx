@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/platform/Shell";
 import { ProgressSummary } from "@/components/platform/ProgressSummary";
 import { IMG } from "@/lib/platform-data";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { useProgress } from "@/hooks/use-progress";
@@ -78,6 +78,7 @@ function CoursesPage() {
   }, [isLoadingEnrollments, courseEnrollments, ebookEnrollments]);
   const createPaymentLink = useServerFn(createAsaasPaymentLink);
   const { openPayment } = usePaymentModal();
+  const queryClient = useQueryClient();
 
   const handlePurchase = async (item: any, type: 'course' | 'ebook') => {
     // Check if item is already owned (safety check)
@@ -158,15 +159,27 @@ function CoursesPage() {
         }
       });
 
+      const pendingCoupon = localStorage.getItem('pending_coupon_code') || undefined;
+
       const result = await createPaymentLink({
         data: {
           products,
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: item.payment_type || 'unique',
           dueDays: item.due_days || 3,
+          couponCode: pendingCoupon,
         }
       });
-      
+
+      if ((result as any).free) {
+        localStorage.removeItem('pending_coupon_code');
+        toast.success("Cupom aplicado! Acesso liberado gratuitamente. 🎉");
+        await queryClient.invalidateQueries({ queryKey: ["course-enrollments"] });
+        await queryClient.invalidateQueries({ queryKey: ["ebook-enrollments"] });
+        navigate({ to: type === 'course' ? `/app/cursos/${item.id}` : `/app/ebooks/${item.id}` });
+        return;
+      }
+
       if (result.url) {
         openPayment(result.url, item.title, item.id, type);
       }

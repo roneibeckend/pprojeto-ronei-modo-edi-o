@@ -2,10 +2,11 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useEffect, useState, Suspense, lazy, useRef, useLayoutEffect } from "react";
 import { Check, Lock, Play, ChevronLeft, ChevronRight, FileText, StickyNote, Loader2, ShoppingCart, CheckCircle2, ArrowDown, X, Award } from "lucide-react";
 import { PageHeader } from "@/components/platform/Shell";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { createAsaasPaymentLink } from "@/lib/asaas.functions";
+import { CouponInput, type AppliedCoupon } from "@/components/platform/CouponInput";
 import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -93,6 +94,8 @@ function CoursePage() {
   const [isLoadingSignedUrl, setIsLoadingSignedUrl] = useState(false);
   const generateCertFn = useServerFn(generateCertificate);
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+  const queryClient = useQueryClient();
 
 
   const handlePurchase = async () => {
@@ -152,9 +155,17 @@ function CoursePage() {
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: course.payment_type || 'unique',
           dueDays: course.due_days || 3,
+          couponCode: appliedCoupon?.code,
         }
       });
-      
+
+      if ((result as any).free) {
+        toast.success("Cupom aplicado! Acesso liberado gratuitamente. 🎉");
+        await queryClient.invalidateQueries({ queryKey: ["course-enrollments"] });
+        await queryClient.invalidateQueries({ queryKey: ["ebook-enrollments"] });
+        return;
+      }
+
       if (result.url) {
         openPayment(result.url, course.title, course.id, 'course');
       }
@@ -291,22 +302,42 @@ function CoursePage() {
         <p className="mt-4 max-w-md text-muted-foreground">
           Este conteúdo é exclusivo para alunos deste treinamento. Adquira agora para liberar o acesso imediato.
         </p>
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-          <Link to="/app/cursos" className="btn-ghost-fire px-8 py-3 font-bold active:scale-[0.98] touch-action-manipulation">
-            Voltar aos cursos
-          </Link>
-          <button 
-            onClick={handlePurchase}
-            disabled={isProcessing}
-            className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] touch-action-manipulation"
-          >
-            {isProcessing ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <ShoppingCart className="h-5 w-5" />
-            )}
-            {isProcessing ? "Processando..." : `Comprar por R$ ${course.price?.toString().replace(".", ",")}`}
-          </button>
+        <div className="mt-8 w-full max-w-md space-y-4">
+          <CouponInput
+            productId={course.id}
+            productType="course"
+            amount={course.price || 0}
+            authenticated
+            applied={appliedCoupon}
+            onApplied={setAppliedCoupon}
+            initialCode={typeof window !== 'undefined' ? localStorage.getItem('pending_coupon_code') ?? undefined : undefined}
+          />
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <Link to="/app/cursos" className="btn-ghost-fire px-8 py-3 font-bold active:scale-[0.98] touch-action-manipulation">
+              Voltar aos cursos
+            </Link>
+            <button
+              onClick={handlePurchase}
+              disabled={isProcessing}
+              className="btn-fire px-10 py-3 font-bold shadow-lg shadow-fire/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] touch-action-manipulation"
+            >
+              {isProcessing ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <ShoppingCart className="h-5 w-5" />
+              )}
+              {isProcessing
+                ? "Processando..."
+                : appliedCoupon && appliedCoupon.finalAmount <= 0
+                  ? "Resgatar Grátis"
+                  : `Comprar por R$ ${(appliedCoupon ? appliedCoupon.finalAmount : course.price)?.toString().replace(".", ",")}`}
+            </button>
+          </div>
+          {appliedCoupon && appliedCoupon.discountAmount > 0 && (
+            <p className="text-xs text-emerald-400 font-semibold text-center sm:text-left">
+              De <span className="line-through">R$ {course.price?.toString().replace(".", ",")}</span> por R$ {appliedCoupon.finalAmount.toFixed(2).replace(".", ",")} com o cupom {appliedCoupon.code}
+            </p>
+          )}
         </div>
       </div>
     );

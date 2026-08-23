@@ -22,6 +22,8 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
     affiliateRef: z.string().optional(),
     paymentType: z.enum(['unique', 'recurring']).optional(),
     dueDays: z.number().optional(),
+    couponCode: z.string().trim().max(40).optional(),
+    checkoutContext: z.enum(['main', 'upsell', 'downsell', 'order_bump']).optional(),
   }).parse(data))
   .handler(async ({ data, context }) => {
     const { apiKey, baseUrl, isTestMode } = await getAsaasConfig();
@@ -50,8 +52,53 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
         });
       }
 
-      const totalValue = pricedProducts.reduce((acc, p) => acc + p.value, 0);
+      // CUPOM: validação e resgate atômicos no banco (anti-fraude e anti-concorrência).
+      // O desconto é sempre recalculado no servidor sobre o preço autoritativo do produto principal.
+      let couponApplied: { code: string; discountAmount: number; finalAmount: number } | null = null;
+      if (data.couponCode) {
+        const main = pricedProducts[0];
+        const { data: redemption, error: couponError } = await (supabaseAdmin as any).rpc("redeem_coupon", {
+          p_code: data.couponCode,
+          p_product_id: main.productId,
+          p_product_type: main.productType,
+          p_amount: main.value,
+          p_user_id: context.userId,
+          p_context: data.checkoutContext ?? "main",
+          p_metadata: {
+            products: pricedProducts.map((p) => ({ id: p.productId, type: p.productType, value: p.value })),
+          },
+        });
+
+        if (couponError) {
+          console.error("[Coupons] Erro ao resgatar cupom:", couponError);
+          throw new Error("Não foi possível aplicar o cupom. Tente novamente.");
+        }
+        if (!redemption?.valid) {
+          throw new Error(redemption?.message || "Cupom inválido ou expirado.");
+        }
+
+        const discountAmount = Number(redemption.discount_amount) || 0;
+        if (discountAmount > 0) {
+          pricedProducts[0] = { ...main, value: Number(redemption.final_amount) };
+          couponApplied = {
+            code: redemption.code,
+            discountAmount,
+            finalAmount: Number(redemption.final_amount),
+          };
+          console.log(`[Coupons] Cupom ${redemption.code} aplicado: -R$ ${discountAmount} em ${main.productId}`);
+        }
+      }
+
+      const totalValue = Math.round(pricedProducts.reduce((acc, p) => acc + p.value, 0) * 100) / 100;
       const mainProduct = pricedProducts[0];
+
+      // 100% DE DESCONTO: libera o acesso imediatamente, sem gerar cobrança no Asaas.
+      if (totalValue <= 0) {
+        for (const p of pricedProducts) {
+          await grantAccess(p.productType, p.productId, context.userId);
+        }
+        return { free: true, coupon: couponApplied?.code ?? null, url: null, id: null };
+      }
       const rawTitles = pricedProducts.map(p => p.title).join(' + ');
 
       // Sanitização rigorosa para o Asaas: apenas alfanuméricos, espaços, hífen e underscore.
