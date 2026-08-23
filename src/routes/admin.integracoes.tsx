@@ -845,26 +845,27 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
-          <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+        <TabsList className="scrollbar-hidden mb-6 w-full justify-start gap-1 overflow-x-auto bg-black/40 border border-white/5 p-1 [-webkit-overflow-scrolling:touch]">
+          <TabsTrigger value="config" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             Identidade
           </TabsTrigger>
-          <TabsTrigger value="guide" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+          <TabsTrigger value="guide" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             Manual
           </TabsTrigger>
-          <TabsTrigger value="templates" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+          <TabsTrigger value="templates" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             Templates
           </TabsTrigger>
-          <TabsTrigger value="resend" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+          <TabsTrigger value="resend" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             API Key (Resend)
           </TabsTrigger>
-          <TabsTrigger value="test" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+          <TabsTrigger value="test" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             Teste de Envio
           </TabsTrigger>
-          <TabsTrigger value="logs" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+          <TabsTrigger value="logs" className="shrink-0 whitespace-nowrap data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
             Logs de Auditoria
           </TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="config" className="space-y-6 m-0">
           <Card className="bg-[#111] border-white/5">
