@@ -1,8 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { triggerEmailEvent } from "./resend.server";
 
 
 /**
@@ -10,6 +8,7 @@ import { triggerEmailEvent } from "./resend.server";
  * Centraliza a lógica, validações e logs.
  */
 export const sendEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => z.object({
     to: z.string().email(),
     template: z.enum([
@@ -23,8 +22,15 @@ export const sendEmail = createServerFn({ method: "POST" })
     data: z.record(z.any()).optional(),
     idempotencyKey: z.string().optional()
   }).parse(data))
-  .handler(async ({ data: { to, template, data, idempotencyKey } }) => {
+  .handler(async ({ data: { to, template, data, idempotencyKey }, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc('has_role', {
+      _user_id: context.userId,
+      _role: 'admin'
+    });
+    if (!isAdmin) throw new Error("Forbidden: Admin access required");
+
     try {
+      const { triggerEmailEvent } = await import("./resend.server");
       // Usa o template cadastrado (email_templates) quando existir; senão faz fallback genérico.
       const result = await triggerEmailEvent({
         event: template,
@@ -32,11 +38,13 @@ export const sendEmail = createServerFn({ method: "POST" })
         data: data ?? {},
         idempotencyKey
       });
-      return { success: true, id: (result as any)?.id ?? null };
+      if (!result?.success || !result.id) {
+        throw new Error("O provedor não confirmou o envio do e-mail.");
+      }
+      return { success: true, id: result.id };
     } catch (error: any) {
       console.error(`[Resend] Falha na abstração sendEmail:`, error);
-      // Retorna erro estruturado (a UI deve verificar success)
-      return { success: false, error: error?.message ?? 'Falha ao enviar e-mail' };
+      throw new Error(error?.message ?? 'Falha ao enviar e-mail');
     }
   });
 
@@ -54,6 +62,7 @@ export const getEmailLogs = createServerFn({ method: "GET" })
     });
     if (!isAdmin) throw new Error("Forbidden: Admin access required");
 
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from('email_logs')
       .select('*')
@@ -73,6 +82,7 @@ export const getEmailSettings = createServerFn({ method: "GET" })
     });
     if (!isAdmin) throw new Error("Forbidden: Admin access required");
 
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from('email_settings')
       .select('*')
@@ -98,6 +108,7 @@ export const validateSender = createServerFn({ method: "POST" })
 
     if (!isAdmin) throw new Error("Forbidden: Admin access required");
 
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { validateResendSender } = await import("./resend.server");
     const result = await validateResendSender(data.apiKey, data.email);
     
@@ -130,6 +141,7 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
 
     if (!isAdmin) throw new Error("Forbidden: Admin access required");
 
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     // Always use the first record for simplicity, assuming one global config
     const { data: existing } = await supabaseAdmin
       .from('email_settings')

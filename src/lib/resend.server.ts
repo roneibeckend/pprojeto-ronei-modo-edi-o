@@ -48,39 +48,41 @@ export async function getResendConfig() {
 
 export async function validateResendSender(apiKey: string, email: string) {
   try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        from: 'onboarding@resend.dev',
-        to: 'test@resend.dev',
-        subject: 'Validation',
-        html: 'Validation',
-        dry_run: true
-      })
-    });
-
-    if (response.status === 401) {
-      const data = await response.json().catch(() => ({}));
-      if (data.name === 'restricted_api_key') {
-         return {
-           status: 'verified',
-           message: 'Chave de API validada com sucesso (Restrita a envio).'
-         };
-      }
-      throw new Error(`Chave de API Inválida (401)`);
+    const domain = email.split('@')[1]?.trim().toLowerCase();
+    if (!domain) {
+      throw new Error('E-mail remetente inválido.');
     }
 
+    const response = await fetch('https://api.resend.com/domains', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`
+      }
+    });
+
+    const payload = await response.json().catch(() => ({}));
     if (!response.ok) {
-      throw new Error(`Erro API Resend: ${response.status}`);
+      if (response.status === 401 && payload?.name === 'restricted_api_key') {
+        return {
+          status: 'pending',
+          error: 'A chave possui somente permissão de envio. Não foi possível confirmar o domínio; faça um envio de teste.'
+        };
+      }
+      throw new Error(payload?.message || `Erro API Resend: ${response.status}`);
+    }
+
+    const domains = Array.isArray(payload?.data) ? payload.data : [];
+    const configuredDomain = domains.find((item: { name?: string }) => item?.name?.toLowerCase() === domain);
+    if (!configuredDomain || configuredDomain.status !== 'verified') {
+      return {
+        status: 'error',
+        error: `O domínio ${domain} não está verificado no Resend.`
+      };
     }
 
     return {
       status: 'verified',
-      message: 'Chave de API validada com sucesso.'
+      message: `Domínio ${domain} validado no Resend.`
     };
   } catch (error: any) {
     return {
@@ -129,11 +131,18 @@ export async function sendResendEmail(params: {
       // para o e-mail do dono da conta. Mensagem clara para o admin resolver.
       const isUnverifiedDomain =
         response.status === 403 || /testing emails|verify a domain/i.test(raw);
-      throw new Error(
+      const friendlyMessage =
         isUnverifiedDomain
           ? 'Envio bloqueado: o domínio do remetente não está verificado no Resend. Verifique um domínio em resend.com/domains e configure o e-mail remetente com esse domínio nas Integrações.'
-          : raw
-      );
+          : raw;
+      if (isUnverifiedDomain) {
+        await supabaseAdmin.from('email_settings').update({
+          validation_status: 'error',
+          validation_error: friendlyMessage,
+          last_validation_at: new Date().toISOString()
+        }).eq('from_email', config.fromEmail);
+      }
+      throw new Error(friendlyMessage);
     }
 
 
