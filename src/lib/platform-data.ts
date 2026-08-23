@@ -1,11 +1,14 @@
-import platter1 from "@/assets/platter1.asset.json";
-import platter2 from "@/assets/platter2.asset.json";
-import ribeye from "@/assets/ribeye.asset.json";
-import chef from "@/assets/chef-working.asset.json";
-import hero from "@/assets/hero-chef.asset.json";
-import skewersFlat from "@/assets/skewers-flat.asset.json";
-import skewersHeld from "@/assets/skewers-held.asset.json";
-import skewerSingle from "@/assets/skewer-single.asset.json";
+import {
+  optPlatter1 as platter1,
+  optPlatter2 as platter2,
+  optRibeye as ribeye,
+  optChefWorking as chef,
+  optHeroChef as hero,
+  optSkewersFlat as skewersFlat,
+  optSkewersHeld as skewersHeld,
+  optSkewerSingle as skewerSingle,
+} from "@/assets/optimized";
+
 
 export const IMG = {
   platter1: platter1.url,
