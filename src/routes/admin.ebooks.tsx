@@ -326,7 +326,7 @@ function AdminEbooksPage() {
             <Tabs value={activeTab} onValueChange={(val) => {
               setActiveTab(val);
             }} className="flex-1 flex flex-col min-h-0">
-              <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start z-20 backdrop-blur-md shrink-0">
+              <TabsList className="mb-4 sm:mb-6 z-20 shrink-0 w-full max-w-full justify-start gap-1 overflow-x-auto overflow-y-hidden whitespace-nowrap rounded-lg border border-white/10 bg-white/5 p-1 backdrop-blur-md sm:w-auto sm:self-start">
 
                 <TabsTrigger value="info" className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Info className="h-4 w-4" /> Informações
