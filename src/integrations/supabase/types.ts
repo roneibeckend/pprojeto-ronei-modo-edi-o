@@ -1727,41 +1727,103 @@ export type Database = {
         }
         Relationships: []
       }
+      payout_audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          details: Json
+          id: string
+          payout_id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          payout_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          payout_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payout_audit_log_payout_id_fkey"
+            columns: ["payout_id"]
+            isOneToOne: false
+            referencedRelation: "payout_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payout_requests: {
         Row: {
+          admin_notes: string | null
           amount: number
           asaas_payment_id: string | null
           created_at: string | null
+          document_status: string
+          document_uploaded_at: string | null
+          document_url: string | null
           id: string
+          ip_address: string | null
           metadata: Json | null
           method: string
           pix_key: string | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           status: Database["public"]["Enums"]["payout_status"]
           updated_at: string | null
+          user_agent: string | null
           user_id: string
         }
         Insert: {
+          admin_notes?: string | null
           amount: number
           asaas_payment_id?: string | null
           created_at?: string | null
+          document_status?: string
+          document_uploaded_at?: string | null
+          document_url?: string | null
           id?: string
+          ip_address?: string | null
           metadata?: Json | null
           method: string
           pix_key?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: Database["public"]["Enums"]["payout_status"]
           updated_at?: string | null
+          user_agent?: string | null
           user_id: string
         }
         Update: {
+          admin_notes?: string | null
           amount?: number
           asaas_payment_id?: string | null
           created_at?: string | null
+          document_status?: string
+          document_uploaded_at?: string | null
+          document_url?: string | null
           id?: string
+          ip_address?: string | null
           metadata?: Json | null
           method?: string
           pix_key?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: Database["public"]["Enums"]["payout_status"]
           updated_at?: string | null
+          user_agent?: string | null
           user_id?: string
         }
         Relationships: [
@@ -2443,6 +2505,19 @@ export type Database = {
               status: string
             }[]
           }
+      admin_request_payout_document: {
+        Args: { p_notes?: string; p_payout_id: string }
+        Returns: undefined
+      }
+      admin_set_payout_status: {
+        Args: {
+          p_notes?: string
+          p_payout_id: string
+          p_rejection_reason?: string
+          p_status: Database["public"]["Enums"]["payout_status"]
+        }
+        Returns: Json
+      }
       affiliate_sensitive_fields_unchanged: {
         Args: {
           _balance: number
@@ -2458,6 +2533,7 @@ export type Database = {
         Args: { p_points: number; p_user_id: string }
         Returns: undefined
       }
+      cancel_payout: { Args: { p_payout_id: string }; Returns: undefined }
       complete_coupon_redemption: {
         Args: {
           p_product_id: string
@@ -2544,6 +2620,18 @@ export type Database = {
         }
         Returns: Json
       }
+      request_payout_atomic: {
+        Args: {
+          p_amount: number
+          p_document_url?: string
+          p_ip?: string
+          p_method: string
+          p_pix_key: string
+          p_user_agent?: string
+          p_user_type: string
+        }
+        Returns: string
+      }
       save_assistant_response: {
         Args: { p_content: string; p_ticket_id: string }
         Returns: undefined
@@ -2576,7 +2664,13 @@ export type Database = {
         | "SUPORTE"
         | "PROBLEMAS"
       live_class_status: "scheduled" | "live" | "completed"
-      payout_status: "pending" | "analyzing" | "approved" | "paid" | "rejected"
+      payout_status:
+        | "pending"
+        | "analyzing"
+        | "approved"
+        | "paid"
+        | "rejected"
+        | "cancelled"
       support_sender_type: "student" | "assistant" | "support_agent" | "system"
       support_ticket_status: "open" | "in_progress" | "resolved" | "closed"
     }
@@ -2721,7 +2815,14 @@ export const Constants = {
         "PROBLEMAS",
       ],
       live_class_status: ["scheduled", "live", "completed"],
-      payout_status: ["pending", "analyzing", "approved", "paid", "rejected"],
+      payout_status: [
+        "pending",
+        "analyzing",
+        "approved",
+        "paid",
+        "rejected",
+        "cancelled",
+      ],
       support_sender_type: ["student", "assistant", "support_agent", "system"],
       support_ticket_status: ["open", "in_progress", "resolved", "closed"],
     },
