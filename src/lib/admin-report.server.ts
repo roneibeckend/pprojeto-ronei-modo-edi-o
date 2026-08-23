@@ -119,9 +119,16 @@ export async function collectAdminReport(date?: string, reportType = "Relatório
     collectExtras(current.dateStr),
   ]);
 
+  // O total conciliado (banco + gateway) é a fonte de verdade das vendas do dia.
+  const reconciled: AdminReportExtras["paymentsConfirmed"] =
+    current.salesCount >= extras.paymentsConfirmed.count
+      ? { count: current.salesCount, value: current.totalRevenue }
+      : extras.paymentsConfirmed;
+
   return {
     ...current,
     ...extras,
+    paymentsConfirmed: reconciled,
     reportType,
     generatedAt: new Intl.DateTimeFormat("pt-BR", {
       dateStyle: "short",
