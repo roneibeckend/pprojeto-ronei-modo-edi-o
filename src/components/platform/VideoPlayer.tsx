@@ -62,6 +62,7 @@ export function VideoPlayer({
   onProgress,
   className,
   aspect = 'video',
+  autoStart = false,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
