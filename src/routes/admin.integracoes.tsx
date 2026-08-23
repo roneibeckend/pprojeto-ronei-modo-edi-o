@@ -931,6 +931,13 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                   />
                 </div>
               </div>
+              {settings?.validation_status === 'error' && settings?.validation_error && (
+                <Alert className="border-red-500/20 bg-red-500/5 text-red-300">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Envio bloqueado</AlertTitle>
+                  <AlertDescription>{settings.validation_error}</AlertDescription>
+                </Alert>
+              )}
 
               <div className="flex flex-col gap-2 pt-4 border-t border-white/5 sm:flex-row sm:items-center">
                 <Button 
