@@ -1225,10 +1225,10 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
   return (
     <Card className="bg-[#111] border-white/5">
       <CardHeader className="border-b border-white/5 bg-white/[0.02]">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-lg font-bold uppercase flex items-center gap-2">
-              <Mail className="h-5 w-5 text-[#ff6a00]" /> Credenciais API (Resend)
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
+              <Mail className="h-5 w-5 shrink-0 text-[#ff6a00]" /> <span className="min-w-0">Credenciais API (Resend)</span>
             </CardTitle>
             <CardDescription className="text-xs text-white/40">Insira sua API Key para habilitar os envios transacionais.</CardDescription>
           </div>
@@ -1237,14 +1237,15 @@ function ResendConfigTab({ integration: initialIntegration }: { integration: Int
               variant="outline" 
               size="sm"
               onClick={() => setIntegration({ ...integration, status: !integration.status })}
-              className={`h-7 rounded-full px-4 border-none transition-all ${integration.status ? 'bg-[#ff6a00] text-black' : 'bg-white/10 text-white/40'}`}
+              className={`h-8 shrink-0 rounded-full px-4 border-none text-[10px] font-bold uppercase tracking-widest transition-all ${integration.status ? 'bg-[#ff6a00] text-black' : 'bg-white/10 text-white/40'}`}
             >
               {integration.status ? 'ATIVO' : 'INATIVO'}
             </Button>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-6 space-y-6">
+      <CardContent className="p-4 sm:p-6 space-y-6">
+
         <div className="space-y-2">
           <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
             <Key className="h-3 w-3 text-[#ff6a00]" /> API Key
