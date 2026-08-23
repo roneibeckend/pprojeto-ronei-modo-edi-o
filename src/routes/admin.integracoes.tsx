@@ -429,14 +429,14 @@ function IntegrationsPage() {
                 <ChevronRight className="h-3.5 w-3.5 mr-1 rotate-180" /> Voltar à lista
               </Button>
               <Tabs defaultValue="config" className="w-full">
-                <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
-                  <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+                <TabsList className="scrollbar-hidden w-full overflow-x-auto bg-black/40 border border-white/5 p-1 mb-6 [-webkit-overflow-scrolling:touch]">
+                  <TabsTrigger value="config" className="flex-1 shrink-0 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
                     Configuração
                   </TabsTrigger>
-                  <TabsTrigger value="guide" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+                  <TabsTrigger value="guide" className="flex-1 shrink-0 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
                     Como Configurar
                   </TabsTrigger>
-                  <TabsTrigger value="history" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
+                  <TabsTrigger value="history" className="flex-1 shrink-0 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-4 sm:px-6 h-9">
                     Histórico & Logs
                   </TabsTrigger>
                 </TabsList>
