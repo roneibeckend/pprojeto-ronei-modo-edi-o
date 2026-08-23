@@ -467,9 +467,14 @@ function FullCertificate({ cert }: { cert: any }) {
             {/* Signatures + seal */}
             <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-[1fr_auto_1fr] sm:items-end">
               <div className="text-center">
-                <div className="mx-auto font-[cursive] text-2xl italic text-black/90">Ronnei</div>
+                <img
+                  src={rubricaAsset.url}
+                  alt="Assinatura de Ronei da Silva"
+                  crossOrigin="anonymous"
+                  className="mx-auto h-16 w-auto max-w-[240px] object-contain"
+                />
                 <div className="mx-auto mt-1 h-px w-48 bg-black/50" />
-                <div className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-black/60">Ronnei — Fundador</div>
+                <div className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em] text-black/60">Ronei da Silva — Fundador</div>
                 <div className="text-[10px] text-black/40">Espetos Grill · Ronnei na Veia</div>
               </div>
 
