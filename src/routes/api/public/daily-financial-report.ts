@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { collectDailyReport, renderDailyReportText } from "@/lib/daily-report.server";
 import { collectAdminReport } from "@/lib/admin-report.server";
 import { renderAdminReportEmail } from "@/lib/admin-report-email.server";
 
