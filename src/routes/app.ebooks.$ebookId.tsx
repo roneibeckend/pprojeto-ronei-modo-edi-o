@@ -724,7 +724,7 @@ function EbookReaderPage() {
           >
             <div
               className="relative flex h-[100dvh] w-full flex-col sm:mx-auto sm:max-w-4xl sm:justify-center"
-              style={{ paddingTop: "env(safe-area-inset-top, 0px)", paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+              style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
             >
               <button
                 onClick={() => {
