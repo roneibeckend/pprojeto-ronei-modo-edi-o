@@ -408,7 +408,7 @@ export function CouponsPanel() {
 
       {/* Create / Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0a0a0a] border-white/10">
+        <DialogContent className="w-[calc(100vw-1.5rem)] sm:w-auto max-w-2xl max-h-[85dvh] overflow-y-auto overflow-x-hidden bg-[#0a0a0a] border-white/10 p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="text-white uppercase tracking-tight font-black">
               {editing ? `Editar Cupom ${editing.code}` : "Novo Cupom"}
@@ -573,7 +573,7 @@ export function CouponsPanel() {
 
       {/* Product Picker Dialog */}
       <Dialog open={productPickerOpen} onOpenChange={setProductPickerOpen}>
-        <DialogContent className="max-w-md bg-[#0a0a0a] border-white/10">
+        <DialogContent className="w-[calc(100vw-1.5rem)] sm:w-auto max-w-md max-h-[85dvh] overflow-y-auto bg-[#0a0a0a] border-white/10 p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="text-white uppercase tracking-tight font-black text-sm">Vincular Produtos</DialogTitle>
           </DialogHeader>
@@ -612,7 +612,7 @@ export function CouponsPanel() {
 
       {/* Delete Confirmation */}
       <AlertDialog open={Boolean(deleting)} onOpenChange={() => setDeleting(null)}>
-        <AlertDialogContent className="bg-[#0a0a0a] border-white/10">
+        <AlertDialogContent className="w-[calc(100vw-1.5rem)] max-w-md bg-[#0a0a0a] border-white/10">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-white">Excluir cupom {deleting?.code}?</AlertDialogTitle>
             <AlertDialogDescription className="text-white/40 text-xs">
@@ -633,7 +633,7 @@ export function CouponsPanel() {
 
       {/* Report Dialog */}
       <Dialog open={Boolean(reportFor)} onOpenChange={() => setReportFor(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0a0a0a] border-white/10">
+        <DialogContent className="w-[calc(100vw-1.5rem)] sm:w-auto max-w-2xl max-h-[85dvh] overflow-y-auto overflow-x-hidden bg-[#0a0a0a] border-white/10 p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle className="text-white uppercase tracking-tight font-black flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-[#ff6a00]" /> Relatório — {reportFor?.code}
