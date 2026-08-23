@@ -518,11 +518,14 @@ function EbookReaderPage() {
 
   async function handleOpenDownload() {
     try {
+      setPreparingDownload(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error("Sessão expirada. Faça login novamente.");
+        setAuthUserId(null);
+        toast.error("Faça login para baixar o e-book.");
         return;
       }
+      setAuthUserId(user.id);
       const { data: profile } = await supabase
         .from("profiles")
         .select("name, email")
@@ -537,11 +540,42 @@ function EbookReaderPage() {
       setShowDownloadDialog(true);
     } catch (error: any) {
       toast.error("Não foi possível preparar o download: " + error.message);
+    } finally {
+      setPreparingDownload(false);
     }
   }
 
-  async function handleConfirmDownload() {
-    if (!downloadOwner) return;
+  async function handleConfirmDownload(accepted: boolean) {
+    if (!downloadOwner) {
+      toast.error("Faça login para baixar o e-book.");
+      throw new Error("unauthenticated");
+    }
+    if (!accepted) {
+      toast.error("É necessário aceitar os termos de direitos autorais.");
+      throw new Error("terms_not_accepted");
+    }
+
+    // O aceite e o limite anti-abuso são validados e registrados no servidor
+    // antes de qualquer geração de arquivo.
+    let result: any;
+    try {
+      result = await registerDownload({
+        data: {
+          ebook_id: ebook.id,
+          accepted: true,
+          user_agent: typeof navigator !== "undefined" ? navigator.userAgent : "",
+        },
+      });
+    } catch (error: any) {
+      toast.error("Não foi possível validar o download: " + (error?.message || "erro desconhecido"));
+      throw error;
+    }
+
+    if (!result?.allowed) {
+      toast.error(result?.message || "Download não permitido.");
+      throw new Error(result?.reason || "denied");
+    }
+
     try {
       const { generateEbookPdf } = await import("@/lib/ebook-pdf");
       generateEbookPdf({
@@ -551,22 +585,12 @@ function EbookReaderPage() {
         owner: downloadOwner,
       });
 
-      // Registro de auditoria do download (rastreabilidade da cópia)
-      void supabase.rpc("log_system_event", {
-        _level: "info",
-        _source: "ebook_download",
-        _message: `Download do e-book "${ebook.title}" por ${downloadOwner.email}`,
-        _details: {
-          ebook_id: ebook.id,
-          user_id: downloadOwner.id,
-          email: downloadOwner.email,
-          accepted_copyright_terms: true,
-        },
-      });
-
-      toast.success("PDF gerado com sua identificação em todas as páginas.");
+      toast.success(
+        `PDF gerado com sua identificação. ${result.email_sent ? "Enviamos o link do e-book no seu e-mail. " : ""}Restam ${result.remaining_for_ebook} download(s) hoje para este e-book.`,
+      );
     } catch (error: any) {
       toast.error("Erro ao gerar o PDF: " + error.message);
+      throw error;
     }
   }
 
