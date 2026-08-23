@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/platform/Shell";
 import { ProgressSummary } from "@/components/platform/ProgressSummary";
 import { IMG } from "@/lib/platform-data";
+import { optimizedImage } from "@/lib/image-url";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -296,7 +297,7 @@ function CoursesPage() {
               <article key={c.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30 flex flex-col h-full relative z-[1]">
                 <div className="relative aspect-video max-h-[220px] bg-muted/20 shrink-0 overflow-hidden">
                   <img 
-                    src={c.cover_url || IMG.hero} 
+                    src={optimizedImage(c.cover_url) || IMG.hero} 
                     alt={c.title} 
                     className="h-full w-full object-contain bg-black transition-transform duration-500 group-hover:scale-110" 
 
@@ -338,7 +339,7 @@ function CoursesPage() {
               <article key={e.id} className="glass card-tilt group overflow-hidden rounded-2xl border border-white/5 transition-all hover:border-fire/30 flex flex-col h-full relative z-[1]">
                 <div className="relative aspect-video max-h-[220px] bg-muted/20 shrink-0 overflow-hidden">
                   <img 
-                    src={e.cover_url || e.cover || IMG.hero} 
+                    src={optimizedImage(e.cover_url || e.cover) || IMG.hero} 
                     alt={e.title} 
                     className="h-full w-full object-contain bg-black transition-transform duration-500 group-hover:scale-110" 
 
@@ -389,7 +390,7 @@ function CoursesPage() {
               <article key={c.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100 flex flex-col h-full relative z-[1]">
                 <div className="relative aspect-video max-h-[220px] bg-muted/20 grayscale-[0.3] overflow-hidden">
                   <img 
-                    src={c.cover_url || IMG.hero} 
+                    src={optimizedImage(c.cover_url) || IMG.hero} 
                     alt={c.title} 
                     className="h-full w-full object-contain bg-black" 
 
@@ -446,7 +447,7 @@ function CoursesPage() {
               <article key={e.id} className="glass overflow-hidden rounded-2xl border border-white/5 opacity-80 transition-opacity hover:opacity-100 flex flex-col h-full relative z-[1]">
                 <div className="relative aspect-video max-h-[160px] sm:max-h-[200px] bg-muted/20 grayscale-[0.3] overflow-hidden">
                   <img 
-                    src={e.cover_url || e.cover || IMG.hero} 
+                    src={optimizedImage(e.cover_url || e.cover) || IMG.hero} 
                     alt={e.title} 
                     className="h-full w-full object-contain sm:object-cover" 
 

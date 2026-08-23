@@ -1,5 +1,5 @@
 // src/lib/asaas-transfers.server.ts
-import { getAsaasConfig, asaasHeaders } from "./asaas.server";
+import { getAsaasConfig, asaasHeaders, asaasFetchJson, asaasErrorMessage } from "./asaas.server";
 
 export interface AsaasTransfer {
   id: string;
@@ -26,16 +26,15 @@ export async function fetchAsaasTransfers() {
 
   // Paginação completa: garante o extrato inteiro, não só as últimas 50 saídas
   while (offset < 2000) {
-    const res = await fetch(`${baseUrl}/transfers?limit=${limit}&offset=${offset}`, {
+    const res = await asaasFetchJson(`${baseUrl}/transfers?limit=${limit}&offset=${offset}`, {
       headers: asaasHeaders(apiKey),
     });
 
-    if (!res.ok) {
-      const errorBody = await res.text().catch(() => "Unknown error");
-      throw new Error(`Asaas API error (${res.status}): ${errorBody}`);
+    if (!res.ok || !res.json) {
+      throw new Error(asaasErrorMessage(res));
     }
 
-    const json = await res.json();
+    const json = res.json;
     const page = (json?.data || []) as AsaasTransfer[];
     all.push(...page);
 

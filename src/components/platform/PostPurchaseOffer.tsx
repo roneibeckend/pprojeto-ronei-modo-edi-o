@@ -6,6 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEnrollments } from '@/hooks/use-enrollments';
 import { toast } from 'sonner';
 import { IMG } from '@/lib/platform-data';
+import { optimizedImage } from '@/lib/image-url';
+
 
 interface OfferItem {
   id: string;
@@ -182,7 +184,7 @@ export function PostPurchaseOffer({
                   >
                     <div className="h-14 w-20 sm:h-20 sm:w-32 rounded-lg overflow-hidden shrink-0 bg-muted/20">
                       <img 
-                        src={offer.cover_url || IMG.hero} 
+                        src={optimizedImage(offer.cover_url) || IMG.hero} 
                         alt={offer.title} 
                         className="h-full w-full object-cover"
                       />

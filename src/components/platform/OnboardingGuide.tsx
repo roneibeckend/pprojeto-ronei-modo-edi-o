@@ -127,14 +127,19 @@ export function OnboardingGuide() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+        className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/80 p-4 backdrop-blur-sm"
+        style={{
+          paddingTop: 'max(1rem, env(safe-area-inset-top))',
+          paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+        }}
       >
         <motion.div 
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-[#0e0e0e] shadow-2xl"
+          className="relative my-auto max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto overscroll-contain rounded-3xl border border-white/10 bg-[#0e0e0e] shadow-2xl"
         >
+
           {/* Progress Bar */}
           <div className="absolute top-0 left-0 flex h-1.5 w-full gap-1 p-1">
             {STEPS.map((_, i) => (
@@ -154,20 +159,20 @@ export function OnboardingGuide() {
             <X className="h-5 w-5" />
           </button>
 
-          <div className="p-8 pt-12 text-center">
+          <div className="p-5 pt-12 pb-6 text-center sm:p-8 sm:pt-12">
             <div className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl ${step.bgColor} ${step.color}`}>
-              <Icon className="h-10 w-10" />
+              <Icon className="h-8 w-8 sm:h-10 sm:w-10" />
             </div>
 
-            <h2 className="mb-4 font-display text-2xl font-black text-white">
+            <h2 className="mb-3 font-display text-xl sm:text-2xl font-black text-white">
               {step.title}
             </h2>
             
-            <p className="mb-8 text-base text-white/60 leading-relaxed">
+            <p className="mb-6 text-sm sm:mb-8 sm:text-base text-white/60 leading-relaxed">
               {step.description}
             </p>
 
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <button 
                 onClick={prevStep}
                 disabled={currentStep === 0}
@@ -179,7 +184,7 @@ export function OnboardingGuide() {
                 Anterior
               </button>
 
-              <div className="flex gap-2">
+              <div className="ml-auto flex items-center gap-2">
                 <button 
                   onClick={handleClose}
                   className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors"

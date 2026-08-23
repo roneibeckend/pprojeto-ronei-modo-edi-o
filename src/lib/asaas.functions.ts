@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
+  asaasErrorMessage,
+  asaasFetchJson,
   asaasHeaders,
   buildExternalReference,
   findConfirmedPayment,
@@ -117,7 +119,7 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
         ? sanitizedName.substring(0, 97) + '...' 
         : sanitizedName;
 
-      const response = await fetch(`${baseUrl}/paymentLinks`, {
+      const response = await asaasFetchJson(`${baseUrl}/paymentLinks`, {
         method: 'POST',
         headers: asaasHeaders(apiKey),
         body: JSON.stringify({
@@ -138,18 +140,20 @@ export const createAsaasPaymentLink = createServerFn({ method: "POST" })
         })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.errors?.[0]?.description || "Erro ao criar link no Asaas");
+      if (!response.ok || !response.json) {
+        console.error(
+          `[Asaas] Falha ao criar link (HTTP ${response.status}):`,
+          response.text?.slice(0, 300),
+        );
+        throw new Error(asaasErrorMessage(response));
       }
 
-      const result = await response.json();
+      const result = response.json;
 
       return { url: result.url, id: result.id };
     } catch (error: any) {
       console.error("[Asaas] Erro ao criar link:", error);
-      const errorMessage = error.message || "Falha na comunicação com o Asaas";
-      throw new Error(`${errorMessage}. Verifique se a Chave de API está correta e se o ambiente (Produção/Sandbox) corresponde à chave.`);
+      throw new Error(error?.message || "Falha na comunicação com o Asaas. Tente novamente em instantes.");
     }
   });
 

@@ -9,6 +9,7 @@ import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { IMG } from "@/lib/platform-data";
+import { optimizedImage } from "@/lib/image-url";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
@@ -384,7 +385,7 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
       <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"} flex flex-col h-full active:scale-[0.99] touch-action-manipulation relative z-[1]`}>
       <div className="relative aspect-video max-h-[220px] bg-muted/20 shrink-0 overflow-hidden">
         <img 
-          src={item.cover_url || IMG.hero} 
+          src={optimizedImage(item.cover_url) || IMG.hero} 
           alt={item.title} 
           className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 ${isLocked ? "blur-[1px] brightness-75" : ""}`} 
 

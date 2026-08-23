@@ -1,8 +1,30 @@
 // src/lib/asaas.server.ts
 // supabaseAdmin is now imported dynamically in functions to avoid module cycle issues
 
-const ASAAS_SANDBOX_URL = "https://sandbox.asaas.com/api/v3";
-const ASAAS_PRODUCTION_URL = "https://www.asaas.com/api/v3";
+// Hosts oficiais atuais da API do Asaas. Os domínios antigos (www.asaas.com/api/v3 e
+// sandbox.asaas.com/api/v3) foram descontinuados e passaram a responder HTML de erro (503).
+const ASAAS_SANDBOX_URL = "https://api-sandbox.asaas.com/v3";
+const ASAAS_PRODUCTION_URL = "https://api.asaas.com/v3";
+
+/** Bases alternativas usadas como failover quando o host principal responde HTML/5xx. */
+const ASAAS_FALLBACKS: Record<string, string[]> = {
+  [ASAAS_PRODUCTION_URL]: ["https://www.asaas.com/api/v3"],
+  [ASAAS_SANDBOX_URL]: ["https://sandbox.asaas.com/api/v3"],
+  "https://www.asaas.com/api/v3": [ASAAS_PRODUCTION_URL],
+  "https://sandbox.asaas.com/api/v3": [ASAAS_SANDBOX_URL],
+};
+
+/** Gera a lista de URLs a tentar (principal + failover) para um endpoint do Asaas. */
+function asaasUrlCandidates(url: string): string[] {
+  for (const [base, alts] of Object.entries(ASAAS_FALLBACKS)) {
+    if (url.startsWith(base)) {
+      const path = url.slice(base.length);
+      return [url, ...alts.map((a) => `${a}${path}`)];
+    }
+  }
+  return [url];
+}
+
 
 export const ASAAS_USER_AGENT = "Lovable-LMS-Platform/1.0.0 (+https://lovable.app)";
 
@@ -48,6 +70,65 @@ export async function getAsaasConfig() {
   };
 }
 
+/**
+ * Executa uma chamada ao Asaas de forma resiliente: nunca faz JSON.parse cego.
+ * Se o Asaas responder HTML (503/502/Cloudflare/manutenção), devolve uma mensagem clara
+ * em vez do erro "Unexpected token '<'".
+ */
+export async function asaasFetchJson(
+  url: string,
+  init: RequestInit,
+  attempts = 2,
+): Promise<{ ok: boolean; status: number; json: any; text: string }> {
+  let last: { ok: boolean; status: number; json: any; text: string } | null = null;
+
+  for (const candidate of asaasUrlCandidates(url)) {
+    for (let i = 0; i < attempts; i++) {
+      let res: Response;
+      try {
+        res = await fetch(candidate, init);
+      } catch (e: any) {
+        last = { ok: false, status: 0, json: null, text: e?.message || "Falha de rede" };
+        if (i < attempts - 1) await new Promise((r) => setTimeout(r, 400 * (i + 1)));
+        continue;
+      }
+
+      const text = await res.text().catch(() => "");
+      let json: any = null;
+      try { json = text ? JSON.parse(text) : null; } catch { json = null; }
+
+      last = { ok: res.ok, status: res.status, json, text };
+
+      // Resposta não-JSON (HTML de manutenção/proxy) ou 5xx/429: vale tentar novamente.
+      const retryable = res.status >= 500 || res.status === 429 || json === null;
+      if (!retryable) return last;
+      console.warn(`[Asaas] Resposta não utilizável de ${candidate} (HTTP ${res.status}). Tentando novamente...`);
+      if (i < attempts - 1) await new Promise((r) => setTimeout(r, 500 * (i + 1)));
+    }
+  }
+
+  return last!;
+}
+
+
+/** Traduz uma resposta do Asaas em mensagem legível para o usuário final. */
+export function asaasErrorMessage(result: { status: number; json: any; text: string }) {
+  const apiMessage =
+    result.json?.errors?.[0]?.description || result.json?.message || null;
+  if (apiMessage) return apiMessage;
+
+  if (result.status === 0) {
+    return "Não foi possível conectar ao Asaas. Verifique sua conexão e tente novamente.";
+  }
+  if (result.status === 401 || result.status === 403) {
+    return "Chave de API do Asaas inválida ou sem permissão. Confira a chave e o ambiente (Produção/Sandbox).";
+  }
+  if (result.status >= 500 || /<html/i.test(result.text)) {
+    return `O Asaas está temporariamente indisponível (HTTP ${result.status}). Aguarde alguns minutos e tente novamente.`;
+  }
+  return `Erro inesperado do Asaas (HTTP ${result.status}).`;
+}
+
 export async function asaasRequest(
   config: { apiKey: string; baseUrl: string; isTestMode?: boolean },
   path: string,
@@ -55,26 +136,18 @@ export async function asaasRequest(
   body?: Record<string, any>
 ) {
   const url = `${config.baseUrl}${path}`;
-  const res = await fetch(url, {
+  const res = await asaasFetchJson(url, {
     method,
     headers: asaasHeaders(config.apiKey),
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  const text = await res.text().catch(() => "Unknown error");
-  let json: any = null;
-  try {
-    json = text ? JSON.parse(text) : null;
-  } catch {
-    json = null;
+  if (!res.ok || !res.json) {
+    throw new Error(asaasErrorMessage(res));
   }
 
-  if (!res.ok) {
-    const message = json?.errors?.[0]?.description || json?.message || text || `HTTP ${res.status}`;
-    throw new Error(`Asaas API error (${res.status}): ${message}`);
-  }
+  return res.json;
 
-  return json;
 }
 
 export function asaasHeaders(apiKey: string) {
@@ -219,16 +292,15 @@ export async function resolveUserFromPayment(payment: any, baseUrl: string, apiK
 
 export async function fetchPaymentFromAsaas(paymentId: string) {
   const { apiKey, baseUrl } = await getAsaasConfig();
-  const res = await fetch(`${baseUrl}/payments/${paymentId}`, {
+  const res = await asaasFetchJson(`${baseUrl}/payments/${paymentId}`, {
     headers: asaasHeaders(apiKey),
   });
 
-  if (!res.ok) {
-    const errorBody = await res.text().catch(() => "Unknown error");
-    throw new Error(`Asaas API error (${res.status}): ${errorBody}`);
+  if (!res.ok || !res.json) {
+    throw new Error(asaasErrorMessage(res));
   }
 
-  return await res.json();
+  return res.json;
 }
 
 
@@ -245,12 +317,11 @@ export async function findConfirmedPayment(params: {
   const email = params.userEmail?.toLowerCase() || null;
 
   for (const status of ["RECEIVED", "CONFIRMED", "RECEIVED_IN_CASH"]) {
-    const res = await fetch(`${baseUrl}/payments?status=${status}&limit=100`, {
+    const res = await asaasFetchJson(`${baseUrl}/payments?status=${status}&limit=100`, {
       headers: asaasHeaders(apiKey),
     });
-    if (!res.ok) continue;
-    const json = await res.json();
-    const payments: any[] = json?.data || [];
+    if (!res.ok || !res.json) continue;
+    const payments: any[] = res.json?.data || [];
 
     const strict = payments.find(
       (p) => typeof p.externalReference === "string" && p.externalReference.startsWith(strictPrefix),
