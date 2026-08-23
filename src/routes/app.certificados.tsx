@@ -9,6 +9,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getStudentCertificates } from "@/lib/certificates-student.functions";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { CertificateQrCode, CERT_VERIFY_DOMAIN, certificateVerifyUrl } from "@/components/platform/CertificateQrCode";
 
 
 // Estilos específicos para impressão
