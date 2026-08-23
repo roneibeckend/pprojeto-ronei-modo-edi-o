@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.acquire_asaas_webhook_claim(text, text, text, jsonb);
