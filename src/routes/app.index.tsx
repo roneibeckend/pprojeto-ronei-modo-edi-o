@@ -77,6 +77,7 @@ function Dashboard() {
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: targetItem.payment_type || 'unique',
           dueDays: targetItem.due_days || 3,
+          couponCode: localStorage.getItem('pending_coupon_code') || undefined,
         }
       });
       
@@ -222,6 +223,8 @@ function Dashboard() {
           onProceedWithOffers={(selected) => executeCheckout(offerItem, selected)}
           onProceedWithoutOffers={() => executeCheckout(offerItem, [])}
           originalProductId={offerItem.id}
+          productType={offerItem.type}
+          amount={offerItem.price || 0}
         />
       )}
 
@@ -381,6 +384,8 @@ function CourseShowcaseCard({ item, isEnrolled }: { item: any; isEnrolled: boole
         onProceedWithOffers={(selected) => executeCheckout(selected)}
         onProceedWithoutOffers={() => executeCheckout([])}
         originalProductId={item.id}
+        productType={item.type}
+        amount={item.price || 0}
       />
       <article className={`glass overflow-hidden rounded-2xl transition-all duration-300 ${isLocked ? "opacity-90 grayscale-[0.3]" : "card-tilt shadow-lg"} flex flex-col h-full active:scale-[0.99] touch-action-manipulation relative z-[1]`}>
       <div className="relative aspect-video max-h-[220px] bg-muted/20 shrink-0 overflow-hidden">

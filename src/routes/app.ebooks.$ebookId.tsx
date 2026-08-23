@@ -452,7 +452,7 @@ function EbookReaderPage() {
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: ebook.payment_type || 'unique',
           dueDays: ebook.due_days || 3,
-          couponCode: appliedCoupon?.code,
+          couponCode: appliedCoupon?.code || localStorage.getItem('pending_coupon_code') || undefined,
         }
       });
 
@@ -507,6 +507,8 @@ function EbookReaderPage() {
           onProceedWithOffers={(selected) => executeCheckout(selected)}
           onProceedWithoutOffers={() => executeCheckout([])}
           originalProductId={ebook.id}
+          productType="ebook"
+          amount={ebook.price || 0}
         />
         <div className="mb-6 rounded-full bg-white/5 p-8 text-gold">
           <Lock className="h-16 w-16" />

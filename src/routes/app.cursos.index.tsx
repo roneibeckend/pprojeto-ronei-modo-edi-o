@@ -264,6 +264,8 @@ function CoursesPage() {
         onProceedWithOffers={(selected) => offerContext && executeCheckout(offerContext.item, offerContext.type, selected)}
         onProceedWithoutOffers={() => offerContext && executeCheckout(offerContext.item, offerContext.type, [])}
         originalProductId={offerContext?.item?.id || ""}
+        productType={offerContext?.type}
+        amount={offerContext?.item?.price || 0}
       />
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-8">
         <PageHeader
