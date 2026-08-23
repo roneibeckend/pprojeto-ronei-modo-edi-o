@@ -223,7 +223,7 @@ export async function sendResendEmail(params: {
  * Replace variables in a template string.
  * Example: "Hello {{name}}" + {name: "John"} -> "Hello John"
  */
-function renderTemplate(content: string, variables: Record<string, any>) {
+export function renderTemplate(content: string, variables: Record<string, any>) {
   return content.replace(/\{\{(.+?)\}\}/g, (match, key) => {
     const cleanKey = key.trim();
     return variables[cleanKey] !== undefined ? variables[cleanKey] : match;
