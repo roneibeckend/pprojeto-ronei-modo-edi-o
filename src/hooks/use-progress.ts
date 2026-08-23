@@ -109,7 +109,10 @@ export function useProgress() {
       }
       await supabase.from("lesson_progress").upsert({ user_id: user.id, lesson_id: lessonId, is_completed: completed, updated_at: new Date().toISOString() }, { onConflict: 'user_id,lesson_id' });
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["lesson-progress", user?.id] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lesson-progress", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["global-progress-tracking", user?.id] });
+    },
   });
 
   const completeChapterMutation = useMutation({
@@ -121,7 +124,10 @@ export function useProgress() {
       }
       await supabase.from("ebook_progress").upsert({ user_id: user.id, chapter_id: chapterId, completed_at: new Date().toISOString(), last_read_at: new Date().toISOString() }, { onConflict: 'user_id,chapter_id' });
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["ebook-progress", user?.id] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ebook-progress", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["global-progress-tracking", user?.id] });
+    },
   });
 
   // Progresso total = média por treinamento (curso/e-book) disponível ao aluno
