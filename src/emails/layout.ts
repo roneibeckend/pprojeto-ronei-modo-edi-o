@@ -189,18 +189,23 @@ export function renderEmailLayout(options: EmailOptions): string {
       <div style="margin-top:10px;font-family:${FONT};font-size:17px;font-weight:800;letter-spacing:1px;color:${BRAND.white};text-transform:uppercase;">${BRAND.name}</div>
       <div style="margin-top:4px;font-family:${FONT};font-size:11px;letter-spacing:2px;color:${BRAND.orange};text-transform:uppercase;">Cursos &middot; eBooks &middot; Receitas</div>
     </td></tr>
-    <tr><td style="padding:0;">
-      <img src="${EMAIL_ASSETS.banner}" width="650" alt="Churrasco Ronnei na Veia" style="display:block;width:100%;max-width:650px;height:auto;border:0;outline:none;text-decoration:none;background:#1a1a1c;" />
-    </td></tr>
-    <tr><td align="center" style="padding:22px 24px 6px;background:${BRAND.black};">
-      <h1 style="margin:0;font-family:${FONT};font-size:24px;line-height:32px;font-weight:800;color:${BRAND.white};">${options.heading}</h1>
-      ${options.subheading ? `<p style="margin:8px 0 0;font-family:${FONT};font-size:15px;line-height:23px;color:#b9b9c0;">${options.subheading}</p>` : ""}
-    </td></tr>
+    <!-- CARD PRINCIPAL (banner + título + conteúdo em uma única superfície branca) -->
+    <tr><td style="padding:6px 14px 8px;background:${BRAND.black};">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="${BRAND.white}" style="background:${BRAND.white};border-radius:18px;overflow:hidden;">
 
-    <!-- CARD -->
-    <tr><td style="padding:18px 14px 8px;background:${BRAND.black};">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BRAND.white};border-radius:16px;">
-        <tr><td style="padding:28px 24px;">
+        <!-- BANNER integrado ao topo do card branco -->
+        <tr><td style="padding:10px 10px 0;background:${BRAND.white};" bgcolor="${BRAND.white}">
+          <img src="${EMAIL_ASSETS.banner}" width="630" alt="Churrasco Ronnei na Veia" style="display:block;width:100%;max-width:630px;height:auto;border:0;outline:none;text-decoration:none;border-radius:14px;background:${BRAND.gray};" />
+        </td></tr>
+
+        <!-- TÍTULO -->
+        <tr><td align="center" style="padding:22px 26px 2px;background:${BRAND.white};" bgcolor="${BRAND.white}">
+          <h1 style="margin:0;font-family:${FONT};font-size:24px;line-height:32px;font-weight:800;color:${BRAND.black};">${options.heading}</h1>
+          ${options.subheading ? `<p style="margin:8px 0 0;font-family:${FONT};font-size:15px;line-height:23px;color:#6b6b74;">${options.subheading}</p>` : ""}
+        </td></tr>
+
+        <!-- CONTEÚDO -->
+        <tr><td style="padding:22px 24px 28px;background:${BRAND.white};" bgcolor="${BRAND.white}">
           ${options.greeting ? `<p style="margin:0 0 14px;font-family:${FONT};font-size:20px;line-height:28px;font-weight:800;color:${BRAND.black};">${options.greeting}</p>` : ""}
           ${options.blocks.map(renderBlock).join("\n")}
           ${
@@ -217,6 +222,7 @@ export function renderEmailLayout(options: EmailOptions): string {
         </td></tr>
       </table>
     </td></tr>
+
 
     <!-- SUPORTE -->
     <tr><td style="padding:10px 14px 18px;background:${BRAND.black};">
