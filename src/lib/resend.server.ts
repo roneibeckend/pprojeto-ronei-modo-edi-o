@@ -118,7 +118,11 @@ export async function sendResendEmail(params: {
         html: params.html,
         text: params.text,
         reply_to: params.reply_to,
-        tags: params.tags
+        // Resend só aceita letras ASCII, números, "_" e "-" em nome/valor de tag
+        tags: params.tags?.map((t) => ({
+          name: sanitizeTag(t.name),
+          value: sanitizeTag(t.value)
+        }))
       })
     });
 
