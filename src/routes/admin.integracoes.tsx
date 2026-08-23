@@ -1831,26 +1831,26 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
           
           return (
             <Card key={feature.id} className="bg-[#111] border-white/5 overflow-hidden">
-              <CardHeader className="border-b border-white/5 bg-white/[0.02] p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-xl ${isActive ? 'bg-[#ff6a00] text-black shadow-[0_0_20px_rgba(255,106,0,0.2)]' : 'bg-white/5 text-white/40'}`}>
+              <CardHeader className="border-b border-white/5 bg-white/[0.02] p-4 sm:p-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
+                    <div className={`shrink-0 p-3 rounded-xl ${isActive ? 'bg-[#ff6a00] text-black shadow-[0_0_20px_rgba(255,106,0,0.2)]' : 'bg-white/5 text-white/40'}`}>
                       <feature.icon className="h-6 w-6" />
                     </div>
-                    <div>
-                      <CardTitle className="text-lg font-bold uppercase tracking-tight">{feature.name}</CardTitle>
+                    <div className="min-w-0">
+                      <CardTitle className="text-base sm:text-lg font-bold uppercase tracking-tight">{feature.name}</CardTitle>
                       <CardDescription className="text-xs text-white/40 mt-1 max-w-md">
                         {feature.description}
                       </CardDescription>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                     <Badge variant="outline" className={`text-[9px] uppercase tracking-widest border-none ${isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-white/5 text-white/20'}`}>
                       {isActive ? 'Ativado' : 'Desativado'}
                     </Badge>
                     <Button 
                       onClick={() => handleToggle(feature, isActive)}
-                      className={`h-10 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${isActive ? 'bg-white/5 text-white hover:bg-white/10' : 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]/90'}`}
+                      className={`h-11 flex-1 px-6 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all sm:flex-none ${isActive ? 'bg-white/5 text-white hover:bg-white/10' : 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]/90'}`}
                     >
                       {isActive ? 'Desativar' : 'Ativar'}
                     </Button>
@@ -1859,8 +1859,9 @@ function FeatureTogglePanel({ integrations }: { integrations: Integration[] | un
               </CardHeader>
               
               {isActive && feature.settingsFields && (
-                <CardContent className="p-6 bg-white/[0.01]">
-                  <div className="grid gap-6 md:grid-cols-2">
+                <CardContent className="p-4 sm:p-6 bg-white/[0.01]">
+                  <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+
                     {feature.settingsFields.map((field: any) => (
                       <div key={field.key} className="space-y-2">
                         <Label className="text-[10px] font-bold uppercase tracking-widest text-white/40">{field.label}</Label>
