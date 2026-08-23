@@ -10,7 +10,7 @@ import { sendResendEmail } from "./resend.server";
  * Centraliza a lógica, validações e logs.
  */
 export const sendEmail = createServerFn({ method: "POST" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     to: z.string().email(),
     template: z.enum([
       'boas_vindas',
@@ -58,7 +58,7 @@ export const sendEmail = createServerFn({ method: "POST" })
 
 export const getEmailLogs = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     limit: z.number().default(50),
     offset: z.number().default(0)
   }).parse(data))
@@ -101,7 +101,7 @@ export const getEmailSettings = createServerFn({ method: "GET" })
 
 export const validateSender = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     apiKey: z.string(),
     email: z.string().email()
   }).parse(data))
@@ -131,7 +131,7 @@ export const validateSender = createServerFn({ method: "POST" })
 
 export const updateEmailSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     from_name: z.string().min(2),
     from_email: z.string().email(),
     reply_to: z.string().email().optional().nullable(),
