@@ -72,9 +72,24 @@ import printWhats3 from "@/assets/opt/print-whats-3.webp";
 import printPix from "@/assets/opt/print-pix.webp";
 
 
-const VideoPlayer = lazy(() =>
-  import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer })),
-);
+const importVideoPlayer = () =>
+  import("@/components/platform/VideoPlayer").then(m => ({ default: m.VideoPlayer }));
+
+const VideoPlayer = lazy(importVideoPlayer);
+
+/** Baixa o chunk do player e aquece o início do arquivo de vídeo no cache. */
+let videoWarmed = false;
+function warmUpVideo(url: string) {
+  if (videoWarmed) return;
+  videoWarmed = true;
+  void importVideoPlayer().catch(() => undefined);
+  try {
+    void fetch(url, { headers: { Range: "bytes=0-800000" } }).catch(() => undefined);
+  } catch {
+    /* cache warming is best-effort */
+  }
+}
+
 
 // Widget da assistente: chunk separado, carregado só quando a seção aparece.
 const BrasaChat = lazy(() => import("@/components/landing/BrasaChat"));
@@ -548,6 +563,20 @@ function Hero() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Baixa o código do player quando o navegador estiver ocioso, para que o
+  // modal abra instantaneamente ao toque (sem esperar o chunk).
+  useEffect(() => {
+    const idle = (window as any).requestIdleCallback as undefined | ((cb: () => void) => number);
+    const run = () => void importVideoPlayer().catch(() => undefined);
+    if (idle) {
+      const handle = idle(run);
+      return () => (window as any).cancelIdleCallback?.(handle);
+    }
+    const t = window.setTimeout(run, 2500);
+    return () => window.clearTimeout(t);
+  }, []);
+
+
   useEffect(() => {
     if (!videoOpen) {
       setIsPlaying(false);
@@ -592,7 +621,10 @@ function Hero() {
             <button
               type="button"
               onClick={() => setVideoOpen(true)}
+              onPointerEnter={() => warmUpVideo(isMobile ? heroVideoMobile.url : heroVideoDesktop.url)}
+              onPointerDown={() => warmUpVideo(isMobile ? heroVideoMobile.url : heroVideoDesktop.url)}
               aria-label="Assistir à história do Ronnei"
+
               className="group relative mx-auto block w-full max-w-md overflow-hidden rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ember)] lg:mx-0"
             >
               <div className="absolute -inset-3 -z-10 rounded-[2rem] bg-fire opacity-25 blur-2xl transition group-hover:opacity-40" />
@@ -680,18 +712,20 @@ function Hero() {
           aria-label="Vídeo: história do Ronnei"
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 px-4 backdrop-blur-xl animate-fade-in"
         >
+          <button
+            type="button"
+            onClick={() => setVideoOpen(false)}
+            aria-label="Fechar vídeo"
+            className="fixed right-3 z-[120] inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/70 text-white shadow-lg backdrop-blur-md transition hover:bg-black/90 active:scale-95"
+            style={{ top: "calc(env(safe-area-inset-top, 0px) + 0.75rem)" }}
+          >
+            <X className="h-6 w-6" />
+          </button>
           <div
             onClick={(e) => e.stopPropagation()}
             className="relative w-full max-w-[min(420px,85vh*9/16)] animate-scale-in"
           >
-            <button
-              type="button"
-              onClick={() => setVideoOpen(false)}
-              aria-label="Fechar vídeo"
-              className="absolute -top-12 right-0 z-[110] inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur-md transition hover:bg-black/80 hover:scale-110 active:scale-95 sm:-right-4 sm:-top-4"
-            >
-              <X className="h-6 w-6" />
-            </button>
+
             <div className="glass gradient-border overflow-hidden rounded-2xl p-1 shadow-fire relative bg-black group/intro">
               <div className="relative aspect-[9/16] max-h-[85vh] w-full overflow-hidden rounded-xl bg-black shadow-2xl">
                 <Suspense fallback={<div className="flex h-full items-center justify-center text-white"><Loader2 className="animate-spin" /></div>}>

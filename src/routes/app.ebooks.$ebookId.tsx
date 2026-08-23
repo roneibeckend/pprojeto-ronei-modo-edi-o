@@ -603,23 +603,26 @@ function EbookReaderPage() {
             key="intro-modal"
           >
             <div className="relative w-full max-w-4xl">
-              <button 
+              <button
                 onClick={() => {
                   if (showOpeningVideo) markVideoAsSeen();
                   setShowIntroVideo(false);
                 }}
-                className="absolute -top-12 right-0 flex items-center gap-2 text-white/60 hover:text-white transition-colors"
+                aria-label={showOpeningVideo ? "Pular vídeo" : "Fechar vídeo"}
+                className="fixed right-3 z-[130] inline-flex h-12 min-w-12 items-center justify-center gap-2 rounded-full border border-white/25 bg-black/70 px-3 text-white shadow-lg backdrop-blur-md transition hover:bg-black/90 active:scale-95"
+                style={{ top: "calc(env(safe-area-inset-top, 0px) + 0.75rem)" }}
               >
-                <span>{showOpeningVideo ? "Pular Vídeo" : "Fechar"}</span>
+                <span className="hidden text-sm font-semibold sm:inline">{showOpeningVideo ? "Pular Vídeo" : "Fechar"}</span>
                 <X className="h-6 w-6" />
               </button>
-              
-              <div className="text-center mb-6">
+
+              <div className="mb-3 hidden text-center sm:mb-6 sm:block">
                 <h2 className="text-2xl font-black text-white mb-2">{ebook.title}</h2>
                 <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Abertura</p>
               </div>
  
-              <div className="relative aspect-[9/16] h-[70vh] w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black group/intro">
+              <div className="relative aspect-[9/16] max-h-[68dvh] w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black group/intro">
+
                 {introNeedsSigning && !signedIntroUrl ? (
                   <div className="w-full h-full flex items-center justify-center"><Loader2 className="animate-spin text-fire" /></div>
                 ) : (
@@ -641,18 +644,19 @@ function EbookReaderPage() {
               </div>
 
  
-              <div className="mt-8 flex justify-center">
+              <div className="mt-4 flex justify-center sm:mt-8">
                 <button 
                   onClick={() => {
                     if (showOpeningVideo) markVideoAsSeen();
                     setShowIntroVideo(false);
                   }}
-                  className="btn-fire px-10 py-4 font-black text-lg shadow-2xl shadow-fire/30 flex items-center gap-3"
+                  className="btn-fire flex items-center gap-3 px-6 py-3 text-base font-black shadow-2xl shadow-fire/30 sm:px-10 sm:py-4 sm:text-lg"
                 >
                   <BookOpen className="h-6 w-6" />
                   {showOpeningVideo ? "Começar Leitura agora" : "Continuar Leitura"}
                 </button>
               </div>
+
             </div>
           </motion.div>
         )}
