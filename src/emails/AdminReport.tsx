@@ -328,10 +328,11 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                 <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} key={b.label} style={{ marginBottom: "10px" }}>
                   <tbody>
                     <tr>
-                      <td align="center" {...({ bgcolor: b.primary ? C.orange : C.white } as any)}
+                      <td align="center" className={b.primary ? undefined : "rnv-white"} {...({ bgcolor: b.primary ? C.orange : C.white } as any)}
                         style={{ backgroundColor: b.primary ? C.orange : C.white, border: `1px solid ${b.primary ? C.orange : C.border}`, borderRadius: "10px" }}>
                         <Link
                           href={b.href}
+                          className={b.primary ? "rnv-inv" : "rnv-txt"}
                           style={{
                             display: "block",
                             padding: "13px 18px",
@@ -354,7 +355,8 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
             <Hr style={{ borderColor: C.border, margin: "26px 0 14px" }} />
 
             {/* Rodapé */}
-            <Text style={{ margin: 0, fontSize: "11px", lineHeight: "18px", color: C.muted, textAlign: "center", fontFamily: FONT }}>
+            <Text className="rnv-mut" style={{ margin: 0, fontSize: "11px", lineHeight: "18px", color: C.muted, textAlign: "center", fontFamily: FONT }}>
+
               Relatório gerado automaticamente pela plataforma {BRAND.name}.
               <br />
               Data/Hora: {props.generatedAt} (Brasília) · Ambiente: {props.environment}
