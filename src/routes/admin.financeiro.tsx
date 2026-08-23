@@ -186,12 +186,12 @@ function FinancePage() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2">
-          <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <select
               value={period}
               onChange={(e) => setPeriod(e.target.value)}
-              className="rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white outline-none focus:border-orange-500/50"
+              className="w-full min-h-[44px] rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white outline-none focus:border-orange-500/50 sm:w-auto"
             >
               <option value="today">Hoje</option>
               <option value="last-7-days">Últimos 7 dias</option>
@@ -204,19 +204,19 @@ function FinancePage() {
             </select>
 
             {period === "custom" && (
-              <div className="flex items-center gap-2">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
                 <input
                   type="date"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-[10px] text-white outline-none focus:border-orange-500/50"
+                  className="min-h-[44px] w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50"
                 />
-                <span className="text-white/20 text-[10px]">até</span>
+                <span className="shrink-0 text-[10px] text-white/20">até</span>
                 <input
                   type="date"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
-                  className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-[10px] text-white outline-none focus:border-orange-500/50"
+                  className="min-h-[44px] w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50"
                 />
               </div>
             )}
@@ -226,7 +226,7 @@ function FinancePage() {
           <button
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#ff6a00] px-4 sm:px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest text-black transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+            className="inline-flex w-full min-h-[44px] items-center justify-center gap-2 rounded-xl bg-[#ff6a00] px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-black transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 sm:w-auto sm:px-6"
           >
             {saveMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -236,6 +236,7 @@ function FinancePage() {
             Salvar
           </button>
         </div>
+
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
