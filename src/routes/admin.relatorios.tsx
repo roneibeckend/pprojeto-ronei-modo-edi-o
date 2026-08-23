@@ -23,6 +23,8 @@ import {
   MessageSquare
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import SystemUpdatesPanel from "@/components/admin/SystemUpdatesPanel";
+
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 // WhatsApp imports removed as they are no longer used
@@ -450,7 +452,10 @@ function AdminRelatoriosPage() {
               )}
             </div>
           </section>
+
+          <SystemUpdatesPanel />
         </div>
+
       </div>
 
       {/* Modal Recipient */}
