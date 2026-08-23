@@ -43,12 +43,19 @@ const printStyles = `
 `;
 
 async function downloadCertificatePDF(node: HTMLElement, cert: { id: string; course: string }) {
+  // html2canvas-pro entende as cores modernas (oklch) usadas no tema.
+  const { default: html2canvas } = await import("html2canvas-pro");
+
   const canvas = await html2canvas(node, {
-    scale: 2,
+    scale: Math.min(2, window.devicePixelRatio || 1.5),
     backgroundColor: "#f5efe4",
     useCORS: true,
+    allowTaint: true,
     logging: false,
   });
+  if (!canvas.width || !canvas.height) {
+    throw new Error("Falha ao renderizar o certificado.");
+  }
   const imgData = canvas.toDataURL("image/jpeg", 0.95);
   const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
   const pageW = pdf.internal.pageSize.getWidth();
