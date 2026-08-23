@@ -1625,14 +1625,25 @@ function EmailTemplatesTab() {
         </Button>
         
         <div className="space-y-2">
-          <div className="relative mb-4">
-            <Input 
-              placeholder="Buscar templates..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-black/40 border-white/10 h-9 text-[10px] pl-8"
-            />
-            <Search className="h-3 w-3 text-white/20 absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="relative mb-4 flex items-center gap-2">
+            <div className="relative flex-1">
+              <Input 
+                placeholder="Buscar templates..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-black/40 border-white/10 h-9 text-[10px] pl-8"
+              />
+              <Search className="h-3 w-3 text-white/20 absolute left-3 top-1/2 -translate-y-1/2" />
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => queryClient.invalidateQueries({ queryKey: ['email_templates'] })}
+              className="h-9 w-9 border-white/10 bg-black/40 hover:bg-[#ff6a00]/10 hover:text-[#ff6a00] hover:border-[#ff6a00]/50"
+              title="Atualizar listagem"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
           </div>
 
           {isLoading ? (
