@@ -61,11 +61,14 @@ async function downloadCertificatePDF(node: HTMLElement, cert: { id: string; cou
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();
   const ratio = canvas.width / canvas.height;
-  let w = pageW;
-  let h = pageW / ratio;
-  if (h > pageH) {
-    h = pageH;
-    w = pageH * ratio;
+  const margin = 6;
+  const maxW = pageW - margin * 2;
+  const maxH = pageH - margin * 2;
+  let w = maxW;
+  let h = maxW / ratio;
+  if (h > maxH) {
+    h = maxH;
+    w = maxH * ratio;
   }
   const x = (pageW - w) / 2;
   const y = (pageH - h) / 2;
