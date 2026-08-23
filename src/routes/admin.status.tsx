@@ -165,15 +165,15 @@ function AdminStatusPage() {
 
 
           <Card className="border-white/10 bg-white/[0.03]">
-            <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <CardTitle className="text-base text-white">Últimos eventos</CardTitle>
-                <CardDescription className="text-white/50">
+            <CardHeader className="flex flex-col gap-3 p-4 pb-3 sm:flex-row sm:items-center sm:justify-between sm:p-6 sm:pb-3">
+              <div className="min-w-0">
+                <CardTitle className="text-sm text-white sm:text-base">Últimos eventos</CardTitle>
+                <CardDescription className="text-xs text-white/50 sm:text-sm">
                   Webhooks, relatórios, e-mails e registros do sistema
                 </CardDescription>
               </div>
               <Select value={filter} onValueChange={setFilter}>
-                <SelectTrigger className="w-full sm:w-[190px]">
+                <SelectTrigger className="h-11 w-full sm:w-[190px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -186,7 +186,7 @@ function AdminStatusPage() {
                 </SelectContent>
               </Select>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-2 p-4 pt-0 sm:p-6 sm:pt-0">
               {events.length === 0 ? (
                 <p className="py-8 text-center text-sm text-white/40">Nenhum evento para este filtro.</p>
               ) : (
