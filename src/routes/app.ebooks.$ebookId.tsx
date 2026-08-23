@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
-import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X, Play, ArrowDown, Award } from "lucide-react";
+import { Lock, ChevronLeft, ChevronRight, Loader2, ShoppingCart, BookOpen, CheckCircle2, X, Play, ArrowDown, Award, Download } from "lucide-react";
 import { VideoPlayer } from "@/components/platform/VideoPlayer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/platform/Shell";
@@ -23,7 +23,6 @@ import { usePostPurchaseOfferStore } from "@/hooks/use-post-purchase-offer";
 import { getSignedVideoUrl } from "@/lib/video.functions";
 import { generateCertificate } from "@/lib/certificates-student.functions";
 import EbookDownloadDialog from "@/components/platform/EbookDownloadDialog";
-import { Download } from "lucide-react";
 
 
 
