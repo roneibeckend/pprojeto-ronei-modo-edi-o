@@ -46,6 +46,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { testIntegrationConnection, saveIntegration, getIntegrationHistory, getResendIntegration } from "@/lib/integrations.functions";
 import { getEmailLogs, getEmailSettings, updateEmailSettings, sendEmail, validateSender } from "@/lib/resend.functions";
 import { getEmailTemplates, saveEmailTemplate, deleteEmailTemplate } from "@/lib/email-templates.functions";
+import { EmailSystemTemplatesPanel } from "@/components/admin/EmailSystemTemplatesPanel";
+
 import { useServerFn } from "@tanstack/react-start";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -1615,8 +1617,12 @@ function EmailTemplatesTab() {
   };
 
   return (
+    <div className="space-y-6">
+    <EmailSystemTemplatesPanel />
+
     <div className="grid gap-6 lg:grid-cols-12">
       <div className="lg:col-span-4 space-y-4">
+
         <Button 
           onClick={() => { setSelectedTemplate({ name: '', subject: '', content_html: '', description: '' }); setIsEditing(true); }}
           className="w-full bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-10"
@@ -1787,7 +1793,9 @@ function EmailTemplatesTab() {
         )}
       </div>
     </div>
+    </div>
   );
+
 }
 
 function FeatureTogglePanel({ integrations }: { integrations: Integration[] | undefined }) {

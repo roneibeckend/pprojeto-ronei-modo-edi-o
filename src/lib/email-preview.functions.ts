@@ -1,0 +1,74 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+async function assertAdmin(context: any) {
+  const { data: isAdmin } = await context.supabase.rpc("has_role", {
+    _user_id: context.userId,
+    _role: "admin",
+  });
+  if (!isAdmin) throw new Error("Forbidden: Admin access required");
+}
+
+/** Renderiza a prévia (assunto + HTML) de um evento com variáveis reais. */
+export const previewEmailTemplate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        event: z.string().min(2),
+        data: z.record(z.any()).default({}),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data: { event, data }, context }) => {
+    await assertAdmin(context);
+
+    const { renderEmailTemplate } = await import("@/emails/templates");
+    const { validateEmailData } = await import("@/emails/catalog");
+
+    const rendered = renderEmailTemplate(event, data);
+    if (!rendered) throw new Error(`Template não encontrado para o evento "${event}".`);
+
+    const validation = validateEmailData(event, data);
+    return {
+      subject: rendered.subject,
+      html: rendered.html,
+      text: rendered.text,
+      validation,
+    };
+  });
+
+/** Envia um e-mail de teste real do evento, bloqueando dados incompletos. */
+export const sendTemplateTestEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        event: z.string().min(2),
+        to: z.string().email("Informe um e-mail válido."),
+        data: z.record(z.any()).default({}),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data: { event, to, data }, context }) => {
+    await assertAdmin(context);
+
+    const { validateEmailData } = await import("@/emails/catalog");
+    const validation = validateEmailData(event, data);
+    if (!validation.valid) {
+      throw new Error(validation.message ?? "Campos obrigatórios ausentes.");
+    }
+
+    const { triggerEmailEvent } = await import("./resend.server");
+    const result = await triggerEmailEvent({
+      event,
+      to,
+      data: { ...data, is_test: true },
+    });
+
+    if (!result?.success || !result.id) {
+      throw new Error("O provedor não confirmou o envio do e-mail de teste.");
+    }
+    return { success: true, id: result.id };
+  });
