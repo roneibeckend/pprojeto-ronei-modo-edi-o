@@ -130,7 +130,9 @@ export function useProgress() {
     },
   });
 
-  // Progresso total = média por treinamento (curso/e-book) disponível ao aluno
+  // Progresso Total = (treinamentos concluídos ÷ treinamentos disponíveis) × 100
+  // "Concluído" segue a mesma regra do sistema: todas as aulas/capítulos concluídos
+  // OU registro de conclusão em progress_tracking (usado por certificados/finalize).
   const completedLessonIds = new Set((lessonProgress || []).filter((p: any) => p.is_completed).map((p: any) => p.lesson_id));
   const completedChapterIds = new Set((ebookProgress || []).filter((p: any) => !!p.completed_at).map((p: any) => p.chapter_id));
 
@@ -157,10 +159,10 @@ export function useProgress() {
     trainings.push({ key: `ebook:${id}`, ratio, done: ratio >= 1 || isTrackedComplete('ebook', id) });
   });
 
-  const totalProgress = trainings.length > 0
-    ? Math.min(100, Math.round((trainings.reduce((sum, t) => sum + (t.done ? 1 : t.ratio), 0) / trainings.length) * 100))
-    : 0;
   const completedTrainings = trainings.filter((t) => t.done).length;
+  const totalProgress = trainings.length > 0
+    ? Math.round((completedTrainings / trainings.length) * 100)
+    : 0;
 
 
   const trackedItems = (globalProgressTracking?.tracking || []).filter(
