@@ -35,8 +35,8 @@ export const BRAND = {
 };
 
 export const EMAIL_ASSETS = {
-  logo: `${BRAND.site}/email-logo.png`,
-  banner: `${BRAND.site}/email-banner.jpg`,
+  logo: `${ASSET_BASE}/email-logo.png`,
+  banner: `${ASSET_BASE}/email-banner.jpg`,
 };
 
 export const LINKS = {
