@@ -337,15 +337,15 @@ function AdminCursosPage() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center bg-black/95 backdrop-blur-sm p-0 sm:p-4 text-left overflow-y-auto pointer-events-auto py-6 sm:py-4">
-          <div className="w-full h-full sm:h-auto sm:max-w-4xl bg-[#0e0e0e] sm:border sm:border-white/10 sm:rounded-2xl p-6 flex flex-col relative z-10">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 shrink-0">
-              <h3 className="text-lg sm:text-xl font-bold pr-4">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo Curso"}</h3>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 backdrop-blur-sm p-2 sm:p-4 text-left pointer-events-auto">
+          <div className="flex w-full max-w-[95vw] flex-col overflow-hidden bg-[#0e0e0e] p-4 sm:p-6 sm:max-w-4xl sm:border sm:border-white/10 rounded-2xl h-[calc(100dvh-1rem)] sm:h-[min(92dvh,calc(100dvh-2rem))] relative z-10">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-4 sm:mb-6 shrink-0">
+              <h3 className="truncate text-base sm:text-xl font-bold pr-2">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo Curso"}</h3>
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors shrink-0"><X className="h-5 w-5" /></button>
             </div>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-              <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start shrink-0">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
+              <TabsList className="mb-4 sm:mb-6 shrink-0 w-full max-w-full justify-start gap-1 overflow-x-auto overflow-y-hidden whitespace-nowrap rounded-lg border border-white/10 bg-white/5 p-1 sm:w-auto sm:self-start">
                 <TabsTrigger value="info" className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Info className="h-4 w-4" /> Informações
                 </TabsTrigger>
@@ -363,7 +363,7 @@ function AdminCursosPage() {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="info" className="flex-1 mt-0">
+              <TabsContent value="info" className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1 mt-0">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
@@ -525,7 +525,7 @@ function AdminCursosPage() {
                 </form>
               </TabsContent>
 
-              <TabsContent value="checkpoints" className="flex-1 mt-0">
+              <TabsContent value="checkpoints" className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1 mt-0">
                 {editingItem?.id && (
                   <div className="space-y-6">
                     <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
@@ -576,18 +576,18 @@ function AdminCursosPage() {
                 )}
               </TabsContent>
 
-              <TabsContent value="content" className="flex-1 mt-0">
+              <TabsContent value="content" className="flex-1 min-h-0 overflow-hidden mt-0 data-[state=active]:flex data-[state=active]:flex-col">
                 {editingItem?.id && <CourseTreeEditor courseId={editingItem.id} />}
               </TabsContent>
 
-              <TabsContent value="students" className="flex-1 mt-0">
+              <TabsContent value="students" className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1 mt-0">
                 <div className="flex flex-col items-center justify-center py-20 text-white/20">
                   <Users className="h-12 w-12 mb-4" />
                   <p className="text-sm">Funcionalidade de listagem de alunos em desenvolvimento.</p>
                 </div>
               </TabsContent>
 
-              <TabsContent value="certificates" className="flex-1 mt-0">
+              <TabsContent value="certificates" className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1 mt-0">
                 {editingItem?.id && (
                   <CertificateEditor 
                     contentId={editingItem.id} 

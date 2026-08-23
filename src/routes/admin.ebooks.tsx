@@ -310,8 +310,8 @@ function AdminEbooksPage() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-2 sm:p-4 text-left outline-none" tabIndex={-1}>
           <div className="w-full max-w-[95vw] lg:max-w-7xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-4 sm:p-6 h-[calc(100dvh-1rem)] sm:h-[min(92dvh,calc(100dvh-2rem))] flex flex-col relative z-50 shadow-2xl overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 z-30 bg-[#0e0e0e] pb-4 border-b border-white/5 pt-2 shrink-0">
-              <h3 className="text-xl font-bold pr-4">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo E-book"}</h3>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-4 sm:mb-6 z-30 bg-[#0e0e0e] pb-4 border-b border-white/5 pt-2 shrink-0">
+              <h3 className="truncate text-base sm:text-xl font-bold pr-2">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo E-book"}</h3>
               <button 
                 onClick={() => {
                   setIsModalOpen(false);
@@ -326,7 +326,7 @@ function AdminEbooksPage() {
             <Tabs value={activeTab} onValueChange={(val) => {
               setActiveTab(val);
             }} className="flex-1 flex flex-col min-h-0">
-              <TabsList className="bg-white/5 border border-white/10 p-1 mb-6 self-start z-20 backdrop-blur-md shrink-0">
+              <TabsList className="mb-4 sm:mb-6 z-20 shrink-0 w-full max-w-full justify-start gap-1 overflow-x-auto overflow-y-hidden whitespace-nowrap rounded-lg border border-white/10 bg-white/5 p-1 backdrop-blur-md sm:w-auto sm:self-start">
 
                 <TabsTrigger value="info" className="flex items-center gap-2 data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black">
                   <Info className="h-4 w-4" /> Informações

@@ -206,9 +206,9 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
   if (loading) return <div className="p-8 text-center text-white/40">Carregando estrutura...</div>;
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold">Conteúdo do Curso</h3>
+    <div className="custom-scrollbar flex h-full min-h-0 flex-col gap-6 overflow-y-auto overscroll-contain pr-1">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+        <h3 className="truncate text-base sm:text-lg font-bold">Conteúdo do Curso</h3>
         <button 
           onClick={() => {
             const newId = crypto.randomUUID();
@@ -221,7 +221,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
               order_index: modules.length 
             });
           }}
-          className="flex items-center gap-2 bg-[#ff6a00] px-4 py-2 rounded-lg text-xs font-bold text-black hover:bg-[#ff8c33] transition-colors"
+          className="flex shrink-0 items-center gap-2 bg-[#ff6a00] px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold text-black hover:bg-[#ff8c33] transition-colors"
         >
           <Plus className="h-4 w-4" /> Adicionar Módulo
         </button>
@@ -230,12 +230,12 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
       <div className="space-y-4">
         {modules.map((module) => (
           <div key={module.id} className="bg-white/[0.02] rounded-xl overflow-hidden border border-white/5">
-            <div className="p-4 bg-white/5 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <GripVertical className="h-4 w-4 text-white/20 cursor-move" />
-                <h4 className="font-bold">{module.title}</h4>
+            <div className="p-3 sm:p-4 bg-white/5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                <GripVertical className="h-4 w-4 shrink-0 text-white/20 cursor-move" />
+                <h4 className="truncate font-bold text-sm sm:text-base">{module.title}</h4>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex shrink-0 items-center gap-1 sm:gap-2">
                 <button 
                   onClick={() => setEditingLesson({ module_id: module.id, title: "", slug: "", description: "", video_url: "", duration_minutes: 10, order_index: lessons.filter(l => l.module_id === module.id).length, is_free: false, content: "" })}
                   className="p-2 text-white/40 hover:text-white"
@@ -249,13 +249,13 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
 
             <div className="p-2 space-y-1">
               {lessons.filter(l => l.module_id === module.id).map((lesson) => (
-                <div key={lesson.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-white/[0.02] group transition-colors">
-                  <div className="flex items-center gap-3">
-                    <PlayCircle className="h-4 w-4 text-white/20" />
-                    <span className="text-sm">{lesson.title}</span>
+                <div key={lesson.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 p-3 rounded-lg hover:bg-white/[0.02] group transition-colors">
+                  <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                    <PlayCircle className="h-4 w-4 shrink-0 text-white/20" />
+                    <span className="truncate text-sm">{lesson.title}</span>
                     {lesson.is_free && <Badge className="bg-green-500/10 text-green-500 border-none text-[8px]">Grátis</Badge>}
                   </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex shrink-0 items-center gap-1 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">
                     <button onClick={() => setEditingLesson(lesson)} className="p-1.5 text-white/40 hover:text-white"><Edit3 className="h-3.5 w-3.5" /></button>
                     <button onClick={() => handleDelete('course_lessons', lesson.id!, lesson.title)} className="p-1.5 text-white/40 hover:text-red-500"><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
@@ -268,7 +268,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
 
       {editingModule && (
         <Dialog open={!!editingModule} onOpenChange={(open) => !open && setEditingModule(null)} modal={false}>
-          <DialogContent className="bg-[#0e0e0e] border-white/10 text-white z-[90] fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full max-w-lg shadow-2xl">
+          <DialogContent className="bg-[#0e0e0e] border-white/10 text-white z-[90] fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-[calc(100vw-1.5rem)] max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain shadow-2xl">
             <DialogHeader><DialogTitle>Módulo</DialogTitle></DialogHeader>
             <form onSubmit={handleSaveModule} className="space-y-4 pt-4 text-left">
               <input 
@@ -302,10 +302,10 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
 
       {editingLesson && (
         <Dialog open={!!editingLesson} onOpenChange={(open) => !open && setEditingLesson(null)} modal={false}>
-          <DialogContent className="bg-[#0e0e0e] border-white/10 text-white max-w-2xl max-h-[90vh] overflow-y-auto text-left z-[90] fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full shadow-2xl">
+          <DialogContent className="bg-[#0e0e0e] border-white/10 text-white max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain text-left z-[90] fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-[calc(100vw-1.5rem)] shadow-2xl">
             <DialogHeader><DialogTitle>Aula</DialogTitle></DialogHeader>
             <form onSubmit={handleSaveLesson} className="space-y-4 pt-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Título</label>
                   <input required placeholder="Título" value={editingLesson.title} onChange={e => setEditingLesson({...editingLesson, title: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg outline-none" />
@@ -327,7 +327,7 @@ export function CourseTreeEditor({ courseId }: CourseTreeEditorProps) {
                 <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Conteúdo da Aula (Markdown)</label>
                 <textarea placeholder="Conteúdo (Markdown/Rich Text)" value={editingLesson.content || ""} onChange={e => setEditingLesson({...editingLesson, content: e.target.value})} className="w-full bg-white/5 border border-white/10 p-3 rounded-lg h-40 outline-none resize-none" />
               </div>
-              <div className="flex items-center gap-6">
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Duração (min)</label>
                   <input type="number" value={editingLesson.duration_minutes} onChange={e => setEditingLesson({...editingLesson, duration_minutes: parseInt(e.target.value)})} className="bg-white/5 border border-white/10 p-3 rounded-lg w-32 outline-none" />
