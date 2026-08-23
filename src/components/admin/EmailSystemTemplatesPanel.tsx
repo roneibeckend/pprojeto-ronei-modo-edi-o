@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { AlertTriangle, CheckCircle2, Eye, Loader2, Mail, RefreshCw, SendHorizontal } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Copy, ExternalLink, Eye, Loader2, Mail, RefreshCw, SendHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +17,8 @@ export function EmailSystemTemplatesPanel() {
 
   const [event, setEvent] = useState(EMAIL_CATALOG[0]!.event);
   const [values, setValues] = useState<Record<string, string>>(() => sampleDataFor(EMAIL_CATALOG[0]!.event));
-  const [preview, setPreview] = useState<{ subject: string; html: string } | null>(null);
+  const [preview, setPreview] = useState<{ subject: string; html: string; text?: string } | null>(null);
+  const [viewMode, setViewMode] = useState<"visual" | "html" | "texto">("visual");
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [testEmail, setTestEmail] = useState("");
@@ -30,7 +31,7 @@ export function EmailSystemTemplatesPanel() {
       setIsLoading(true);
       try {
         const result = await previewFn({ data: { event: ev, data } });
-        setPreview({ subject: result.subject, html: result.html });
+        setPreview({ subject: result.subject, html: result.html, text: result.text });
       } catch (err: any) {
         setPreview(null);
         toast.error("Erro ao gerar prévia: " + (err?.message ?? "desconhecido"));
