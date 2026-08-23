@@ -33,6 +33,7 @@ import { Route as AppAoVivoRouteImport } from './routes/app.ao-vivo'
 import { Route as AppAfiliadosRouteImport } from './routes/app.afiliados'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminSuporteRouteImport } from './routes/admin.suporte'
+import { Route as AdminStatusRouteImport } from './routes/admin.status'
 import { Route as AdminRelatoriosRouteImport } from './routes/admin.relatorios'
 import { Route as AdminReceitasRouteImport } from './routes/admin.receitas'
 import { Route as AdminRankingRouteImport } from './routes/admin.ranking'
@@ -185,6 +186,11 @@ const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
 const AdminSuporteRoute = AdminSuporteRouteImport.update({
   id: '/suporte',
   path: '/suporte',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminStatusRoute = AdminStatusRouteImport.update({
+  id: '/status',
+  path: '/status',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminRelatoriosRoute = AdminRelatoriosRouteImport.update({
@@ -381,6 +387,7 @@ export interface FileRoutesByFullPath {
   '/admin/ranking': typeof AdminRankingRouteWithChildren
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
+  '/admin/status': typeof AdminStatusRoute
   '/admin/suporte': typeof AdminSuporteRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/app/afiliados': typeof AppAfiliadosRouteWithChildren
@@ -438,6 +445,7 @@ export interface FileRoutesByTo {
   '/admin/ranking': typeof AdminRankingRouteWithChildren
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
+  '/admin/status': typeof AdminStatusRoute
   '/admin/suporte': typeof AdminSuporteRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/app/ao-vivo': typeof AppAoVivoRoute
@@ -496,6 +504,7 @@ export interface FileRoutesById {
   '/admin/ranking': typeof AdminRankingRouteWithChildren
   '/admin/receitas': typeof AdminReceitasRoute
   '/admin/relatorios': typeof AdminRelatoriosRoute
+  '/admin/status': typeof AdminStatusRoute
   '/admin/suporte': typeof AdminSuporteRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/app/afiliados': typeof AppAfiliadosRouteWithChildren
@@ -557,6 +566,7 @@ export interface FileRouteTypes {
     | '/admin/ranking'
     | '/admin/receitas'
     | '/admin/relatorios'
+    | '/admin/status'
     | '/admin/suporte'
     | '/admin/usuarios'
     | '/app/afiliados'
@@ -614,6 +624,7 @@ export interface FileRouteTypes {
     | '/admin/ranking'
     | '/admin/receitas'
     | '/admin/relatorios'
+    | '/admin/status'
     | '/admin/suporte'
     | '/admin/usuarios'
     | '/app/ao-vivo'
@@ -671,6 +682,7 @@ export interface FileRouteTypes {
     | '/admin/ranking'
     | '/admin/receitas'
     | '/admin/relatorios'
+    | '/admin/status'
     | '/admin/suporte'
     | '/admin/usuarios'
     | '/app/afiliados'
@@ -891,6 +903,13 @@ declare module '@tanstack/react-router' {
       path: '/suporte'
       fullPath: '/admin/suporte'
       preLoaderRoute: typeof AdminSuporteRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/status': {
+      id: '/admin/status'
+      path: '/status'
+      fullPath: '/admin/status'
+      preLoaderRoute: typeof AdminStatusRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/relatorios': {
@@ -1179,6 +1198,7 @@ interface AdminRouteChildren {
   AdminRankingRoute: typeof AdminRankingRouteWithChildren
   AdminReceitasRoute: typeof AdminReceitasRoute
   AdminRelatoriosRoute: typeof AdminRelatoriosRoute
+  AdminStatusRoute: typeof AdminStatusRoute
   AdminSuporteRoute: typeof AdminSuporteRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1200,6 +1220,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminRankingRoute: AdminRankingRouteWithChildren,
   AdminReceitasRoute: AdminReceitasRoute,
   AdminRelatoriosRoute: AdminRelatoriosRoute,
+  AdminStatusRoute: AdminStatusRoute,
   AdminSuporteRoute: AdminSuporteRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
   AdminIndexRoute: AdminIndexRoute,
