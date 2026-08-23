@@ -42,7 +42,6 @@ export function CouponInput({
   const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const validateAuthed = useServerFn(validateCouponCheckout);
-  validateCouponPublic; // referência mantida para tree-shaking explícito abaixo
   const validatePublic = useServerFn(validateCouponPublic);
 
   const handleApply = async () => {
