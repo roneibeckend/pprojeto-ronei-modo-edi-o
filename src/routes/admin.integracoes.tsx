@@ -1615,8 +1615,12 @@ function EmailTemplatesTab() {
   };
 
   return (
+    <div className="space-y-6">
+    <EmailSystemTemplatesPanel />
+
     <div className="grid gap-6 lg:grid-cols-12">
       <div className="lg:col-span-4 space-y-4">
+
         <Button 
           onClick={() => { setSelectedTemplate({ name: '', subject: '', content_html: '', description: '' }); setIsEditing(true); }}
           className="w-full bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-10"
