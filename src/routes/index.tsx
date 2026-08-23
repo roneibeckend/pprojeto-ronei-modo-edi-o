@@ -690,6 +690,7 @@ function Hero() {
                     autoStart
                     aspect="portrait"
                     className="w-full h-full"
+                    onEnded={() => setVideoOpen(false)}
                   />
 
                 </Suspense>

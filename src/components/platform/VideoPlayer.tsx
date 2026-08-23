@@ -17,6 +17,8 @@ interface VideoPlayerProps {
   isIntro?: boolean;
   /** Starts playback with sound immediately on mount (used when the user already tapped a play button). */
   autoStart?: boolean;
+  /** Called when playback reaches the end (used to auto-close intro modals). */
+  onEnded?: () => void;
 }
 
 const isYouTubeUrl = (url: string) => url.includes('youtube.com') || url.includes('youtu.be');
@@ -70,6 +72,7 @@ export function VideoPlayer({
   className,
   aspect = 'video',
   autoStart = false,
+  onEnded,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
@@ -77,6 +80,11 @@ export function VideoPlayer({
   const [hasError, setHasError] = useState(false);
   const [needsUnmute, setNeedsUnmute] = useState(false);
   const [useLight, setUseLight] = useState(false);
+
+  const onEndedRef = useRef(onEnded);
+  useEffect(() => {
+    onEndedRef.current = onEnded;
+  }, [onEnded]);
 
   const recoveryAttempts = useRef(0);
   const lastSaveRef = useRef(0);
@@ -306,6 +314,17 @@ export function VideoPlayer({
           recoveryAttempts.current = 0;
         }}
         onCanPlay={() => setIsLoading(false)}
+        onEnded={() => {
+          setIsLoading(false);
+          // O vídeo terminou: limpa o progresso salvo e avisa quem abriu o
+          // player para fechar a tela automaticamente.
+          try {
+            localStorage.removeItem(`video_progress_${videoId}`);
+          } catch {
+            /* storage may be unavailable */
+          }
+          onEndedRef.current?.();
+        }}
         onStalled={() => {
           if (started) recover();
         }}
