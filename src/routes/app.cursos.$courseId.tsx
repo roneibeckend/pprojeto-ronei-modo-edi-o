@@ -497,7 +497,7 @@ function CoursePage() {
               className="btn-fire flex items-center justify-center gap-2 px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold"
             >
               <Play className="h-4 w-4 fill-current" />
-              Ver Vídeo Intro
+              Ver Vídeo de Abertura
             </button>
           )}
           <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4 flex items-center justify-center">← Meus Conteúdos</Link>
@@ -527,7 +527,7 @@ function CoursePage() {
               
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-black text-white mb-2">{course.title}</h2>
-                <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Apresentação</p>
+                <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Abertura</p>
               </div>
  
               <div className="relative aspect-[9/16] h-[70vh] w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black group/intro">
@@ -539,7 +539,7 @@ function CoursePage() {
                       key={signedIntroUrl || course.intro_video_url}
                       videoId={`intro-${course.id}`}
                       src={signedIntroUrl || course.intro_video_url}
-                      isIntro={true}
+                      isIntro={false}
                       className="w-full h-full"
                     />
                   </Suspense>
