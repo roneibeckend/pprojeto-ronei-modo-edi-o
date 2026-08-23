@@ -151,15 +151,15 @@ function EbookReaderPage() {
 
 
 
-  // Restaura o trigger automático para vídeos de intro
-  useEffect(() => {
-    if (ebook?.opening_video_url) {
-      const hasSeen = localStorage.getItem(`ebook_opening_${ebook.id}`);
-      if (!hasSeen) {
-        setShowOpeningVideo(true);
-      }
-    }
-  }, [ebook.id, ebook.opening_video_url]);
+  // O vídeo de abertura não inicia automaticamente; o aluno escolhe quando assistir
+  // useEffect(() => {
+  //   if (ebook?.opening_video_url) {
+  //     const hasSeen = localStorage.getItem(`ebook_opening_${ebook.id}`);
+  //     if (!hasSeen) {
+  //       setShowOpeningVideo(true);
+  //     }
+  //   }
+  // }, [ebook.id, ebook.opening_video_url]);
 
   const markVideoAsSeen = () => {
     setShowOpeningVideo(false);
@@ -586,7 +586,7 @@ function EbookReaderPage() {
               className="btn-fire flex items-center justify-center gap-2 px-6 h-12 sm:h-auto py-3 sm:py-4 font-bold"
             >
               <Play className="h-4 w-4 fill-current" />
-              Ver Vídeo Intro
+              Ver Vídeo de Abertura
             </button>
           )}
           <Link to="/app/cursos" className="btn-ghost-fire text-xs sm:text-sm w-full sm:w-auto h-12 sm:h-auto py-3 sm:py-4 flex items-center justify-center">← Meus Conteúdos</Link>
@@ -616,7 +616,7 @@ function EbookReaderPage() {
               
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-black text-white mb-2">{ebook.title}</h2>
-                <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Apresentação</p>
+                <p className="text-fire font-bold uppercase tracking-widest text-sm">Vídeo de Abertura</p>
               </div>
  
               <div className="relative aspect-[9/16] h-[70vh] w-full max-w-[400px] mx-auto rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,106,0,0.2)] border border-white/10 bg-black group/intro">
@@ -627,7 +627,7 @@ function EbookReaderPage() {
                     key={signedIntroUrl || ebook.opening_video_url}
                     videoId={`intro-${ebook.id}`}
                     src={signedIntroUrl || ebook.opening_video_url}
-                    isIntro={true}
+                    isIntro={false}
                     className="w-full h-full"
                   />
                 )}
@@ -828,7 +828,7 @@ function EbookReaderPage() {
                       <Play className="h-4 w-4 fill-current" />
                     </div>
                     <div>
-                      <div className="font-bold">Vídeo de Apresentação</div>
+                      <div className="font-bold">Vídeo de Abertura</div>
                       <div className="text-[10px] opacity-60 uppercase tracking-widest">Introdução Fixa</div>
                     </div>
                   </button>
