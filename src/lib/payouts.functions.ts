@@ -240,27 +240,8 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
 
     if (fetchError || !payout) throw new Error("Solicitação não encontrada.");
 
-    // Se for 'paid', processa a transferência no Asaas primeiro
-    if (data.status === "paid") {
-      const config = await getAsaasConfig();
-      if (!config) throw new Error("Integração Asaas não configurada.");
+    // Pagamento manual: o admin envia o PIX por fora e apenas registra a baixa aqui.
 
-      try {
-        const transfer = await asaasRequest(config, "/transfers", "POST", {
-          value: payout.amount,
-          pixAddressKey: payout.pix_key,
-          pixAddressKeyType: "EVP",
-          description: `Saque Afiliado/Sócio - ${payout.id}`,
-        });
-
-        await supabaseAdmin
-          .from("payout_requests")
-          .update({ asaas_payment_id: transfer.id })
-          .eq("id", payout.id);
-      } catch (err: any) {
-        throw new Error(`Falha na transferência Asaas: ${err.message}`);
-      }
-    }
 
     const { data: result, error: rpcError } = await context.supabase.rpc(
       "admin_set_payout_status",
