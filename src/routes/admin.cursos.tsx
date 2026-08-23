@@ -21,7 +21,7 @@ import {
   Users,
   Flag,
   Save,
-  Award
+  Award,
   Send,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";

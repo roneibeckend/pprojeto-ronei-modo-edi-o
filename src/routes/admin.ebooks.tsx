@@ -32,7 +32,7 @@ import {
   CheckCircle2,
   HelpCircle,
   Flag,
-  Award
+  Award,
   Send,
 } from "lucide-react";
 import { CertificateEditor } from "@/components/admin/CertificateEditor";
