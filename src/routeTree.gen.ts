@@ -9,100 +9,70 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AppRouteImport } from './routes/app'
-import { Route as InicioRouteImport } from './routes/inicio'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
-import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
-import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as VerificarCertificadoRouteImport } from './routes/verificar-certificado'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AdminAfiliadosRouteImport } from './routes/admin.afiliados'
-import { Route as AdminAlunosRouteImport } from './routes/admin.alunos'
-import { Route as AdminAoVivoRouteImport } from './routes/admin.ao-vivo'
-import { Route as AdminChatbotRouteImport } from './routes/admin.chatbot'
-import { Route as AdminCursosRouteImport } from './routes/admin.cursos'
-import { Route as AdminDownloadsRouteImport } from './routes/admin.downloads'
-import { Route as AdminEbooksRouteImport } from './routes/admin.ebooks'
-import { Route as AdminFeedbacksRouteImport } from './routes/admin.feedbacks'
-import { Route as AdminFinanceiroRouteImport } from './routes/admin.financeiro'
-import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
-import { Route as AdminLogsRouteImport } from './routes/admin.logs'
-import { Route as AdminMateriaisRouteImport } from './routes/admin.materiais'
-import { Route as AdminNotificacoesRouteImport } from './routes/admin.notificacoes'
-import { Route as AdminRankingRouteImport } from './routes/admin.ranking'
-import { Route as AdminReceitasRouteImport } from './routes/admin.receitas'
-import { Route as AdminRelatoriosRouteImport } from './routes/admin.relatorios'
-import { Route as AdminStatusRouteImport } from './routes/admin.status'
-import { Route as AdminSuporteRouteImport } from './routes/admin.suporte'
-import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
+import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
+import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
+import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as InicioRouteImport } from './routes/inicio'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
-import { Route as AppAfiliadosRouteImport } from './routes/app.afiliados'
-import { Route as AppAoVivoRouteImport } from './routes/app.ao-vivo'
-import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
-import { Route as AppCursosRouteImport } from './routes/app.cursos'
-import { Route as AppFinanceiroRouteImport } from './routes/app.financeiro'
-import { Route as AppMateriaisRouteImport } from './routes/app.materiais'
-import { Route as AppNotificacoesRouteImport } from './routes/app.notificacoes'
-import { Route as AppPerfilRouteImport } from './routes/app.perfil'
-import { Route as AppProgressoRouteImport } from './routes/app.progresso'
-import { Route as AppReceitasRouteImport } from './routes/app.receitas'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AppSuporteRouteImport } from './routes/app.suporte'
-import { Route as AdminAlunosStudentIdRouteImport } from './routes/admin.alunos.$studentId'
-import { Route as AdminRankingCampanhasRouteImport } from './routes/admin.ranking.campanhas'
-import { Route as ApiPublicDailyFinancialReportRouteImport } from './routes/api/public/daily-financial-report'
-import { Route as ApiPublicDailyUpdatesReportRouteImport } from './routes/api/public/daily-updates-report'
-import { Route as ApiPublicDownloadMigracaoTempRouteImport } from './routes/api/public/download-migracao-temp'
-import { Route as ApiPublicDownloadStorageTempRouteImport } from './routes/api/public/download-storage-temp'
-import { Route as ApiPublicDriveVideoRouteImport } from './routes/api/public/drive-video'
-import { Route as AppAfiliadosIndexRouteImport } from './routes/app.afiliados.index'
-import { Route as AppAfiliadosConfigRouteImport } from './routes/app.afiliados.config'
-import { Route as AppAfiliadosFinanceiroRouteImport } from './routes/app.afiliados.financeiro'
-import { Route as AppAfiliadosLinksRouteImport } from './routes/app.afiliados.links'
-import { Route as AppAfiliadosMateriaisRouteImport } from './routes/app.afiliados.materiais'
-import { Route as AppAfiliadosRedeRouteImport } from './routes/app.afiliados.rede'
+import { Route as AppReceitasRouteImport } from './routes/app.receitas'
+import { Route as AppProgressoRouteImport } from './routes/app.progresso'
+import { Route as AppPerfilRouteImport } from './routes/app.perfil'
+import { Route as AppNotificacoesRouteImport } from './routes/app.notificacoes'
+import { Route as AppMateriaisRouteImport } from './routes/app.materiais'
+import { Route as AppFinanceiroRouteImport } from './routes/app.financeiro'
+import { Route as AppCursosRouteImport } from './routes/app.cursos'
+import { Route as AppCertificadosRouteImport } from './routes/app.certificados'
+import { Route as AppAoVivoRouteImport } from './routes/app.ao-vivo'
+import { Route as AppAfiliadosRouteImport } from './routes/app.afiliados'
+import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
+import { Route as AdminSuporteRouteImport } from './routes/admin.suporte'
+import { Route as AdminStatusRouteImport } from './routes/admin.status'
+import { Route as AdminRelatoriosRouteImport } from './routes/admin.relatorios'
+import { Route as AdminReceitasRouteImport } from './routes/admin.receitas'
+import { Route as AdminRankingRouteImport } from './routes/admin.ranking'
+import { Route as AdminNotificacoesRouteImport } from './routes/admin.notificacoes'
+import { Route as AdminMateriaisRouteImport } from './routes/admin.materiais'
+import { Route as AdminLogsRouteImport } from './routes/admin.logs'
+import { Route as AdminIntegracoesRouteImport } from './routes/admin.integracoes'
+import { Route as AdminFinanceiroRouteImport } from './routes/admin.financeiro'
+import { Route as AdminFeedbacksRouteImport } from './routes/admin.feedbacks'
+import { Route as AdminEbooksRouteImport } from './routes/admin.ebooks'
+import { Route as AdminDownloadsRouteImport } from './routes/admin.downloads'
+import { Route as AdminCursosRouteImport } from './routes/admin.cursos'
+import { Route as AdminChatbotRouteImport } from './routes/admin.chatbot'
+import { Route as AdminAoVivoRouteImport } from './routes/admin.ao-vivo'
+import { Route as AdminAlunosRouteImport } from './routes/admin.alunos'
+import { Route as AdminAfiliadosRouteImport } from './routes/admin.afiliados'
 import { Route as AppCursosIndexRouteImport } from './routes/app.cursos.index'
-import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
-import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.preview'
+import { Route as AppAfiliadosIndexRouteImport } from './routes/app.afiliados.index'
 import { Route as AppEbooksEbookIdRouteImport } from './routes/app.ebooks.$ebookId'
-import { Route as ApiPublicManifestWebmanifestRouteImport } from './routes/api/public/manifest.webmanifest'
+import { Route as AppCursosPreviewRouteImport } from './routes/app.cursos.preview'
+import { Route as AppCursosCourseIdRouteImport } from './routes/app.cursos.$courseId'
+import { Route as AppAfiliadosRedeRouteImport } from './routes/app.afiliados.rede'
+import { Route as AppAfiliadosMateriaisRouteImport } from './routes/app.afiliados.materiais'
+import { Route as AppAfiliadosLinksRouteImport } from './routes/app.afiliados.links'
+import { Route as AppAfiliadosFinanceiroRouteImport } from './routes/app.afiliados.financeiro'
+import { Route as AppAfiliadosConfigRouteImport } from './routes/app.afiliados.config'
+import { Route as ApiPublicDriveVideoRouteImport } from './routes/api/public/drive-video'
+import { Route as ApiPublicDownloadStorageTempRouteImport } from './routes/api/public/download-storage-temp'
+import { Route as ApiPublicDownloadMigracaoTempRouteImport } from './routes/api/public/download-migracao-temp'
+import { Route as ApiPublicDailyUpdatesReportRouteImport } from './routes/api/public/daily-updates-report'
+import { Route as ApiPublicDailyFinancialReportRouteImport } from './routes/api/public/daily-financial-report'
+import { Route as AdminRankingCampanhasRouteImport } from './routes/admin.ranking.campanhas'
+import { Route as AdminAlunosStudentIdRouteImport } from './routes/admin.alunos.$studentId'
 import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
+import { Route as ApiPublicManifestWebmanifestRouteImport } from './routes/api/public/manifest.webmanifest'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AppRoute = AppRouteImport.update({
-  id: '/app',
-  path: '/app',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InicioRoute = InicioRouteImport.update({
-  id: '/inicio',
-  path: '/inicio',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PerguntasFrequentesRoute = PerguntasFrequentesRouteImport.update({
-  id: '/perguntas-frequentes',
-  path: '/perguntas-frequentes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
-  id: '/politica-de-privacidade',
-  path: '/politica-de-privacidade',
+const VerificarCertificadoRoute = VerificarCertificadoRouteImport.update({
+  id: '/verificar-certificado',
+  path: '/verificar-certificado',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
@@ -110,159 +80,54 @@ const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   path: '/termos-de-uso',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VerificarCertificadoRoute = VerificarCertificadoRouteImport.update({
-  id: '/verificar-certificado',
-  path: '/verificar-certificado',
+const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
+  id: '/politica-de-privacidade',
+  path: '/politica-de-privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
+const PerguntasFrequentesRoute = PerguntasFrequentesRouteImport.update({
+  id: '/perguntas-frequentes',
+  path: '/perguntas-frequentes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InicioRoute = InicioRouteImport.update({
+  id: '/inicio',
+  path: '/inicio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminAfiliadosRoute = AdminAfiliadosRouteImport.update({
-  id: '/afiliados',
-  path: '/afiliados',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminAlunosRoute = AdminAlunosRouteImport.update({
-  id: '/alunos',
-  path: '/alunos',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminAoVivoRoute = AdminAoVivoRouteImport.update({
-  id: '/ao-vivo',
-  path: '/ao-vivo',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminChatbotRoute = AdminChatbotRouteImport.update({
-  id: '/chatbot',
-  path: '/chatbot',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCursosRoute = AdminCursosRouteImport.update({
-  id: '/cursos',
-  path: '/cursos',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDownloadsRoute = AdminDownloadsRouteImport.update({
-  id: '/downloads',
-  path: '/downloads',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEbooksRoute = AdminEbooksRouteImport.update({
-  id: '/ebooks',
-  path: '/ebooks',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminFeedbacksRoute = AdminFeedbacksRouteImport.update({
-  id: '/feedbacks',
-  path: '/feedbacks',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminFinanceiroRoute = AdminFinanceiroRouteImport.update({
-  id: '/financeiro',
-  path: '/financeiro',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminIntegracoesRoute = AdminIntegracoesRouteImport.update({
-  id: '/integracoes',
-  path: '/integracoes',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLogsRoute = AdminLogsRouteImport.update({
-  id: '/logs',
-  path: '/logs',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminMateriaisRoute = AdminMateriaisRouteImport.update({
-  id: '/materiais',
-  path: '/materiais',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminNotificacoesRoute = AdminNotificacoesRouteImport.update({
-  id: '/notificacoes',
-  path: '/notificacoes',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRankingRoute = AdminRankingRouteImport.update({
-  id: '/ranking',
-  path: '/ranking',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminReceitasRoute = AdminReceitasRouteImport.update({
-  id: '/receitas',
-  path: '/receitas',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRelatoriosRoute = AdminRelatoriosRouteImport.update({
-  id: '/relatorios',
-  path: '/relatorios',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminStatusRoute = AdminStatusRouteImport.update({
-  id: '/status',
-  path: '/status',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminSuporteRoute = AdminSuporteRouteImport.update({
-  id: '/suporte',
-  path: '/suporte',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
-  id: '/usuarios',
-  path: '/usuarios',
-  getParentRoute: () => AdminRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAfiliadosRoute = AppAfiliadosRouteImport.update({
-  id: '/afiliados',
-  path: '/afiliados',
-  getParentRoute: () => AppRoute,
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
-const AppAoVivoRoute = AppAoVivoRouteImport.update({
-  id: '/ao-vivo',
-  path: '/ao-vivo',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCertificadosRoute = AppCertificadosRouteImport.update({
-  id: '/certificados',
-  path: '/certificados',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCursosRoute = AppCursosRouteImport.update({
-  id: '/cursos',
-  path: '/cursos',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
-  id: '/financeiro',
-  path: '/financeiro',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppMateriaisRoute = AppMateriaisRouteImport.update({
-  id: '/materiais',
-  path: '/materiais',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppNotificacoesRoute = AppNotificacoesRouteImport.update({
-  id: '/notificacoes',
-  path: '/notificacoes',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppPerfilRoute = AppPerfilRouteImport.update({
-  id: '/perfil',
-  path: '/perfil',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppProgressoRoute = AppProgressoRouteImport.update({
-  id: '/progresso',
-  path: '/progresso',
+const AppSuporteRoute = AppSuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
   getParentRoute: () => AppRoute,
 } as any)
 const AppReceitasRoute = AppReceitasRouteImport.update({
@@ -270,31 +135,205 @@ const AppReceitasRoute = AppReceitasRouteImport.update({
   path: '/receitas',
   getParentRoute: () => AppRoute,
 } as any)
-const AppSuporteRoute = AppSuporteRouteImport.update({
-  id: '/suporte',
-  path: '/suporte',
+const AppProgressoRoute = AppProgressoRouteImport.update({
+  id: '/progresso',
+  path: '/progresso',
   getParentRoute: () => AppRoute,
 } as any)
-const AdminAlunosStudentIdRoute = AdminAlunosStudentIdRouteImport.update({
-  id: '/$studentId',
-  path: '/$studentId',
-  getParentRoute: () => AdminAlunosRoute,
+const AppPerfilRoute = AppPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => AppRoute,
 } as any)
-const AdminRankingCampanhasRoute = AdminRankingCampanhasRouteImport.update({
-  id: '/campanhas',
-  path: '/campanhas',
-  getParentRoute: () => AdminRankingRoute,
+const AppNotificacoesRoute = AppNotificacoesRouteImport.update({
+  id: '/notificacoes',
+  path: '/notificacoes',
+  getParentRoute: () => AppRoute,
 } as any)
-const ApiPublicDailyFinancialReportRoute =
-  ApiPublicDailyFinancialReportRouteImport.update({
-    id: '/api/public/daily-financial-report',
-    path: '/api/public/daily-financial-report',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicDailyUpdatesReportRoute =
-  ApiPublicDailyUpdatesReportRouteImport.update({
-    id: '/api/public/daily-updates-report',
-    path: '/api/public/daily-updates-report',
+const AppMateriaisRoute = AppMateriaisRouteImport.update({
+  id: '/materiais',
+  path: '/materiais',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCursosRoute = AppCursosRouteImport.update({
+  id: '/cursos',
+  path: '/cursos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCertificadosRoute = AppCertificadosRouteImport.update({
+  id: '/certificados',
+  path: '/certificados',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAoVivoRoute = AppAoVivoRouteImport.update({
+  id: '/ao-vivo',
+  path: '/ao-vivo',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAfiliadosRoute = AppAfiliadosRouteImport.update({
+  id: '/afiliados',
+  path: '/afiliados',
+  getParentRoute: () => AppRoute,
+} as any)
+const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSuporteRoute = AdminSuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminStatusRoute = AdminStatusRouteImport.update({
+  id: '/status',
+  path: '/status',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRelatoriosRoute = AdminRelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReceitasRoute = AdminReceitasRouteImport.update({
+  id: '/receitas',
+  path: '/receitas',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRankingRoute = AdminRankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNotificacoesRoute = AdminNotificacoesRouteImport.update({
+  id: '/notificacoes',
+  path: '/notificacoes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMateriaisRoute = AdminMateriaisRouteImport.update({
+  id: '/materiais',
+  path: '/materiais',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLogsRoute = AdminLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminIntegracoesRoute = AdminIntegracoesRouteImport.update({
+  id: '/integracoes',
+  path: '/integracoes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFinanceiroRoute = AdminFinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFeedbacksRoute = AdminFeedbacksRouteImport.update({
+  id: '/feedbacks',
+  path: '/feedbacks',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEbooksRoute = AdminEbooksRouteImport.update({
+  id: '/ebooks',
+  path: '/ebooks',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDownloadsRoute = AdminDownloadsRouteImport.update({
+  id: '/downloads',
+  path: '/downloads',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCursosRoute = AdminCursosRouteImport.update({
+  id: '/cursos',
+  path: '/cursos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminChatbotRoute = AdminChatbotRouteImport.update({
+  id: '/chatbot',
+  path: '/chatbot',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAoVivoRoute = AdminAoVivoRouteImport.update({
+  id: '/ao-vivo',
+  path: '/ao-vivo',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAlunosRoute = AdminAlunosRouteImport.update({
+  id: '/alunos',
+  path: '/alunos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAfiliadosRoute = AdminAfiliadosRouteImport.update({
+  id: '/afiliados',
+  path: '/afiliados',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AppCursosIndexRoute = AppCursosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppCursosRoute,
+} as any)
+const AppAfiliadosIndexRoute = AppAfiliadosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppAfiliadosRoute,
+} as any)
+const AppEbooksEbookIdRoute = AppEbooksEbookIdRouteImport.update({
+  id: '/ebooks/$ebookId',
+  path: '/ebooks/$ebookId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCursosPreviewRoute = AppCursosPreviewRouteImport.update({
+  id: '/preview',
+  path: '/preview',
+  getParentRoute: () => AppCursosRoute,
+} as any)
+const AppCursosCourseIdRoute = AppCursosCourseIdRouteImport.update({
+  id: '/$courseId',
+  path: '/$courseId',
+  getParentRoute: () => AppCursosRoute,
+} as any)
+const AppAfiliadosRedeRoute = AppAfiliadosRedeRouteImport.update({
+  id: '/rede',
+  path: '/rede',
+  getParentRoute: () => AppAfiliadosRoute,
+} as any)
+const AppAfiliadosMateriaisRoute = AppAfiliadosMateriaisRouteImport.update({
+  id: '/materiais',
+  path: '/materiais',
+  getParentRoute: () => AppAfiliadosRoute,
+} as any)
+const AppAfiliadosLinksRoute = AppAfiliadosLinksRouteImport.update({
+  id: '/links',
+  path: '/links',
+  getParentRoute: () => AppAfiliadosRoute,
+} as any)
+const AppAfiliadosFinanceiroRoute = AppAfiliadosFinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
+  getParentRoute: () => AppAfiliadosRoute,
+} as any)
+const AppAfiliadosConfigRoute = AppAfiliadosConfigRouteImport.update({
+  id: '/config',
+  path: '/config',
+  getParentRoute: () => AppAfiliadosRoute,
+} as any)
+const ApiPublicDriveVideoRoute = ApiPublicDriveVideoRouteImport.update({
+  id: '/api/public/drive-video',
+  path: '/api/public/drive-video',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicDownloadStorageTempRoute =
+  ApiPublicDownloadStorageTempRouteImport.update({
+    id: '/api/public/download-storage-temp',
+    path: '/api/public/download-storage-temp',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicDownloadMigracaoTempRoute =
@@ -303,66 +342,32 @@ const ApiPublicDownloadMigracaoTempRoute =
     path: '/api/public/download-migracao-temp',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicDownloadStorageTempRoute =
-  ApiPublicDownloadStorageTempRouteImport.update({
-    id: '/api/public/download-storage-temp',
-    path: '/api/public/download-storage-temp',
+const ApiPublicDailyUpdatesReportRoute =
+  ApiPublicDailyUpdatesReportRouteImport.update({
+    id: '/api/public/daily-updates-report',
+    path: '/api/public/daily-updates-report',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicDriveVideoRoute = ApiPublicDriveVideoRouteImport.update({
-  id: '/api/public/drive-video',
-  path: '/api/public/drive-video',
+const ApiPublicDailyFinancialReportRoute =
+  ApiPublicDailyFinancialReportRouteImport.update({
+    id: '/api/public/daily-financial-report',
+    path: '/api/public/daily-financial-report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminRankingCampanhasRoute = AdminRankingCampanhasRouteImport.update({
+  id: '/campanhas',
+  path: '/campanhas',
+  getParentRoute: () => AdminRankingRoute,
+} as any)
+const AdminAlunosStudentIdRoute = AdminAlunosStudentIdRouteImport.update({
+  id: '/$studentId',
+  path: '/$studentId',
+  getParentRoute: () => AdminAlunosRoute,
+} as any)
+const ApiPublicWebhooksAsaasRoute = ApiPublicWebhooksAsaasRouteImport.update({
+  id: '/api/public/webhooks/asaas',
+  path: '/api/public/webhooks/asaas',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AppAfiliadosIndexRoute = AppAfiliadosIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppAfiliadosRoute,
-} as any)
-const AppAfiliadosConfigRoute = AppAfiliadosConfigRouteImport.update({
-  id: '/config',
-  path: '/config',
-  getParentRoute: () => AppAfiliadosRoute,
-} as any)
-const AppAfiliadosFinanceiroRoute = AppAfiliadosFinanceiroRouteImport.update({
-  id: '/financeiro',
-  path: '/financeiro',
-  getParentRoute: () => AppAfiliadosRoute,
-} as any)
-const AppAfiliadosLinksRoute = AppAfiliadosLinksRouteImport.update({
-  id: '/links',
-  path: '/links',
-  getParentRoute: () => AppAfiliadosRoute,
-} as any)
-const AppAfiliadosMateriaisRoute = AppAfiliadosMateriaisRouteImport.update({
-  id: '/materiais',
-  path: '/materiais',
-  getParentRoute: () => AppAfiliadosRoute,
-} as any)
-const AppAfiliadosRedeRoute = AppAfiliadosRedeRouteImport.update({
-  id: '/rede',
-  path: '/rede',
-  getParentRoute: () => AppAfiliadosRoute,
-} as any)
-const AppCursosIndexRoute = AppCursosIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppCursosRoute,
-} as any)
-const AppCursosCourseIdRoute = AppCursosCourseIdRouteImport.update({
-  id: '/$courseId',
-  path: '/$courseId',
-  getParentRoute: () => AppCursosRoute,
-} as any)
-const AppCursosPreviewRoute = AppCursosPreviewRouteImport.update({
-  id: '/preview',
-  path: '/preview',
-  getParentRoute: () => AppCursosRoute,
-} as any)
-const AppEbooksEbookIdRoute = AppEbooksEbookIdRouteImport.update({
-  id: '/ebooks/$ebookId',
-  path: '/ebooks/$ebookId',
-  getParentRoute: () => AppRoute,
 } as any)
 const ApiPublicManifestWebmanifestRoute =
   ApiPublicManifestWebmanifestRouteImport.update({
@@ -370,11 +375,6 @@ const ApiPublicManifestWebmanifestRoute =
     path: '/api/public/manifest/webmanifest',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicWebhooksAsaasRoute = ApiPublicWebhooksAsaasRouteImport.update({
-  id: '/api/public/webhooks/asaas',
-  path: '/api/public/webhooks/asaas',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -765,53 +765,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/app': {
-      id: '/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/inicio': {
-      id: '/inicio'
-      path: '/inicio'
-      fullPath: '/inicio'
-      preLoaderRoute: typeof InicioRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/perguntas-frequentes': {
-      id: '/perguntas-frequentes'
-      path: '/perguntas-frequentes'
-      fullPath: '/perguntas-frequentes'
-      preLoaderRoute: typeof PerguntasFrequentesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/politica-de-privacidade': {
-      id: '/politica-de-privacidade'
-      path: '/politica-de-privacidade'
-      fullPath: '/politica-de-privacidade'
-      preLoaderRoute: typeof PoliticaDePrivacidadeRouteImport
+    '/verificar-certificado': {
+      id: '/verificar-certificado'
+      path: '/verificar-certificado'
+      fullPath: '/verificar-certificado'
+      preLoaderRoute: typeof VerificarCertificadoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/termos-de-uso': {
@@ -821,152 +779,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermosDeUsoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/verificar-certificado': {
-      id: '/verificar-certificado'
-      path: '/verificar-certificado'
-      fullPath: '/verificar-certificado'
-      preLoaderRoute: typeof VerificarCertificadoRouteImport
+    '/politica-de-privacidade': {
+      id: '/politica-de-privacidade'
+      path: '/politica-de-privacidade'
+      fullPath: '/politica-de-privacidade'
+      preLoaderRoute: typeof PoliticaDePrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/': {
-      id: '/admin/'
+    '/perguntas-frequentes': {
+      id: '/perguntas-frequentes'
+      path: '/perguntas-frequentes'
+      fullPath: '/perguntas-frequentes'
+      preLoaderRoute: typeof PerguntasFrequentesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inicio': {
+      id: '/inicio'
+      path: '/inicio'
+      fullPath: '/inicio'
+      preLoaderRoute: typeof InicioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
       path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/afiliados': {
-      id: '/admin/afiliados'
-      path: '/afiliados'
-      fullPath: '/admin/afiliados'
-      preLoaderRoute: typeof AdminAfiliadosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/alunos': {
-      id: '/admin/alunos'
-      path: '/alunos'
-      fullPath: '/admin/alunos'
-      preLoaderRoute: typeof AdminAlunosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/ao-vivo': {
-      id: '/admin/ao-vivo'
-      path: '/ao-vivo'
-      fullPath: '/admin/ao-vivo'
-      preLoaderRoute: typeof AdminAoVivoRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/chatbot': {
-      id: '/admin/chatbot'
-      path: '/chatbot'
-      fullPath: '/admin/chatbot'
-      preLoaderRoute: typeof AdminChatbotRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/cursos': {
-      id: '/admin/cursos'
-      path: '/cursos'
-      fullPath: '/admin/cursos'
-      preLoaderRoute: typeof AdminCursosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/downloads': {
-      id: '/admin/downloads'
-      path: '/downloads'
-      fullPath: '/admin/downloads'
-      preLoaderRoute: typeof AdminDownloadsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/ebooks': {
-      id: '/admin/ebooks'
-      path: '/ebooks'
-      fullPath: '/admin/ebooks'
-      preLoaderRoute: typeof AdminEbooksRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/feedbacks': {
-      id: '/admin/feedbacks'
-      path: '/feedbacks'
-      fullPath: '/admin/feedbacks'
-      preLoaderRoute: typeof AdminFeedbacksRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/financeiro': {
-      id: '/admin/financeiro'
-      path: '/financeiro'
-      fullPath: '/admin/financeiro'
-      preLoaderRoute: typeof AdminFinanceiroRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/integracoes': {
-      id: '/admin/integracoes'
-      path: '/integracoes'
-      fullPath: '/admin/integracoes'
-      preLoaderRoute: typeof AdminIntegracoesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/logs': {
-      id: '/admin/logs'
-      path: '/logs'
-      fullPath: '/admin/logs'
-      preLoaderRoute: typeof AdminLogsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/materiais': {
-      id: '/admin/materiais'
-      path: '/materiais'
-      fullPath: '/admin/materiais'
-      preLoaderRoute: typeof AdminMateriaisRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/notificacoes': {
-      id: '/admin/notificacoes'
-      path: '/notificacoes'
-      fullPath: '/admin/notificacoes'
-      preLoaderRoute: typeof AdminNotificacoesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/ranking': {
-      id: '/admin/ranking'
-      path: '/ranking'
-      fullPath: '/admin/ranking'
-      preLoaderRoute: typeof AdminRankingRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/receitas': {
-      id: '/admin/receitas'
-      path: '/receitas'
-      fullPath: '/admin/receitas'
-      preLoaderRoute: typeof AdminReceitasRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/relatorios': {
-      id: '/admin/relatorios'
-      path: '/relatorios'
-      fullPath: '/admin/relatorios'
-      preLoaderRoute: typeof AdminRelatoriosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/status': {
-      id: '/admin/status'
-      path: '/status'
-      fullPath: '/admin/status'
-      preLoaderRoute: typeof AdminStatusRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/suporte': {
-      id: '/admin/suporte'
-      path: '/suporte'
-      fullPath: '/admin/suporte'
-      preLoaderRoute: typeof AdminSuporteRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/usuarios': {
-      id: '/admin/usuarios'
-      path: '/usuarios'
-      fullPath: '/admin/usuarios'
-      preLoaderRoute: typeof AdminUsuariosRouteImport
-      parentRoute: typeof AdminRoute
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/app/': {
       id: '/app/'
@@ -975,67 +835,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/afiliados': {
-      id: '/app/afiliados'
-      path: '/afiliados'
-      fullPath: '/app/afiliados'
-      preLoaderRoute: typeof AppAfiliadosRouteImport
-      parentRoute: typeof AppRoute
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/app/ao-vivo': {
-      id: '/app/ao-vivo'
-      path: '/ao-vivo'
-      fullPath: '/app/ao-vivo'
-      preLoaderRoute: typeof AppAoVivoRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/certificados': {
-      id: '/app/certificados'
-      path: '/certificados'
-      fullPath: '/app/certificados'
-      preLoaderRoute: typeof AppCertificadosRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/cursos': {
-      id: '/app/cursos'
-      path: '/cursos'
-      fullPath: '/app/cursos'
-      preLoaderRoute: typeof AppCursosRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/financeiro': {
-      id: '/app/financeiro'
-      path: '/financeiro'
-      fullPath: '/app/financeiro'
-      preLoaderRoute: typeof AppFinanceiroRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/materiais': {
-      id: '/app/materiais'
-      path: '/materiais'
-      fullPath: '/app/materiais'
-      preLoaderRoute: typeof AppMateriaisRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/notificacoes': {
-      id: '/app/notificacoes'
-      path: '/notificacoes'
-      fullPath: '/app/notificacoes'
-      preLoaderRoute: typeof AppNotificacoesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/perfil': {
-      id: '/app/perfil'
-      path: '/perfil'
-      fullPath: '/app/perfil'
-      preLoaderRoute: typeof AppPerfilRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/progresso': {
-      id: '/app/progresso'
-      path: '/progresso'
-      fullPath: '/app/progresso'
-      preLoaderRoute: typeof AppProgressoRouteImport
+    '/app/suporte': {
+      id: '/app/suporte'
+      path: '/suporte'
+      fullPath: '/app/suporte'
+      preLoaderRoute: typeof AppSuporteRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/receitas': {
@@ -1045,61 +856,208 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppReceitasRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/suporte': {
-      id: '/app/suporte'
-      path: '/suporte'
-      fullPath: '/app/suporte'
-      preLoaderRoute: typeof AppSuporteRouteImport
+    '/app/progresso': {
+      id: '/app/progresso'
+      path: '/progresso'
+      fullPath: '/app/progresso'
+      preLoaderRoute: typeof AppProgressoRouteImport
       parentRoute: typeof AppRoute
     }
-    '/admin/alunos/$studentId': {
-      id: '/admin/alunos/$studentId'
-      path: '/$studentId'
-      fullPath: '/admin/alunos/$studentId'
-      preLoaderRoute: typeof AdminAlunosStudentIdRouteImport
-      parentRoute: typeof AdminAlunosRoute
+    '/app/perfil': {
+      id: '/app/perfil'
+      path: '/perfil'
+      fullPath: '/app/perfil'
+      preLoaderRoute: typeof AppPerfilRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/admin/ranking/campanhas': {
-      id: '/admin/ranking/campanhas'
-      path: '/campanhas'
-      fullPath: '/admin/ranking/campanhas'
-      preLoaderRoute: typeof AdminRankingCampanhasRouteImport
-      parentRoute: typeof AdminRankingRoute
+    '/app/notificacoes': {
+      id: '/app/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/app/notificacoes'
+      preLoaderRoute: typeof AppNotificacoesRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/api/public/daily-financial-report': {
-      id: '/api/public/daily-financial-report'
-      path: '/api/public/daily-financial-report'
-      fullPath: '/api/public/daily-financial-report'
-      preLoaderRoute: typeof ApiPublicDailyFinancialReportRouteImport
-      parentRoute: typeof rootRouteImport
+    '/app/materiais': {
+      id: '/app/materiais'
+      path: '/materiais'
+      fullPath: '/app/materiais'
+      preLoaderRoute: typeof AppMateriaisRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/api/public/daily-updates-report': {
-      id: '/api/public/daily-updates-report'
-      path: '/api/public/daily-updates-report'
-      fullPath: '/api/public/daily-updates-report'
-      preLoaderRoute: typeof ApiPublicDailyUpdatesReportRouteImport
-      parentRoute: typeof rootRouteImport
+    '/app/financeiro': {
+      id: '/app/financeiro'
+      path: '/financeiro'
+      fullPath: '/app/financeiro'
+      preLoaderRoute: typeof AppFinanceiroRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/api/public/download-migracao-temp': {
-      id: '/api/public/download-migracao-temp'
-      path: '/api/public/download-migracao-temp'
-      fullPath: '/api/public/download-migracao-temp'
-      preLoaderRoute: typeof ApiPublicDownloadMigracaoTempRouteImport
-      parentRoute: typeof rootRouteImport
+    '/app/cursos': {
+      id: '/app/cursos'
+      path: '/cursos'
+      fullPath: '/app/cursos'
+      preLoaderRoute: typeof AppCursosRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/api/public/download-storage-temp': {
-      id: '/api/public/download-storage-temp'
-      path: '/api/public/download-storage-temp'
-      fullPath: '/api/public/download-storage-temp'
-      preLoaderRoute: typeof ApiPublicDownloadStorageTempRouteImport
-      parentRoute: typeof rootRouteImport
+    '/app/certificados': {
+      id: '/app/certificados'
+      path: '/certificados'
+      fullPath: '/app/certificados'
+      preLoaderRoute: typeof AppCertificadosRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/api/public/drive-video': {
-      id: '/api/public/drive-video'
-      path: '/api/public/drive-video'
-      fullPath: '/api/public/drive-video'
-      preLoaderRoute: typeof ApiPublicDriveVideoRouteImport
-      parentRoute: typeof rootRouteImport
+    '/app/ao-vivo': {
+      id: '/app/ao-vivo'
+      path: '/ao-vivo'
+      fullPath: '/app/ao-vivo'
+      preLoaderRoute: typeof AppAoVivoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/afiliados': {
+      id: '/app/afiliados'
+      path: '/afiliados'
+      fullPath: '/app/afiliados'
+      preLoaderRoute: typeof AppAfiliadosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/admin/usuarios': {
+      id: '/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AdminUsuariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/suporte': {
+      id: '/admin/suporte'
+      path: '/suporte'
+      fullPath: '/admin/suporte'
+      preLoaderRoute: typeof AdminSuporteRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/status': {
+      id: '/admin/status'
+      path: '/status'
+      fullPath: '/admin/status'
+      preLoaderRoute: typeof AdminStatusRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/relatorios': {
+      id: '/admin/relatorios'
+      path: '/relatorios'
+      fullPath: '/admin/relatorios'
+      preLoaderRoute: typeof AdminRelatoriosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/receitas': {
+      id: '/admin/receitas'
+      path: '/receitas'
+      fullPath: '/admin/receitas'
+      preLoaderRoute: typeof AdminReceitasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/ranking': {
+      id: '/admin/ranking'
+      path: '/ranking'
+      fullPath: '/admin/ranking'
+      preLoaderRoute: typeof AdminRankingRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/notificacoes': {
+      id: '/admin/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/admin/notificacoes'
+      preLoaderRoute: typeof AdminNotificacoesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/materiais': {
+      id: '/admin/materiais'
+      path: '/materiais'
+      fullPath: '/admin/materiais'
+      preLoaderRoute: typeof AdminMateriaisRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/logs': {
+      id: '/admin/logs'
+      path: '/logs'
+      fullPath: '/admin/logs'
+      preLoaderRoute: typeof AdminLogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/integracoes': {
+      id: '/admin/integracoes'
+      path: '/integracoes'
+      fullPath: '/admin/integracoes'
+      preLoaderRoute: typeof AdminIntegracoesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/financeiro': {
+      id: '/admin/financeiro'
+      path: '/financeiro'
+      fullPath: '/admin/financeiro'
+      preLoaderRoute: typeof AdminFinanceiroRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/feedbacks': {
+      id: '/admin/feedbacks'
+      path: '/feedbacks'
+      fullPath: '/admin/feedbacks'
+      preLoaderRoute: typeof AdminFeedbacksRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/ebooks': {
+      id: '/admin/ebooks'
+      path: '/ebooks'
+      fullPath: '/admin/ebooks'
+      preLoaderRoute: typeof AdminEbooksRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/downloads': {
+      id: '/admin/downloads'
+      path: '/downloads'
+      fullPath: '/admin/downloads'
+      preLoaderRoute: typeof AdminDownloadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/cursos': {
+      id: '/admin/cursos'
+      path: '/cursos'
+      fullPath: '/admin/cursos'
+      preLoaderRoute: typeof AdminCursosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/chatbot': {
+      id: '/admin/chatbot'
+      path: '/chatbot'
+      fullPath: '/admin/chatbot'
+      preLoaderRoute: typeof AdminChatbotRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/ao-vivo': {
+      id: '/admin/ao-vivo'
+      path: '/ao-vivo'
+      fullPath: '/admin/ao-vivo'
+      preLoaderRoute: typeof AdminAoVivoRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/alunos': {
+      id: '/admin/alunos'
+      path: '/alunos'
+      fullPath: '/admin/alunos'
+      preLoaderRoute: typeof AdminAlunosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/afiliados': {
+      id: '/admin/afiliados'
+      path: '/afiliados'
+      fullPath: '/admin/afiliados'
+      preLoaderRoute: typeof AdminAfiliadosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/app/cursos/': {
+      id: '/app/cursos/'
+      path: '/'
+      fullPath: '/app/cursos/'
+      preLoaderRoute: typeof AppCursosIndexRouteImport
+      parentRoute: typeof AppCursosRoute
     }
     '/app/afiliados/': {
       id: '/app/afiliados/'
@@ -1108,46 +1066,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAfiliadosIndexRouteImport
       parentRoute: typeof AppAfiliadosRoute
     }
-    '/app/afiliados/config': {
-      id: '/app/afiliados/config'
-      path: '/config'
-      fullPath: '/app/afiliados/config'
-      preLoaderRoute: typeof AppAfiliadosConfigRouteImport
-      parentRoute: typeof AppAfiliadosRoute
+    '/app/ebooks/$ebookId': {
+      id: '/app/ebooks/$ebookId'
+      path: '/ebooks/$ebookId'
+      fullPath: '/app/ebooks/$ebookId'
+      preLoaderRoute: typeof AppEbooksEbookIdRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/app/afiliados/financeiro': {
-      id: '/app/afiliados/financeiro'
-      path: '/financeiro'
-      fullPath: '/app/afiliados/financeiro'
-      preLoaderRoute: typeof AppAfiliadosFinanceiroRouteImport
-      parentRoute: typeof AppAfiliadosRoute
-    }
-    '/app/afiliados/links': {
-      id: '/app/afiliados/links'
-      path: '/links'
-      fullPath: '/app/afiliados/links'
-      preLoaderRoute: typeof AppAfiliadosLinksRouteImport
-      parentRoute: typeof AppAfiliadosRoute
-    }
-    '/app/afiliados/materiais': {
-      id: '/app/afiliados/materiais'
-      path: '/materiais'
-      fullPath: '/app/afiliados/materiais'
-      preLoaderRoute: typeof AppAfiliadosMateriaisRouteImport
-      parentRoute: typeof AppAfiliadosRoute
-    }
-    '/app/afiliados/rede': {
-      id: '/app/afiliados/rede'
-      path: '/rede'
-      fullPath: '/app/afiliados/rede'
-      preLoaderRoute: typeof AppAfiliadosRedeRouteImport
-      parentRoute: typeof AppAfiliadosRoute
-    }
-    '/app/cursos/': {
-      id: '/app/cursos/'
-      path: '/'
-      fullPath: '/app/cursos/'
-      preLoaderRoute: typeof AppCursosIndexRouteImport
+    '/app/cursos/preview': {
+      id: '/app/cursos/preview'
+      path: '/preview'
+      fullPath: '/app/cursos/preview'
+      preLoaderRoute: typeof AppCursosPreviewRouteImport
       parentRoute: typeof AppCursosRoute
     }
     '/app/cursos/$courseId': {
@@ -1157,32 +1087,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCursosCourseIdRouteImport
       parentRoute: typeof AppCursosRoute
     }
-    '/app/cursos/preview': {
-      id: '/app/cursos/preview'
-      path: '/preview'
-      fullPath: '/app/cursos/preview'
-      preLoaderRoute: typeof AppCursosPreviewRouteImport
-      parentRoute: typeof AppCursosRoute
+    '/app/afiliados/rede': {
+      id: '/app/afiliados/rede'
+      path: '/rede'
+      fullPath: '/app/afiliados/rede'
+      preLoaderRoute: typeof AppAfiliadosRedeRouteImport
+      parentRoute: typeof AppAfiliadosRoute
     }
-    '/app/ebooks/$ebookId': {
-      id: '/app/ebooks/$ebookId'
-      path: '/ebooks/$ebookId'
-      fullPath: '/app/ebooks/$ebookId'
-      preLoaderRoute: typeof AppEbooksEbookIdRouteImport
-      parentRoute: typeof AppRoute
+    '/app/afiliados/materiais': {
+      id: '/app/afiliados/materiais'
+      path: '/materiais'
+      fullPath: '/app/afiliados/materiais'
+      preLoaderRoute: typeof AppAfiliadosMateriaisRouteImport
+      parentRoute: typeof AppAfiliadosRoute
     }
-    '/api/public/manifest/webmanifest': {
-      id: '/api/public/manifest/webmanifest'
-      path: '/api/public/manifest/webmanifest'
-      fullPath: '/api/public/manifest/webmanifest'
-      preLoaderRoute: typeof ApiPublicManifestWebmanifestRouteImport
+    '/app/afiliados/links': {
+      id: '/app/afiliados/links'
+      path: '/links'
+      fullPath: '/app/afiliados/links'
+      preLoaderRoute: typeof AppAfiliadosLinksRouteImport
+      parentRoute: typeof AppAfiliadosRoute
+    }
+    '/app/afiliados/financeiro': {
+      id: '/app/afiliados/financeiro'
+      path: '/financeiro'
+      fullPath: '/app/afiliados/financeiro'
+      preLoaderRoute: typeof AppAfiliadosFinanceiroRouteImport
+      parentRoute: typeof AppAfiliadosRoute
+    }
+    '/app/afiliados/config': {
+      id: '/app/afiliados/config'
+      path: '/config'
+      fullPath: '/app/afiliados/config'
+      preLoaderRoute: typeof AppAfiliadosConfigRouteImport
+      parentRoute: typeof AppAfiliadosRoute
+    }
+    '/api/public/drive-video': {
+      id: '/api/public/drive-video'
+      path: '/api/public/drive-video'
+      fullPath: '/api/public/drive-video'
+      preLoaderRoute: typeof ApiPublicDriveVideoRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/public/download-storage-temp': {
+      id: '/api/public/download-storage-temp'
+      path: '/api/public/download-storage-temp'
+      fullPath: '/api/public/download-storage-temp'
+      preLoaderRoute: typeof ApiPublicDownloadStorageTempRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/download-migracao-temp': {
+      id: '/api/public/download-migracao-temp'
+      path: '/api/public/download-migracao-temp'
+      fullPath: '/api/public/download-migracao-temp'
+      preLoaderRoute: typeof ApiPublicDownloadMigracaoTempRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/daily-updates-report': {
+      id: '/api/public/daily-updates-report'
+      path: '/api/public/daily-updates-report'
+      fullPath: '/api/public/daily-updates-report'
+      preLoaderRoute: typeof ApiPublicDailyUpdatesReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/daily-financial-report': {
+      id: '/api/public/daily-financial-report'
+      path: '/api/public/daily-financial-report'
+      fullPath: '/api/public/daily-financial-report'
+      preLoaderRoute: typeof ApiPublicDailyFinancialReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ranking/campanhas': {
+      id: '/admin/ranking/campanhas'
+      path: '/campanhas'
+      fullPath: '/admin/ranking/campanhas'
+      preLoaderRoute: typeof AdminRankingCampanhasRouteImport
+      parentRoute: typeof AdminRankingRoute
+    }
+    '/admin/alunos/$studentId': {
+      id: '/admin/alunos/$studentId'
+      path: '/$studentId'
+      fullPath: '/admin/alunos/$studentId'
+      preLoaderRoute: typeof AdminAlunosStudentIdRouteImport
+      parentRoute: typeof AdminAlunosRoute
     }
     '/api/public/webhooks/asaas': {
       id: '/api/public/webhooks/asaas'
       path: '/api/public/webhooks/asaas'
       fullPath: '/api/public/webhooks/asaas'
       preLoaderRoute: typeof ApiPublicWebhooksAsaasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/manifest/webmanifest': {
+      id: '/api/public/manifest/webmanifest'
+      path: '/api/public/manifest/webmanifest'
+      fullPath: '/api/public/manifest/webmanifest'
+      preLoaderRoute: typeof ApiPublicManifestWebmanifestRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
