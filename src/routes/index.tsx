@@ -726,7 +726,6 @@ function Hero() {
             className="relative w-full max-w-[min(420px,85vh*9/16)] animate-scale-in"
           >
 
-            </button>
             <div className="glass gradient-border overflow-hidden rounded-2xl p-1 shadow-fire relative bg-black group/intro">
               <div className="relative aspect-[9/16] max-h-[85vh] w-full overflow-hidden rounded-xl bg-black shadow-2xl">
                 <Suspense fallback={<div className="flex h-full items-center justify-center text-white"><Loader2 className="animate-spin" /></div>}>
