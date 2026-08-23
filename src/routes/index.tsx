@@ -563,6 +563,20 @@ function Hero() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Baixa o código do player quando o navegador estiver ocioso, para que o
+  // modal abra instantaneamente ao toque (sem esperar o chunk).
+  useEffect(() => {
+    const idle = (window as any).requestIdleCallback as undefined | ((cb: () => void) => number);
+    const run = () => void importVideoPlayer().catch(() => undefined);
+    if (idle) {
+      const handle = idle(run);
+      return () => (window as any).cancelIdleCallback?.(handle);
+    }
+    const t = window.setTimeout(run, 2500);
+    return () => window.clearTimeout(t);
+  }, []);
+
+
   useEffect(() => {
     if (!videoOpen) {
       setIsPlaying(false);
