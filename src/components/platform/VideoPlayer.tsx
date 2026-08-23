@@ -284,12 +284,12 @@ export function VideoPlayer({
         key={playableSrc}
         ref={videoRef}
         src={playableSrc}
-        poster={cleanPoster}
+        poster={autoStart ? undefined : cleanPoster}
         title={title}
         className="h-full w-full object-cover bg-black"
         playsInline
         webkit-playsinline="true"
-        preload="none"
+        preload={autoStart ? 'auto' : 'none'}
         controls={started}
         controlsList="nodownload noplaybackrate"
 
