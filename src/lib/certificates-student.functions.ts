@@ -113,19 +113,23 @@ export const getStudentCertificates = createServerFn({ method: "GET" })
     const courseList = (courseRes.data || []) as any[];
     const ebookList = (ebookRes.data || []) as any[];
 
-    return certs.map(cert => {
+    const { estimateContentHours } = await import("@/lib/certificate-hours.server");
+
+    return await Promise.all(certs.map(async (cert) => {
       const content = cert.content_type === 'course' 
         ? courseList.find(c => c.id === cert.content_id)
         : ebookList.find(e => e.id === cert.content_id);
+
+      const hours = await estimateContentHours(cert.content_id, cert.content_type);
 
       return {
         ...cert,
         student_name: (profile as any)?.name || 'Aluno',
         course: content?.title || 'Conteúdo Removido',
         completedAt: new Date(cert.issue_date).toLocaleDateString('pt-BR'),
-        hours: cert.custom_data?.hours || 10,
+        hours,
         code: cert.certificate_code,
         unlocked: true
       };
-    });
+    }));
   });
