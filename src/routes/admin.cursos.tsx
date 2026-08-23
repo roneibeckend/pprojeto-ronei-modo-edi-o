@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { CourseTreeEditor } from "@/components/admin/CourseTreeEditor";
 import { CertificateEditor } from "@/components/admin/CertificateEditor";
+import { WorkloadHoursField } from "@/components/admin/WorkloadHoursField";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -473,6 +474,14 @@ function AdminCursosPage() {
                       className="w-full bg-white/5 border border-white/10 p-3 rounded-lg text-sm outline-none focus:border-[#ff6a00] transition-colors resize-none" 
                     />
                   </div>
+
+                  <WorkloadHoursField
+                    contentId={editingItem?.id}
+                    contentType="course"
+                    hours={editingItem?.workload_hours ?? null}
+                    extras={editingItem?.workload_extras ?? null}
+                    onChange={(patch) => setEditingItem({ ...editingItem, ...patch })}
+                  />
 
                   <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-white/5">
                     <div className="space-y-0.5">

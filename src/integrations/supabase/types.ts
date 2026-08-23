@@ -870,6 +870,8 @@ export type Database = {
           teacher_name: string | null
           title: string
           updated_at: string
+          workload_extras: Json
+          workload_hours: number | null
         }
         Insert: {
           badge?: string | null
@@ -892,6 +894,8 @@ export type Database = {
           teacher_name?: string | null
           title: string
           updated_at?: string
+          workload_extras?: Json
+          workload_hours?: number | null
         }
         Update: {
           badge?: string | null
@@ -914,6 +918,8 @@ export type Database = {
           teacher_name?: string | null
           title?: string
           updated_at?: string
+          workload_extras?: Json
+          workload_hours?: number | null
         }
         Relationships: []
       }
@@ -1093,6 +1099,8 @@ export type Database = {
           title: string
           updated_at: string | null
           video_url: string | null
+          workload_extras: Json
+          workload_hours: number | null
         }
         Insert: {
           badge?: string | null
@@ -1119,6 +1127,8 @@ export type Database = {
           title: string
           updated_at?: string | null
           video_url?: string | null
+          workload_extras?: Json
+          workload_hours?: number | null
         }
         Update: {
           badge?: string | null
@@ -1145,6 +1155,8 @@ export type Database = {
           title?: string
           updated_at?: string | null
           video_url?: string | null
+          workload_extras?: Json
+          workload_hours?: number | null
         }
         Relationships: [
           {
