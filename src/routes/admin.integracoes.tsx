@@ -742,6 +742,10 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
   const [isSendingTest, setIsSendingTest] = useState(false);
   const [testTo, setTestTo] = useState('');
   const [testTemplate, setTestTemplate] = useState('boas_vindas');
+  const getEmailSettingsFn = useServerFn(getEmailSettings);
+  const getEmailLogsFn = useServerFn(getEmailLogs);
+  const updateEmailSettingsFn = useServerFn(updateEmailSettings);
+  const sendEmailFn = useServerFn(sendEmail);
   
   // Local state for form inputs to ensure persistence and React-controlled behavior
   const [formData, setFormData] = useState({
@@ -752,7 +756,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
 
   const { data: settings, isLoading: loadingSettings } = useQuery({
     queryKey: ['email_settings'],
-    queryFn: async () => await getEmailSettings()
+    queryFn: async () => await getEmailSettingsFn()
   });
 
   // Sync local form state with fetched data
@@ -773,11 +777,11 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
 
   const { data: logs, isLoading: loadingLogs } = useQuery({
     queryKey: ['email_logs'],
-    queryFn: async () => await getEmailLogs({ data: { limit: 20, offset: 0 } })
+    queryFn: async () => await getEmailLogsFn({ data: { limit: 20, offset: 0 } })
   });
 
   const updateSettingsMutation = useMutation({
-    mutationFn: updateEmailSettings,
+    mutationFn: (input: Parameters<typeof updateEmailSettingsFn>[0]) => updateEmailSettingsFn(input),
     onSuccess: (result: any) => {
       toast.success("Configurações de e-mail atualizadas!");
       if (result?.warning) {
@@ -789,13 +793,9 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
   });
 
   const sendTestMutation = useMutation({
-    mutationFn: sendEmail,
+    mutationFn: (input: Parameters<typeof sendEmailFn>[0]) => sendEmailFn(input),
     onSuccess: (result: any) => {
-      if (result?.success) {
-        toast.success(`E-mail de teste aceito pelo Resend${result.id ? ` (ID: ${result.id})` : ''}. Verifique a caixa de entrada e a aba Logs.`);
-      } else {
-        toast.error("Falha no envio: " + (result?.error || 'erro desconhecido'), { duration: 10000 });
-      }
+      toast.success(`E-mail aceito para envio pelo Resend (ID: ${result.id}). Verifique a caixa de entrada e a aba Logs.`);
       queryClient.invalidateQueries({ queryKey: ['email_logs'] });
       setIsSendingTest(false);
     },
@@ -1011,7 +1011,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
           <Card className="bg-[#111] border-white/5">
             <CardHeader>
               <CardTitle className="text-lg font-bold uppercase">Simular Envio Transacional</CardTitle>
-              <CardDescription className="text-xs text-white/40">Teste a entrega e visualize como os templates chegam na caixa de entrada.</CardDescription>
+                  <CardDescription className="text-xs text-white/40">Este teste só mostra sucesso quando o Resend aceita o e-mail para envio.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
@@ -1081,7 +1081,8 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                       <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40">Template</th>
                       <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40">Destinatário</th>
                       <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40">Status</th>
-                      <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40">Data/Hora</th>
+                       <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40">Detalhes</th>
+                       <th className="text-left px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40">Data/Hora</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -1089,7 +1090,7 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                       Array(5).fill(0).map((_, i) => <tr key={i} className="h-16 animate-pulse bg-white/[0.01]" />)
                     ) : logs?.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="px-6 py-12 text-center text-xs text-white/20 uppercase font-bold tracking-widest">Nenhum log encontrado.</td>
+                         <td colSpan={5} className="px-6 py-12 text-center text-xs text-white/20 uppercase font-bold tracking-widest">Nenhum log encontrado.</td>
                       </tr>
                     ) : (
                       logs?.map((log: any) => (
@@ -1113,6 +1114,9 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                               {log.status}
                             </Badge>
                           </td>
+                           <td className="max-w-xs px-6 py-4 text-[10px] text-white/50">
+                             {log.error_message || (log.provider_message_id ? `ID: ${log.provider_message_id}` : '—')}
+                           </td>
                           <td className="px-6 py-4 text-[10px] text-white/20">
                             {new Date(log.created_at).toLocaleString('pt-BR')}
                           </td>
