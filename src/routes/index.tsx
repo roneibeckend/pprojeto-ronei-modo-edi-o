@@ -117,7 +117,18 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: OG_IMAGE },
       { name: "twitter:image:alt", content: "Chef especialista em espetinhos" },
     ],
-    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
+    links: [
+      { rel: "canonical", href: `${SITE_URL}/` },
+      { rel: "preconnect", href: "https://i.ytimg.com", crossOrigin: "anonymous" },
+      { rel: "dns-prefetch", href: "https://i.ytimg.com" },
+      {
+        rel: "preload",
+        as: "image",
+        href: "https://i.ytimg.com/vi_webp/ZowrRHEwP7I/mqdefault.webp",
+        fetchpriority: "high",
+      },
+    ],
+
     scripts: [
       {
         type: "application/ld+json",
@@ -588,7 +599,9 @@ function Hero() {
               <div className="glass gradient-border relative overflow-hidden rounded-2xl p-1.5 shadow-fire">
                 <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background ring-1 ring-white/10 shadow-2xl">
                   <img
-                    src="https://img.youtube.com/vi/ZowrRHEwP7I/maxresdefault.jpg"
+                    src="https://i.ytimg.com/vi_webp/ZowrRHEwP7I/mqdefault.webp"
+                    srcSet="https://i.ytimg.com/vi_webp/ZowrRHEwP7I/mqdefault.webp 320w, https://i.ytimg.com/vi_webp/ZowrRHEwP7I/sddefault.webp 640w"
+                    sizes="(max-width: 640px) 100vw, 480px"
                     alt="Ronnei — história do Espetos Grill"
                     loading="eager"
                     fetchPriority="high"
@@ -597,6 +610,7 @@ function Hero() {
                     height={720}
                     className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                   />
+
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
 
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -1907,8 +1921,18 @@ function AuroraBackdrop() {
 
 function LandingPage() {
   useEffect(() => {
+    // Ativa o estado oculto das animações somente agora (após hidratação).
+    // Antes disso o HTML já está visível, evitando "tela vazia" no mobile.
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduceMotion) {
+      document.documentElement.setAttribute("data-reveal-js", "");
+    }
+
     // Assign varied reveal variants per section so animations don't all feel the same.
     // Order below matches <main> children.
+
     const variantsBySection: Array<{ headline: string; card: string }> = [
       { headline: "up",    card: "up"     }, // Hero
       { headline: "clip",  card: "scale"  }, // ForYou
@@ -1993,8 +2017,10 @@ function LandingPage() {
     return () => {
       io.disconnect();
       window.removeEventListener("scroll", onScroll);
+      document.documentElement.removeAttribute("data-reveal-js");
     };
   }, []);
+
   return (
     <div className="min-h-dvh pb-24 md:pb-0">
       <ScrollProgress />
