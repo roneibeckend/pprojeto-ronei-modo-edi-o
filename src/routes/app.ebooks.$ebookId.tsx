@@ -724,7 +724,7 @@ function EbookReaderPage() {
           >
             <div
               className="relative flex h-[100dvh] w-full flex-col sm:mx-auto sm:max-w-4xl sm:justify-center"
-              style={{ paddingTop: "env(safe-area-inset-top, 0px)", paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+              style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
             >
               <button
                 onClick={() => {
@@ -767,7 +767,10 @@ function EbookReaderPage() {
                 )}
               </div>
 
-              <div className="shrink-0 px-4 pb-3 pt-3 sm:mt-8 sm:flex sm:justify-center sm:px-0 sm:pb-0">
+              <div
+                className="shrink-0 px-3 pb-0 pt-2 sm:mt-8 sm:flex sm:justify-center sm:px-0 sm:pb-0 sm:pt-0"
+                style={{ paddingBottom: "max(2px, calc(env(safe-area-inset-bottom, 0px) - 0.9rem))" }}
+              >
                 <button 
                   onClick={() => {
                     if (showOpeningVideo) markVideoAsSeen();
