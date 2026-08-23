@@ -117,7 +117,18 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: OG_IMAGE },
       { name: "twitter:image:alt", content: "Chef especialista em espetinhos" },
     ],
-    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
+    links: [
+      { rel: "canonical", href: `${SITE_URL}/` },
+      { rel: "preconnect", href: "https://i.ytimg.com", crossOrigin: "anonymous" },
+      { rel: "dns-prefetch", href: "https://i.ytimg.com" },
+      {
+        rel: "preload",
+        as: "image",
+        href: "https://i.ytimg.com/vi_webp/ZowrRHEwP7I/mqdefault.webp",
+        fetchpriority: "high",
+      },
+    ],
+
     scripts: [
       {
         type: "application/ld+json",
