@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { useProgress } from "@/hooks/use-progress";
 import { createAsaasPaymentLink } from "@/lib/asaas.functions";
+import { CouponInput, type AppliedCoupon } from "@/components/platform/CouponInput";
 import { getAffiliateRef } from "@/hooks/use-affiliate-tracking";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -94,6 +95,7 @@ function EbookReaderPage() {
   const { isChapterCompleted, completeChapter, ebookProgress } = useProgress();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
   const { isEnabled: isOfferEnabled, syncWithDatabase } = usePostPurchaseOfferStore();
