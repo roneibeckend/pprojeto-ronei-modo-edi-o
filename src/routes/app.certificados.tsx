@@ -405,7 +405,7 @@ function CertificateModal({ cert, onClose, autoDownload }: { cert: any; onClose:
 }
 
 function FullCertificate({ cert }: { cert: any }) {
-  const verifyUrl = `verifica.ronneinaveia.com/${cert.code ?? "—"}`;
+  const verifyUrl = `${CERT_VERIFY_DOMAIN}/verificar-certificado?codigo=${cert.code ?? ""}`;
   return (
     <div className="relative overflow-hidden bg-[#f5efe4] text-[#1a1207] shadow-2xl">
       {/* Guilloché background */}
