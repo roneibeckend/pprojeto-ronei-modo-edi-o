@@ -113,7 +113,7 @@ export const validateSender = createServerFn({ method: "POST" })
     const result = await validateResendSender(data.apiKey, data.email);
     
     // Update settings with validation result using admin client
-    const { data: settings } = await supabaseAdmin.from('email_settings').select('id').maybeSingle();
+    const { data: settings } = await supabaseAdmin.from('email_settings').select('id').order('created_at', { ascending: true }).limit(1).maybeSingle();
     if (settings) {
       await supabaseAdmin.from('email_settings').update({
         validation_status: result.status,
@@ -146,6 +146,7 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
     const { data: existing } = await supabaseAdmin
       .from('email_settings')
       .select('*')
+      .order('created_at', { ascending: true })
       .limit(1)
       .maybeSingle();
     
