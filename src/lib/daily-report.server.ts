@@ -132,23 +132,38 @@ export async function collectDailyReport(date?: string): Promise<DailyReportData
     supabase.from("email_logs").select("status").gte("created_at", start).lte("created_at", end).limit(1000),
   ]);
 
-  const payments = paymentsRes.data || [];
-  const grossRevenue = payments.reduce((s, p: any) => s + Number(p.amount || 0), 0);
-  const totalFees = payments.reduce((s, p: any) => s + Number(p.fee || 0), 0);
-  const totalRevenue = payments.reduce(
-    (s, p: any) => s + Number(p.net_amount ?? p.amount ?? 0),
-    0,
-  );
+  // Base local + conciliação com o gateway (evita relatório zerado quando o webhook falha).
+  const localPayments: NormalizedPayment[] = ((paymentsRes.data || []) as any[]).map((p, i) => {
+    const amount = Number(p.amount || 0);
+    const net = Number(p.net_amount ?? amount);
+    return {
+      key: String(p.external_id || `local-${i}`),
+      amount,
+      net,
+      fee: Number(p.fee ?? Math.max(0, amount - net)),
+      billing_type: String(p.billing_type || "OUTRO"),
+    };
+  });
+
+  const asaasPayments = await fetchAsaasDayPayments(dateStr);
+  const localKeys = new Set(localPayments.map((p) => p.key));
+  const payments: NormalizedPayment[] = [
+    ...localPayments,
+    ...asaasPayments.filter((p) => !localKeys.has(p.key)),
+  ];
+
+  const grossRevenue = payments.reduce((s, p) => s + p.amount, 0);
+  const totalFees = payments.reduce((s, p) => s + p.fee, 0);
+  const totalRevenue = payments.reduce((s, p) => s + p.net, 0);
   const salesCount = payments.length;
   const avgTicket = salesCount > 0 ? totalRevenue / salesCount : 0;
 
   const byMap = new Map<string, { count: number; value: number }>();
-  for (const p of payments as any[]) {
-    const key = p.billing_type || "OUTRO";
-    const cur = byMap.get(key) || { count: 0, value: 0 };
+  for (const p of payments) {
+    const cur = byMap.get(p.billing_type) || { count: 0, value: 0 };
     cur.count += 1;
-    cur.value += Number(p.net_amount ?? p.amount ?? 0);
-    byMap.set(key, cur);
+    cur.value += p.net;
+    byMap.set(p.billing_type, cur);
   }
 
   const dailyCosts = (costsRes.data || []).reduce((s, c: any) => s + Number(c.value || 0) / 30, 0);
