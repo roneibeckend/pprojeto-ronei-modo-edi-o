@@ -33,7 +33,8 @@ import {
   ToggleRight,
   AlertCircle,
   Search,
-  RefreshCw
+  RefreshCw,
+  Eye
 } from "lucide-react";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
