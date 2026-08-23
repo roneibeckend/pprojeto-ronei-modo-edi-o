@@ -1,5 +1,7 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { renderEmailTemplate } from "@/emails/templates";
+import { validateEmailData } from "@/emails/catalog";
+
 
 
 export async function getResendConfig() {
