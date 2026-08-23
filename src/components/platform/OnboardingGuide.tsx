@@ -82,6 +82,14 @@ export function OnboardingGuide() {
     };
 
     checkStatus();
+
+    // Allow the launcher to re-open the guide at any time
+    const handleOpen = () => {
+      setCurrentStep(0);
+      setIsOpen(true);
+    };
+    window.addEventListener('open-onboarding-guide', handleOpen);
+    return () => window.removeEventListener('open-onboarding-guide', handleOpen);
   }, [getStatus]);
 
   const handleClose = async () => {
@@ -195,19 +203,13 @@ export function OnboardingGuide() {
 }
 
 export function OnboardingLauncher() {
-  const completeStatus = useServerFn(completeOnboarding);
-
-  const resetOnboarding = async () => {
-    localStorage.removeItem('onboarding_completed');
-    // We could also reset it in DB if we want the launcher to be a "re-watch"
-    // but usually launcher is just to trigger the UI again.
-    // For now, let's just reload to trigger the useEffect in OnboardingGuide
-    window.location.reload();
+  const openGuide = () => {
+    window.dispatchEvent(new Event('open-onboarding-guide'));
   };
 
   return (
     <button 
-      onClick={resetOnboarding}
+      onClick={openGuide}
       title="Guia de Primeiros Passos"
       className="flex h-10 w-10 items-center justify-center rounded-md border border-white/10 text-white/60 transition-all hover:border-primary/50 hover:text-primary active:scale-95"
     >
