@@ -6,13 +6,25 @@
  * Não usa CSS externo nem dependências de runtime.
  */
 
+/** URL pública onde os assets dos e-mails estão hospedados (precisa responder 200). */
+const FALLBACK_SITE = "https://skewer-success-engine.lovable.app";
+
+function resolveSite(): string {
+  const raw =
+    process.env["EMAIL_ASSET_BASE_URL"] ||
+    process.env["SITE_URL"] ||
+    process.env["PUBLIC_SITE_URL"] ||
+    FALLBACK_SITE;
+  return String(raw).replace(/\/$/, "");
+}
+
 export const BRAND = {
   name: "Ronnei na Veia",
   black: "#0B0B0B",
   orange: "#FF6B00",
   white: "#FFFFFF",
   gray: "#F5F5F5",
-  site: (process.env["SITE_URL"]?.replace(/\/$/, "") || "https://ronneinaveia.com.br"),
+  site: resolveSite(),
 };
 
 export const EMAIL_ASSETS = {

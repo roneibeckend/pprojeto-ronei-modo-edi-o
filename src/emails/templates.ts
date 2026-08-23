@@ -366,6 +366,70 @@ const liveClass: Builder = (d) =>
     cta: { label: "Ver aula", url: link(d, ["link", "access_link"], `${LINKS.dashboard}/aulas-ao-vivo`) },
   });
 
+/* ============ EXTRAS: conclusão, certificado, novo conteúdo ============ */
+const courseCompleted: Builder = (d) =>
+  build({
+    subject: `🏆 Parabéns! Você concluiu ${val(d, ["title", "course_name", "product_name"], "seu treinamento")}`,
+    preview: "Treinamento concluído com sucesso.",
+    heading: "🏆 Treinamento concluído",
+    greeting: `Parabéns, ${firstName(d)}!`,
+    blocks: [
+      { type: "text", text: `Você concluiu <strong>${val(d, ["title", "course_name", "product_name"], "o treinamento")}</strong>. Excelente trabalho!` },
+      { type: "text", text: "Continue evoluindo: novos conteúdos são liberados constantemente na sua área.", highlight: true },
+    ],
+    cta: { label: "Ver meu certificado", url: link(d, ["link", "certificate_url"], `${LINKS.dashboard}/certificados`) },
+  });
+
+const certificateIssued: Builder = (d) =>
+  build({
+    subject: "📜 Seu certificado está disponível",
+    preview: "Seu certificado foi emitido e já pode ser baixado.",
+    heading: "📜 Certificado emitido",
+    greeting: `Olá, ${firstName(d)}`,
+    blocks: [
+      { type: "text", text: "Seu certificado foi emitido com sucesso." },
+      {
+        type: "details",
+        title: "Dados do certificado",
+        rows: [
+          { label: "Treinamento", value: val(d, ["title", "course_name", "product_name"], "-") },
+          { label: "Carga horária", value: val(d, ["hours", "workload_hours", "carga_horaria"], "-") },
+          { label: "Emissão", value: val(d, ["date", "data"], new Date().toLocaleDateString("pt-BR")) },
+        ],
+      },
+    ],
+    cta: { label: "Baixar certificado", url: link(d, ["link", "certificate_url"], `${LINKS.dashboard}/certificados`) },
+  });
+
+const newContent: Builder = (d) =>
+  build({
+    subject: val(d, ["subject"], `✨ Novo conteúdo liberado: ${val(d, ["title"], "confira agora")}`),
+    preview: "Um novo conteúdo acabou de entrar na sua área de membros.",
+    heading: val(d, ["heading"], "✨ Novo conteúdo liberado"),
+    greeting: `Olá, ${firstName(d)}`,
+    blocks: [
+      { type: "text", text: val(d, ["message", "mensagem", "html", "body"], `Liberamos <strong>${val(d, ["title", "product_name"], "um novo conteúdo")}</strong> na sua área de membros.`) },
+      ...(val(d, ["description", "descricao"]) ? ([{ type: "quote", text: val(d, ["description", "descricao"]) }] as EmailBlock[]) : []),
+    ],
+    cta: { label: "Acessar conteúdo", url: link(d, ["link", "access_link"], LINKS.dashboard) },
+  });
+
+const supportReceived: Builder = (d) =>
+  build({
+    subject: "📩 Recebemos sua mensagem",
+    preview: "Sua solicitação de suporte foi registrada.",
+    heading: "📩 Recebemos sua mensagem",
+    greeting: `Olá, ${firstName(d)}`,
+    blocks: [
+      { type: "text", text: "Registramos sua solicitação e nossa equipe responderá em breve." },
+      { type: "quote", text: val(d, ["message", "mensagem", "summary"], "Você será avisado por e-mail assim que houver resposta.") },
+      ...(val(d, ["ticket_id", "protocolo"])
+        ? ([{ type: "details", rows: [{ label: "Protocolo", value: val(d, ["ticket_id", "protocolo"]) }] }] as EmailBlock[])
+        : []),
+    ],
+    cta: { label: "Acompanhar atendimento", url: link(d, ["link", "ticket_url"], `${LINKS.dashboard}/suporte`) },
+  });
+
 /** Nomes canônicos + aliases usados no código atual da plataforma. */
 export const EMAIL_TEMPLATES: Record<string, Builder> = {
   welcome,
@@ -402,6 +466,16 @@ export const EMAIL_TEMPLATES: Record<string, Builder> = {
   saque_recusado: payoutRejected,
   saque_admin_novo: payoutAdminNew,
   nova_aula_ao_vivo: liveClass,
+  acesso_liberado_produto: accessGranted,
+  conclusao_curso: courseCompleted,
+  course_completed: courseCompleted,
+  certificado_emitido: certificateIssued,
+  certificate_issued: certificateIssued,
+  novo_conteudo: newContent,
+  new_content: newContent,
+  suporte_recebido: supportReceived,
+  support_received: supportReceived,
+  contato_suporte: supportReply,
 };
 
 export function hasEmailTemplate(event: string) {

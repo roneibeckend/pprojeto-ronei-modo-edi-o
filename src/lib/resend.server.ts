@@ -105,7 +105,12 @@ function sanitizeTag(value: string) {
 
 /** URL pública absoluta da logo circular usada nos e-mails. */
 export const EMAIL_LOGO_URL =
-  (process.env['SITE_URL']?.replace(/\/$/, '') || 'https://ronneinaveia.com.br') + '/email-logo.png';
+  (
+    process.env['EMAIL_ASSET_BASE_URL'] ||
+    process.env['SITE_URL'] ||
+    process.env['PUBLIC_SITE_URL'] ||
+    'https://skewer-success-engine.lovable.app'
+  ).replace(/\/$/, '') + '/email-logo.png';
 
 /**
  * Adiciona o cabeçalho com a logo redonda da marca em todo e-mail enviado.
@@ -259,14 +264,32 @@ export async function triggerEmailEvent(params: {
       .maybeSingle();
 
     if (error || !template) {
-      console.warn(`[Email] Template não encontrado para o evento: ${params.event}. Usando fallback.`);
-      // Generic fallback logic if template is missing
+      console.warn(`[Email] Template não encontrado para o evento: ${params.event}. Usando layout padrão da marca.`);
+      // Fallback com o layout premium da marca (nunca envia e-mail "cru")
+      const { renderEmailLayout, renderEmailText, LINKS } = await import("@/emails/layout");
+      const fallbackOptions = {
+        preview: String(params.data?.subject || `Notificação ${params.event}`),
+        heading: String(params.data?.heading || params.data?.subject || 'Notificação'),
+        greeting: params.data?.name ? `Olá, ${params.data.name}` : undefined,
+        blocks: [
+          {
+            type: 'text' as const,
+            text: String(
+              params.data?.message || params.data?.mensagem || params.data?.html ||
+              'Você tem uma nova notificação na sua área de membros.'
+            )
+          }
+        ],
+        cta: { label: 'Acessar minha área', url: String(params.data?.link || LINKS.dashboard) }
+      };
       return await sendResendEmail({
         to: params.to,
         subject: params.data.subject || `Notificação: ${params.event}`,
-        html: `<p>Notificação de sistema para o evento: ${params.event}</p>`,
+        html: renderEmailLayout(fallbackOptions),
+        text: renderEmailText(fallbackOptions),
         tags: params.idempotencyKey ? [{ name: 'idempotency_key', value: params.idempotencyKey }] : undefined
       });
+
     }
 
     const renderedSubject = renderTemplate(template.subject, params.data);
