@@ -17,17 +17,52 @@ import { DatePickerWithRange } from "@/components/ui/date-picker-range";
 import { DateRange } from "react-day-picker";
 import { startOfDay, endOfDay, subDays } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import { PayoutRequestPanel } from "@/components/platform/PayoutRequestPanel";
 
 export const Route = createFileRoute("/app/afiliados/financeiro")({
+  head: () => ({
+    meta: [
+      { title: "Relatório Financeiro do Afiliado" },
+      {
+        name: "description",
+        content:
+          "Acompanhe comissões, volume de vendas e solicite saques via PIX na sua área de afiliado.",
+      },
+      { property: "og:title", content: "Relatório Financeiro do Afiliado" },
+      {
+        property: "og:description",
+        content: "Comissões, performance de vendas e saques via PIX para afiliados.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: AffiliateFinancialPage,
 });
 
 function AffiliateFinancialPage() {
+  const { user } = useAuth();
   const [filterDays, setFilterDays] = useState<string>("30");
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: subDays(new Date(), 30),
     to: new Date(),
   });
+
+  const { data: affiliate } = useQuery({
+    queryKey: ["affiliate-balance", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("affiliates")
+        .select("id, balance, total_earnings, status")
+        .eq("id", user?.id as string)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
 
   const { data: sales, isLoading } = useQuery({
     queryKey: ["affiliate-sales-detailed", filterDays, dateRange],
