@@ -190,6 +190,14 @@ function SupportPage() {
 
       if (msgError) throw msgError;
 
+      // Confirmação de abertura de chamado por e-mail (não bloqueia o fluxo)
+      try {
+        const { notifySupportTicketCreated } = await import("@/lib/email-triggers.functions");
+        await notifySupportTicketCreated({ data: { ticket_id: ticket.id, message } });
+      } catch (mailErr) {
+        console.error("[Suporte] Falha ao enviar e-mail de confirmação:", mailErr);
+      }
+
       toast.success("Seu chamado foi enviado para a equipe do Ronnei!", {
         description: `Protocolo: ${ticket.id.slice(0, 8)}`
       });

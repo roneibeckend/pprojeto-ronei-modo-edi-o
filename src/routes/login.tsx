@@ -182,15 +182,8 @@ function LoginPage() {
 
         // Dispara e-mail de boas-vindas (não bloqueia o fluxo)
         try {
-          const { sendEmail } = await import("@/lib/resend.functions");
-          // @ts-ignore - trigger via server function
-          await sendEmail({
-            data: {
-              to: email,
-              template: 'boas_vindas',
-              data: { name: name || email.split('@')[0] }
-            }
-          });
+          const { sendWelcomeEmailPublic } = await import("@/lib/email-triggers.functions");
+          await sendWelcomeEmailPublic({ data: { email } });
         } catch (emailErr) {
           console.error("[Auth] Erro ao disparar e-mail de boas-vindas:", emailErr);
         }

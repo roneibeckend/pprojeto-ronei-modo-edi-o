@@ -138,7 +138,15 @@ function AdminSupportPage() {
 
       if (error) throw error;
       
-      toast.success("Resposta enviada (Simulado)");
+      // Notifica o aluno por e-mail sobre a resposta do suporte
+      try {
+        const { notifySupportReply } = await import("@/lib/email-triggers.functions");
+        await notifySupportReply({ data: { ticket_id: selectedTicket.id, message: replyMessage } });
+      } catch (mailErr) {
+        console.error("[Suporte] Falha ao notificar aluno por e-mail:", mailErr);
+      }
+
+      toast.success("Resposta enviada ao aluno");
       setReply("");
       fetchTickets();
       if (selectedTicket) fetchMessages(selectedTicket.id);

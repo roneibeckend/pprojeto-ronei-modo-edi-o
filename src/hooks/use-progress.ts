@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "./use-auth";
@@ -163,6 +164,37 @@ export function useProgress() {
   const totalProgress = trainings.length > 0
     ? Math.round((completedTrainings / trainings.length) * 100)
     : 0;
+
+  // E-mail de conclusão de treinamento (o servidor garante um único envio).
+  const completedKeys = trainings.filter((t) => t.done).map((t) => t.key).join("|");
+  useEffect(() => {
+    if (!user?.id || !completedKeys) return;
+    const storageKey = `completed-mail:${user.id}`;
+    let notified: string[] = [];
+    try {
+      notified = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    } catch { notified = []; }
+
+    const pending = completedKeys.split("|").filter((key) => key && !notified.includes(key));
+    if (pending.length === 0) return;
+
+    (async () => {
+      try {
+        const { notifyContentCompleted } = await import("@/lib/email-triggers.functions");
+        for (const key of pending) {
+          const [type, id] = key.split(":");
+          if (!id) continue;
+          await notifyContentCompleted({
+            data: { content_id: id, content_type: type === "ebook" ? "ebook" : "course" },
+          });
+        }
+        localStorage.setItem(storageKey, JSON.stringify([...notified, ...pending]));
+      } catch (mailError) {
+        console.error("[Progresso] Falha ao notificar conclusão:", mailError);
+      }
+    })();
+  }, [user?.id, completedKeys]);
+
 
 
   const trackedItems = (globalProgressTracking?.tracking || []).filter(
