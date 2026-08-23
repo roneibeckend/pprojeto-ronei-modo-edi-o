@@ -588,7 +588,9 @@ function Hero() {
               <div className="glass gradient-border relative overflow-hidden rounded-2xl p-1.5 shadow-fire">
                 <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-background ring-1 ring-white/10 shadow-2xl">
                   <img
-                    src="https://img.youtube.com/vi/ZowrRHEwP7I/maxresdefault.jpg"
+                    src="https://i.ytimg.com/vi_webp/ZowrRHEwP7I/mqdefault.webp"
+                    srcSet="https://i.ytimg.com/vi_webp/ZowrRHEwP7I/mqdefault.webp 320w, https://i.ytimg.com/vi_webp/ZowrRHEwP7I/sddefault.webp 640w"
+                    sizes="(max-width: 640px) 100vw, 480px"
                     alt="Ronnei — história do Espetos Grill"
                     loading="eager"
                     fetchPriority="high"
@@ -597,6 +599,7 @@ function Hero() {
                     height={720}
                     className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                   />
+
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
 
                   <div className="absolute inset-0 flex items-center justify-center">
