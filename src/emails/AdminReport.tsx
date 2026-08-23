@@ -181,9 +181,47 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
 
   return (
     <Html lang="pt-BR">
-      <Head />
+      <Head>
+        {/* Impede que Gmail/Outlook apliquem inversão automática de cores
+            (causa clássica de "blocos brancos" com texto invisível). */}
+        <meta name="color-scheme" content="light only" />
+        <meta name="supported-color-schemes" content="light only" />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+:root { color-scheme: light only; supported-color-schemes: light only; }
+.rnv-page { background-color:${C.page} !important; }
+.rnv-card { background-color:${C.surface} !important; }
+.rnv-white { background-color:${C.white} !important; }
+.rnv-dark { background-color:${C.black} !important; }
+.rnv-txt, .rnv-txt * { color:${C.text} !important; }
+.rnv-mut, .rnv-mut * { color:${C.muted} !important; }
+.rnv-inv, .rnv-inv * { color:${C.white} !important; }
+@media (prefers-color-scheme: dark) {
+  .rnv-page { background-color:${C.page} !important; }
+  .rnv-card { background-color:${C.surface} !important; }
+  .rnv-white { background-color:${C.white} !important; }
+  .rnv-dark { background-color:${C.black} !important; }
+  .rnv-txt, .rnv-txt * { color:${C.text} !important; }
+  .rnv-mut, .rnv-mut * { color:${C.muted} !important; }
+  .rnv-inv, .rnv-inv * { color:${C.white} !important; }
+}
+[data-ogsc] .rnv-card, [data-ogsb] .rnv-card { background-color:${C.surface} !important; }
+[data-ogsc] .rnv-white, [data-ogsb] .rnv-white { background-color:${C.white} !important; }
+[data-ogsc] .rnv-txt, [data-ogsc] .rnv-txt * { color:${C.text} !important; }
+[data-ogsc] .rnv-mut, [data-ogsc] .rnv-mut * { color:${C.muted} !important; }
+[data-ogsc] .rnv-inv, [data-ogsc] .rnv-inv * { color:${C.white} !important; }
+`,
+          }}
+        />
+      </Head>
       <Preview>{props.previewText}</Preview>
-      <Body style={{ margin: 0, padding: 0, backgroundColor: C.page, fontFamily: FONT }}>
+      <Body
+        className="rnv-page"
+        {...({ bgcolor: C.page } as any)}
+        style={{ margin: 0, padding: 0, backgroundColor: C.page, fontFamily: FONT }}
+      >
+
         <Container style={{ width: "100%", maxWidth: "660px", margin: "0 auto", padding: "0 0 28px" }}>
           {/* Header */}
           <Section style={{ backgroundColor: C.black, borderBottom: `3px solid ${C.orange}`, padding: "22px 24px" }}>
