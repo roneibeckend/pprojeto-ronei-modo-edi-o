@@ -413,36 +413,6 @@ export const adminListPayouts = createServerFn({ method: "GET" })
     return data || [];
   });
 
-/** Distribui lucros entre sócios (admin). */
-export const distributeProfits = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) =>
-    z.object({ amount: z.number().positive() }).parse(data),
-  )
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { data: partners, error: partnersError } = await supabaseAdmin
-      .from("financial_partners")
-      .select("*");
-
-    if (partnersError) throw new Error(partnersError.message);
-    if (!partners || partners.length === 0) throw new Error("Nenhum sócio cadastrado.");
-
-    for (const partner of partners) {
-      const share = (data.amount * partner.percent) / 100;
-      if (share > 0 && partner.user_id) {
-        const { error: distError } = await supabaseAdmin.rpc("distribute_partner_profits", {
-          p_amount: share,
-          p_partner_id: partner.user_id,
-        });
-        if (distError) console.error(`Erro ao distribuir para ${partner.name}:`, distError);
-      }
-    }
-
-    return { success: true };
-  });
 
 /** Dados financeiros do sócio logado. */
 export const getPartnerFinancials = createServerFn({ method: "GET" })
