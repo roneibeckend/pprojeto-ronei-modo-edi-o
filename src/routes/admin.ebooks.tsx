@@ -310,8 +310,8 @@ function AdminEbooksPage() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-2 sm:p-4 text-left outline-none" tabIndex={-1}>
           <div className="w-full max-w-[95vw] lg:max-w-7xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-4 sm:p-6 h-[calc(100dvh-1rem)] sm:h-[min(92dvh,calc(100dvh-2rem))] flex flex-col relative z-50 shadow-2xl overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 z-30 bg-[#0e0e0e] pb-4 border-b border-white/5 pt-2 shrink-0">
-              <h3 className="text-xl font-bold pr-4">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo E-book"}</h3>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-4 sm:mb-6 z-30 bg-[#0e0e0e] pb-4 border-b border-white/5 pt-2 shrink-0">
+              <h3 className="truncate text-base sm:text-xl font-bold pr-2">{editingItem?.id ? `Editando: ${editingItem.title}` : "Novo E-book"}</h3>
               <button 
                 onClick={() => {
                   setIsModalOpen(false);
