@@ -57,12 +57,19 @@ export const sendEmail = createServerFn({ method: "POST" })
   });
 
 export const getEmailLogs = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({
     limit: z.number().default(50),
     offset: z.number().default(0)
   }).parse(data))
-  .handler(async ({ data: { limit, offset } }) => {
-    const { data, error } = await supabase
+  .handler(async ({ data: { limit, offset }, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc('has_role', {
+      _user_id: context.userId,
+      _role: 'admin'
+    });
+    if (!isAdmin) throw new Error("Forbidden: Admin access required");
+
+    const { data, error } = await supabaseAdmin
       .from('email_logs')
       .select('*')
       .order('created_at', { ascending: false })
@@ -73,10 +80,19 @@ export const getEmailLogs = createServerFn({ method: "GET" })
   });
 
 export const getEmailSettings = createServerFn({ method: "GET" })
-  .handler(async () => {
-    const { data, error } = await supabase
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: isAdmin } = await context.supabase.rpc('has_role', {
+      _user_id: context.userId,
+      _role: 'admin'
+    });
+    if (!isAdmin) throw new Error("Forbidden: Admin access required");
+
+    const { data, error } = await supabaseAdmin
       .from('email_settings')
       .select('*')
+      .order('created_at', { ascending: true })
+      .limit(1)
       .maybeSingle();
 
     if (error) throw new Error(error.message);
