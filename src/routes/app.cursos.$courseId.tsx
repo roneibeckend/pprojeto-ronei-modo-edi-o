@@ -155,7 +155,7 @@ function CoursePage() {
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: course.payment_type || 'unique',
           dueDays: course.due_days || 3,
-          couponCode: appliedCoupon?.code,
+          couponCode: appliedCoupon?.code || localStorage.getItem('pending_coupon_code') || undefined,
         }
       });
 

@@ -77,6 +77,7 @@ function Dashboard() {
           affiliateRef: getAffiliateRef() || undefined,
           paymentType: targetItem.payment_type || 'unique',
           dueDays: targetItem.due_days || 3,
+          couponCode: localStorage.getItem('pending_coupon_code') || undefined,
         }
       });
       
