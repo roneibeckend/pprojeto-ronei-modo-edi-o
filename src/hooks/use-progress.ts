@@ -32,15 +32,29 @@ export function useProgress() {
     queryFn: async () => {
       if (!user?.id) return { lessonCount: 0, chapterCount: 0, tracking: [] };
 
-      // Considera apenas o conteúdo que o aluno realmente possui
-      const [{ data: courseEnrollments }, { data: ebookEnrollments }, { data: progressTracking }] = await Promise.all([
+      // Considera o mesmo universo exibido em "Seus Treinamentos":
+      // matrículas + conteúdos gratuitos publicados (mesma regra de app/cursos)
+      const [
+        { data: courseEnrollments },
+        { data: ebookEnrollments },
+        { data: progressTracking },
+        { data: publishedCourses },
+        { data: publishedEbooks },
+      ] = await Promise.all([
         supabase.from("course_enrollments").select("course_id").eq("user_id", user.id),
         supabase.from("ebook_enrollments").select("ebook_id").eq("user_id", user.id),
         supabase.from("progress_tracking").select("item_type, item_id, started_at, completed_at").eq("user_id", user.id),
+        supabase.from("courses").select("id, price").eq("status", "published"),
+        supabase.from("ebooks").select("id, price").eq("status", "published"),
       ]);
 
-      const courseIds = (courseEnrollments || []).map((c: any) => c.course_id);
-      const ebookIds = (ebookEnrollments || []).map((e: any) => e.ebook_id);
+      const enrolledCourseIds = (courseEnrollments || []).map((c: any) => c.course_id);
+      const freeCourseIds = (publishedCourses || []).filter((c: any) => (c.price || 0) === 0).map((c: any) => c.id);
+      const courseIds = Array.from(new Set([...enrolledCourseIds, ...freeCourseIds]));
+
+      const enrolledEbookIds = (ebookEnrollments || []).map((e: any) => e.ebook_id);
+      const freeEbookIds = (publishedEbooks || []).filter((e: any) => (e.price || 0) === 0).map((e: any) => e.id);
+      const ebookIds = Array.from(new Set([...enrolledEbookIds, ...freeEbookIds]));
 
       // Aulas agrupadas por curso
       const courseLessonMap: Record<string, string[]> = {};
@@ -95,7 +109,10 @@ export function useProgress() {
       }
       await supabase.from("lesson_progress").upsert({ user_id: user.id, lesson_id: lessonId, is_completed: completed, updated_at: new Date().toISOString() }, { onConflict: 'user_id,lesson_id' });
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["lesson-progress", user?.id] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lesson-progress", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["global-progress-tracking", user?.id] });
+    },
   });
 
   const completeChapterMutation = useMutation({
@@ -107,10 +124,15 @@ export function useProgress() {
       }
       await supabase.from("ebook_progress").upsert({ user_id: user.id, chapter_id: chapterId, completed_at: new Date().toISOString(), last_read_at: new Date().toISOString() }, { onConflict: 'user_id,chapter_id' });
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["ebook-progress", user?.id] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ebook-progress", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["global-progress-tracking", user?.id] });
+    },
   });
 
-  // Progresso total = média por treinamento (curso/e-book) disponível ao aluno
+  // Progresso Total = (treinamentos concluídos ÷ treinamentos disponíveis) × 100
+  // "Concluído" segue a mesma regra do sistema: todas as aulas/capítulos concluídos
+  // OU registro de conclusão em progress_tracking (usado por certificados/finalize).
   const completedLessonIds = new Set((lessonProgress || []).filter((p: any) => p.is_completed).map((p: any) => p.lesson_id));
   const completedChapterIds = new Set((ebookProgress || []).filter((p: any) => !!p.completed_at).map((p: any) => p.chapter_id));
 
@@ -137,10 +159,10 @@ export function useProgress() {
     trainings.push({ key: `ebook:${id}`, ratio, done: ratio >= 1 || isTrackedComplete('ebook', id) });
   });
 
-  const totalProgress = trainings.length > 0
-    ? Math.min(100, Math.round((trainings.reduce((sum, t) => sum + (t.done ? 1 : t.ratio), 0) / trainings.length) * 100))
-    : 0;
   const completedTrainings = trainings.filter((t) => t.done).length;
+  const totalProgress = trainings.length > 0
+    ? Math.round((completedTrainings / trainings.length) * 100)
+    : 0;
 
 
   const trackedItems = (globalProgressTracking?.tracking || []).filter(
