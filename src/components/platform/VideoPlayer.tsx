@@ -52,6 +52,7 @@ export function VideoPlayer({
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -66,6 +67,7 @@ export function VideoPlayer({
   // Reset when the media changes
   useEffect(() => {
     setStarted(false);
+    setIsPlaying(false);
     setIsLoading(false);
     setHasError(false);
   }, [src]);
@@ -170,7 +172,12 @@ export function VideoPlayer({
         controls={false}
         disablePictureInPicture
         onWaiting={() => setIsLoading(true)}
-        onPlaying={() => setIsLoading(false)}
+        onPlaying={() => {
+          setIsLoading(false);
+          setIsPlaying(true);
+        }}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
         onCanPlay={() => setIsLoading(false)}
         onError={() => {
           setIsLoading(false);
@@ -197,7 +204,7 @@ export function VideoPlayer({
         <Button
           type="button"
           size="icon"
-          aria-label={videoRef.current?.paused ? 'Reproduzir vídeo' : 'Pausar vídeo'}
+          aria-label={isPlaying ? 'Pausar vídeo' : 'Reproduzir vídeo'}
           onClick={() => {
             const video = videoRef.current;
             if (!video) return;
@@ -206,7 +213,7 @@ export function VideoPlayer({
           }}
           className="absolute bottom-4 left-4 z-20 h-12 w-12 rounded-full bg-background/80 text-foreground shadow-lg backdrop-blur hover:bg-background"
         >
-          {videoRef.current?.paused ? <Play className="h-5 w-5 fill-current" /> : <Pause className="h-5 w-5 fill-current" />}
+          {isPlaying ? <Pause className="h-5 w-5 fill-current" /> : <Play className="h-5 w-5 fill-current" />}
         </Button>
       )}
 
