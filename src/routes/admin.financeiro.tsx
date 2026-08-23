@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { 
   Calculator, 
   Plus, 
@@ -17,6 +17,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 
 import { getFinancialSummary } from "@/lib/finance.functions";
+import { FinanceOutflowStatement } from "@/components/admin/FinanceOutflowStatement";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/financeiro")({
@@ -266,26 +267,6 @@ function FinancePage() {
 
         {/* Coluna 1: Receita e Profit Table */}
         <div className="space-y-6 text-left lg:col-span-1">
-          <section className="border border-white/5 bg-black/40 p-6">
-            <div className="mb-4 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-              Gerenciamento Financeiro
-            </div>
-            <div className="grid gap-3">
-              <Link
-                to="/admin/financeiro/saques"
-                className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/10 transition-colors text-left group"
-              >
-                <div>
-                  <div className="text-[10px] font-bold text-white uppercase mb-0.5">Gestão de Saídas</div>
-                  <div className="text-[9px] text-white/40">Controle de saídas Asaas e manuais</div>
-                </div>
-                <div className="h-6 w-6 rounded-full bg-fire/10 flex items-center justify-center group-hover:bg-fire/20 transition-colors">
-                  <TrendingUp className="h-3 w-3 text-fire" />
-                </div>
-              </Link>
-            </div>
-          </section>
-
           <section className="border border-white/5 bg-black/40 p-6">
             <div className="mb-4 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <div className="flex items-center gap-2">
