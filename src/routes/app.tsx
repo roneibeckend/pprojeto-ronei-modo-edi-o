@@ -7,8 +7,22 @@ import { OnboardingGuide } from "@/components/platform/OnboardingGuide";
 export const Route = createFileRoute("/app")({
   ssr: false,
   loader: async ({ context: { queryClient } }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    let { data: { session } } = await supabase.auth.getSession();
+
+    // Confirma que o token ainda é válido no servidor. Tokens revogados/expirados
+    // ficavam salvos no navegador e geravam recarga infinita entre /login e /app.
+    if (session) {
+      const { data: userData, error } = await supabase.auth.getUser();
+      if (error || !userData.user) {
+        try {
+          await supabase.auth.signOut({ scope: "local" });
+        } catch {
+          /* ignora */
+        }
+        session = null;
+      }
+    }
+
     if (!session) {
       const currentPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/app';
       throw redirect({
@@ -18,6 +32,7 @@ export const Route = createFileRoute("/app")({
         },
       });
     }
+
 
     // Parallel prefetch common app data
     await Promise.all([
