@@ -26,21 +26,8 @@ export function optimizedImage(
       return parsed.toString();
     }
 
-    if (
-      parsed.hostname.endsWith("supabase.co") &&
-      parsed.pathname.includes("/storage/v1/object/public/")
-    ) {
-      parsed.pathname = parsed.pathname.replace(
-        "/storage/v1/object/public/",
-        "/storage/v1/render/image/public/",
-      );
-      parsed.searchParams.set("width", String(width));
-      parsed.searchParams.set("quality", String(quality));
-      parsed.searchParams.set("resize", "contain");
-      return parsed.toString();
-    }
-
     return url;
+
   } catch {
     return url;
   }
