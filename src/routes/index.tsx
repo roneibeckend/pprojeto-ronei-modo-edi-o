@@ -1501,8 +1501,8 @@ function Offer() {
             </div>
 
             <div className="mt-6 space-y-4">
-              <LandingCouponField />
               <CheckoutButton label="Começar Agora" />
+
             </div>
 
             <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
