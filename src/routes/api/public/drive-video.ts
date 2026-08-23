@@ -49,7 +49,7 @@ export const Route = createFileRoute('/api/public/drive-video')({
           const outHeaders = new Headers();
           outHeaders.set('Content-Type', contentType || 'video/mp4');
           outHeaders.set('Accept-Ranges', 'bytes');
-          outHeaders.set('Cache-Control', 'public, max-age=3600');
+          outHeaders.set('Cache-Control', 'public, max-age=86400, immutable');
           for (const key of ['content-length', 'content-range', 'etag', 'last-modified']) {
             const value = upstream.headers.get(key);
             if (value) outHeaders.set(key, value);

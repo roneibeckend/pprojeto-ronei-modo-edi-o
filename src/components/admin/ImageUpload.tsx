@@ -44,7 +44,7 @@ export function ImageUpload({
 
       const { error: uploadError } = await supabase.storage
         .from(bucket)
-        .upload(filePath, file);
+        .upload(filePath, file, { cacheControl: '31536000' });
 
       if (uploadError) throw uploadError;
 

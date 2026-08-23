@@ -45,7 +45,9 @@ export function VideoUpload({
       const { error: uploadError } = await supabase.storage
         .from(bucket)
         .upload(filePath, file, {
-          contentType: file.type || undefined
+          contentType: file.type || undefined,
+          // Vídeos são imutáveis: cache longo evita downloads repetidos na CDN.
+          cacheControl: '31536000'
         });
 
       if (uploadError) throw uploadError;
