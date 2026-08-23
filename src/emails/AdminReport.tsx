@@ -138,7 +138,7 @@ function DataSection({ title, icon, rows }: { title: string; icon: string; rows:
         width="100%"
         cellPadding={0}
         cellSpacing={0}
-        bgcolor={C.surface}
+        {...({ bgcolor: C.surface } as any)}
         style={{ backgroundColor: C.surface, border: `1px solid ${C.border}`, borderRadius: "12px", padding: "6px 16px" }}
       >
         <tbody>
@@ -279,7 +279,7 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                 <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} key={b.label} style={{ marginBottom: "10px" }}>
                   <tbody>
                     <tr>
-                      <td align="center" bgcolor={b.primary ? C.orange : C.white}
+                      <td align="center" {...({ bgcolor: b.primary ? C.orange : C.white } as any)}
                         style={{ backgroundColor: b.primary ? C.orange : C.white, border: `1px solid ${b.primary ? C.orange : C.border}`, borderRadius: "10px" }}>
                         <Link
                           href={b.href}
