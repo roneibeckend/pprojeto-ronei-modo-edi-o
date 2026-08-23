@@ -182,10 +182,11 @@ export function FinanceOutflowStatement() {
       </div>
 
       <Tabs defaultValue="statement" className="w-full">
-        <TabsList className="bg-white/5 border border-white/5 flex-wrap h-auto">
-          <TabsTrigger value="statement">Extrato de Saídas</TabsTrigger>
-          <TabsTrigger value="payouts">Solicitações de Saque</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 gap-1 border border-white/5 bg-white/5 sm:inline-flex sm:w-auto">
+          <TabsTrigger value="statement" className="text-[11px] sm:text-sm">Extrato de Saídas</TabsTrigger>
+          <TabsTrigger value="payouts" className="text-[11px] sm:text-sm">Solicitações de Saque</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="statement" className="space-y-4 pt-4">
           <div className="border border-white/5 bg-white/[0.02] rounded-xl p-4 space-y-3">
@@ -211,12 +212,12 @@ export function FinanceOutflowStatement() {
                   {label}
                 </button>
               ))}
-              <div className="ml-auto flex items-center gap-2">
+              <div className="flex w-full flex-col gap-2 sm:ml-auto sm:w-auto sm:flex-row sm:items-center">
                 <Button
                   onClick={() => syncMutation.mutate()}
                   disabled={syncMutation.isPending}
                   variant="outline"
-                  className="border-white/10"
+                  className="w-full min-h-[44px] border-white/10 sm:w-auto"
                 >
                   {syncMutation.isPending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -227,11 +228,12 @@ export function FinanceOutflowStatement() {
                 </Button>
                 <Dialog open={isManualModalOpen} onOpenChange={setIsManualModalOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-fire text-white hover:bg-fire/90">
+                    <Button className="w-full min-h-[44px] bg-fire text-white hover:bg-fire/90 sm:w-auto">
                       <Plus className="h-4 w-4 mr-2" /> Saída manual
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="bg-[#111] border-white/10 text-white">
+                  <DialogContent className="max-h-[calc(100dvh-2rem)] w-[calc(100vw-1.5rem)] max-w-lg overflow-y-auto border-white/10 bg-[#111] text-white">
+
                     <DialogHeader>
                       <DialogTitle>Registrar Saída Manual</DialogTitle>
                     </DialogHeader>
@@ -325,7 +327,7 @@ export function FinanceOutflowStatement() {
                   {label}
                 </button>
               ))}
-              <div className="relative ml-auto min-w-[180px] flex-1 max-w-xs">
+              <div className="relative w-full min-w-0 flex-1 sm:ml-auto sm:max-w-xs">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
                 <Input
                   placeholder="Buscar descrição..."
