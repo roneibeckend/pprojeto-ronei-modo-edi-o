@@ -8,12 +8,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2, ExternalLink, CheckCircle2, ShoppingBag, ArrowRight, ShieldCheck, RefreshCw } from "lucide-react";
+import { Loader2, ExternalLink, CheckCircle2, ShoppingBag, ArrowRight, ShieldCheck, RefreshCw, AlertTriangle } from "lucide-react";
 import { usePaymentModal } from "@/hooks/use-payment-modal";
 import { useEnrollments } from "@/hooks/use-enrollments";
 import { useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { verifyAsaasPayment } from "@/lib/asaas.functions";
+import { verifyAsaasPayment, checkAsaasCheckoutHealth } from "@/lib/asaas.functions";
 import { completePendingCheckout } from "@/lib/checkout.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -24,13 +24,26 @@ export function AsaasPaymentModal() {
   const { isEnrolledInCourse, isEnrolledInEbook, refetchEnrollments } = useEnrollments();
   const [opened, setOpened] = React.useState(false);
   const [checking, setChecking] = React.useState(false);
+  const [checkoutDown, setCheckoutDown] = React.useState(false);
   const navigate = useNavigate();
   const completeCheckout = useServerFn(completePendingCheckout);
+  const probeCheckout = useServerFn(checkAsaasCheckoutHealth);
 
 
   React.useEffect(() => {
     if (isOpen) setOpened(false);
   }, [isOpen, paymentUrl]);
+
+  // Sonda a página do Asaas: se estiver fora do ar (503), avisamos antes de redirecionar.
+  React.useEffect(() => {
+    if (!isOpen || !paymentUrl) { setCheckoutDown(false); return; }
+    let active = true;
+    setCheckoutDown(false);
+    probeCheckout({ data: { url: paymentUrl } })
+      .then((r) => { if (active) setCheckoutDown(!r.available); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [isOpen, paymentUrl, probeCheckout]);
 
   // Polling: revalida as matrículas e confirma automaticamente após o webhook
   React.useEffect(() => {
@@ -153,6 +166,19 @@ export function AsaasPaymentModal() {
                   automaticamente após a confirmação.
                 </p>
               </div>
+
+              {checkoutDown && (
+                <div className="flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4">
+                  <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+                  <div className="text-sm">
+                    <p className="font-bold text-amber-400">Asaas temporariamente indisponível</p>
+                    <p className="text-muted-foreground">
+                      A página de pagamento do Asaas está fora do ar neste momento (erro 503 no provedor). Seu pedido
+                      ficou salvo: tente novamente em alguns minutos usando o mesmo link. Nenhuma cobrança foi feita.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <button
                 onClick={handleOpenCheckout}
