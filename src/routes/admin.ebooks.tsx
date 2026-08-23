@@ -38,6 +38,7 @@ import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { VideoUpload } from "@/components/admin/VideoUpload";
 import { VisualChapterEditor } from "@/components/admin/VisualChapterEditor";
+import { WorkloadHoursField } from "@/components/admin/WorkloadHoursField";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
