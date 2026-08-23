@@ -503,6 +503,8 @@ function Nav() {
             width={40}
             height={40}
             fetchPriority="high"
+            decoding="async"
+            fetchPriority="high"
             className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_12px_oklch(0.72_0.20_50/0.55)]"
           />
           <span className="truncate font-display text-base tracking-wide sm:text-xl">
@@ -590,6 +592,7 @@ function Hero() {
                     src="https://img.youtube.com/vi/ZowrRHEwP7I/maxresdefault.jpg"
                     alt="Ronnei — história do Espetos Grill"
                     loading="eager"
+                    fetchPriority="high"
                     decoding="async"
                     fetchPriority="high"
                     width={1280}
@@ -790,6 +793,7 @@ function AuthorSolution() {
                   src={s.src}
                   alt={s.alt}
                   loading={i === 0 ? "eager" : "lazy"}
+                  decoding="async"
                   decoding="async"
                   width={s.width}
                   height={s.height}
@@ -1073,6 +1077,7 @@ function SocialProof() {
                   src={p.src}
                   alt={p.alt}
                   loading="lazy"
+                  decoding="async"
                   width={720}
                   height={1024}
                   className="aspect-[9/16] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
@@ -1367,7 +1372,7 @@ function Testimonials() {
               </div>
               <p className="mt-4 text-muted-foreground italic">"{t.text}"</p>
               <div className="mt-6 flex items-center gap-3">
-                <img src={t.img} alt={t.name} className="h-11 w-11 rounded-full object-cover border border-white/10" loading="lazy" />
+                <img src={t.img} alt={t.name} className="h-11 w-11 rounded-full object-cover border border-white/10" loading="lazy" decoding="async" />
                 <div>
                   <div className="font-semibold">{t.name}</div>
                   <div className="text-xs text-muted-foreground">{t.role}</div>
@@ -1625,6 +1630,7 @@ function FinalCTA() {
             aria-hidden
             loading="lazy"
             decoding="async"
+            decoding="async"
             width={1280}
             height={800}
             className="absolute inset-0 -z-10 h-full w-full object-cover opacity-20"
@@ -1662,6 +1668,7 @@ function Footer() {
               alt="Ronnei na Veia"
               width={40}
               height={40}
+              decoding="async"
               loading="lazy"
               className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_0_12px_oklch(0.72_0.20_50/0.55)]"
             />
