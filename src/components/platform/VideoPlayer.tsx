@@ -40,14 +40,19 @@ function getDriveStream(url: string) {
   return id ? `/api/public/drive-video?id=${encodeURIComponent(id)}` : url;
 }
 
-/** Small screens (and data-saver connections) get the lighter encode when provided. */
+/**
+ * Only genuinely constrained connections (data-saver / 2G-3G) or very small,
+ * low-density screens fall back to the lighter encode. Everyone else gets the
+ * full-quality file so the video never looks blurry.
+ */
 function prefersLightVariant() {
   if (typeof window === 'undefined') return false;
-  const smallScreen = window.matchMedia('(max-width: 820px)').matches;
   const connection = (navigator as any).connection;
   const saveData = Boolean(connection?.saveData);
   const slowLink = ['slow-2g', '2g', '3g'].includes(connection?.effectiveType ?? '');
-  return smallScreen || saveData || slowLink;
+  const tinyScreen =
+    window.matchMedia('(max-width: 480px)').matches && (window.devicePixelRatio || 1) < 2;
+  return saveData || slowLink || tinyScreen;
 }
 
 const PROGRESS_SAVE_INTERVAL_MS = 5000;
