@@ -682,9 +682,11 @@ function Hero() {
                     poster={heroVideoPoster.url}
                     videoId="ronnei-history"
                     isIntro={true}
+                    autoStart
                     aspect="portrait"
                     className="w-full h-full"
                   />
+
                 </Suspense>
               </div>
             </div>
