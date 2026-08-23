@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useProgress } from "@/hooks/use-progress";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/app/perfil")({
 
 function ProfilePage() {
   const { user } = useAuth();
+  const { streak, lessonProgress, ebookProgress } = useProgress();
   const { canInstall, isStandalone, installPwa } = usePwaInstall();
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
@@ -330,11 +332,13 @@ function ProfilePage() {
               
               <div className="mt-6 grid grid-cols-2 w-full gap-2 px-2">
                 <div className="rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center border border-white/5 shadow-inner">
-                  <div className="text-lg font-bold text-[#ff6a00] truncate w-full">{profile?.streak || 0}</div>
+                  <div className="text-lg font-bold text-[#ff6a00] truncate w-full">{streak}</div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate w-full">Dias</div>
                 </div>
                 <div className="rounded-xl bg-white/[0.03] p-3 text-center min-w-0 flex flex-col items-center justify-center border border-white/5 shadow-inner">
-                  <div className="text-lg font-bold text-[#ff6a00] truncate w-full">{profile?.lessons_watched || 0}</div>
+                  <div className="text-lg font-bold text-[#ff6a00] truncate w-full">
+                    {lessonProgress.filter((p: any) => p.is_completed).length + ebookProgress.filter((p: any) => !!p.completed_at).length}
+                  </div>
                   <div className="text-[10px] font-bold uppercase tracking-widest text-white/30 truncate w-full">Aulas</div>
                 </div>
               </div>
