@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerificarCertificadoRouteImport } from './routes/verificar-certificado'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
@@ -68,6 +69,11 @@ import { Route as AdminAlunosStudentIdRouteImport } from './routes/admin.alunos.
 import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
 import { Route as ApiPublicManifestWebmanifestRouteImport } from './routes/api/public/manifest.webmanifest'
 
+const VerificarCertificadoRoute = VerificarCertificadoRouteImport.update({
+  id: '/verificar-certificado',
+  path: '/verificar-certificado',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   id: '/termos-de-uso',
   path: '/termos-de-uso',
@@ -372,6 +378,7 @@ export interface FileRoutesByFullPath {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/verificar-certificado': typeof VerificarCertificadoRoute
   '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
@@ -430,6 +437,7 @@ export interface FileRoutesByTo {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/verificar-certificado': typeof VerificarCertificadoRoute
   '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
@@ -489,6 +497,7 @@ export interface FileRoutesById {
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/verificar-certificado': typeof VerificarCertificadoRoute
   '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/alunos': typeof AdminAlunosRouteWithChildren
   '/admin/ao-vivo': typeof AdminAoVivoRoute
@@ -551,6 +560,7 @@ export interface FileRouteTypes {
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/verificar-certificado'
     | '/admin/afiliados'
     | '/admin/alunos'
     | '/admin/ao-vivo'
@@ -609,6 +619,7 @@ export interface FileRouteTypes {
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/verificar-certificado'
     | '/admin/afiliados'
     | '/admin/alunos'
     | '/admin/ao-vivo'
@@ -667,6 +678,7 @@ export interface FileRouteTypes {
     | '/perguntas-frequentes'
     | '/politica-de-privacidade'
     | '/termos-de-uso'
+    | '/verificar-certificado'
     | '/admin/afiliados'
     | '/admin/alunos'
     | '/admin/ao-vivo'
@@ -728,6 +740,7 @@ export interface RootRouteChildren {
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
+  VerificarCertificadoRoute: typeof VerificarCertificadoRoute
   ApiPublicDailyFinancialReportRoute: typeof ApiPublicDailyFinancialReportRoute
   ApiPublicDownloadMigracaoTempRoute: typeof ApiPublicDownloadMigracaoTempRoute
   ApiPublicDownloadStorageTempRoute: typeof ApiPublicDownloadStorageTempRoute
@@ -737,6 +750,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verificar-certificado': {
+      id: '/verificar-certificado'
+      path: '/verificar-certificado'
+      fullPath: '/verificar-certificado'
+      preLoaderRoute: typeof VerificarCertificadoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/termos-de-uso': {
       id: '/termos-de-uso'
       path: '/termos-de-uso'
@@ -1311,6 +1331,7 @@ const rootRouteChildren: RootRouteChildren = {
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
+  VerificarCertificadoRoute: VerificarCertificadoRoute,
   ApiPublicDailyFinancialReportRoute: ApiPublicDailyFinancialReportRoute,
   ApiPublicDownloadMigracaoTempRoute: ApiPublicDownloadMigracaoTempRoute,
   ApiPublicDownloadStorageTempRoute: ApiPublicDownloadStorageTempRoute,
