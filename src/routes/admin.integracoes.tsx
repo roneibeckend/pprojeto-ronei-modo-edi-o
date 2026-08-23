@@ -267,53 +267,53 @@ function IntegrationsPage() {
           </p>
         </div>
         
-        <div className="flex items-center gap-1 rounded-sm border border-white/5 bg-black/40 p-1 self-start sm:self-auto">
+        <div className="scrollbar-hidden -mx-3 flex items-center gap-1 overflow-x-auto rounded-sm border border-white/5 bg-black/40 p-1 px-3 self-stretch sm:mx-0 sm:self-auto [-webkit-overflow-scrolling:touch]">
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('ia'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'ia' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'ia' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <BrainCircuit className="h-3.5 w-3.5" /> IA
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('payment'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'payment' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'payment' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <Wallet className="h-3.5 w-3.5" /> Pagamentos
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('email'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'email' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'email' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <Mail className="h-3.5 w-3.5" /> E-mail
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('webhooks'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'webhooks' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'webhooks' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <Zap className="h-3.5 w-3.5" /> Webhooks
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('offers'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'offers' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'offers' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <Percent className="h-3.5 w-3.5" /> Ofertas
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('feature'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'feature' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'feature' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <Sparkles className="h-3.5 w-3.5" /> Recursos
           </Button>
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('oauth'); setSelectedItem(null); }}
-            className={`flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'oauth' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            className={`flex shrink-0 items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition h-10 ${activeCategory === 'oauth' ? 'bg-[#ff6a00] text-black hover:bg-[#ff6a00]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
           >
             <ShieldCheck className="h-3.5 w-3.5" /> Login Social
           </Button>
