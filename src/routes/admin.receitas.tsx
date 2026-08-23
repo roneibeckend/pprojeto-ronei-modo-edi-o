@@ -322,7 +322,7 @@ function AdminReceitasPage() {
                 />
               </div>
 
-              <div className="pt-4 flex gap-3">
+              <div className="sticky bottom-0 -mx-5 sm:-mx-6 -mb-5 sm:-mb-6 flex gap-3 border-t border-white/10 bg-[#0e0e0e] px-5 sm:px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3.5 rounded-xl bg-white/5 font-bold hover:bg-white/10 transition uppercase tracking-widest text-xs">Cancelar</button>
                 <button type="submit" disabled={isSaving} className="flex-1 py-3.5 rounded-xl bg-[#ff6a00] text-black font-bold disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] transition uppercase tracking-widest text-xs">
                   {isSaving ? "Salvando..." : "Salvar Receita"}
