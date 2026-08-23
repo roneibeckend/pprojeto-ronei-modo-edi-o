@@ -166,8 +166,8 @@ function CertificatesPage() {
         <div className="flex-1">
           <div className="text-sm font-bold text-white">Verificação pública</div>
           <div className="text-xs text-white/50">
-            Cada certificado tem código único (ex.: EVNA-2026-XXXX) e pode ser validado em
-            <span className="ml-1 font-mono text-white/70">verifica.ronneinaveia.com</span>
+            Cada certificado tem código único (ex.: CERT-A1B2C3D4) e pode ser validado em
+            <span className="ml-1 font-mono text-white/70">{CERT_VERIFY_DOMAIN}/verificar-certificado</span>
           </div>
         </div>
       </div>
