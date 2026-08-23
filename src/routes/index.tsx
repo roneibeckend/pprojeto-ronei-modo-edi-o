@@ -80,7 +80,7 @@ const VideoPlayer = lazy(() =>
 );
 
 const SITE_URL = "https://espetinhonaveia.lovable.app";
-const OG_IMAGE = `${SITE_URL}${heroChef.url}`;
+const OG_IMAGE = `${SITE_URL}${heroChefOriginal.url}`;
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
