@@ -68,10 +68,10 @@ import {
 import heroVideoDesktop from "@/assets/ronnei-historia-desktop.mp4.asset.json";
 import heroVideoMobile from "@/assets/ronnei-historia-mobile.mp4.asset.json";
 import heroVideoPoster from "@/assets/ronnei-historia-poster.jpg.asset.json";
-import printWhats1 from "@/assets/print-whats-1.jpg";
-import printWhats2 from "@/assets/print-whats-2.jpg";
-import printWhats3 from "@/assets/print-whats-3.jpg";
-import printPix from "@/assets/print-pix.jpg";
+import printWhats1 from "@/assets/opt/print-whats-1.webp";
+import printWhats2 from "@/assets/opt/print-whats-2.webp";
+import printWhats3 from "@/assets/opt/print-whats-3.webp";
+import printPix from "@/assets/opt/print-pix.webp";
 
 
 const VideoPlayer = lazy(() => 
