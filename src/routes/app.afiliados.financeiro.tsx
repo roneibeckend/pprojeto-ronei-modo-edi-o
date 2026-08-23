@@ -169,6 +169,14 @@ function AffiliateFinancialPage() {
         </div>
       </div>
 
+      <PayoutRequestPanel
+        balance={Number(affiliate?.balance || 0)}
+        userType="affiliate"
+        invalidateKeys={["affiliate-balance", "affiliate-stats", "affiliate-sales-detailed"]}
+      />
+
+
+
       <div className="glass rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden">
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
           <h3 className="font-bold flex items-center gap-2">
