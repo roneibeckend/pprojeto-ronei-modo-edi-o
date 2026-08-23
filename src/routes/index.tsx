@@ -712,17 +712,20 @@ function Hero() {
           aria-label="Vídeo: história do Ronnei"
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 px-4 backdrop-blur-xl animate-fade-in"
         >
+          <button
+            type="button"
+            onClick={() => setVideoOpen(false)}
+            aria-label="Fechar vídeo"
+            className="fixed right-3 z-[120] inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/70 text-white shadow-lg backdrop-blur-md transition hover:bg-black/90 active:scale-95"
+            style={{ top: "calc(env(safe-area-inset-top, 0px) + 0.75rem)" }}
+          >
+            <X className="h-6 w-6" />
+          </button>
           <div
             onClick={(e) => e.stopPropagation()}
             className="relative w-full max-w-[min(420px,85vh*9/16)] animate-scale-in"
           >
-            <button
-              type="button"
-              onClick={() => setVideoOpen(false)}
-              aria-label="Fechar vídeo"
-              className="absolute -top-12 right-0 z-[110] inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur-md transition hover:bg-black/80 hover:scale-110 active:scale-95 sm:-right-4 sm:-top-4"
-            >
-              <X className="h-6 w-6" />
+
             </button>
             <div className="glass gradient-border overflow-hidden rounded-2xl p-1 shadow-fire relative bg-black group/intro">
               <div className="relative aspect-[9/16] max-h-[85vh] w-full overflow-hidden rounded-xl bg-black shadow-2xl">
