@@ -32,15 +32,29 @@ export function useProgress() {
     queryFn: async () => {
       if (!user?.id) return { lessonCount: 0, chapterCount: 0, tracking: [] };
 
-      // Considera apenas o conteúdo que o aluno realmente possui
-      const [{ data: courseEnrollments }, { data: ebookEnrollments }, { data: progressTracking }] = await Promise.all([
+      // Considera o mesmo universo exibido em "Seus Treinamentos":
+      // matrículas + conteúdos gratuitos publicados (mesma regra de app/cursos)
+      const [
+        { data: courseEnrollments },
+        { data: ebookEnrollments },
+        { data: progressTracking },
+        { data: publishedCourses },
+        { data: publishedEbooks },
+      ] = await Promise.all([
         supabase.from("course_enrollments").select("course_id").eq("user_id", user.id),
         supabase.from("ebook_enrollments").select("ebook_id").eq("user_id", user.id),
         supabase.from("progress_tracking").select("item_type, item_id, started_at, completed_at").eq("user_id", user.id),
+        supabase.from("courses").select("id, price").eq("status", "published"),
+        supabase.from("ebooks").select("id, price").eq("status", "published"),
       ]);
 
-      const courseIds = (courseEnrollments || []).map((c: any) => c.course_id);
-      const ebookIds = (ebookEnrollments || []).map((e: any) => e.ebook_id);
+      const enrolledCourseIds = (courseEnrollments || []).map((c: any) => c.course_id);
+      const freeCourseIds = (publishedCourses || []).filter((c: any) => (c.price || 0) === 0).map((c: any) => c.id);
+      const courseIds = Array.from(new Set([...enrolledCourseIds, ...freeCourseIds]));
+
+      const enrolledEbookIds = (ebookEnrollments || []).map((e: any) => e.ebook_id);
+      const freeEbookIds = (publishedEbooks || []).filter((e: any) => (e.price || 0) === 0).map((e: any) => e.id);
+      const ebookIds = Array.from(new Set([...enrolledEbookIds, ...freeEbookIds]));
 
       // Aulas agrupadas por curso
       const courseLessonMap: Record<string, string[]> = {};
