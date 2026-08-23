@@ -2,7 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { getAsaasConfig, asaasRequest } from "@/lib/asaas.server";
 import {
   getAdminRecipients,
   notifyAdmins,
@@ -215,7 +214,8 @@ export const getPayoutHistory = createServerFn({ method: "GET" })
 
 /**
  * Atualização de status pelo admin.
- * 'paid' executa a transferência PIX no Asaas antes de confirmar.
+ * O PIX é enviado manualmente pelo administrador fora do painel; marcar como
+ * 'paid' apenas registra a baixa (nenhuma transferência automática é disparada).
  * Recusa/cancelamento estorna o saldo automaticamente (via função no banco).
  */
 export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
@@ -239,27 +239,8 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
 
     if (fetchError || !payout) throw new Error("Solicitação não encontrada.");
 
-    // Se for 'paid', processa a transferência no Asaas primeiro
-    if (data.status === "paid") {
-      const config = await getAsaasConfig();
-      if (!config) throw new Error("Integração Asaas não configurada.");
+    // Pagamento manual: o admin envia o PIX por fora e apenas registra a baixa aqui.
 
-      try {
-        const transfer = await asaasRequest(config, "/transfers", "POST", {
-          value: payout.amount,
-          pixAddressKey: payout.pix_key,
-          pixAddressKeyType: "EVP",
-          description: `Saque Afiliado/Sócio - ${payout.id}`,
-        });
-
-        await supabaseAdmin
-          .from("payout_requests")
-          .update({ asaas_payment_id: transfer.id })
-          .eq("id", payout.id);
-      } catch (err: any) {
-        throw new Error(`Falha na transferência Asaas: ${err.message}`);
-      }
-    }
 
     const { data: result, error: rpcError } = await context.supabase.rpc(
       "admin_set_payout_status",
@@ -431,36 +412,6 @@ export const adminListPayouts = createServerFn({ method: "GET" })
     return data || [];
   });
 
-/** Distribui lucros entre sócios (admin). */
-export const distributeProfits = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) =>
-    z.object({ amount: z.number().positive() }).parse(data),
-  )
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { data: partners, error: partnersError } = await supabaseAdmin
-      .from("financial_partners")
-      .select("*");
-
-    if (partnersError) throw new Error(partnersError.message);
-    if (!partners || partners.length === 0) throw new Error("Nenhum sócio cadastrado.");
-
-    for (const partner of partners) {
-      const share = (data.amount * partner.percent) / 100;
-      if (share > 0 && partner.user_id) {
-        const { error: distError } = await supabaseAdmin.rpc("distribute_partner_profits", {
-          p_amount: share,
-          p_partner_id: partner.user_id,
-        });
-        if (distError) console.error(`Erro ao distribuir para ${partner.name}:`, distError);
-      }
-    }
-
-    return { success: true };
-  });
 
 /** Dados financeiros do sócio logado. */
 export const getPartnerFinancials = createServerFn({ method: "GET" })

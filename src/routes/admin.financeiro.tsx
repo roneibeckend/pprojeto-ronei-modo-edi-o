@@ -15,7 +15,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { distributeProfits } from "@/lib/payouts.functions";
+
 import { getFinancialSummary } from "@/lib/finance.functions";
 import { toast } from "sonner";
 
@@ -162,40 +162,6 @@ function FinancePage() {
     }
   });
 
-  const distributeProfitsFn = useServerFn(distributeProfits);
-
-  const handleDistribute = async () => {
-    try {
-      if (profit <= 0) {
-        toast.error("Não há lucro disponível para distribuição.");
-        return;
-      }
-
-      if (totalPercent !== 100) {
-        toast.error("A soma das porcentagens dos sócios deve ser 100%.");
-        return;
-      }
-
-      toast.loading("Distribuindo lucros...", { id: "distribute-loading" });
-
-      for (const partner of partners) {
-        if (partner.percent > 0) {
-          const amount = (profit * partner.percent) / 100;
-          
-          if (partner.user_id) {
-            await distributeProfitsFn({ data: { amount, partnerId: partner.user_id } });
-          } else {
-            console.warn(`Sócio ${partner.name} não possui usuário vinculado. Pulando distribuição.`);
-          }
-        }
-      }
-
-      toast.success("Distribuição de lucros processada!", { id: "distribute-loading" });
-    } catch (error: any) {
-      toast.error("Erro na distribuição: " + error.message, { id: "distribute-loading" });
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -256,14 +222,6 @@ function FinancePage() {
           </div>
 
 
-          <button
-            onClick={handleDistribute}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 sm:px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest text-emerald-400 transition-all hover:bg-emerald-500/20 active:scale-[0.98]"
-          >
-            <TrendingUp className="h-4 w-4" />
-            Distribuir Lucros
-          </button>
-          
           <button
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending}

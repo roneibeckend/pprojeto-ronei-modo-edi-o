@@ -261,7 +261,15 @@ export function AdminPayoutsPanel() {
                           size="sm"
                           className="bg-emerald-600 hover:bg-emerald-500 min-h-[38px]"
                           disabled={statusMutation.isPending}
-                          onClick={() => statusMutation.mutate({ payoutId: p.id, status: "paid" })}
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                "Confirme que o PIX já foi enviado manualmente para este saque. Esta baixa não dispara nenhuma transferência automática.",
+                              )
+                            ) {
+                              statusMutation.mutate({ payoutId: p.id, status: "paid" });
+                            }
+                          }}
                         >
                           {statusMutation.isPending ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
