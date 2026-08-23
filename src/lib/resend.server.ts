@@ -105,7 +105,12 @@ function sanitizeTag(value: string) {
 
 /** URL pública absoluta da logo circular usada nos e-mails. */
 export const EMAIL_LOGO_URL =
-  (process.env['SITE_URL']?.replace(/\/$/, '') || 'https://ronneinaveia.com.br') + '/email-logo.png';
+  (
+    process.env['EMAIL_ASSET_BASE_URL'] ||
+    process.env['SITE_URL'] ||
+    process.env['PUBLIC_SITE_URL'] ||
+    'https://skewer-success-engine.lovable.app'
+  ).replace(/\/$/, '') + '/email-logo.png';
 
 /**
  * Adiciona o cabeçalho com a logo redonda da marca em todo e-mail enviado.
