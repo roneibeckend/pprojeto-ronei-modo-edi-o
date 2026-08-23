@@ -33,7 +33,8 @@ import {
   ToggleRight,
   AlertCircle,
   Search,
-  RefreshCw
+  RefreshCw,
+  Eye
 } from "lucide-react";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -48,7 +49,7 @@ import { getEmailLogs, getEmailSettings, updateEmailSettings, sendEmail, validat
 import { getEmailTemplates, saveEmailTemplate, deleteEmailTemplate } from "@/lib/email-templates.functions";
 import { EmailSystemTemplatesPanel } from "@/components/admin/EmailSystemTemplatesPanel";
 import { EMAIL_CATALOG, sampleDataFor } from "@/emails/catalog";
-import { sendRawTestEmail, sendTemplateTestEmail } from "@/lib/email-preview.functions";
+import { previewRawTemplate, sendRawTestEmail, sendTemplateTestEmail } from "@/lib/email-preview.functions";
 
 import { useServerFn } from "@tanstack/react-start";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -1530,6 +1531,40 @@ function EmailTemplatesTab() {
   const saveTemplateFn = useServerFn(saveEmailTemplate);
   const deleteTemplateFn = useServerFn(deleteEmailTemplate);
   const sendRawTestFn = useServerFn(sendRawTestEmail);
+  const previewRawFn = useServerFn(previewRawTemplate);
+  const [rawPreview, setRawPreview] = useState<{ subject: string; html: string } | null>(null);
+  const [rawViewMode, setRawViewMode] = useState<'visual' | 'html'>('visual');
+  const [isRendering, setIsRendering] = useState(false);
+
+  const handleShowFinalHtml = async () => {
+    const subject = (document.getElementById('temp_subject') as HTMLInputElement)?.value ?? '';
+    const html = (document.getElementById('temp_html') as HTMLTextAreaElement)?.value ?? '';
+    if (!subject.trim() || html.trim().length < 10) {
+      toast.error('Preencha o assunto e o conteúdo HTML antes de visualizar.');
+      return;
+    }
+    setIsRendering(true);
+    try {
+      const result = await previewRawFn({
+        data: {
+          subject,
+          html,
+          data: {
+            name: 'Churrasqueiro',
+            product_name: 'Curso Mestre do Churrasco',
+            access_link: 'https://ronneinaveia.com.br/app',
+            amount: 'R$ 197,00',
+            payment_id: 'pay_000123456',
+          },
+        },
+      });
+      setRawPreview(result);
+    } catch (err: any) {
+      toast.error('Erro ao renderizar: ' + (err?.message ?? 'desconhecido'));
+    } finally {
+      setIsRendering(false);
+    }
+  };
 
   const { data: templates, isLoading, error } = useQuery({
     queryKey: ['email_templates'],
@@ -1766,12 +1801,67 @@ function EmailTemplatesTab() {
                   </div>
                 </div>
               </div>
-              
+
+              {rawPreview && (
+                <div className="space-y-2 pt-4 border-t border-white/5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-[10px] uppercase font-bold tracking-widest text-white/40 mr-auto">
+                      HTML final — assunto: <span className="text-white/70 normal-case">{rawPreview.subject}</span>
+                    </p>
+                    {(['visual', 'html'] as const).map((mode) => (
+                      <button
+                        key={mode}
+                        onClick={() => setRawViewMode(mode)}
+                        className={`px-3 h-8 rounded-lg border text-[9px] font-bold uppercase tracking-widest ${
+                          rawViewMode === mode
+                            ? 'bg-[#ff6a00]/10 border-[#ff6a00] text-white'
+                            : 'bg-black/40 border-white/5 text-white/50'
+                        }`}
+                      >
+                        {mode === 'visual' ? 'Visual' : 'Código'}
+                      </button>
+                    ))}
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        void navigator.clipboard.writeText(rawPreview.html);
+                        toast.success('HTML final copiado.');
+                      }}
+                      className="border-white/10 text-white/60 uppercase text-[9px] font-bold h-8 px-3"
+                    >
+                      Copiar
+                    </Button>
+                  </div>
+                  <div
+                    className={`rounded-xl overflow-hidden border border-white/10 h-[420px] ${
+                      rawViewMode === 'visual' ? 'bg-white' : 'bg-black/60'
+                    }`}
+                  >
+                    {rawViewMode === 'visual' ? (
+                      <iframe title="HTML final do modelo" srcDoc={rawPreview.html} sandbox="" className="w-full h-full border-0" />
+                    ) : (
+                      <pre className="w-full h-full overflow-auto p-4 text-[10px] leading-relaxed text-emerald-200/80 whitespace-pre-wrap break-words font-mono">
+                        {rawPreview.html}
+                      </pre>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center justify-between pt-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
                   <Button onClick={handleSave} disabled={saveMutation.isPending} className="bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] px-8">
                     {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                     Salvar Template
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleShowFinalHtml}
+                    disabled={isRendering}
+                    className="border-white/10 text-white/60 hover:text-white uppercase text-[10px] font-bold"
+                  >
+                    {isRendering ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" /> : <Eye className="h-3.5 w-3.5 mr-2" />}
+                    Ver HTML final
                   </Button>
                   <Button 
                     variant="outline" 

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { AlertTriangle, CheckCircle2, Eye, Loader2, Mail, RefreshCw, SendHorizontal } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Copy, ExternalLink, Eye, Loader2, Mail, RefreshCw, SendHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +17,8 @@ export function EmailSystemTemplatesPanel() {
 
   const [event, setEvent] = useState(EMAIL_CATALOG[0]!.event);
   const [values, setValues] = useState<Record<string, string>>(() => sampleDataFor(EMAIL_CATALOG[0]!.event));
-  const [preview, setPreview] = useState<{ subject: string; html: string } | null>(null);
+  const [preview, setPreview] = useState<{ subject: string; html: string; text?: string } | null>(null);
+  const [viewMode, setViewMode] = useState<"visual" | "html" | "texto">("visual");
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [testEmail, setTestEmail] = useState("");
@@ -30,7 +31,7 @@ export function EmailSystemTemplatesPanel() {
       setIsLoading(true);
       try {
         const result = await previewFn({ data: { event: ev, data } });
-        setPreview({ subject: result.subject, html: result.html });
+        setPreview({ subject: result.subject, html: result.html, text: result.text });
       } catch (err: any) {
         setPreview(null);
         toast.error("Erro ao gerar prévia: " + (err?.message ?? "desconhecido"));
@@ -209,7 +210,7 @@ export function EmailSystemTemplatesPanel() {
         <div className="lg:col-span-5 space-y-2">
           <div className="flex items-center justify-between gap-2">
             <p className="text-[10px] uppercase font-bold tracking-widest text-white/40 flex items-center gap-2">
-              <Eye className="h-3.5 w-3.5 text-[#ff6a00]" /> Prévia visual
+              <Eye className="h-3.5 w-3.5 text-[#ff6a00]" /> Prévia do e-mail
             </p>
             <Badge variant="outline" className="text-[8px] uppercase border-white/10 text-white/40">
               {entry.event}
@@ -221,18 +222,76 @@ export function EmailSystemTemplatesPanel() {
               {preview.subject}
             </p>
           )}
-          <div className="rounded-xl overflow-hidden border border-white/10 bg-white h-[480px]">
+
+          <div className="flex flex-wrap items-center gap-2">
+            {(["visual", "html", "texto"] as const).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={`px-3 h-8 rounded-lg border text-[9px] font-bold uppercase tracking-widest transition-all ${
+                  viewMode === mode
+                    ? "bg-[#ff6a00]/10 border-[#ff6a00] text-white"
+                    : "bg-black/40 border-white/5 text-white/50 hover:border-white/20"
+                }`}
+              >
+                {mode === "visual" ? "Visual" : mode === "html" ? "HTML final" : "Texto"}
+              </button>
+            ))}
+            {preview?.html && (
+              <>
+                <Button
+                  onClick={() => {
+                    void navigator.clipboard.writeText(
+                      viewMode === "texto" ? preview.text ?? "" : preview.html,
+                    );
+                    toast.success("Conteúdo copiado.");
+                  }}
+                  variant="outline"
+                  className="border-white/10 text-white/60 uppercase text-[9px] font-bold h-8 px-3"
+                >
+                  <Copy className="h-3 w-3 mr-1.5" /> Copiar
+                </Button>
+                <Button
+                  onClick={() => {
+                    const w = window.open("", "_blank");
+                    if (!w) return toast.error("Permita pop-ups para abrir a prévia.");
+                    w.document.write(preview.html);
+                    w.document.close();
+                  }}
+                  variant="outline"
+                  className="border-white/10 text-white/60 uppercase text-[9px] font-bold h-8 px-3"
+                >
+                  <ExternalLink className="h-3 w-3 mr-1.5" /> Abrir
+                </Button>
+                <span className="text-[9px] text-white/30 tabular-nums">
+                  {(new Blob([preview.html]).size / 1024).toFixed(1)} KB
+                </span>
+              </>
+            )}
+          </div>
+
+          <div
+            className={`rounded-xl overflow-hidden border border-white/10 h-[480px] ${
+              viewMode === "visual" ? "bg-white" : "bg-black/60"
+            }`}
+          >
             {isLoading && !preview ? (
               <div className="h-full flex items-center justify-center bg-black/60">
                 <Loader2 className="h-5 w-5 animate-spin text-[#ff6a00]" />
               </div>
             ) : preview ? (
-              <iframe
-                title="Prévia do e-mail"
-                srcDoc={preview.html}
-                sandbox=""
-                className="w-full h-full border-0"
-              />
+              viewMode === "visual" ? (
+                <iframe
+                  title="Prévia do e-mail"
+                  srcDoc={preview.html}
+                  sandbox=""
+                  className="w-full h-full border-0"
+                />
+              ) : (
+                <pre className="w-full h-full overflow-auto p-4 text-[10px] leading-relaxed text-emerald-200/80 whitespace-pre-wrap break-words font-mono">
+                  {viewMode === "html" ? preview.html : preview.text || "Sem versão em texto."}
+                </pre>
+              )
             ) : (
               <div className="h-full flex items-center justify-center bg-black/60 text-[10px] uppercase font-bold tracking-widest text-white/20">
                 Sem prévia
