@@ -101,6 +101,30 @@ function sanitizeTag(value: string) {
   return clean || 'na';
 }
 
+/** URL pública absoluta da logo circular usada nos e-mails. */
+export const EMAIL_LOGO_URL =
+  (process.env['SITE_URL']?.replace(/\/$/, '') || 'https://ronneinaveia.com.br') + '/email-logo.png';
+
+/**
+ * Adiciona o cabeçalho com a logo redonda da marca em todo e-mail enviado.
+ * Usa tabela + border-radius (compatível com Gmail, Outlook e Apple Mail).
+ */
+function withBrandHeader(html: string, brandName: string) {
+  if (!html || html.includes('email-logo.png')) return html;
+  const header = `
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0f0f10;padding:28px 0;">
+  <tr>
+    <td align="center">
+      <img src="${EMAIL_LOGO_URL}" width="88" height="88" alt="${brandName}"
+        style="display:block;width:88px;height:88px;border-radius:50%;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;" />
+      <div style="margin-top:12px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#ffffff;letter-spacing:.5px;">${brandName}</div>
+    </td>
+  </tr>
+</table>`;
+  return `<div style="background:#0f0f10;">${header}</div>${html}`;
+}
+
+
 export async function sendResendEmail(params: {
   to: string | string[];
   subject: string;
