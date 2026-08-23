@@ -29,6 +29,60 @@ export interface DailyReportData {
 const brl = (v: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
 
+type NormalizedPayment = {
+  key: string;
+  amount: number;
+  net: number;
+  fee: number;
+  billing_type: string;
+};
+
+/**
+ * Busca no Asaas as cobranças efetivamente recebidas na data.
+ * Necessário porque vendas confirmadas direto no gateway (sem webhook processado)
+ * não existem na tabela local `payments` e ficavam fora do relatório.
+ */
+async function fetchAsaasDayPayments(dateStr: string): Promise<NormalizedPayment[]> {
+  try {
+    const { getAsaasConfig, asaasRequest } = await import("@/lib/asaas.server");
+    const config = await getAsaasConfig();
+    const out: NormalizedPayment[] = [];
+    const seen = new Set<string>();
+
+    // paymentDate cobre PIX/cartão liquidados; confirmedDate cobre confirmações do dia.
+    for (const field of ["paymentDate", "confirmedDate"]) {
+      let offset = 0;
+      for (let page = 0; page < 10; page++) {
+        const qs = `?${field}%5Bge%5D=${dateStr}&${field}%5Ble%5D=${dateStr}&limit=100&offset=${offset}`;
+        const json: any = await asaasRequest(config, `/payments${qs}`);
+        const rows: any[] = json?.data || [];
+        for (const p of rows) {
+          const status = String(p?.status || "");
+          if (!["CONFIRMED", "RECEIVED", "RECEIVED_IN_CASH"].includes(status)) continue;
+          const key = String(p?.id || "");
+          if (!key || seen.has(key)) continue;
+          seen.add(key);
+          const amount = Number(p?.value || 0);
+          const net = Number(p?.netValue ?? amount);
+          out.push({
+            key,
+            amount,
+            net,
+            fee: Math.max(0, amount - net),
+            billing_type: String(p?.billingType || "OUTRO"),
+          });
+        }
+        if (!json?.hasMore) break;
+        offset += 100;
+      }
+    }
+    return out;
+  } catch (e: any) {
+    console.warn("[daily-report] Asaas indisponível para conciliação:", e?.message || e);
+    return [];
+  }
+}
+
 export async function collectDailyReport(date?: string): Promise<DailyReportData> {
   const supabase = supabaseAdmin;
 
