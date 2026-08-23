@@ -290,6 +290,8 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                     <tbody>
                       <tr>
                         <td
+                          className="rnv-card"
+                          {...({ bgcolor: C.surface } as any)}
                           style={{
                             backgroundColor: C.surface,
                             border: `1px solid ${color}`,
@@ -302,10 +304,11 @@ export function AdminReportEmail(props: AdminReportEmailProps) {
                             {a.level === "critical" ? "CRÍTICO" : a.level === "warning" ? "ATENÇÃO" : "NORMAL"} · {a.title}
                           </Text>
                           {a.detail ? (
-                            <Text style={{ margin: "5px 0 0", fontSize: "13px", color: C.muted, fontFamily: FONT }}>
+                            <Text className="rnv-mut" style={{ margin: "5px 0 0", fontSize: "13px", color: C.muted, fontFamily: FONT }}>
                               {a.detail}
                             </Text>
                           ) : null}
+
                         </td>
                       </tr>
                     </tbody>
