@@ -482,9 +482,6 @@ function FullCertificate({ cert }: { cert: any }) {
                   <Flame className="h-6 w-6" strokeWidth={2.75} />
                   <span className="mt-0.5 font-display text-[8px] font-black uppercase tracking-widest">Oficial</span>
                 </div>
-                <span className="absolute -bottom-2 -right-1 rounded-full bg-black px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-widest text-[#ff6a00]">
-                  #{cert.id.toUpperCase()}
-                </span>
               </div>
 
               <div className="text-center">
