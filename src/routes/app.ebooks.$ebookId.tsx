@@ -644,18 +644,19 @@ function EbookReaderPage() {
               </div>
 
  
-              <div className="mt-8 flex justify-center">
+              <div className="mt-4 flex justify-center sm:mt-8">
                 <button 
                   onClick={() => {
                     if (showOpeningVideo) markVideoAsSeen();
                     setShowIntroVideo(false);
                   }}
-                  className="btn-fire px-10 py-4 font-black text-lg shadow-2xl shadow-fire/30 flex items-center gap-3"
+                  className="btn-fire flex items-center gap-3 px-6 py-3 text-base font-black shadow-2xl shadow-fire/30 sm:px-10 sm:py-4 sm:text-lg"
                 >
                   <BookOpen className="h-6 w-6" />
                   {showOpeningVideo ? "Começar Leitura agora" : "Continuar Leitura"}
                 </button>
               </div>
+
             </div>
           </motion.div>
         )}
