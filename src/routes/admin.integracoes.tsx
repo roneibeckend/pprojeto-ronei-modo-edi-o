@@ -790,16 +790,21 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
 
   const sendTestMutation = useMutation({
     mutationFn: sendEmail,
-    onSuccess: () => {
-      toast.success("E-mail de teste enviado com sucesso!");
+    onSuccess: (result: any) => {
+      if (result?.success) {
+        toast.success(`E-mail de teste aceito pelo Resend${result.id ? ` (ID: ${result.id})` : ''}. Verifique a caixa de entrada e a aba Logs.`);
+      } else {
+        toast.error("Falha no envio: " + (result?.error || 'erro desconhecido'), { duration: 10000 });
+      }
       queryClient.invalidateQueries({ queryKey: ['email_logs'] });
       setIsSendingTest(false);
     },
     onError: (err: any) => {
-      toast.error("Erro no envio: " + err.message);
+      toast.error("Erro no envio: " + err.message, { duration: 10000 });
       setIsSendingTest(false);
     }
   });
+
 
   const handleManualSave = () => {
     if (!formData.from_name || formData.from_name.length < 2) {
