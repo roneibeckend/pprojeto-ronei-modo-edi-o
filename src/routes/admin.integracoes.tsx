@@ -960,7 +960,8 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
               </CardTitle>
               <CardDescription className="text-xs text-white/40">Instruções para configurar o envio transacional.</CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
+
               <div className="space-y-4">
                 {GUIDES.resend.map((step, idx) => (
                   <div key={idx} className="flex gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-xl">
