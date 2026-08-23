@@ -327,7 +327,7 @@ export function FinanceOutflowStatement() {
                   {label}
                 </button>
               ))}
-              <div className="relative ml-auto min-w-[180px] flex-1 max-w-xs">
+              <div className="relative w-full min-w-0 flex-1 sm:ml-auto sm:max-w-xs">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
                 <Input
                   placeholder="Buscar descrição..."
