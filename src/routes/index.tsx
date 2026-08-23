@@ -51,24 +51,28 @@ import {
   Send,
 } from "lucide-react";
 
-import heroChef from "@/assets/hero-chef.asset.json";
-import platter1 from "@/assets/platter1.asset.json";
-import platter2 from "@/assets/platter2.asset.json";
-import skewerSingle from "@/assets/skewer-single.asset.json";
-import skewersHeld from "@/assets/skewers-held.asset.json";
-import skewersFlat from "@/assets/skewers-flat.asset.json";
-import ribeye from "@/assets/ribeye.asset.json";
-import chefWorking from "@/assets/chef-working.asset.json";
-import chefPortrait from "@/assets/chef-portrait.asset.json";
+import heroChefOriginal from "@/assets/hero-chef.asset.json";
+import {
+  optHeroChef as heroChef,
+  optPlatter1 as platter1,
+  optPlatter2 as platter2,
+  optSkewerSingle as skewerSingle,
+  optSkewersHeld as skewersHeld,
+  optSkewersFlat as skewersFlat,
+  optRibeye as ribeye,
+  optChefWorking as chefWorking,
+  optChefPortrait as chefPortrait,
+  optAuthor as author,
+  optLogoMark as logo,
+} from "@/assets/optimized";
 import heroVideoDesktop from "@/assets/ronnei-historia-desktop.mp4.asset.json";
 import heroVideoMobile from "@/assets/ronnei-historia-mobile.mp4.asset.json";
 import heroVideoPoster from "@/assets/ronnei-historia-poster.jpg.asset.json";
-import author from "@/assets/author.asset.json";
 import printWhats1 from "@/assets/print-whats-1.jpg";
 import printWhats2 from "@/assets/print-whats-2.jpg";
 import printWhats3 from "@/assets/print-whats-3.jpg";
 import printPix from "@/assets/print-pix.jpg";
-import logo from "@/assets/logo-mark.png";
+
 
 const VideoPlayer = lazy(() => 
   import("@/components/platform/VideoPlayer")
