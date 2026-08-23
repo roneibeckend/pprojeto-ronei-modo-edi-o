@@ -1521,7 +1521,7 @@ function EmailTemplatesTab() {
   const deleteTemplateFn = useServerFn(deleteEmailTemplate);
   const sendEmailFn = useServerFn(sendEmail);
 
-  const { data: templates, isLoading } = useQuery({
+  const { data: templates, isLoading, error } = useQuery({
     queryKey: ['email_templates'],
     queryFn: async () => await getTemplatesFn()
   });
