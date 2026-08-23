@@ -178,20 +178,9 @@ function LoginPage() {
             emailRedirectTo: `${window.location.origin}/inicio`,
           },
         });
-        // Login automático se o Supabase não o fizer (auto-confirmação ativada/desativada)
-        if (!data.session) {
-          const { error: signInError, data: signInData } = await supabase.auth.signInWithPassword({ email, password });
-          if (signInError) throw signInError;
-          
-          // Se logou com sucesso, a sessão está em signInData.session
-          if (signInData.session) {
-            toast.success("Conta criada!", { description: "Você já pode acessar sua área de membros." });
-          }
-        } else {
-          toast.success("Conta criada!", { description: "Você já pode acessar sua área de membros." });
-        }
-        
-        // Disparar e-mail de boas-vindas
+        if (error) throw error;
+
+        // Dispara e-mail de boas-vindas (não bloqueia o fluxo)
         try {
           const { sendEmail } = await import("@/lib/resend.functions");
           // @ts-ignore - trigger via server function
@@ -205,10 +194,36 @@ function LoginPage() {
         } catch (emailErr) {
           console.error("[Auth] Erro ao disparar e-mail de boas-vindas:", emailErr);
         }
-        
+
+        let session = data.session;
+
+        // Se a confirmação de e-mail estiver desativada, o Supabase pode não retornar
+        // sessão imediatamente — tentamos logar. Se exigir confirmação, orientamos o usuário.
+        if (!session) {
+          const { data: signInData, error: signInError } =
+            await supabase.auth.signInWithPassword({ email, password });
+
+          if (signInError) {
+            if (/not confirmed/i.test(signInError.message)) {
+              toast.success("Conta criada! Confirme seu e-mail", {
+                description: `Enviamos um link de confirmação para ${email}. Clique nele para liberar seu acesso.`,
+                duration: 10000,
+              });
+              setMode("login");
+              setPassword("");
+              return;
+            }
+            throw signInError;
+          }
+          session = signInData.session;
+        }
+
+        toast.success("Conta criada!", { description: "Você já pode acessar sua área de membros." });
+
         const urlParams = new URLSearchParams(window.location.search);
         const redirectTo = urlParams.get('redirectTo');
         navigate({ to: redirectTo || "/inicio", replace: true });
+
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
