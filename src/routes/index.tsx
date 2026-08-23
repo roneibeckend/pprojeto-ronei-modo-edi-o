@@ -633,7 +633,7 @@ function Hero() {
         </div>
 
 
-        <Reveal variant="up" delay={4} immediate className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
+        <Reveal variant="up" delay={4} immediate className="mt-3 hidden flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:flex sm:text-sm">
           <span className="inline-flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--ember)] opacity-75" />
