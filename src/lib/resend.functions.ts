@@ -146,6 +146,7 @@ export const updateEmailSettings = createServerFn({ method: "POST" })
     const { data: existing } = await supabaseAdmin
       .from('email_settings')
       .select('*')
+      .order('created_at', { ascending: true })
       .limit(1)
       .maybeSingle();
     
