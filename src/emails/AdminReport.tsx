@@ -102,6 +102,8 @@ function KpiCard({ kpi }: { kpi: AdminReportKpi }) {
       <tbody>
         <tr>
           <td
+            className="rnv-card"
+            {...({ bgcolor: C.surface } as any)}
             style={{
               backgroundColor: C.surface,
               border: `1px solid ${C.border}`,
@@ -110,12 +112,13 @@ function KpiCard({ kpi }: { kpi: AdminReportKpi }) {
               padding: "16px 18px",
             }}
           >
-            <Text style={{ margin: 0, fontSize: "11px", letterSpacing: "1px", color: C.muted, textTransform: "uppercase", fontFamily: FONT }}>
+            <Text className="rnv-mut" style={{ margin: 0, fontSize: "11px", letterSpacing: "1px", color: C.muted, textTransform: "uppercase", fontFamily: FONT }}>
               {kpi.icon} {kpi.label}
             </Text>
-            <Text style={{ margin: "8px 0 0", fontSize: "26px", lineHeight: "30px", fontWeight: 800, color: C.text, fontFamily: FONT }}>
+            <Text className="rnv-txt" style={{ margin: "8px 0 0", fontSize: "26px", lineHeight: "30px", fontWeight: 800, color: C.text, fontFamily: FONT }}>
               {kpi.value}
             </Text>
+
             <DeltaBadge delta={kpi.delta} />
           </td>
         </tr>
