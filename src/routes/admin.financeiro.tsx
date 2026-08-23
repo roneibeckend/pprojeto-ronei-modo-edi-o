@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { 
   Calculator, 
   Plus, 
@@ -17,6 +17,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 
 import { getFinancialSummary } from "@/lib/finance.functions";
+import { FinanceOutflowStatement } from "@/components/admin/FinanceOutflowStatement";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/financeiro")({
@@ -268,26 +269,6 @@ function FinancePage() {
         <div className="space-y-6 text-left lg:col-span-1">
           <section className="border border-white/5 bg-black/40 p-6">
             <div className="mb-4 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-              Gerenciamento Financeiro
-            </div>
-            <div className="grid gap-3">
-              <Link
-                to="/admin/financeiro/saques"
-                className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/10 transition-colors text-left group"
-              >
-                <div>
-                  <div className="text-[10px] font-bold text-white uppercase mb-0.5">Gestão de Saídas</div>
-                  <div className="text-[9px] text-white/40">Controle de saídas Asaas e manuais</div>
-                </div>
-                <div className="h-6 w-6 rounded-full bg-fire/10 flex items-center justify-center group-hover:bg-fire/20 transition-colors">
-                  <TrendingUp className="h-3 w-3 text-fire" />
-                </div>
-              </Link>
-            </div>
-          </section>
-
-          <section className="border border-white/5 bg-black/40 p-6">
-            <div className="mb-4 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
               <div className="flex items-center gap-2">
                 <Calculator className="h-4 w-4" style={{ color: ORANGE }} /> Receita Automatizada
               </div>
@@ -490,6 +471,19 @@ function FinancePage() {
           </div>
         </section>
       </div>
+
+      <section className="border border-white/5 bg-black/40 p-4 sm:p-6 text-left">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" style={{ color: ORANGE }} /> Gerenciamento Financeiro — Extrato de Saídas
+          </div>
+          <span className="lowercase tracking-normal font-normal text-white/30">
+            movimentações de saída da conta Asaas registradas automaticamente
+          </span>
+        </div>
+        <FinanceOutflowStatement />
+      </section>
+
     </div>
   );
 }

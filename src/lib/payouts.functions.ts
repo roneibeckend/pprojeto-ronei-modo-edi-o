@@ -132,7 +132,7 @@ export const requestPayout = createServerFn({ method: "POST" })
             amount: amountFmt,
             pix_key: data.pix_key,
             date: dateFmt,
-            link: `${origin}/admin/financeiro/saques`,
+            link: `${origin}/admin/financeiro`,
           }),
         ),
       );
