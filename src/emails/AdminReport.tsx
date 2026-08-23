@@ -22,14 +22,16 @@ import { BRAND, EMAIL_ASSETS } from "@/emails/layout";
 
 const C = {
   black: "#0B0B0B",
-  orange: "#FF6B00",
+  orange: "#C24A00",
   white: "#FFFFFF",
-  green: "#22C55E",
-  red: "#EF4444",
-  yellow: "#F59E0B",
-  surface: "#141416",
-  border: "#26262A",
-  muted: "#A1A1AA",
+  green: "#15803D",
+  red: "#B91C1C",
+  yellow: "#B45309",
+  surface: "#F6F6F7",
+  border: "#E4E4E7",
+  muted: "#52525B",
+  text: "#18181B",
+  page: "#EEEEF1",
 };
 
 const FONT =
