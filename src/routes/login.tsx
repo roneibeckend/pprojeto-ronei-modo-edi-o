@@ -53,13 +53,21 @@ function LoginPage() {
       }
     }
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        // Se houver redirectTo, usa ele, senão vai para /inicio
-        const target = redirectTo || "/inicio";
-        navigate({ to: target, replace: true });
+    // Valida a sessão de verdade (getSession não checa o token no servidor).
+    // Sessão inválida/revogada era mantida no navegador e causava loop de recarga.
+    supabase.auth.getUser().then(async ({ data, error }) => {
+      if (error || !data.user) {
+        try {
+          await supabase.auth.signOut({ scope: "local" });
+        } catch {
+          /* ignora */
+        }
+        return;
       }
+      const target = redirectTo || "/inicio";
+      navigate({ to: target, replace: true });
     });
+
 
     // Após o retorno do OAuth (Facebook), a sessão pode chegar de forma assíncrona
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
