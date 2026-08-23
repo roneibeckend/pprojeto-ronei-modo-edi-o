@@ -2394,6 +2394,42 @@ export type Database = {
           },
         ]
       }
+      system_updates: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          impact: string
+          released_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: string
+          released_at?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: string
+          released_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       unhandled_questions: {
         Row: {
           confidence: number | null
@@ -2423,6 +2459,50 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      update_report_logs: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          provider_message_id: string | null
+          recipient_email: string | null
+          recipient_id: string | null
+          report_date: string
+          status: string
+          updates_count: number
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          provider_message_id?: string | null
+          recipient_email?: string | null
+          recipient_id?: string | null
+          report_date: string
+          status?: string
+          updates_count?: number
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          provider_message_id?: string | null
+          recipient_email?: string | null
+          recipient_id?: string | null
+          report_date?: string
+          status?: string
+          updates_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "update_report_logs_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "report_recipients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_notifications: {
         Row: {
