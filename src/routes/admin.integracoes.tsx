@@ -1435,16 +1435,17 @@ function OffersIntegrationPanel() {
               </p>
             </div>
 
-            <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 flex flex-col justify-center">
+            <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 sm:p-6 flex flex-col justify-center">
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
+                <div className="h-10 w-10 shrink-0 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
                   <Zap className="h-5 w-5 text-[#ff6a00]" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h4 className="text-xs font-bold text-white uppercase tracking-widest">Ação Imediata</h4>
                   <p className="text-[10px] text-white/40">As mudanças refletem instantaneamente no checkout.</p>
                 </div>
               </div>
+
               <Button 
                 onClick={() => {
                   const input = document.getElementById('discount_input') as HTMLInputElement;
