@@ -232,8 +232,24 @@ export async function triggerEmailEvent(params: {
   idempotencyKey?: string;
 }) {
   console.log(`[Email] Disparando evento: ${params.event} para ${params.to}`);
-  
+
   try {
+    // 1) Templates premium definidos em código (src/emails) têm prioridade.
+    const coded = renderEmailTemplate(params.event, params.data);
+    if (coded) {
+      return await sendResendEmail({
+        to: params.to,
+        subject: params.data?.subject || coded.subject,
+        html: coded.html,
+        text: coded.text,
+        tags: [
+          { name: 'event', value: params.event },
+          ...(params.idempotencyKey ? [{ name: 'idempotency_key', value: params.idempotencyKey }] : [])
+        ]
+      });
+    }
+
+    // 2) Fallback: template salvo no banco (editável pelo admin).
     const { data: template, error } = await supabaseAdmin
       .from('email_templates')
       .select('*')
@@ -254,6 +270,7 @@ export async function triggerEmailEvent(params: {
     const renderedSubject = renderTemplate(template.subject, params.data);
     const renderedHtml = renderTemplate(template.content_html, params.data);
     const renderedText = template.content_text ? renderTemplate(template.content_text, params.data) : undefined;
+
 
     return await sendResendEmail({
       to: params.to,
