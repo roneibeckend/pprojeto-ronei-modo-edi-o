@@ -14,15 +14,26 @@ export const Route = createFileRoute('/api/public/manifest/webmanifest')({
           theme_color: "#e11d48",
           icons: [
             {
-              src: "/favicon.ico",
-              sizes: "32x32",
-              type: "image/x-icon"
+              src: "/favicon.png",
+              sizes: "64x64",
+              type: "image/png"
             },
             {
-              src: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4a3ab4b2-697e-4265-9cc2-26c31eb5da7c/id-preview-97f464f3--28d3c13e-4c7d-45b5-8d3d-fa05057ac015.lovable.app-1784863120206.png",
+              src: "/icons/icon-192x192.png",
+              sizes: "192x192",
+              type: "image/png"
+            },
+            {
+              src: "/icons/icon-512x512.png",
               sizes: "512x512",
               type: "image/png",
-              purpose: "any maskable"
+              purpose: "any"
+            },
+            {
+              src: "/icons/maskable-icon.png",
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "maskable"
             }
           ],
           id: "/app",
