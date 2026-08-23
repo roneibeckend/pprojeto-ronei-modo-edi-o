@@ -219,6 +219,24 @@ async function resolveStoredVideoLocation(
     }
   }
 
+  // Last resort: the stored reference may carry a stale folder prefix
+  // (e.g. "videos/clip.mp4" while the object lives at the bucket root).
+  const baseName = normalizedPath.split("/").pop() ?? "";
+
+  if (baseName && baseName !== normalizedPath) {
+    for (const bucket of candidates) {
+      const exists = await objectExists(
+        supabaseAdmin,
+        bucket,
+        baseName
+      );
+
+      if (exists) {
+        return { bucket, path: baseName };
+      }
+    }
+  }
+
   throw new Error(
     "Arquivo de vídeo não encontrado no armazenamento."
   );
