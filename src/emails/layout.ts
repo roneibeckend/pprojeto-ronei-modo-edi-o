@@ -65,7 +65,8 @@ export type EmailBlock =
   | { type: "details"; title?: string; rows: { label: string; value: string }[] }
   | { type: "highlight"; title: string; value: string; hint?: string }
   | { type: "quote"; text: string }
-  | { type: "note"; text: string };
+  | { type: "note"; text: string }
+  | { type: "raw"; html: string };
 
 export interface EmailOptions {
   /** Texto de pré-visualização (inbox preview). */
@@ -149,6 +150,9 @@ function renderBlock(block: EmailBlock): string {
 
     case "note":
       return `<p style="margin:0 0 16px;font-family:${FONT};font-size:13px;line-height:20px;color:#82828c;">${block.text}</p>`;
+
+    case "raw":
+      return `<div style="font-family:${FONT};font-size:16px;line-height:26px;color:#33333a;">${block.html}</div>`;
   }
 }
 
@@ -277,4 +281,15 @@ function strip(html: string): string {
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
     .trim();
+}
+
+
+/** Embrulha HTML customizado (modelos editáveis do admin) no layout premium da marca. */
+export function wrapCustomHtml(options: { heading: string; bodyHtml: string; cta?: { label: string; url: string } }): string {
+  return renderEmailLayout({
+    preview: options.heading,
+    heading: options.heading,
+    blocks: [{ type: "raw", html: options.bodyHtml }],
+    cta: options.cta ?? { label: "Acessar minha área", url: LINKS.dashboard },
+  });
 }

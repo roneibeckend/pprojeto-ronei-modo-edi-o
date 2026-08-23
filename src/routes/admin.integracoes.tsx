@@ -47,6 +47,8 @@ import { testIntegrationConnection, saveIntegration, getIntegrationHistory, getR
 import { getEmailLogs, getEmailSettings, updateEmailSettings, sendEmail, validateSender } from "@/lib/resend.functions";
 import { getEmailTemplates, saveEmailTemplate, deleteEmailTemplate } from "@/lib/email-templates.functions";
 import { EmailSystemTemplatesPanel } from "@/components/admin/EmailSystemTemplatesPanel";
+import { EMAIL_CATALOG, sampleDataFor } from "@/emails/catalog";
+import { sendRawTestEmail, sendTemplateTestEmail } from "@/lib/email-preview.functions";
 
 import { useServerFn } from "@tanstack/react-start";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -744,11 +746,12 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
   const [activeTab, setActiveTab] = useState('config');
   const [isSendingTest, setIsSendingTest] = useState(false);
   const [testTo, setTestTo] = useState('');
-  const [testTemplate, setTestTemplate] = useState('boas_vindas');
+  const [testTemplate, setTestTemplate] = useState(EMAIL_CATALOG[0]!.event);
   const getEmailSettingsFn = useServerFn(getEmailSettings);
   const getEmailLogsFn = useServerFn(getEmailLogs);
   const updateEmailSettingsFn = useServerFn(updateEmailSettings);
   const sendEmailFn = useServerFn(sendEmail);
+  const sendCatalogTestFn = useServerFn(sendTemplateTestEmail);
   
   // Local state for form inputs to ensure persistence and React-controlled behavior
   const [formData, setFormData] = useState({
@@ -1041,27 +1044,31 @@ function EmailIntegrationPanel({ integrations }: { integrations: Integration[] |
                     onChange={(e) => setTestTemplate(e.target.value)}
                     className="w-full h-11 bg-black border border-white/10 rounded-lg text-white text-sm px-4 outline-none focus:border-[#ff6a00]"
                   >
-                    <option value="boas_vindas">Boas-vindas</option>
-                    <option value="acesso_liberado_produto">Acesso Liberado</option>
-                    <option value="conclusao_curso">Conclusão de Curso</option>
-                    <option value="certificado_emitido">Certificado Emitido</option>
-                    <option value="novo_conteudo">Novo Conteúdo</option>
-                    <option value="suporte_recebido">Suporte Recebido</option>
+                    {EMAIL_CATALOG.map((item) => (
+                      <option key={item.event} value={item.event}>{item.label}</option>
+                    ))}
                   </select>
                 </div>
               </div>
               
               <Button 
                 disabled={!testTo || isSendingTest}
-                onClick={() => {
+                onClick={async () => {
                   setIsSendingTest(true);
-                  sendTestMutation.mutate({ 
-                    data: {
-                      to: testTo, 
-                      template: testTemplate as any,
-                      data: { name: 'Usuário de Teste', product_name: 'Curso Mestre do Churrasco' }
-                    }
-                  });
+                  try {
+                    await sendCatalogTestFn({
+                      data: {
+                        to: testTo,
+                        event: testTemplate,
+                        data: sampleDataFor(testTemplate),
+                      }
+                    });
+                    toast.success("E-mail de teste enviado com o conteúdo real do template!");
+                  } catch (err: any) {
+                    toast.error("Falha no envio: " + (err?.message ?? 'desconhecido'));
+                  } finally {
+                    setIsSendingTest(false);
+                  }
                 }}
                 className="w-full bg-[#ff6a00] text-black font-bold uppercase tracking-widest text-[10px] h-12"
               >
@@ -1522,7 +1529,7 @@ function EmailTemplatesTab() {
   const getTemplatesFn = useServerFn(getEmailTemplates);
   const saveTemplateFn = useServerFn(saveEmailTemplate);
   const deleteTemplateFn = useServerFn(deleteEmailTemplate);
-  const sendEmailFn = useServerFn(sendEmail);
+  const sendRawTestFn = useServerFn(sendRawTestEmail);
 
   const { data: templates, isLoading, error } = useQuery({
     queryKey: ['email_templates'],
@@ -1597,14 +1604,17 @@ function EmailTemplatesTab() {
       setIsSendingTest(true);
       const subject = (document.getElementById('temp_subject') as HTMLInputElement).value;
       const html = (document.getElementById('temp_html') as HTMLTextAreaElement).value;
-      
-      await sendEmailFn({
+
+      await sendRawTestFn({
         data: {
           to: email,
-          template: 'novo_conteudo' as any, // Abstração genérica
+          subject,
+          html,
           data: {
-            subject: `[TESTE] ${subject}`,
-            html: html.replace(/\{\{(.+?)\}\}/g, 'VALOR_TESTE')
+            name: 'Churrasqueiro',
+            product_name: 'Curso Mestre do Churrasco',
+            link: 'https://skewer-success-engine.lovable.app/app',
+            dashboard_url: 'https://skewer-success-engine.lovable.app/app',
           }
         }
       });
