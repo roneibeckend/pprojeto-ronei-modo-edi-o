@@ -15,6 +15,8 @@ interface VideoPlayerProps {
   aspect?: 'video' | 'portrait';
   /** Kept for API compatibility. Intro videos never autoplay: the user always taps play. */
   isIntro?: boolean;
+  /** Starts playback with sound immediately on mount (used when the user already tapped a play button). */
+  autoStart?: boolean;
 }
 
 const isYouTubeUrl = (url: string) => url.includes('youtube.com') || url.includes('youtu.be');
@@ -60,6 +62,7 @@ export function VideoPlayer({
   onProgress,
   className,
   aspect = 'video',
+  autoStart = false,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
@@ -175,6 +178,53 @@ export function VideoPlayer({
     return () => window.removeEventListener('online', handleOnline);
   }, [isEmbed, started, hasError, recover]);
 
+  // Start playback with sound. Called by the overlay button or automatically
+  // when the user already tapped a play button before this player mounted.
+  const startPlayback = useCallback(async () => {
+    setHasError(false);
+    setStarted(true);
+    if (isEmbed) return;
+    const video = videoRef.current;
+    if (!video) return;
+    setIsLoading(true);
+    recoveryAttempts.current = 0;
+    video.muted = false;
+    video.removeAttribute('muted');
+    video.defaultMuted = false;
+    video.volume = 1;
+    setNeedsUnmute(false);
+    try {
+      if (video.currentTime === 0) {
+        try {
+          const saved = Number(localStorage.getItem(`video_progress_${videoId}`));
+          if (Number.isFinite(saved) && saved > 0 && saved < video.duration) video.currentTime = saved;
+        } catch {
+          /* storage may be unavailable */
+        }
+      }
+      await video.play();
+    } catch {
+      // Some mobile browsers still refuse audible playback: start muted and
+      // offer an explicit "tap for sound" action instead of failing silently.
+      try {
+        video.muted = true;
+        await video.play();
+        setNeedsUnmute(true);
+      } catch {
+        /* user can press the native play button */
+      }
+      setIsLoading(false);
+    }
+  }, [isEmbed, videoId]);
+
+  // Autostart: the click that opened this player counts as the user gesture.
+  useEffect(() => {
+    if (!autoStart) return;
+    const id = requestAnimationFrame(() => void startPlayback());
+    return () => cancelAnimationFrame(id);
+  }, [autoStart, startPlayback, playableSrc]);
+
+
   // ---- YouTube: render the iframe only after the user taps play
   if (isEmbed) {
     const ytId = getYouTubeId(src);
@@ -214,42 +264,8 @@ export function VideoPlayer({
     );
   }
 
-  const handlePlay = async () => {
-    const video = videoRef.current;
-    if (!video) return;
-    setHasError(false);
-    setIsLoading(true);
-    setStarted(true);
-    recoveryAttempts.current = 0;
-    // Always start with sound: a user tap satisfies mobile autoplay policies.
-    video.muted = false;
-    video.removeAttribute('muted');
-    video.defaultMuted = false;
-    video.volume = 1;
-    setNeedsUnmute(false);
-    try {
-      if (video.currentTime === 0) {
-        try {
-          const saved = Number(localStorage.getItem(`video_progress_${videoId}`));
-          if (Number.isFinite(saved) && saved > 0 && saved < video.duration) video.currentTime = saved;
-        } catch {
-          /* storage may be unavailable */
-        }
-      }
-      await video.play();
-    } catch {
-      // Some mobile browsers still refuse audible playback: start muted and
-      // offer an explicit "tap for sound" action instead of failing silently.
-      try {
-        video.muted = true;
-        await video.play();
-        setNeedsUnmute(true);
-      } catch {
-        /* user can press the native play button */
-      }
-      setIsLoading(false);
-    }
-  };
+  const handlePlay = startPlayback;
+
 
   const enableSound = () => {
     const video = videoRef.current;
@@ -268,12 +284,12 @@ export function VideoPlayer({
         key={playableSrc}
         ref={videoRef}
         src={playableSrc}
-        poster={cleanPoster}
+        poster={autoStart ? undefined : cleanPoster}
         title={title}
         className="h-full w-full object-cover bg-black"
         playsInline
         webkit-playsinline="true"
-        preload="none"
+        preload={autoStart ? 'auto' : 'none'}
         controls={started}
         controlsList="nodownload noplaybackrate"
 
