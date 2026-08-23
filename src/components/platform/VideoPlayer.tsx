@@ -13,6 +13,7 @@ interface VideoPlayerProps {
   onProgress?: (progress: number) => void;
   className?: string;
   aspect?: 'video' | 'portrait';
+  fit?: 'cover' | 'contain';
   /** Kept for API compatibility. Intro videos never autoplay: the user always taps play. */
   isIntro?: boolean;
   /** Starts playback with sound immediately on mount (used when the user already tapped a play button). */
@@ -71,6 +72,7 @@ export function VideoPlayer({
   onProgress,
   className,
   aspect = 'video',
+  fit = 'cover',
   autoStart = false,
   onEnded,
 }: VideoPlayerProps) {
@@ -301,7 +303,7 @@ export function VideoPlayer({
         src={playableSrc}
         poster={autoStart ? undefined : cleanPoster}
         title={title}
-        className="h-full w-full object-cover bg-black"
+        className={cn('h-full w-full bg-black', fit === 'contain' ? 'object-contain' : 'object-cover')}
         playsInline
         webkit-playsinline="true"
         preload={autoStart ? 'auto' : 'none'}
