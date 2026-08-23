@@ -506,6 +506,16 @@ function AdminEbooksPage() {
                     </div>
                   </div>
 
+                  <WorkloadHoursField
+                    contentId={editingItem?.id}
+                    contentType="ebook"
+                    hours={editingItem?.workload_hours ?? null}
+                    extras={editingItem?.workload_extras ?? null}
+                    onChange={(patch) => setEditingItem({ ...editingItem, ...patch })}
+                  />
+
+
+
                   <div className="flex justify-end pt-6 border-t border-white/5">
                     <button 
                       type="submit" 
