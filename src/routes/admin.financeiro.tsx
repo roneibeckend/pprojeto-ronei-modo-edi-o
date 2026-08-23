@@ -223,14 +223,6 @@ function FinancePage() {
 
 
           <button
-            onClick={handleDistribute}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 sm:px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest text-emerald-400 transition-all hover:bg-emerald-500/20 active:scale-[0.98]"
-          >
-            <TrendingUp className="h-4 w-4" />
-            Distribuir Lucros
-          </button>
-          
-          <button
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#ff6a00] px-4 sm:px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest text-black transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
