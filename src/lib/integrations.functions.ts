@@ -36,18 +36,16 @@ export const getResendIntegration = createServerFn({ method: "GET" })
 
 export const saveIntegration = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((data: unknown) => z.object({
-    data: z.object({
-      id: z.string().uuid().optional().nullable(),
-      name: z.string(),
-      type: z.enum(['ia', 'payment', 'feature']),
-      category: z.string(),
-      status: z.boolean(),
-      credentials: z.record(z.any()),
-      settings: z.record(z.any())
-    })
+  .inputValidator((data: unknown) => z.object({
+    id: z.string().uuid().optional().nullable(),
+    name: z.string(),
+    type: z.enum(['ia', 'payment', 'feature']),
+    category: z.string(),
+    status: z.boolean(),
+    credentials: z.record(z.any()),
+    settings: z.record(z.any())
   }).parse(data))
-  .handler(async ({ data: { data }, context }) => {
+  .handler(async ({ data, context }) => {
     const { data: isAdmin } = await context.supabase.rpc('has_role', { 
       _user_id: context.userId, 
       _role: 'admin' 
