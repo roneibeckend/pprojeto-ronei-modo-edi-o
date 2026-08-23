@@ -504,7 +504,62 @@ function EbookReaderPage() {
     );
   }
 
+  async function handleOpenDownload() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Sessão expirada. Faça login novamente.");
+        return;
+      }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("name, email")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      setDownloadOwner({
+        id: user.id,
+        name: profile?.name || user.email?.split("@")[0] || "Aluno",
+        email: profile?.email || user.email || "",
+      });
+      setShowDownloadDialog(true);
+    } catch (error: any) {
+      toast.error("Não foi possível preparar o download: " + error.message);
+    }
+  }
+
+  async function handleConfirmDownload() {
+    if (!downloadOwner) return;
+    try {
+      const { generateEbookPdf } = await import("@/lib/ebook-pdf");
+      generateEbookPdf({
+        title: ebook.title,
+        subtitle: ebook.subtitle,
+        chapters: chapters.map((c: any) => ({ title: c.title, content: c.content })),
+        owner: downloadOwner,
+      });
+
+      // Registro de auditoria do download (rastreabilidade da cópia)
+      void supabase.rpc("log_system_event", {
+        _level: "info",
+        _source: "ebook_download",
+        _message: `Download do e-book "${ebook.title}" por ${downloadOwner.email}`,
+        _details: {
+          ebook_id: ebook.id,
+          user_id: downloadOwner.id,
+          email: downloadOwner.email,
+          accepted_copyright_terms: true,
+        },
+      });
+
+      toast.success("PDF gerado com sua identificação em todas as páginas.");
+    } catch (error: any) {
+      toast.error("Erro ao gerar o PDF: " + error.message);
+    }
+  }
+
   if (!hasAccess) {
+
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <PostPurchaseOffer
