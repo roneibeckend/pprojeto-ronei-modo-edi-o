@@ -1,8 +1,30 @@
 // src/lib/asaas.server.ts
 // supabaseAdmin is now imported dynamically in functions to avoid module cycle issues
 
-const ASAAS_SANDBOX_URL = "https://sandbox.asaas.com/api/v3";
-const ASAAS_PRODUCTION_URL = "https://www.asaas.com/api/v3";
+// Hosts oficiais atuais da API do Asaas. Os domínios antigos (www.asaas.com/api/v3 e
+// sandbox.asaas.com/api/v3) foram descontinuados e passaram a responder HTML de erro (503).
+const ASAAS_SANDBOX_URL = "https://api-sandbox.asaas.com/v3";
+const ASAAS_PRODUCTION_URL = "https://api.asaas.com/v3";
+
+/** Bases alternativas usadas como failover quando o host principal responde HTML/5xx. */
+const ASAAS_FALLBACKS: Record<string, string[]> = {
+  [ASAAS_PRODUCTION_URL]: ["https://www.asaas.com/api/v3"],
+  [ASAAS_SANDBOX_URL]: ["https://sandbox.asaas.com/api/v3"],
+  "https://www.asaas.com/api/v3": [ASAAS_PRODUCTION_URL],
+  "https://sandbox.asaas.com/api/v3": [ASAAS_SANDBOX_URL],
+};
+
+/** Gera a lista de URLs a tentar (principal + failover) para um endpoint do Asaas. */
+function asaasUrlCandidates(url: string): string[] {
+  for (const [base, alts] of Object.entries(ASAAS_FALLBACKS)) {
+    if (url.startsWith(base)) {
+      const path = url.slice(base.length);
+      return [url, ...alts.map((a) => `${a}${path}`)];
+    }
+  }
+  return [url];
+}
+
 
 export const ASAAS_USER_AGENT = "Lovable-LMS-Platform/1.0.0 (+https://lovable.app)";
 
