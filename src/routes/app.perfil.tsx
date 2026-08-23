@@ -369,6 +369,10 @@ function ProfilePage() {
             </div>
           </section>
 
+          <EmailVerificationCard />
+
+
+
           {canInstall && !isStandalone && (
             <section className="glass space-y-4 rounded-2xl border border-white/5 bg-white/[0.02] p-6">
               <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">Aplicativo</h4>
