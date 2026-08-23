@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, Pause, Loader2, AlertCircle } from 'lucide-react';
+import { Play, Loader2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -52,7 +52,6 @@ export function VideoPlayer({
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -69,7 +68,6 @@ export function VideoPlayer({
   // Reset when the media changes
   useEffect(() => {
     setStarted(false);
-    setIsPlaying(false);
     setIsLoading(false);
     setHasError(false);
   }, [src]);
@@ -171,15 +169,12 @@ export function VideoPlayer({
         playsInline
         webkit-playsinline="true"
         preload="none"
-        controls={false}
+        controls={started}
+        controlsList="nodownload noplaybackrate"
         disablePictureInPicture
+
         onWaiting={() => setIsLoading(true)}
-        onPlaying={() => {
-          setIsLoading(false);
-          setIsPlaying(true);
-        }}
-        onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
+        onPlaying={() => setIsLoading(false)}
         onCanPlay={() => setIsLoading(false)}
         onError={() => {
           setIsLoading(false);
@@ -202,22 +197,8 @@ export function VideoPlayer({
         </Button>
       )}
 
-      {started && !hasError && (
-        <Button
-          type="button"
-          size="icon"
-          aria-label={isPlaying ? 'Pausar vídeo' : 'Reproduzir vídeo'}
-          onClick={() => {
-            const video = videoRef.current;
-            if (!video) return;
-            if (video.paused) void video.play();
-            else video.pause();
-          }}
-          className="absolute bottom-4 left-4 z-20 h-12 w-12 rounded-full bg-background/80 text-foreground shadow-lg backdrop-blur hover:bg-background"
-        >
-          {isPlaying ? <Pause className="h-5 w-5 fill-current" /> : <Play className="h-5 w-5 fill-current" />}
-        </Button>
-      )}
+
+
 
       {isLoading && started && !hasError && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-10 pointer-events-none">
