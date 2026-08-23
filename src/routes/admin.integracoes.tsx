@@ -1529,7 +1529,7 @@ function EmailTemplatesTab() {
   const getTemplatesFn = useServerFn(getEmailTemplates);
   const saveTemplateFn = useServerFn(saveEmailTemplate);
   const deleteTemplateFn = useServerFn(deleteEmailTemplate);
-  const sendEmailFn = useServerFn(sendEmail);
+  const sendRawTestFn = useServerFn(sendRawTestEmail);
 
   const { data: templates, isLoading, error } = useQuery({
     queryKey: ['email_templates'],
