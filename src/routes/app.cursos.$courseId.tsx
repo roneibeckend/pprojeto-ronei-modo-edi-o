@@ -539,7 +539,9 @@ function CoursePage() {
                       key={signedIntroUrl || course.intro_video_url}
                       videoId={`intro-${course.id}`}
                       src={signedIntroUrl || course.intro_video_url}
+                      poster={course.cover_url || undefined}
                       isIntro={false}
+                      aspect="portrait"
                       className="w-full h-full"
                     />
                   </Suspense>
