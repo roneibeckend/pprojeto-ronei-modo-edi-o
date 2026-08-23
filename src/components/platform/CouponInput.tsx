@@ -75,10 +75,10 @@ export function CouponInput({
 
       onApplied({
         code: String(result.code ?? trimmed.toUpperCase()),
-        discountType: result.discount_type,
-        discountValue: Number(result.discount_value) || 0,
-        discountAmount: Number(result.discount_amount) || 0,
-        finalAmount: result.final_amount != null ? Number(result.final_amount) : (amount ?? 0),
+        discountType: result.discountType ?? "percentage",
+        discountValue: Number(result.discountValue) || 0,
+        discountAmount: Number(result.discountAmount) || 0,
+        finalAmount: result.finalAmount != null ? Number(result.finalAmount) : (amount ?? 0),
       });
       setError(null);
     } catch (err: any) {
