@@ -170,7 +170,23 @@ function LoginPage() {
         toast.error("Senha inválida", { description: validation.message });
         return;
       }
+
+      // Proteção contra senhas vazadas em bases públicas de credenciais.
+      try {
+        const { checkLeakedPassword } = await import("@/lib/leaked-password.functions");
+        const result = await checkLeakedPassword({ data: { password } });
+        if (result?.leaked) {
+          toast.error("Senha comprometida", {
+            description:
+              "Esta senha já apareceu em vazamentos de dados públicos. Escolha outra senha para proteger sua conta.",
+          });
+          return;
+        }
+      } catch (leakErr) {
+        console.error("[Auth] Falha ao verificar senha vazada:", leakErr);
+      }
     }
+
 
     setLoading(true);
     try {
