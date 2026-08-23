@@ -136,25 +136,18 @@ export async function asaasRequest(
   body?: Record<string, any>
 ) {
   const url = `${config.baseUrl}${path}`;
-  const res = await fetch(url, {
+  const res = await asaasFetchJson(url, {
     method,
     headers: asaasHeaders(config.apiKey),
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  const text = await res.text().catch(() => "Unknown error");
-  let json: any = null;
-  try {
-    json = text ? JSON.parse(text) : null;
-  } catch {
-    json = null;
+  if (!res.ok || !res.json) {
+    throw new Error(asaasErrorMessage(res));
   }
 
-  if (!res.ok) {
-    throw new Error(asaasErrorMessage({ status: res.status, json, text }));
-  }
+  return res.json;
 
-  return json;
 }
 
 export function asaasHeaders(apiKey: string) {
