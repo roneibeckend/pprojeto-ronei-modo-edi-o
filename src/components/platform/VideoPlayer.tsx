@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, Loader2, Maximize, Volume2, VolumeX, AlertCircle } from 'lucide-react';
+import { Play, Loader2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
 
 interface VideoPlayerProps {
   src: string;
@@ -10,539 +9,186 @@ interface VideoPlayerProps {
   videoId: string; // Used for saving progress
   onProgress?: (progress: number) => void;
   className?: string;
+  /** Kept for API compatibility. Intro videos never autoplay: the user always taps play. */
   isIntro?: boolean;
 }
 
-export function VideoPlayer({ 
-  src, 
-  poster, 
-  title, 
+const isYouTubeUrl = (url: string) => url.includes('youtube.com') || url.includes('youtu.be');
+const isDriveUrl = (url: string) => url.includes('drive.google.com');
+
+function getYouTubeId(url: string) {
+  if (url.includes('youtube.com/embed/')) return url.split('/embed/')[1]?.split(/[?&/]/)[0] ?? '';
+  if (url.includes('youtube.com/watch?v=')) return url.split('v=')[1]?.split('&')[0] ?? '';
+  if (url.includes('youtu.be/')) return url.split('youtu.be/')[1]?.split(/[?&/]/)[0] ?? '';
+  return '';
+}
+
+function getDriveEmbed(url: string) {
+  if (url.includes('/preview')) return url.split('?')[0];
+  const match = url.match(/\/file\/d\/([^/]+)/) || url.match(/id=([^&]+)/);
+  return match?.[1] ? `https://drive.google.com/file/d/${match[1]}/preview` : url;
+}
+
+export function VideoPlayer({
+  src,
+  poster,
+  title,
   videoId,
   onProgress,
   className,
-  isIntro = false
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showControls, setShowControls] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [started, setStarted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
-  
-  // Detection for mobile to hide UI on intro videos
-  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const isEmbed = isYouTubeUrl(src) || isDriveUrl(src);
 
+  // Reset when the media changes
   useEffect(() => {
-    const checkMobile = () => {
-      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-      const isMobileUA = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
-      const isSmallScreen = window.innerWidth < 1024;
-      setIsMobileDevice(isMobileUA || isSmallScreen);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    setStarted(false);
+    setIsLoading(false);
+    setHasError(false);
+  }, [src]);
 
-    const handleInitialControls = () => {
-      if (!isMobileDevice) {
-        setShowControls(true);
-        startControlsTimer();
-      }
-    };
-    handleInitialControls();
-
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
-    };
-  }, []);
-
-  const startControlsTimer = () => {
-    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
-    controlsTimeoutRef.current = setTimeout(() => {
-      setShowControls(false);
-    }, 3000);
-  };
-
-  const handleInteraction = () => {
-    setShowControls(true);
-    startControlsTimer();
-  };
-
-
-  const hideAllUI = isIntro && isMobileDevice;
-
-
-  const isYouTube = src.includes('youtube.com') || src.includes('youtu.be');
-  const isGoogleDrive = src.includes('drive.google.com');
-  
-  const getEmbedUrl = (url: string) => {
-    if (!url) return '';
-    
-    // YouTube
-    if (isYouTube) {
-      if (url.includes('youtube.com/embed/')) return url;
-      
-      let videoId = '';
-      if (url.includes('youtube.com/watch?v=')) {
-        videoId = url.split('v=')[1].split('&')[0];
-      } else if (url.includes('youtu.be/')) {
-        videoId = url.split('youtu.be/')[1].split('?')[0];
-      }
-      
-      if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&vq=hd1080&controls=1&disablekb=0&fs=1&playsinline=1&mute=1&widget_referrer=${encodeURIComponent(window.location.origin)}`;
-      }
-    }
-
-    // Google Drive
-    if (isGoogleDrive) {
-      let finalDriveUrl = url;
-      if (!url.includes('/preview')) {
-        const match = url.match(/\/file\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
-        if (match && match[1]) {
-          finalDriveUrl = `https://drive.google.com/file/d/${match[1]}/preview?autoplay=1&mute=1`;
-        }
-      }
-      
-      // Force playsinline=1 for mobile compatibility on all Drive URLs
-      if (!finalDriveUrl.includes('playsinline=1')) {
-        finalDriveUrl = finalDriveUrl.includes('?') 
-          ? `${finalDriveUrl}&playsinline=1`
-          : `${finalDriveUrl}?playsinline=1`;
-      }
-      return finalDriveUrl;
-    }
-    
-    return url;
-  };
-
-  // Keep latest onProgress without re-running the media effect
+  // Progress persistence (native <video> only)
   const onProgressRef = useRef(onProgress);
-  useEffect(() => { onProgressRef.current = onProgress; }, [onProgress]);
-
-  // Diagnostics + progress tracking. Runs only when the actual media changes.
   useEffect(() => {
-    if (isYouTube || isGoogleDrive) {
-      setIsLoading(false);
-      return;
-    }
+    onProgressRef.current = onProgress;
+  }, [onProgress]);
 
+  useEffect(() => {
+    if (isEmbed) return;
     const video = videoRef.current;
     if (!video) return;
 
-    const log = (event: string) => {
-      console.log(
-        `[VideoPlayer:${event}] readyState=${video.readyState} networkState=${video.networkState} ` +
-        `t=${video.currentTime.toFixed(2)} dur=${Number.isFinite(video.duration) ? video.duration.toFixed(2) : 'NaN'} ` +
-        `buffered=${video.buffered.length ? `${video.buffered.start(0).toFixed(2)}-${video.buffered.end(video.buffered.length - 1).toFixed(2)}` : 'none'}`
-      );
-    };
-
-    const diagnosticEvents = [
-      'loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'canplay',
-      'canplaythrough', 'play', 'playing', 'pause', 'waiting', 'stalled',
-      'suspend', 'seeking', 'seeked', 'ended', 'error', 'abort', 'emptied',
-    ];
-    const listeners = diagnosticEvents.map((name) => {
-      const fn = () => log(name);
-      video.addEventListener(name, fn);
-      return [name, fn] as const;
-    });
-
-    // Safety net: never leave the spinner up forever. Never call load() here,
-    // as that restarts the download and creates the mobile loading loop.
-    const loadingTimeout = setTimeout(() => setIsLoading(false), 20000);
-
     const handleTimeUpdate = () => {
-      localStorage.setItem(`video_progress_${videoId}`, video.currentTime.toString());
+      try {
+        localStorage.setItem(`video_progress_${videoId}`, String(video.currentTime));
+      } catch {
+        /* storage may be unavailable */
+      }
       onProgressRef.current?.(video.currentTime);
     };
 
     video.addEventListener('timeupdate', handleTimeUpdate);
-    return () => {
-      clearTimeout(loadingTimeout);
-      video.removeEventListener('timeupdate', handleTimeUpdate);
-      listeners.forEach(([name, fn]) => video.removeEventListener(name, fn));
-      
-      // Release video resources
-      video.pause();
-      video.removeAttribute('src'); // empty source
-      video.load();
-    };
-  }, [src, videoId, isYouTube, isGoogleDrive]);
+    return () => video.removeEventListener('timeupdate', handleTimeUpdate);
+  }, [src, videoId, isEmbed]);
 
-
-
-  // Intro videos: try a muted autoplay once the media is ready.
-  // If the browser blocks it (mobile/desktop policies), fall back to tap-to-play.
-  const autoplayTriedRef = useRef(false);
-  useEffect(() => {
-    autoplayTriedRef.current = false;
-    if (src && !isYouTube && !isGoogleDrive) {
-      // Small delay to allow browser to settle
-      const timer = setTimeout(tryAutoplay, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [src]);
-
-  const tryAutoplay = async () => {
-    const video = videoRef.current;
-    if (!video || !isIntro) return;
-    
-    autoplayTriedRef.current = true;
-    
-    // Critical: Mobile/Modern Desktop autoplay MUST be muted to start without user interaction.
-    video.muted = true;
-    video.defaultMuted = true;
-    video.setAttribute('muted', '');
-    video.setAttribute('playsinline', '');
-    video.setAttribute('webkit-playsinline', 'true');
-    video.setAttribute('x5-playsinline', 'true');
-    setIsMuted(true);
-    
-    console.log(`[VideoPlayer:tryAutoplay] Attempting muted play for intro video: ${videoId}`);
-    
-    if (isMobileDevice) {
-      video.style.transform = 'translateZ(0)';
-      video.style.backfaceVisibility = 'hidden';
-    }
-
-    try {
-      // Ensure source is ready
-      if (video.readyState < 1) {
-        video.load();
-      }
-
-      const p = video.play();
-      if (p !== undefined) {
-        await p;
-        console.log(`[VideoPlayer:tryAutoplay] Playback started successfully for: ${videoId}`);
-        setIsPlaying(true);
-        setIsLoading(false);
-      }
-    } catch (err: any) {
-      console.warn(`[VideoPlayer:tryAutoplay] Playback rejected for: ${videoId}`, err.name);
-      setIsPlaying(false);
-      setIsLoading(false);
-      // NotAllowedError is normal when autoplay is blocked; user interaction will be required.
-    }
-  };
-
-  const togglePlay = async (e?: React.MouseEvent | React.TouchEvent) => {
-    if (e) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (video.paused) {
-      // Reset muted states for user-initiated playback
-      video.muted = false;
-      video.volume = 1;
-      setIsMuted(false);
-      video.removeAttribute('muted');
-      
-      try {
-        await video.play();
-        console.log(`[VideoPlayer:togglePlay] Success`);
-        setIsPlaying(true);
-        setIsLoading(false);
-      } catch (err: any) {
-        console.warn('[VideoPlayer:togglePlay] Play failed, trying muted fallback:', err.name);
-        video.muted = true;
-        setIsMuted(true);
-        try {
-          await video.play();
-          setIsPlaying(true);
-          setIsLoading(false);
-        } catch (err2) {
-          console.error('[VideoPlayer:togglePlay] Muted fallback also failed:', err2);
-          setIsPlaying(false);
-        }
-      }
-    } else {
-      video.pause();
-      setIsPlaying(false);
-    }
-    handleInteraction();
-  };
-
-  const unmute = (e: React.MouseEvent | React.TouchEvent) => {
-    e.stopPropagation();
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = false;
-    video.volume = 1;
-    setIsMuted(false);
-    if (video.paused) {
-      video.play().catch(err => {
-        console.warn("Unmute play failed", err);
-      });
-    }
-    handleInteraction();
-  };
-
-
-  if (isYouTube || isGoogleDrive) {
-    const embedUrl = getEmbedUrl(src);
-    const finalUrl = hideAllUI 
-      ? `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&enablejsapi=1${!embedUrl.includes('playsinline') ? '&playsinline=1' : ''}`
-      : `${embedUrl}${embedUrl.includes('?') ? '&' : '?'}showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1${!embedUrl.includes('playsinline') ? '&playsinline=1' : ''}`;
+  // ---- Embedded providers (YouTube / Google Drive): render only after the user taps play
+  if (isEmbed) {
+    const ytId = isYouTubeUrl(src) ? getYouTubeId(src) : '';
+    const embedUrl = ytId
+      ? `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=1`
+      : `${getDriveEmbed(src)}?autoplay=1`;
+    const thumb = poster || (ytId ? `https://i.ytimg.com/vi/${ytId}/hq720.jpg` : undefined);
 
     return (
-      <div className={cn("relative aspect-video w-full mx-auto bg-black rounded-xl overflow-hidden glass shadow-2xl", className)}>
-        <div className="absolute inset-0 z-10 overflow-hidden">
+      <div className={cn('relative aspect-video w-full mx-auto bg-black rounded-xl overflow-hidden shadow-2xl', className)}>
+        {started ? (
           <iframe
-            src={finalUrl}
+            src={embedUrl}
             className="absolute inset-0 w-full h-full border-0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
             allowFullScreen
-            title={title || "Video Player"}
-            loading="lazy"
-            {...(isGoogleDrive ? { "webkit-playsinline": "true", "playsinline": "true" } : {})}
+            title={title || 'Vídeo'}
           />
-        </div>
-
-        {/* User Interaction Layer - Block native controls and allow toggle */}
-        <div 
-          className="absolute inset-0 z-50 bg-transparent cursor-pointer" 
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            // Since we can't easily control generic iframes, we just let it be,
-            // but for future-proofing we could add message passing here.
-          }} 
-        />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setStarted(true)}
+            aria-label="Reproduzir vídeo"
+            className="absolute inset-0 w-full h-full flex items-center justify-center"
+          >
+            {thumb && (
+              <img src={thumb} alt={title || 'Capa do vídeo'} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+            )}
+            <span className="absolute inset-0 bg-black/30" />
+            <span className="relative w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transition-transform hover:scale-110 active:scale-95">
+              <Play className="w-8 h-8 text-white ml-1 fill-current" />
+            </span>
+          </button>
+        )}
       </div>
     );
   }
 
-
-  // On phones/tablets we hand over to the native controls: they are touch-friendly,
-  // support fullscreen/scrubbing and never fight the browser's gesture requirements.
-  const useNativeControls = isMobileDevice;
+  const handlePlay = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+    setHasError(false);
+    setIsLoading(true);
+    setStarted(true);
+    try {
+      await video.play();
+    } catch {
+      // Autoplay policies: fall back to native controls; the user can press play again.
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div 
-      className={cn("relative group aspect-video mx-auto bg-black rounded-xl overflow-hidden glass shadow-2xl", "cursor-pointer", className)}
-      onMouseMove={handleInteraction}
-      onTouchStart={handleInteraction}
-    >
-      
-
-
+    <div className={cn('relative aspect-video mx-auto bg-black rounded-xl overflow-hidden shadow-2xl', className)}>
       <video
         key={src}
         ref={videoRef}
         src={src}
         poster={poster}
-        className={cn(
-          "w-full h-full", 
-          (useNativeControls || isIntro)
-            ? "object-contain bg-black" 
-            : "object-cover"
-        )}
+        title={title}
+        className="w-full h-full object-contain bg-black"
         playsInline
+        // @ts-expect-error legacy iOS attribute
         webkit-playsinline="true"
-        x5-playsinline="true"
-        muted={isIntro}
-        autoPlay={isIntro}
-        loop={isIntro}
-        controls={useNativeControls}
         preload="metadata"
+        controls={started}
         controlsList="nodownload noremoteplayback"
-        onLoadStart={() => {
-          setIsLoading(true);
-        }}
-        onLoadedMetadata={(e) => {
-          // Metadata is enough to try initial play for intro
-          const video = e.currentTarget;
-          if (isIntro) {
-            video.muted = true;
-            video.setAttribute('muted', '');
-            tryAutoplay();
-          }
-        }}
-        onCanPlay={() => {
-          // CanPlay means enough buffer to start
-          if (isIntro) {
-            tryAutoplay();
-          } else {
-            // For normal videos, we wait for user interaction to call togglePlay,
-            // but we can remove the loader now.
-            setIsLoading(false);
-          }
-        }}
-        onPlaying={() => {
-          setIsPlaying(true);
+        onWaiting={() => setIsLoading(true)}
+        onPlaying={() => setIsLoading(false)}
+        onCanPlay={() => setIsLoading(false)}
+        onError={() => {
           setIsLoading(false);
-        }}
-        onPause={() => setIsPlaying(false)}
-        onWaiting={() => {
-          const video = videoRef.current;
-          // Only show the spinner for a genuine buffer underrun.
-          if (video && video.readyState < video.HAVE_ENOUGH_DATA) setIsLoading(true);
-        }}
-        onStalled={() => {
-          console.warn('[VideoPlayer:onStalled] Video stalled');
-          const video = videoRef.current;
-          if (video && video.paused && isPlaying) {
-             video.play().catch(() => {});
-          }
-        }}
-        onSuspend={() => {
-          console.log('[VideoPlayer:onSuspend] Video suspend - playback might be throttled by browser');
-        }}
-        onError={(e) => {
-          setIsLoading(false);
-          const video = videoRef.current;
-          if (video?.error) {
-            console.error('Video error code:', video.error.code, 'message:', video.error.message);
-            
-            // Critical error fallback: show the poster or a message
-            if (video.error.code === 4) { // MEDIA_ERR_SRC_NOT_SUPPORTED
-               toast.error("Erro ao carregar o vídeo. Tente recarregar a página.");
-            }
-          }
-        }}
-        onClick={(e) => {
-          // Prevent default to avoid browser-specific tap behaviors
-          if (isMobileDevice) {
-            e.stopPropagation();
-          }
-          
-          if (!useNativeControls) {
-            e.stopPropagation();
-            togglePlay(e);
-          }
-        }}
-        onEnded={() => {
-          setIsPlaying(false);
+          setHasError(true);
         }}
       />
 
-
-
-      {/* Loading Overlay */}
-      {isLoading && !isPlaying && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-10 pointer-events-none">
-          <div className="flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 animate-spin text-fire" />
-            <span className="text-white/70 text-xs font-medium animate-pulse">Carregando...</span>
-          </div>
-        </div>
-      )}
-
-      {/* Error Fallback */}
-      {videoRef.current?.error && !isLoading && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-20 p-6 text-center">
-          <AlertCircle className="w-12 h-12 text-fire mb-4" />
-          <h3 className="text-white font-bold mb-2">Ops! O vídeo não carregou</h3>
-          <p className="text-white/60 text-sm mb-6">Tente recarregar a página ou verifique sua conexão.</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="btn-fire px-6 py-2 text-sm"
-          >
-            Recarregar
-          </button>
-        </div>
-      )}
-
-      {/* UI Overlay: only visible on desktop OR when the video is not yet playing on mobile.
-          We hide it entirely on mobile while playing to avoid blocking native controls. */}
-      {(!useNativeControls || !isPlaying) && (
-        <div
-          className={cn(
-            "absolute inset-0 flex items-center justify-center bg-black/10 transition-all duration-300 z-30",
-            (isPlaying && isIntro) ? "opacity-0 invisible pointer-events-none" :
-            useNativeControls
-              ? (isPlaying ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible")
-              : ((!isPlaying || showControls) ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none")
-          )}
-          onClick={useNativeControls ? (isPlaying ? undefined : togglePlay) : (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            togglePlay(e);
-          }}
-        >
-          {!isLoading ? (
-            <div className={cn(
-              "w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transform transition active:scale-95 hover:scale-110",
-              useNativeControls && isPlaying && "hidden" // Extra safety for mobile persistent buttons
-            )}>
-              {isPlaying ? (
-                <div className="flex gap-1.5">
-                  <div className="w-2 h-8 bg-white rounded-full" />
-                  <div className="w-2 h-8 bg-white rounded-full" />
-                </div>
-              ) : (
-                <Play className="w-8 h-8 text-white ml-1 fill-current" />
-              )}
-            </div>
-          ) : (
-            <div className={cn(
-              "w-20 h-20 rounded-full bg-fire/20 flex items-center justify-center",
-              useNativeControls && isPlaying && "hidden"
-            )}>
-              <Loader2 className="w-10 h-10 animate-spin text-fire" />
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Muted playback started automatically: offer a touch-friendly way to enable sound */}
-      {isMuted && isPlaying && (
+      {/* Clean cover with a single play button until playback starts */}
+      {!started && !hasError && (
         <button
-          onClick={unmute}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full bg-fire px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-fire/20 transition active:scale-95 animate-in fade-in zoom-in duration-500"
+          type="button"
+          onClick={handlePlay}
+          aria-label="Reproduzir vídeo"
+          className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/20"
         >
-          <VolumeX className="w-4 h-4" />
-          Toque para ativar o som
+          <span className="w-20 h-20 rounded-full bg-fire shadow-fire flex items-center justify-center transition-transform hover:scale-110 active:scale-95">
+            <Play className="w-8 h-8 text-white ml-1 fill-current" />
+          </span>
         </button>
       )}
 
-      {/* Desktop-only extra controls */}
-      {!useNativeControls && showControls && (
-        <div className="absolute top-4 right-4 flex flex-col items-center gap-3 z-40">
-            <button 
-              onClick={async (e) => {
-                e.stopPropagation();
-                if(videoRef.current) {
-                  const newMuted = !videoRef.current.muted;
-                  videoRef.current.muted = newMuted;
-                  setIsMuted(newMuted);
-                  if (!newMuted && videoRef.current.volume === 0) {
-                    videoRef.current.volume = 1;
-                  }
-                  // If unmuting while paused, try to play
-                  if (!newMuted && videoRef.current.paused) {
-                    try { await videoRef.current.play(); setIsPlaying(true); } catch(e) {}
-                  }
-                }
-                handleInteraction();
-              }}
-              className="text-white/70 hover:text-white p-2 rounded-full bg-black/40 backdrop-blur-sm transition-all active:scale-90"
-            >
-              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-            </button>
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                videoRef.current?.requestFullscreen();
-                handleInteraction();
-              }}
-              className="text-white/70 hover:text-white p-2 rounded-full bg-black/40 backdrop-blur-sm transition-all active:scale-90"
-            >
-              <Maximize className="w-5 h-5" />
-            </button>
+      {isLoading && started && !hasError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-10 pointer-events-none">
+          <Loader2 className="w-10 h-10 animate-spin text-fire" />
         </div>
       )}
 
-
+      {hasError && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 z-20 p-6 text-center">
+          <AlertCircle className="w-10 h-10 text-fire mb-3" />
+          <h3 className="text-white font-bold mb-1">O vídeo não carregou</h3>
+          <p className="text-white/60 text-sm mb-5">Verifique sua conexão e tente novamente.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setHasError(false);
+              setStarted(false);
+              videoRef.current?.load();
+            }}
+            className="btn-fire px-6 py-2 text-sm"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      )}
     </div>
   );
 }
