@@ -607,7 +607,10 @@ function Hero() {
             <button
               type="button"
               onClick={() => setVideoOpen(true)}
+              onPointerEnter={() => warmUpVideo(isMobile ? heroVideoMobile.url : heroVideoDesktop.url)}
+              onPointerDown={() => warmUpVideo(isMobile ? heroVideoMobile.url : heroVideoDesktop.url)}
               aria-label="Assistir à história do Ronnei"
+
               className="group relative mx-auto block w-full max-w-md overflow-hidden rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ember)] lg:mx-0"
             >
               <div className="absolute -inset-3 -z-10 rounded-[2rem] bg-fire opacity-25 blur-2xl transition group-hover:opacity-40" />
