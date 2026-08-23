@@ -212,12 +212,12 @@ export function FinanceOutflowStatement() {
                   {label}
                 </button>
               ))}
-              <div className="ml-auto flex items-center gap-2">
+              <div className="flex w-full flex-col gap-2 sm:ml-auto sm:w-auto sm:flex-row sm:items-center">
                 <Button
                   onClick={() => syncMutation.mutate()}
                   disabled={syncMutation.isPending}
                   variant="outline"
-                  className="border-white/10"
+                  className="w-full min-h-[44px] border-white/10 sm:w-auto"
                 >
                   {syncMutation.isPending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -228,11 +228,12 @@ export function FinanceOutflowStatement() {
                 </Button>
                 <Dialog open={isManualModalOpen} onOpenChange={setIsManualModalOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-fire text-white hover:bg-fire/90">
+                    <Button className="w-full min-h-[44px] bg-fire text-white hover:bg-fire/90 sm:w-auto">
                       <Plus className="h-4 w-4 mr-2" /> Saída manual
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="bg-[#111] border-white/10 text-white">
+                  <DialogContent className="max-h-[calc(100dvh-2rem)] w-[calc(100vw-1.5rem)] max-w-lg overflow-y-auto border-white/10 bg-[#111] text-white">
+
                     <DialogHeader>
                       <DialogTitle>Registrar Saída Manual</DialogTitle>
                     </DialogHeader>
