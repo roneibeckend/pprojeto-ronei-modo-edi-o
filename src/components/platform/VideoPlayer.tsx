@@ -25,20 +25,15 @@ function getYouTubeId(url: string) {
   return '';
 }
 
-function getDriveEmbed(url: string) {
-  if (url.includes('/preview')) return url.split('?')[0];
-  const match = url.match(/\/file\/d\/([^/]+)/) || url.match(/id=([^&]+)/);
-  return match?.[1] ? `https://drive.google.com/file/d/${match[1]}/preview` : url;
-}
-
 function getDriveId(url: string) {
   const match = url.match(/\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
   return match?.[1] ?? '';
 }
 
+/** Proxy route: streams the Drive file so the native player can render a clean UI with audio. */
 function getDriveStream(url: string) {
   const id = getDriveId(url);
-  return id ? `https://drive.google.com/uc?export=download&id=${id}` : url;
+  return id ? `/api/public/drive-video?id=${encodeURIComponent(id)}` : url;
 }
 
 export function VideoPlayer({
@@ -57,13 +52,14 @@ export function VideoPlayer({
 
   const isYouTube = isYouTubeUrl(src);
   const isDrive = isDriveUrl(src);
-  // Google Drive files cannot be played by a native <video> tag (the download
-  // endpoint answers with an HTML confirmation page), so they use the iframe embed.
-  const isEmbed = isYouTube || isDrive;
+  // Only YouTube keeps an iframe. Google Drive files are streamed through our
+  // proxy so the browser's own (single, clean) control bar is used and audio works.
+  const isEmbed = isYouTube;
   const playableSrc = isDrive ? getDriveStream(src) : src;
   const driveId = isDrive ? getDriveId(src) : '';
   const cleanPoster = poster || (driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w1200` : undefined);
   const frameClass = aspect === 'portrait' ? 'aspect-[9/16]' : 'aspect-video';
+
 
   // Reset when the media changes
   useEffect(() => {
