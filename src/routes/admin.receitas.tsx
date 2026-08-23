@@ -257,17 +257,23 @@ function AdminReceitasPage() {
                             const filePath = `${fileName}`;
 
                             toast.loading("Fazendo upload do vídeo...");
-                            const { error: uploadError, data } = await supabase.storage
+                            const { error: uploadError } = await supabase.storage
                               .from('recipe-videos')
                               .upload(filePath, file);
 
                             if (uploadError) throw uploadError;
 
-                            const { data: { publicUrl } } = supabase.storage
+                            const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
+                            const { data: signed } = await supabase.storage
                               .from('recipe-videos')
-                              .getPublicUrl(filePath);
+                              .createSignedUrl(filePath, TEN_YEARS);
 
-                            setEditingItem({...editingItem, video_url: publicUrl});
+                            const finalUrl =
+                              signed?.signedUrl ||
+                              supabase.storage.from('recipe-videos').getPublicUrl(filePath).data.publicUrl;
+
+                            setEditingItem({...editingItem, video_url: finalUrl});
+
                             toast.dismiss();
                             toast.success("Vídeo enviado com sucesso!");
                           } catch (error: any) {
