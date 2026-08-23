@@ -48,13 +48,21 @@ async function collectExtras(dateStr: string): Promise<AdminReportExtras> {
   const end = `${dateStr}T23:59:59.999Z`;
   const paid = ["CONFIRMED", "RECEIVED", "RECEIVED_IN_CASH"];
 
-  const [invoicesRes, confirmedRes, refundsRes, activeRes, canceledRes, progressRes, ebookEnrRes, affiliatesRes, allPaidRes] =
+  const [invoicesRes, confirmedRes, refundsRes, activeRowsRes, canceledRes, progressRes, ebookEnrRes, affiliatesRes, allPaidRes] =
     await Promise.all([
       supabase.from("payments").select("amount").gte("created_at", start).lte("created_at", end).limit(1000),
       supabase.from("payments").select("net_amount, amount").in("status", paid).gte("created_at", start).lte("created_at", end).limit(1000),
       supabase.from("payments").select("amount").in("status", ["REFUNDED", "REFUND_REQUESTED", "CHARGEBACK_REQUESTED"]).gte("updated_at", start).lte("updated_at", end).limit(1000),
-      supabase.from("profiles").select("id", { count: "exact", head: true }).eq("status", "active"),
-      supabase.from("profiles").select("id", { count: "exact", head: true }).in("status", ["inactive", "canceled", "cancelado"]),
+      // "Ativos" = alunos com atividade real de estudo nos últimos 30 dias.
+      supabase
+        .from("progress_tracking")
+        .select("user_id")
+        .gte("started_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+        .limit(5000),
+      supabase
+        .from("profiles")
+        .select("id", { count: "exact", head: true })
+        .in("status", ["inactive", "canceled", "cancelado", "blocked", "bloqueado", "suspended"]),
       supabase.from("progress_tracking").select("item_type, item_id").gte("started_at", start).lte("started_at", end).limit(2000),
       supabase.from("ebook_enrollments").select("ebook_id").gte("created_at", start).lte("created_at", end).limit(1000),
       supabase.from("affiliates").select("id", { count: "exact", head: true }).eq("status", "active"),
@@ -129,7 +137,7 @@ async function collectExtras(dateStr: string): Promise<AdminReportExtras> {
       count: refunds.length,
       value: refunds.reduce((s, p) => s + Number(p.amount || 0), 0),
     },
-    usersActive: activeRes.count || 0,
+    usersActive: new Set(((activeRowsRes.data || []) as any[]).map((r) => String(r.user_id))).size,
     usersCanceled: canceledRes.count || 0,
     topCourse,
     topEbook,
