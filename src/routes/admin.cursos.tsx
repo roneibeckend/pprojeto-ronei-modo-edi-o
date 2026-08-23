@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { notifyNewContent } from "@/lib/content-notify.functions";
 import { useState, useEffect } from "react";
 import { 
   Plus, 
@@ -20,6 +22,7 @@ import {
   Flag,
   Save,
   Award
+  Send,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -117,6 +120,30 @@ function AdminCursosPage() {
       toast.error("Erro ao salvar: " + error.message);
     } finally {
       setIsSaving(false);
+    }
+  }
+
+  const notifyContent = useServerFn(notifyNewContent);
+  const [notifyingId, setNotifyingId] = useState<string | null>(null);
+
+  async function handleNotify(course: any, force = false) {
+    setNotifyingId(course.id);
+    try {
+      const res: any = await notifyContent({ data: { contentType: "course", contentId: course.id, force } });
+      if (res?.alreadySent) {
+        if (confirm("Este curso já foi anunciado por e-mail. Deseja enviar novamente para todos os alunos?")) {
+          setNotifyingId(null);
+          return handleNotify(course, true);
+        }
+      } else if (res?.success) {
+        toast.success(`E-mail enviado para ${res.sentCount} de ${res.recipients} alunos.`);
+      } else {
+        toast.error("Nenhum e-mail enviado. " + (res?.error || "Verifique as configurações de e-mail."));
+      }
+    } catch (e: any) {
+      toast.error("Erro ao avisar alunos: " + (e?.message || e));
+    } finally {
+      setNotifyingId(null);
     }
   }
 
@@ -296,6 +323,14 @@ function AdminCursosPage() {
                         className="p-1.5 sm:p-2 text-white/40 hover:text-white transition-colors"
                       >
                         <Edit3 className="h-4 w-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleNotify(course)}
+                        disabled={notifyingId === course.id}
+                        title="Avisar alunos por e-mail sobre este curso"
+                        className="p-1.5 sm:p-2 text-white/40 hover:text-[#ff6a00] transition-colors disabled:opacity-40"
+                      >
+                        <Send className="h-4 w-4" />
                       </button>
                       <button 
                         onClick={() => handleDelete(course)}

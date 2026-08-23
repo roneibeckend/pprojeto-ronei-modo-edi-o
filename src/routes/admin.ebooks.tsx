@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { notifyNewContent } from "@/lib/content-notify.functions";
 import { useState, useEffect } from "react";
 import { 
   Plus, 
@@ -31,6 +33,7 @@ import {
   HelpCircle,
   Flag,
   Award
+  Send,
 } from "lucide-react";
 import { CertificateEditor } from "@/components/admin/CertificateEditor";
 import { supabase } from "@/integrations/supabase/client";
@@ -157,6 +160,30 @@ function AdminEbooksPage() {
       toast.error("Erro ao salvar: " + error.message);
     } finally {
       setIsSaving(false);
+    }
+  }
+
+  const notifyContent = useServerFn(notifyNewContent);
+  const [notifyingId, setNotifyingId] = useState<string | null>(null);
+
+  async function handleNotify(ebook: any, force = false) {
+    setNotifyingId(ebook.id);
+    try {
+      const res: any = await notifyContent({ data: { contentType: "ebook", contentId: ebook.id, force } });
+      if (res?.alreadySent) {
+        if (confirm("Este eBook já foi anunciado por e-mail. Deseja enviar novamente para todos os alunos?")) {
+          setNotifyingId(null);
+          return handleNotify(ebook, true);
+        }
+      } else if (res?.success) {
+        toast.success(`E-mail enviado para ${res.sentCount} de ${res.recipients} alunos.`);
+      } else {
+        toast.error("Nenhum e-mail enviado. " + (res?.error || "Verifique as configurações de e-mail."));
+      }
+    } catch (e: any) {
+      toast.error("Erro ao avisar alunos: " + (e?.message || e));
+    } finally {
+      setNotifyingId(null);
     }
   }
 
@@ -291,6 +318,14 @@ function AdminEbooksPage() {
                         className="p-2 text-white/40 hover:text-white transition-colors"
                       >
                         <Edit3 className="h-4 w-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleNotify(ebook)}
+                        disabled={notifyingId === ebook.id}
+                        title="Avisar alunos por e-mail sobre este eBook"
+                        className="p-2 text-white/40 hover:text-[#ff6a00] transition-colors disabled:opacity-40"
+                      >
+                        <Send className="h-4 w-4" />
                       </button>
                       <button 
                         onClick={() => handleDelete(ebook)}
