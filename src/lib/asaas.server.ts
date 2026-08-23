@@ -48,6 +48,35 @@ export async function getAsaasConfig() {
   };
 }
 
+export async function asaasRequest(
+  config: { apiKey: string; baseUrl: string; isTestMode?: boolean },
+  path: string,
+  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" = "GET",
+  body?: Record<string, any>
+) {
+  const url = `${config.baseUrl}${path}`;
+  const res = await fetch(url, {
+    method,
+    headers: asaasHeaders(config.apiKey),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  const text = await res.text().catch(() => "Unknown error");
+  let json: any = null;
+  try {
+    json = text ? JSON.parse(text) : null;
+  } catch {
+    json = null;
+  }
+
+  if (!res.ok) {
+    const message = json?.errors?.[0]?.description || json?.message || text || `HTTP ${res.status}`;
+    throw new Error(`Asaas API error (${res.status}): ${message}`);
+  }
+
+  return json;
+}
+
 export function asaasHeaders(apiKey: string) {
   return {
     accept: "application/json",
