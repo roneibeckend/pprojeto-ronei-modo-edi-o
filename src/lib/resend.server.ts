@@ -239,10 +239,29 @@ export async function triggerEmailEvent(params: {
 }) {
   console.log(`[Email] Disparando evento: ${params.event} para ${params.to}`);
 
+  // Bloqueio de e-mails incompletos: valida os campos obrigatórios do evento
+  // (nome, valores, datas, URLs) antes de qualquer chamada ao provedor.
+  const validation = validateEmailData(params.event, params.data || {});
+  if (!validation.valid) {
+    const message = validation.message ?? 'Campos obrigatórios ausentes no evento de e-mail.';
+    console.error(`[Email] ${message}`);
+    try {
+      await supabaseAdmin.from('email_logs').insert({
+        recipient_email: params.to,
+        template_name: params.event,
+        status: 'error',
+        error_message: message,
+        payload: { missing: validation.missing } as any
+      });
+    } catch (logError) {}
+    throw new Error(message);
+  }
+
   try {
     // 1) Templates premium definidos em código (src/emails) têm prioridade.
     const coded = renderEmailTemplate(params.event, params.data);
     if (coded) {
+
       return await sendResendEmail({
         to: params.to,
         subject: params.data?.subject || coded.subject,
