@@ -78,34 +78,38 @@ export async function getAsaasConfig() {
 export async function asaasFetchJson(
   url: string,
   init: RequestInit,
-  attempts = 3,
+  attempts = 2,
 ): Promise<{ ok: boolean; status: number; json: any; text: string }> {
   let last: { ok: boolean; status: number; json: any; text: string } | null = null;
 
-  for (let i = 0; i < attempts; i++) {
-    let res: Response;
-    try {
-      res = await fetch(url, init);
-    } catch (e: any) {
-      last = { ok: false, status: 0, json: null, text: e?.message || "Falha de rede" };
-      if (i < attempts - 1) { await new Promise((r) => setTimeout(r, 400 * (i + 1))); continue; }
-      break;
+  for (const candidate of asaasUrlCandidates(url)) {
+    for (let i = 0; i < attempts; i++) {
+      let res: Response;
+      try {
+        res = await fetch(candidate, init);
+      } catch (e: any) {
+        last = { ok: false, status: 0, json: null, text: e?.message || "Falha de rede" };
+        if (i < attempts - 1) await new Promise((r) => setTimeout(r, 400 * (i + 1)));
+        continue;
+      }
+
+      const text = await res.text().catch(() => "");
+      let json: any = null;
+      try { json = text ? JSON.parse(text) : null; } catch { json = null; }
+
+      last = { ok: res.ok, status: res.status, json, text };
+
+      // Resposta não-JSON (HTML de manutenção/proxy) ou 5xx/429: vale tentar novamente.
+      const retryable = res.status >= 500 || res.status === 429 || json === null;
+      if (!retryable) return last;
+      console.warn(`[Asaas] Resposta não utilizável de ${candidate} (HTTP ${res.status}). Tentando novamente...`);
+      if (i < attempts - 1) await new Promise((r) => setTimeout(r, 500 * (i + 1)));
     }
-
-    const text = await res.text().catch(() => "");
-    let json: any = null;
-    try { json = text ? JSON.parse(text) : null; } catch { json = null; }
-
-    last = { ok: res.ok, status: res.status, json, text };
-
-    // Resposta não-JSON (HTML de erro/manutenção) ou 5xx: vale tentar novamente.
-    const retryable = res.status >= 500 || res.status === 429 || (res.ok && json === null);
-    if (!retryable) break;
-    if (i < attempts - 1) await new Promise((r) => setTimeout(r, 500 * (i + 1)));
   }
 
   return last!;
 }
+
 
 /** Traduz uma resposta do Asaas em mensagem legível para o usuário final. */
 export function asaasErrorMessage(result: { status: number; json: any; text: string }) {
