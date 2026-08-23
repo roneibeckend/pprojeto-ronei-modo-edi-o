@@ -56,9 +56,9 @@ export const validateCouponPublic = createServerFn({ method: "POST" })
     });
     if (error) {
       console.error("[Coupons] Erro na validação pública:", error);
-      return { valid: false, reason: "error", message: "Não foi possível validar o cupom agora. Tente novamente." };
+      return { valid: false, reason: "error", message: "Não foi possível validar o cupom agora. Tente novamente." } as CouponValidationResult;
     }
-    return result as Record<string, unknown>;
+    return toValidationResult(result);
   });
 
 // ============================================================================
@@ -87,9 +87,9 @@ export const validateCouponCheckout = createServerFn({ method: "POST" })
     });
     if (error) {
       console.error("[Coupons] Erro na validação autenticada:", error);
-      return { valid: false, reason: "error", message: "Não foi possível validar o cupom agora. Tente novamente." };
+      return { valid: false, reason: "error", message: "Não foi possível validar o cupom agora. Tente novamente." } as CouponValidationResult;
     }
-    return result as Record<string, unknown>;
+    return toValidationResult(result);
   });
 
 // ============================================================================
