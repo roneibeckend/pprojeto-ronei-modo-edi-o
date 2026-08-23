@@ -48,6 +48,61 @@ export async function getAsaasConfig() {
   };
 }
 
+/**
+ * Executa uma chamada ao Asaas de forma resiliente: nunca faz JSON.parse cego.
+ * Se o Asaas responder HTML (503/502/Cloudflare/manutenção), devolve uma mensagem clara
+ * em vez do erro "Unexpected token '<'".
+ */
+export async function asaasFetchJson(
+  url: string,
+  init: RequestInit,
+  attempts = 3,
+): Promise<{ ok: boolean; status: number; json: any; text: string }> {
+  let last: { ok: boolean; status: number; json: any; text: string } | null = null;
+
+  for (let i = 0; i < attempts; i++) {
+    let res: Response;
+    try {
+      res = await fetch(url, init);
+    } catch (e: any) {
+      last = { ok: false, status: 0, json: null, text: e?.message || "Falha de rede" };
+      if (i < attempts - 1) { await new Promise((r) => setTimeout(r, 400 * (i + 1))); continue; }
+      break;
+    }
+
+    const text = await res.text().catch(() => "");
+    let json: any = null;
+    try { json = text ? JSON.parse(text) : null; } catch { json = null; }
+
+    last = { ok: res.ok, status: res.status, json, text };
+
+    // Resposta não-JSON (HTML de erro/manutenção) ou 5xx: vale tentar novamente.
+    const retryable = res.status >= 500 || res.status === 429 || (res.ok && json === null);
+    if (!retryable) break;
+    if (i < attempts - 1) await new Promise((r) => setTimeout(r, 500 * (i + 1)));
+  }
+
+  return last!;
+}
+
+/** Traduz uma resposta do Asaas em mensagem legível para o usuário final. */
+export function asaasErrorMessage(result: { status: number; json: any; text: string }) {
+  const apiMessage =
+    result.json?.errors?.[0]?.description || result.json?.message || null;
+  if (apiMessage) return apiMessage;
+
+  if (result.status === 0) {
+    return "Não foi possível conectar ao Asaas. Verifique sua conexão e tente novamente.";
+  }
+  if (result.status === 401 || result.status === 403) {
+    return "Chave de API do Asaas inválida ou sem permissão. Confira a chave e o ambiente (Produção/Sandbox).";
+  }
+  if (result.status >= 500 || /<html/i.test(result.text)) {
+    return `O Asaas está temporariamente indisponível (HTTP ${result.status}). Aguarde alguns minutos e tente novamente.`;
+  }
+  return `Erro inesperado do Asaas (HTTP ${result.status}).`;
+}
+
 export async function asaasRequest(
   config: { apiKey: string; baseUrl: string; isTestMode?: boolean },
   path: string,
