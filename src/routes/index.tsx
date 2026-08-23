@@ -1907,8 +1907,18 @@ function AuroraBackdrop() {
 
 function LandingPage() {
   useEffect(() => {
+    // Ativa o estado oculto das animações somente agora (após hidratação).
+    // Antes disso o HTML já está visível, evitando "tela vazia" no mobile.
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduceMotion) {
+      document.documentElement.setAttribute("data-reveal-js", "");
+    }
+
     // Assign varied reveal variants per section so animations don't all feel the same.
     // Order below matches <main> children.
+
     const variantsBySection: Array<{ headline: string; card: string }> = [
       { headline: "up",    card: "up"     }, // Hero
       { headline: "clip",  card: "scale"  }, // ForYou
