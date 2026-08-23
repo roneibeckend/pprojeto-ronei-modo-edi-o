@@ -301,7 +301,7 @@ function CoursesPage() {
                   <img 
                     src={optimizedImage(c.cover_url) || IMG.hero} 
                     alt={c.title} 
-                    className="h-full w-full object-contain bg-black transition-transform duration-500 group-hover:scale-110" 
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
 
 
 
@@ -343,7 +343,7 @@ function CoursesPage() {
                   <img 
                     src={optimizedImage(e.cover_url || e.cover) || IMG.hero} 
                     alt={e.title} 
-                    className="h-full w-full object-contain bg-black transition-transform duration-500 group-hover:scale-110" 
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
 
 
                     loading="lazy" 
@@ -394,7 +394,7 @@ function CoursesPage() {
                   <img 
                     src={optimizedImage(c.cover_url) || IMG.hero} 
                     alt={c.title} 
-                    className="h-full w-full object-contain bg-black" 
+                    className="h-full w-full object-cover" 
 
 
                     loading="lazy" 
@@ -451,7 +451,7 @@ function CoursesPage() {
                   <img 
                     src={optimizedImage(e.cover_url || e.cover) || IMG.hero} 
                     alt={e.title} 
-                    className="h-full w-full object-contain sm:object-cover" 
+                    className="h-full w-full object-cover" 
 
                     loading="lazy" 
                   />
