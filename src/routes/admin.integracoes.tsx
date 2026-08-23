@@ -324,8 +324,8 @@ function IntegrationsPage() {
 
 
       <div className={`grid gap-8 grid-cols-1 lg:grid-cols-12 ${activeCategory === 'oauth' ? 'hidden' : ''}`}>
-        {/* Sidebar List */}
-        <div className="lg:col-span-4 space-y-4">
+        {/* Sidebar List — no mobile, esconde quando um item está aberto */}
+        <div className={`lg:col-span-4 space-y-4 ${selectedItem && (activeCategory === 'ia' || activeCategory === 'payment') ? 'hidden lg:block' : ''}`}>
           {activeCategory === 'email' ? (
             <Card className="bg-[#111] border-white/5">
               <CardHeader>
@@ -420,6 +420,14 @@ function IntegrationsPage() {
         <div className="lg:col-span-8">
           {activeCategory === 'email' ? <EmailIntegrationPanel integrations={integrations} /> : activeCategory === 'offers' ? <OffersIntegrationPanel /> : (activeCategory === 'feature') ? <FeatureTogglePanel integrations={integrations} /> : (selectedItem && selectedItem.category !== 'resend') ? (
             <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => { setSelectedItem(null); setTestResult(null); }}
+                className="lg:hidden text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 -ml-2"
+              >
+                <ChevronRight className="h-3.5 w-3.5 mr-1 rotate-180" /> Voltar à lista
+              </Button>
               <Tabs defaultValue="config" className="w-full">
                 <TabsList className="bg-black/40 border border-white/5 p-1 mb-6">
                   <TabsTrigger value="config" className="data-[state=active]:bg-[#ff6a00] data-[state=active]:text-black uppercase text-[10px] font-bold tracking-widest px-6 h-9">
