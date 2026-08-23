@@ -48,12 +48,20 @@ export function ImageUpload({
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
+      // O bucket é privado: geramos um link assinado de longa duração para
+      // que a imagem fique visível para os alunos (o /object/public/ falharia).
+      const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
+      const { data: signed } = await supabase.storage
         .from(bucket)
-        .getPublicUrl(filePath);
+        .createSignedUrl(filePath, TEN_YEARS);
 
-      onChange(publicUrl);
+      const finalUrl =
+        signed?.signedUrl ||
+        supabase.storage.from(bucket).getPublicUrl(filePath).data.publicUrl;
+
+      onChange(finalUrl);
       toast.success("Imagem enviada com sucesso!");
+
     } catch (error: any) {
       toast.error("Erro no upload: " + error.message);
     } finally {

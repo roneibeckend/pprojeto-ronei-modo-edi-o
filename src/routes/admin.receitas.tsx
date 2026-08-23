@@ -167,13 +167,14 @@ function AdminReceitasPage() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto py-6 sm:py-4">
-          <div className="w-full max-w-2xl bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 my-8">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
-              <h3 className="text-xl font-bold">{editingItem?.id ? "Editar Receita" : "Nova Receita"}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-3 sm:p-4">
+          <div className="flex w-full max-w-2xl max-h-[calc(100dvh-1.5rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0e0e0e]">
+            <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4 sm:px-6">
+              <h3 className="text-lg sm:text-xl font-bold">{editingItem?.id ? "Editar Receita" : "Nova Receita"}</h3>
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition"><X className="h-5 w-5" /></button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-6 text-left">
+            <form onSubmit={handleSubmit} className="flex-1 min-h-0 overflow-y-auto space-y-6 p-5 sm:p-6 text-left">
+
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-white/40">Nome da Receita</label>
@@ -257,17 +258,23 @@ function AdminReceitasPage() {
                             const filePath = `${fileName}`;
 
                             toast.loading("Fazendo upload do vídeo...");
-                            const { error: uploadError, data } = await supabase.storage
+                            const { error: uploadError } = await supabase.storage
                               .from('recipe-videos')
                               .upload(filePath, file);
 
                             if (uploadError) throw uploadError;
 
-                            const { data: { publicUrl } } = supabase.storage
+                            const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
+                            const { data: signed } = await supabase.storage
                               .from('recipe-videos')
-                              .getPublicUrl(filePath);
+                              .createSignedUrl(filePath, TEN_YEARS);
 
-                            setEditingItem({...editingItem, video_url: publicUrl});
+                            const finalUrl =
+                              signed?.signedUrl ||
+                              supabase.storage.from('recipe-videos').getPublicUrl(filePath).data.publicUrl;
+
+                            setEditingItem({...editingItem, video_url: finalUrl});
+
                             toast.dismiss();
                             toast.success("Vídeo enviado com sucesso!");
                           } catch (error: any) {
@@ -315,7 +322,7 @@ function AdminReceitasPage() {
                 />
               </div>
 
-              <div className="pt-4 flex gap-3">
+              <div className="sticky bottom-0 -mx-5 sm:-mx-6 -mb-5 sm:-mb-6 flex gap-3 border-t border-white/10 bg-[#0e0e0e] px-5 sm:px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3.5 rounded-xl bg-white/5 font-bold hover:bg-white/10 transition uppercase tracking-widest text-xs">Cancelar</button>
                 <button type="submit" disabled={isSaving} className="flex-1 py-3.5 rounded-xl bg-[#ff6a00] text-black font-bold disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] transition uppercase tracking-widest text-xs">
                   {isSaving ? "Salvando..." : "Salvar Receita"}
