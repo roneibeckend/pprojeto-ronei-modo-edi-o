@@ -15,6 +15,8 @@ interface VideoPlayerProps {
   aspect?: 'video' | 'portrait';
   /** Kept for API compatibility. Intro videos never autoplay: the user always taps play. */
   isIntro?: boolean;
+  /** Starts playback with sound immediately on mount (used when the user already tapped a play button). */
+  autoStart?: boolean;
 }
 
 const isYouTubeUrl = (url: string) => url.includes('youtube.com') || url.includes('youtu.be');
