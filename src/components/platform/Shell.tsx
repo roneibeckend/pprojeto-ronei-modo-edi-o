@@ -22,7 +22,6 @@ import {
   LogOut,
   Menu,
   X,
-  Flame,
   Shield,
   ChevronRight,
   Settings,
@@ -39,6 +38,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import brandFlame from "@/assets/brand-flame.png.asset.json";
 
 type NavItem = {
   to: string;
@@ -121,7 +121,15 @@ export function Shell({ children }: { children: ReactNode }) {
       {/* Brand */}
       <div className="flex shrink-0 items-center gap-3 border-b border-sidebar-border px-5 py-4">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary">
-          <Flame className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} />
+          <img
+            src={brandFlame.url}
+            alt=""
+            aria-hidden
+            width={28}
+            height={28}
+            decoding="async"
+            className="h-7 w-7 object-contain"
+          />
         </div>
         <div className="min-w-0">
           <div className="font-display text-base font-extrabold uppercase leading-tight tracking-wide text-sidebar-foreground">
