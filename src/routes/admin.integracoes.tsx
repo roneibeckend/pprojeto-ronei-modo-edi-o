@@ -274,7 +274,7 @@ function IntegrationsPage() {
           </p>
         </div>
         
-        <div className="scrollbar-hidden -mx-3 hidden items-center gap-1 overflow-x-auto rounded-sm border border-white/5 bg-black/40 p-1 px-3 self-stretch sm:mx-0 sm:self-auto [-webkit-overflow-scrolling:touch] lg:flex">
+        <div className="-mx-3 hidden items-center gap-1 rounded-sm border border-white/5 bg-black/40 p-1 px-3 self-stretch sm:mx-0 sm:self-auto lg:flex lg:flex-wrap lg:justify-end">
           <Button 
             variant="ghost"
             onClick={() => { setActiveCategory('ia'); setSelectedItem(null); }}
