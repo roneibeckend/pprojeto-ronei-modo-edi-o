@@ -24,6 +24,7 @@ import { getSignedVideoUrl } from "@/lib/video.functions";
 import { generateCertificate } from "@/lib/certificates-student.functions";
 import EbookDownloadDialog from "@/components/platform/EbookDownloadDialog";
 import { registerEbookDownload } from "@/lib/ebook-download.functions";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
 
 
 
