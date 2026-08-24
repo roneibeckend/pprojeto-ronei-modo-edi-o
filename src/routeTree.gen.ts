@@ -61,8 +61,6 @@ import { Route as AppAfiliadosLinksRouteImport } from './routes/app.afiliados.li
 import { Route as AppAfiliadosFinanceiroRouteImport } from './routes/app.afiliados.financeiro'
 import { Route as AppAfiliadosConfigRouteImport } from './routes/app.afiliados.config'
 import { Route as ApiPublicDriveVideoRouteImport } from './routes/api/public/drive-video'
-import { Route as ApiPublicDownloadStorageTempRouteImport } from './routes/api/public/download-storage-temp'
-import { Route as ApiPublicDownloadMigracaoTempRouteImport } from './routes/api/public/download-migracao-temp'
 import { Route as ApiPublicDailyUpdatesReportRouteImport } from './routes/api/public/daily-updates-report'
 import { Route as ApiPublicDailyFinancialReportRouteImport } from './routes/api/public/daily-financial-report'
 import { Route as AdminRankingCampanhasRouteImport } from './routes/admin.ranking.campanhas'
@@ -330,18 +328,6 @@ const ApiPublicDriveVideoRoute = ApiPublicDriveVideoRouteImport.update({
   path: '/api/public/drive-video',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicDownloadStorageTempRoute =
-  ApiPublicDownloadStorageTempRouteImport.update({
-    id: '/api/public/download-storage-temp',
-    path: '/api/public/download-storage-temp',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicDownloadMigracaoTempRoute =
-  ApiPublicDownloadMigracaoTempRouteImport.update({
-    id: '/api/public/download-migracao-temp',
-    path: '/api/public/download-migracao-temp',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicDailyUpdatesReportRoute =
   ApiPublicDailyUpdatesReportRouteImport.update({
     id: '/api/public/daily-updates-report',
@@ -422,8 +408,6 @@ export interface FileRoutesByFullPath {
   '/admin/ranking/campanhas': typeof AdminRankingCampanhasRoute
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
   '/api/public/daily-updates-report': typeof ApiPublicDailyUpdatesReportRoute
-  '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
-  '/api/public/download-storage-temp': typeof ApiPublicDownloadStorageTempRoute
   '/api/public/drive-video': typeof ApiPublicDriveVideoRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
@@ -480,8 +464,6 @@ export interface FileRoutesByTo {
   '/admin/ranking/campanhas': typeof AdminRankingCampanhasRoute
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
   '/api/public/daily-updates-report': typeof ApiPublicDailyUpdatesReportRoute
-  '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
-  '/api/public/download-storage-temp': typeof ApiPublicDownloadStorageTempRoute
   '/api/public/drive-video': typeof ApiPublicDriveVideoRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
@@ -543,8 +525,6 @@ export interface FileRoutesById {
   '/admin/ranking/campanhas': typeof AdminRankingCampanhasRoute
   '/api/public/daily-financial-report': typeof ApiPublicDailyFinancialReportRoute
   '/api/public/daily-updates-report': typeof ApiPublicDailyUpdatesReportRoute
-  '/api/public/download-migracao-temp': typeof ApiPublicDownloadMigracaoTempRoute
-  '/api/public/download-storage-temp': typeof ApiPublicDownloadStorageTempRoute
   '/api/public/drive-video': typeof ApiPublicDriveVideoRoute
   '/app/afiliados/config': typeof AppAfiliadosConfigRoute
   '/app/afiliados/financeiro': typeof AppAfiliadosFinanceiroRoute
@@ -607,8 +587,6 @@ export interface FileRouteTypes {
     | '/admin/ranking/campanhas'
     | '/api/public/daily-financial-report'
     | '/api/public/daily-updates-report'
-    | '/api/public/download-migracao-temp'
-    | '/api/public/download-storage-temp'
     | '/api/public/drive-video'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
@@ -665,8 +643,6 @@ export interface FileRouteTypes {
     | '/admin/ranking/campanhas'
     | '/api/public/daily-financial-report'
     | '/api/public/daily-updates-report'
-    | '/api/public/download-migracao-temp'
-    | '/api/public/download-storage-temp'
     | '/api/public/drive-video'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
@@ -727,8 +703,6 @@ export interface FileRouteTypes {
     | '/admin/ranking/campanhas'
     | '/api/public/daily-financial-report'
     | '/api/public/daily-updates-report'
-    | '/api/public/download-migracao-temp'
-    | '/api/public/download-storage-temp'
     | '/api/public/drive-video'
     | '/app/afiliados/config'
     | '/app/afiliados/financeiro'
@@ -756,8 +730,6 @@ export interface RootRouteChildren {
   VerificarCertificadoRoute: typeof VerificarCertificadoRoute
   ApiPublicDailyFinancialReportRoute: typeof ApiPublicDailyFinancialReportRoute
   ApiPublicDailyUpdatesReportRoute: typeof ApiPublicDailyUpdatesReportRoute
-  ApiPublicDownloadMigracaoTempRoute: typeof ApiPublicDownloadMigracaoTempRoute
-  ApiPublicDownloadStorageTempRoute: typeof ApiPublicDownloadStorageTempRoute
   ApiPublicDriveVideoRoute: typeof ApiPublicDriveVideoRoute
   ApiPublicManifestWebmanifestRoute: typeof ApiPublicManifestWebmanifestRoute
   ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
@@ -1129,20 +1101,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDriveVideoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/download-storage-temp': {
-      id: '/api/public/download-storage-temp'
-      path: '/api/public/download-storage-temp'
-      fullPath: '/api/public/download-storage-temp'
-      preLoaderRoute: typeof ApiPublicDownloadStorageTempRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/download-migracao-temp': {
-      id: '/api/public/download-migracao-temp'
-      path: '/api/public/download-migracao-temp'
-      fullPath: '/api/public/download-migracao-temp'
-      preLoaderRoute: typeof ApiPublicDownloadMigracaoTempRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/daily-updates-report': {
       id: '/api/public/daily-updates-report'
       path: '/api/public/daily-updates-report'
@@ -1344,8 +1302,6 @@ const rootRouteChildren: RootRouteChildren = {
   VerificarCertificadoRoute: VerificarCertificadoRoute,
   ApiPublicDailyFinancialReportRoute: ApiPublicDailyFinancialReportRoute,
   ApiPublicDailyUpdatesReportRoute: ApiPublicDailyUpdatesReportRoute,
-  ApiPublicDownloadMigracaoTempRoute: ApiPublicDownloadMigracaoTempRoute,
-  ApiPublicDownloadStorageTempRoute: ApiPublicDownloadStorageTempRoute,
   ApiPublicDriveVideoRoute: ApiPublicDriveVideoRoute,
   ApiPublicManifestWebmanifestRoute: ApiPublicManifestWebmanifestRoute,
   ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
