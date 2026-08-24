@@ -24,6 +24,7 @@ import { getSignedVideoUrl } from "@/lib/video.functions";
 import { generateCertificate } from "@/lib/certificates-student.functions";
 import EbookDownloadDialog from "@/components/platform/EbookDownloadDialog";
 import { registerEbookDownload } from "@/lib/ebook-download.functions";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
 
 
 
@@ -851,7 +852,7 @@ function EbookReaderPage() {
                       [&_th]:p-4 [&_th]:border [&_th]:border-white/10 [&_th]:bg-white/10 [&_th]:font-bold [&_th]:text-sm
                       [&_figcaption]:text-sm [&_figcaption]:text-muted-foreground [&_figcaption]:text-center [&_figcaption]:mt-2 [&_figcaption]:mb-8
                       [&_.table-wrapper]:overflow-x-auto [&_.table-wrapper]:max-w-full [&_.table-wrapper]:mb-8" 
-                      dangerouslySetInnerHTML={{ __html: activeChapter.content }} 
+                      dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(activeChapter.content) }} 
                     />
                   ) : activeChapter ? (
                     <div className="flex flex-col items-center justify-center py-20 opacity-50 text-center">

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
 import * as pdf from "pdf-parse";
 import * as mammoth from "mammoth";
 
@@ -173,7 +174,7 @@ export const importEbookFromFile = createServerFn({ method: "POST" })
         ebook_id: data.ebook_id,
         module_id: module.id,
         title: section.title,
-        content: section.content,
+        content: sanitizeRichHtml(section.content),
         order_index: section.order_index
       }));
 
