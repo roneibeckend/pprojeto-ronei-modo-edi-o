@@ -378,6 +378,14 @@ function LoginPage() {
 
 
 
+          {!ENABLE_EMAIL_LOGIN && (
+            <p className="mt-6 rounded-xl border border-white/10 bg-secondary/40 p-4 text-center text-sm text-muted-foreground">
+              O acesso por e-mail e senha está temporariamente indisponível. Use o botão acima para entrar.
+            </p>
+          )}
+
+          {ENABLE_EMAIL_LOGIN && (
+          <>
           <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
             <div className="h-px flex-1 bg-white/10" />
             ou com e-mail
