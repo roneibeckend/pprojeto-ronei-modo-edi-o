@@ -492,6 +492,8 @@ function LoginPage() {
               </>
             )}
           </p>
+          </>
+          )}
 
           <p className="mt-2 text-center text-xs text-muted-foreground">
             <button onClick={() => window.history.back()} className="hover:underline">← Voltar</button>
