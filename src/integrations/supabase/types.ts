@@ -2703,17 +2703,6 @@ export type Database = {
         }
         Returns: Json
       }
-      affiliate_sensitive_fields_unchanged: {
-        Args: {
-          _balance: number
-          _commission_rate: number
-          _id: string
-          _referrer_id: string
-          _status: Database["public"]["Enums"]["affiliate_status"]
-          _total_earnings: number
-        }
-        Returns: boolean
-      }
       award_points: {
         Args: { p_points: number; p_user_id: string }
         Returns: undefined
