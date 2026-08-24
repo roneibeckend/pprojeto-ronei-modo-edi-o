@@ -21,6 +21,11 @@ export const Route = createFileRoute("/login")({
 
 type Mode = "login" | "signup";
 
+// Provedores desativados até que as credenciais sejam configuradas.
+const ENABLE_EMAIL_LOGIN = false;
+const ENABLE_FACEBOOK_LOGIN = false;
+const ENABLE_APPLE_LOGIN = false;
+
 function LoginPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<Mode>("login");
